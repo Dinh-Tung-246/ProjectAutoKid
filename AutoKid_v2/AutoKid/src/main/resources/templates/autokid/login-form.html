@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AutoKid</title>
+    <link rel="icon" type="image/x-icon" href="img/logo.png" style="height: 10px; width: 10px">
+    <link rel="stylesheet" href="css/login-form.css" type="text/css">
+    <link
+            rel="stylesheet"
+            href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css"
+    />
+</head>
+<body>
+<!-- Page Preloder -->
+<div id="preloder">
+    <div class="loader"></div>
+</div>
+
+<div class="container" id="container">
+    <div class="form-container sign-up-container">
+        <form id="registerForm" action="/autokid/login/register" method="post">
+            <h1>Tạo tài khoản</h1>
+            <input type="text" name="tenKH" id="tenKH" placeholder="Họ và tên" />
+            <input type="email" name="emailKH" id="emailKH" placeholder="Email" />
+            <input type="password" name="matKhau" id="matKhau" placeholder="Mật khẩu" />
+            <input type="password" name="confirmPass" id="confirmPass" placeholder="Xác nhận mật khẩu" />
+            <button type="submit" onclick="register(event)">Đăng ký</button>
+        </form>
+    </div>
+    <div class="form-container sign-in-container">
+        <form id="loginForm" action="/autokid/login/login" method="post">
+            <h1>Đăng nhập</h1>
+            <input type="email" name="email" id="email" placeholder="Email" />
+            <input type="password" name="password" id="password" placeholder="Mật khẩu" />
+            <a href="#">Quên mật khẩu?</a>
+            <button onclick="login(event)">Đăng nhập</button>
+        </form>
+    </div>
+    <div class="overlay-container">
+        <div class="overlay">
+            <div class="overlay-panel overlay-left">
+                <h1>Welcome Back!</h1>
+                <p>To keep connected with us please login with your personal info</p>
+                <button class="ghost" id="signIn">Đăng nhập</button>
+            </div>
+            <div class="overlay-panel overlay-right">
+                <h1>Hello, Friend!</h1>
+                <p>Enter your personal details and start journey with us</p>
+                <button class="ghost" id="signUp">Đăng ký</button>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script src="js/login-form.js"></script>
+</body>
+</html>

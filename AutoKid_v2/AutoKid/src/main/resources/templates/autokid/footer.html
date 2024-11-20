@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<footer class="footer" th:fragment="fragment" >
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-3 col-md-6 col-sm-6">
+        <div class="footer__about">
+          <div class="footer__about__logo">
+            <a th:href="@{http://localhost:8080/autokid/home}"><img src="img/logo.png" alt="" /></a>
+          </div>
+          <ul>
+            <li>Địa chỉ: Ngõ 26, Đường Cầu Diễn, huyện Bắc Từ Liêm, Thành phố Hà Nội</li>
+            <li>Điện thoại: +65 11.188.888</li>
+            <li>Email: autokid@gmail.com</li>
+          </ul>
+        </div>
+      </div>
+      <div class="col-lg-4 col-md-6 col-sm-6 offset-lg-1">
+        <div class="footer__widget">
+          <h6>Liên kết hữu ích</h6>
+          <ul>
+            <li><a href="#">Về chúng tôi</a></li>
+            <li><a href="#">Về cửa hàng của chúng tôi</a></li>
+            <li><a href="#">Mua sắm an toàn</a></li>
+            <li><a href="#">Thông tin giao hàng</a></li>
+            <li><a href="#">Chính sách bảo mật</a></li>
+            <li><a href="#">Sơ đồ trang web</a></li>
+          </ul>
+          <ul>
+            <li><a href="#">Chúng tôi là ai</a></li>
+            <li><a href="#">Dịch vụ của chúng tôi</a></li>
+            <li><a href="#">Dự án</a></li>
+            <li><a href="#">Liên hệ</a></li>
+            <li><a href="#">Sáng tạo</a></li>
+            <li><a href="#">Phản hồi</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="col-lg-4 col-md-12">
+        <div class="footer__widget">
+          <h6>Tham gia bản tin của chúng tôi ngay</h6>
+          <p>
+            Nhận cập nhật qua E-mail về cửa hàng và các ưu đãi đặc biệt của chúng tôi.
+          </p>
+          <form action="#">
+            <input type="text" placeholder="Nhập email của bạn" />
+            <button type="submit" class="site-btn">Đăng ký</button>
+          </form>
+          <div class="footer__widget__social">
+            <a href="#"><i class="fa fa-facebook"></i></a>
+            <a href="#"><i class="fa fa-instagram"></i></a>
+            <a href="#"><i class="fa fa-twitter"></i></a>
+            <a href="#"><i class="fa fa-pinterest"></i></a>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-lg-12">
+        <div class="footer__copyright">
+          <div class="footer__copyright__text">
+            <p>
+              Copyright &copy;
+              <script>
+                document.write(new Date().getFullYear());
+              </script>
+              Tất cả các quyền được bảo lưu | Mẫu này được thiết kế bởi
+              <i class="fa fa-heart" aria-hidden="true"></i> bởi
+              <a href="http://localhost:8080/autokid/home" target="_blank">Autokid</a>
+            </p>
+          </div>
+          <div class="footer__copyright__payment">
+            <img src="img/payment-item.png" alt="" />
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</footer>
+</body>
+</html>

@@ -1,0 +1,34 @@
+.filter-price h4 {
+    margin-bottom: 20px;
+}
+
+.filter-price .checkbox-price {
+    margin-bottom: 20px;
+}
+
+input[type=checkbox] {
+    -ms-transform: scale(2);
+    -moz-transform: scale(2);
+    -webkit-transform: scale(2);
+    -o-transform: scale(2);
+    transform: scale(2);
+    padding: 10px;
+}
+
+input[type=radio] {
+    transform: scale(2);
+}
+
+.checkbox-text {
+    margin-left: 5px;
+    font-size: 110%;
+    display: inline;
+}
+
+.filter-brands h4 {
+    margin: 20px 0px;
+}
+
+.filter-brands .checkbox-brand {
+    margin-bottom: 20px;
+}

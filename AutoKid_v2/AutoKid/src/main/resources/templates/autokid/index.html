@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="description" content="Ogani Template" />
+    <meta name="keywords" content="Ogani, unica, creative, html" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>AutoKid | Home</title>
+    <link rel="icon" type="image/x-icon" href="img/logo.png" style="height: 10px; width: 10px">
+    <!-- Google Font -->
+    <link
+      href="https://fonts.googleapis.com/css2?family=Cairo:wght@200;300;400;600;900&display=swap"
+      rel="stylesheet"
+    />
+
+    <!-- Css Styles -->
+    <link rel="stylesheet" href="css/bootstrap.min.css" type="text/css" />
+    <link rel="stylesheet" href="css/font-awesome.min.css" type="text/css" />
+    <link rel="stylesheet" href="css/elegant-icons.css" type="text/css" />
+    <link rel="stylesheet" href="css/nice-select.css" type="text/css" />
+    <link rel="stylesheet" href="css/jquery-ui.min.css" type="text/css" />
+    <link rel="stylesheet" href="css/owl.carousel.min.css" type="text/css" />
+    <link rel="stylesheet" href="css/slicknav.min.css" type="text/css" />
+    <link rel="stylesheet" href="css/style.css" type="text/css" />
+    <!--    <link rel="stylesheet" th:href="@{/css/style.css}" type="text/css" />-->
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css"
+    />
+  </head>
+
+  <body>
+    <!-- Page Preloder -->
+    <div id="preloder">
+      <div class="loader"></div>
+    </div>
+
+    <th:block th:replace="autokid/header :: fragment"></th:block>
+
+    <!-- Hero Section Begin -->
+    <section class="hero">
+      <div class="container">
+        <div class="row">
+          <div class="col-lg-3">
+            <div class="hero__categories">
+              <div class="hero__categories__all" style="border: none">
+                <i class="fa fa-bars"></i>
+                <span>Danh mục</span>
+              </div>
+              <ul>
+                <li th:each="loaisp : ${loaisp}"><a th:href="@{http://localhost:8080/autokid/shop/category(idLSP=${loaisp.idLoaiSP})}" class="checkbox-text" th:text="${loaisp.tenLoai}"></a></li>
+              </ul>
+            </div>
+          </div>
+          <div class="col-lg-9">
+            <div class="hero__search">
+              <div class="hero__search__form">
+                <form action="#">
+                  <div class="hero__search__categories">
+                    Tất cả các mặt hàng
+                    <span class="arrow_carrot-down"></span>
+                  </div>
+                  <input type="text" placeholder="Bạn cần tìm gì?" />
+                  <button type="submit" class="site-btn">Tìm kiếm</button>
+                </form>
+              </div>
+              <div class="hero__search__phone">
+                <div class="hero__search__phone__icon">
+                  <i class="fa fa-phone"></i>
+                </div>
+                <div class="hero__search__phone__text">
+                  <h5>+65 11.188.888</h5>
+                  <span>hỗ trợ 24/7</span>
+                </div>
+              </div>
+            </div>
+            <div class="hero__item set-bg" data-setbg="img/hero/banner.jpg">
+              <div class="hero__text">
+                <span>Siêu xe đạp</span>
+                <h2>Xe đạp <br />100% chính hãng</h2>
+                <p>Dịch vụ nhận và giao hàng miễn phí</p>
+                <a href="#" class="primary-btn">MUA NGAY</a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+    <!-- Hero Section End -->
+
+    <!-- Categories Section Begin -->
+    <section class="categories">
+      <div class="container">
+        <div class="row">
+          <div class="categories__slider owl-carousel">
+            <div th:each="sanpham : ${sanpham}" class="col-lg-3">
+              <a
+                th:href="@{http://localhost:8080/autokid/shop-detail(idSP=${sanpham.idSP})}"
+              >
+                <div
+                  class="categories__item"
+                  th:style="'background-image: url(\'/img/categories/' + ${sanpham.anhSPMau} + '\'); background-repeat: no-repeat;'"
+                >
+                  <h5 th:text="${sanpham.tenSP}"></h5>
+                </div>
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+    <!-- Categories Section End -->
+
+    <!-- Featured Section Begin -->
+    <section class="featured spad">
+      <div class="container">
+        <div class="row">
+          <div class="col-lg-12">
+            <div class="section-title">
+              <h2>Sản phẩm nổi bật</h2>
+            </div>
+            <div class="featured__controls">
+              <ul>
+                <li class="active" data-filter="*">Tất cả</li>
+                <li
+                  th:each="lsp : ${loaisp}"
+                  th:attr="data-filter=${'.' + lsp.tenLoai.replaceAll(' ','_')}"
+                  th:text="${lsp.tenLoai}"
+                ></li>
+              </ul>
+            </div>
+          </div>
+        </div>
+        <div class="row featured__filter">
+          <div
+            class="col-lg-3 col-md-4 col-sm-6 mix"
+            th:each="sp : ${sanpham}"
+            th:class=" ${'col-lg-3 col-md-4 col-sm-6 mix ' + sp.loaiSP.replaceAll(' ','_')}"
+          >
+            <div class="featured__item">
+              <div
+                class="featured__item__pic set-bg"
+                th:attr="data-setbg=${'/img/categories/' + sp.anhSPMau}"
+              >
+                <ul class="featured__item__pic__hover">
+                  <li>
+                    <a href="#"><i class="fa fa-heart"></i></a>
+                  </li>
+                  <li>
+                    <a th:href="@{http://localhost:8080/autokid/shop-detail(idSP=${sp.idSP})}"><i class="fa fa-retweet"></i></a>
+                  </li>
+                  <li>
+                    <a
+                      href="javascript:void(0)"
+                      th:data-id="${sp.idSP}"
+                      th:data-ten="${sp.tenSP}"
+                      th:data-gia="${sp.giaSauGiam}"
+                      onclick="addToCart(this)"
+                    >
+                      <i class="fa fa-shopping-cart"></i>
+                    </a>
+                  </li>
+                </ul>
+              </div>
+              <div class="featured__item__text">
+                <h6><a href="#" th:text="${sp.tenSP}"></a></h6>
+                <h5 th:if="${sp.donGia == sp.giaSauGiam}"><span th:text="${sp.donGia}"></span> <span> VND</span></h5>
+                <h5 th:unless="${sp.donGia == sp.giaSauGiam}">
+                  <del style="text-decoration-thickness: 2px; opacity: 0.5;"><span th:text="${sp.donGia}"></span> <span>VNĐ</span></del><br/>
+                  <span th:text="${sp.giaSauGiam}"></span> <span> VNĐ</span>
+                </h5>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+    <!-- Featured Section End -->
+
+    <!-- Footer Section Begin -->
+    <th:block th:replace="autokid/footer :: fragment"></th:block>
+    <!-- Footer Section End -->
+
+    <!-- Js Plugins -->
+    <script src="js/jquery-3.3.1.min.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+    <script src="js/jquery.nice-select.min.js"></script>
+    <script src="js/jquery-ui.min.js"></script>
+    <script src="js/jquery.slicknav.js"></script>
+    <script src="js/mixitup.min.js"></script>
+    <script src="js/owl.carousel.min.js"></script>
+    <script src="js/main.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="js/index.js"></script>
+  </body>
+</html>

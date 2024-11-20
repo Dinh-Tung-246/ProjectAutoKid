@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="zxx" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="description" content="Ogani Template"/>
+    <meta name="keywords" content="Ogani, unica, creative, html"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <meta http-equiv="X-UA-Compatible" content="ie=edge"/>
+    <title>AutoKid | Checkout</title>
+    <link rel="icon" type="image/x-icon" href="img/logo.png" style="height: 10px; width: 10px">
+
+    <!-- Google Font -->
+    <link
+            href="https://fonts.googleapis.com/css2?family=Cairo:wght@200;300;400;600;900&display=swap"
+            rel="stylesheet"
+    />
+
+    <!-- Css Styles -->
+    <link rel="stylesheet" href="css/bootstrap.min.css" type="text/css"/>
+    <link rel="stylesheet" href="css/font-awesome.min.css" type="text/css"/>
+    <link rel="stylesheet" href="css/elegant-icons.css" type="text/css"/>
+    <link rel="stylesheet" href="css/nice-select.css" type="text/css"/>
+    <link rel="stylesheet" href="css/jquery-ui.min.css" type="text/css"/>
+    <link rel="stylesheet" href="css/owl.carousel.min.css" type="text/css"/>
+    <link rel="stylesheet" href="css/slicknav.min.css" type="text/css"/>
+    <link rel="stylesheet" href="css/style.css" type="text/css"/>
+    <link rel="stylesheet" href="css/checkout.css" type="text/css" />
+    <link
+            rel="stylesheet"
+            href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css"
+    />
+</head>
+
+<body>
+<!-- Page Preloder -->
+<div id="preloder">
+    <div class="loader"></div>
+</div>
+
+<th:block th:replace="autokid/header :: fragment"></th:block>
+
+<!-- Hero Section Begin -->
+<section class="hero hero-normal">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-3">
+                <div class="hero__categories">
+                    <div class="hero__categories__all">
+                        <i class="fa fa-bars"></i>
+                        <span>Danh Mục</span>
+                    </div>
+                    <ul>
+                        <li th:each="lsp: ${lsp}">
+                            <a href="#" th:text="${lsp.tenLoai}"></a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            <div class="col-lg-9">
+                <div class="hero__search">
+                    <div class="hero__search__form">
+                        <form action="#">
+                            <div class="hero__search__categories">
+                                Danh mục
+                                <span class="arrow_carrot-down"></span>
+                            </div>
+                            <input type="text" placeholder="Bạn đang cần gì ?"/>
+                            <button type="submit" class="site-btn">Tìm kiếm</button>
+                        </form>
+                    </div>
+                    <div class="hero__search__phone">
+                        <div class="hero__search__phone__icon">
+                            <i class="fa fa-phone"></i>
+                        </div>
+                        <div class="hero__search__phone__text">
+                            <h5>+84 0000744333</h5>
+                            <span>Hỗ trợ 24/7 </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<!-- Hero Section End -->
+
+<!-- Breadcrumb Section Begin -->
+<section class="breadcrumb-section set-bg" data-setbg="img/breadcrumb.jpg">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-12 text-center">
+                <div class="breadcrumb__text">
+                    <h2>Đặt hàng</h2>
+                    <div class="breadcrumb__option">
+                        <a th:href="@{http://localhost:8080/autokid/home}">Trang chủ</a>
+                        <span>Đặt hàng</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<!-- Breadcrumb Section End -->
+
+<!-- Checkout Section Begin -->
+<section class="checkout spad">
+    <div class="container">
+        <div class="checkout__form">
+            <h4>Chi tiết đơn hàng</h4>
+            <form id="checkout-form">
+                <div class="row">
+                    <div class="col-lg-8 col-md-6">
+                        <div class="row">
+                            <div class="col-lg-6">
+                                <div class="checkout__input">
+                                    <p>Họ và tên<span>*</span></p>
+                                    <input type="text" class="name-kh">
+                                </div>
+                            </div>
+                            <div class="col-lg-6">
+                                <div class="checkout__input">
+                                    <p>Số điện thoại<span>*</span></p>
+                                    <input type="text" class="phone-number">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="checkout__input">
+                            <p>Địa chỉ nhận hàng<span>*</span></p>
+                            <input type="text" placeholder="Số nhà, tên đường, xã, huyện, thành phố" class="address-kh">
+                        </div>
+                        <br/>
+                        <p>Sau khi đặt hàng, phía Shop sẽ gọi điện thoại cho bạn để xác nhận đơn hàng.
+                        Sau khi đơn hàng được xác nhận, Shop sẽ thông báo lại cho bạn và hàng sẽ được
+                        giao trong vòng 2 đến 3 ngày tới. Mọi thông tin thắc mắc hãy liện hệ với chúng
+                        tôi qua số: <strong>1900 5678</strong>. Cảm ơn bạn đã tin dùng.
+                    </div>
+                    <div class="col-lg-4 col-md-6">
+                        <div class="checkout__order">
+                            <h4>Đơn hàng của bạn</h4>
+                            <div class="checkout__order__products">
+                                Sản phẩm <span>Tổng tiền</span>
+                            </div>
+                            <div id="checkout-price">
+                                <ul th:if="1 == 0">
+                                    <li>Gói rau <span>$75.99</span></li>
+                                    <li>Rau tươi <span>$151.99</span></li>
+                                    <li>Chuối hữu cơ <span>$53.99</span></li>
+                                </ul>
+                            </div>
+                            <div id="total-price">
+                                <div th:if="1==0" class="checkout__order__total" >
+                                    Tổng cộng <span>$750.99</span>
+                                </div>
+                            </div>
+                            <div style="margin-bottom: 20px;"><strong>Hình thức thanh toán</strong></div>
+                            <div class="checkout__input__checkbox" th:each="pttt : ${pttt}">
+                                <label th:if="${pttt.trangThai == 1}">
+                                    [[${pttt.tenPTTT}]]
+                                    <input type="radio" name="payment_type" th:value="${pttt.id}"/>
+                                    <span class="checkmark"></span>
+                                </label>
+                            </div>
+                            <button type="submit" class="site-btn">ĐẶT HÀNG</button>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</section>
+<!-- Kết thúc phần thanh toán -->
+
+<!-- Phần footer bắt đầu -->
+<th:block th:replace="autokid/footer :: fragment"></th:block>
+<!-- Kết thúc phần footer -->
+
+<!-- Js Plugins -->
+<script src="js/jquery-3.3.1.min.js"></script>
+<script src="js/bootstrap.min.js"></script>
+<script src="js/jquery.nice-select.min.js"></script>
+<script src="js/jquery-ui.min.js"></script>
+<script src="js/jquery.slicknav.js"></script>
+<script src="js/mixitup.min.js"></script>
+<script src="js/owl.carousel.min.js"></script>
+<script src="js/main.js"></script>
+<script src="js/checkout.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+</body>
+</html>

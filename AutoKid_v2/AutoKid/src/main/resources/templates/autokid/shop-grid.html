@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="zxx" xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="description" content="Ogani Template" />
+    <meta name="keywords" content="Ogani, unica, creative, html" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>AutoKid | Shop-grid</title>
+    <link rel="icon" type="image/x-icon" href="img/logo.png" style="height: 10px; width: 10px">
+
+    <!-- Google Font -->
+    <link
+      href="https://fonts.googleapis.com/css2?family=Cairo:wght@200;300;400;600;900&display=swap"
+      rel="stylesheet"
+    />
+
+    <!-- Css Styles -->
+    <link rel="stylesheet" href="css/bootstrap.min.css" type="text/css" />
+    <link rel="stylesheet" href="css/font-awesome.min.css" type="text/css" />
+    <link rel="stylesheet" href="css/elegant-icons.css" type="text/css" />
+    <link rel="stylesheet" href="css/nice-select.css" type="text/css" />
+    <link rel="stylesheet" href="css/jquery-ui.min.css" type="text/css" />
+    <link rel="stylesheet" href="css/owl.carousel.min.css" type="text/css" />
+    <link rel="stylesheet" href="css/slicknav.min.css" type="text/css" />
+    <link rel="stylesheet" href="css/style.css" type="text/css" />
+    <link rel="stylesheet" href="css/shoping-gird.css" type="text/css">
+    <link
+            rel="stylesheet"
+            href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css"
+    />
+  </head>
+  <body>
+    <!-- Page Preloder -->
+    <div id="preloder">
+      <div class="loader"></div>
+    </div>
+
+    <th:block th:replace="autokid/header :: fragment"></th:block>
+
+    <!-- Hero Section Begin -->
+    <section class="hero hero-normal">
+      <div class="container">
+        <div class="row">
+          <div class="col-lg-3" >
+            <div class="hero__categories">
+              <div class="hero__categories__all">
+                <i class="fa fa-bars"></i>
+                <span>DANH MỤC</span>
+              </div>
+              <ul >
+                <li th:each="loaisp : ${loaisp}"><a th:href="@{http://localhost:8080/autokid/shop/category(idLSP=${loaisp.idLoaiSP})}" class="checkbox-text" th:text="${loaisp.tenLoai}"></a></li>
+              </ul>
+            </div>
+          </div>
+          <div class="col-lg-9">
+            <div class="hero__search">
+              <div class="hero__search__form">
+                <form action="#">
+                  <div class="hero__search__categories">
+                    DANH MỤC
+                    <span class="arrow_carrot-down"></span>
+                  </div>
+                  <input type="text" placeholder="What do yo u need?" />
+                  <button type="submit" class="site-btn">TÌM KIẾM</button>
+                </form>
+              </div>
+              <div class="hero__search__phone">
+                <div class="hero__search__phone__icon">
+                  <i class="fa fa-phone"></i>
+                </div>
+                <div class="hero__search__phone__text">
+                  <h5>+65 11.188.888</h5>
+                  <span>Hỗ trợ 24/7</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+    <!-- Hero Section End -->
+
+    <!-- Breadcrumb Section Begin -->
+    <section class="breadcrumb-section set-bg" data-setbg="img/breadcrumb.jpeg">
+      <div class="container">
+        <div class="row">
+          <div class="col-lg-12 text-center">
+            <div class="breadcrumb__text">
+              <h2>Cửa hàng AutoKid</h2>
+              <div class="breadcrumb__option">
+                <a th:href="@{http://localhost:8080/autokid/home}">Trang chủ</a>
+                <span>Cửa hàng</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+    <!-- Breadcrumb Section End -->
+
+    <!-- Product Section Begin -->
+    <section class="product spad">
+      <div class="container">
+        <div class="row">
+          <div class="col-lg-3 col-md-5">
+            <div class="sidebar">
+              <div class="sidebar__item">
+                <h4>Danh mục</h4>
+                <ul>
+                  <li th:each="loaisp : ${loaisp}"><a th:href="@{http://localhost:8080/autokid/shop/category(idLSP=${loaisp.idLoaiSP})}" class="checkbox-text" th:text="${loaisp.tenLoai}"></a></li>
+                </ul>
+              </div>
+              <div class="filter-price">
+                <h4> <strong>Khoảng giá</strong></h4>
+                <input type="radio" class="checkbox-price" name="price-range" value="1"  onchange="filterByPrice(this.value)"/> <span class="checkbox-text">Từ 200.000 đến 500.000</span> <br/>
+                <input type="radio" class="checkbox-price" name="price-range" value="2"  onchange="filterByPrice(this.value)"/> <span class="checkbox-text">Từ 500.000 đến 1.000.000</span> <br/>
+                <input type="radio" class="checkbox-price" name="price-range" value="3"  onchange="filterByPrice(this.value)"/> <span class="checkbox-text">Từ 1.000.000 đến 1.500.000</span> <br/>
+                <input type="radio" class="checkbox-price" name="price-range" value="4"  onchange="filterByPrice(this.value)"/> <span class="checkbox-text">Từ 1.500.000 đến 2.500.000</span> <br/>
+                <input type="radio" class="checkbox-price" name="price-range" value="5"  onchange="filterByPrice(this.value)"/> <span class="checkbox-text">Từ 2.500.000 đến 5.000.000</span> <br/>
+              </div>
+              <div class="filter-brands">
+                <h4><strong>Thương hiệu</strong></h4>
+                <div th:each="th: ${thuonghieu}">
+                  <input type="checkbox" class="checkbox-brand" th:value="${th.id}"/>
+                  <span class="checkbox-text" th:text="${th.tenTH}"></span>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="col-lg-9 col-md-7">
+            <div class="product__discount">
+              <div class="section-title product__discount__title">
+                <h2>Giảm giá</h2>
+              </div>
+              <div class="row">
+                <div class="product__discount__slider owl-carousel">
+                  <div class="col-lg-4" th:each="spkm : ${spkm}">
+                    <div class="product__discount__item">
+                      <div
+                        class="product__discount__item__pic set-bg"
+                        th:attr="data-setbg=${'/img/categories/' + spkm.anhSPMau}"
+                      >
+                        <div class="product__discount__percent" th:text="${spkm.giaTriGiam} + '%'"></div>
+                        <ul class="product__item__pic__hover">
+                          <li>
+                            <a href="#"><i class="fa fa-heart"></i></a>
+                          </li>
+                          <li>
+                            <a th:href="@{http://localhost:8080/autokid/shop-detail(idSP=${spkm.idSP})}"><i class="fa fa-retweet"></i></a>
+                          </li>
+                          <li>
+                            <a
+                                    href="javascript:void(0)"
+                                    th:data-id="${spkm.idSP}"
+                                    th:data-ten="${spkm.tenSP}"
+                                    th:data-gia="${spkm.giaSauGiam}"
+                                    onclick="addToCart(this)"
+                            >
+                              <i class="fa fa-shopping-cart"></i>
+                            </a>
+                          </li>
+                        </ul>
+                      </div>
+                      <div class="product__discount__item__text">
+                        <span >Xe đạp</span>
+                        <h5 th:text="${spkm.tenSP}"><a href="#" ></a></h5>
+                        <div class="product__item__price">
+                          [[${spkm.giaSauGiam}]] <span th:text="${spkm.donGia}"></span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col-lg-4">
+                    <div class="product__discount__item">
+                      <div
+                        class="product__discount__item__pic set-bg"
+                        data-setbg="img/product/discount/pd-5.jpg"
+                      >
+                        <div class="product__discount__percent">-20%</div>
+                        <ul class="product__item__pic__hover">
+                          <li>
+                            <a href="#"><i class="fa fa-heart"></i></a>
+                          </li>
+                          <li>
+                            <a href="#"><i class="fa fa-retweet"></i></a>
+                          </li>
+                          <li>
+                            <a href="#"><i class="fa fa-shopping-cart"></i></a>
+                          </li>
+                        </ul>
+                      </div>
+                      <div class="product__discount__item__text">
+                        <span>Dried Fruit</span>
+                        <h5><a href="#">Raisin’n’nuts</a></h5>
+                        <div class="product__item__price">
+                          $30.00 <span>$36.00</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col-lg-4">
+                    <div class="product__discount__item">
+                      <div
+                        class="product__discount__item__pic set-bg"
+                        data-setbg="img/product/discount/pd-6.jpg"
+                      >
+                        <div class="product__discount__percent">-20%</div>
+                        <ul class="product__item__pic__hover">
+                          <li>
+                            <a href="#"><i class="fa fa-heart"></i></a>
+                          </li>
+                          <li>
+                            <a href="#"><i class="fa fa-retweet"></i></a>
+                          </li>
+                          <li>
+                            <a href="#"><i class="fa fa-shopping-cart"></i></a>
+                          </li>
+                        </ul>
+                      </div>
+                      <div class="product__discount__item__text">
+                        <span>Dried Fruit</span>
+                        <h5><a href="#">Raisin’n’nuts</a></h5>
+                        <div class="product__item__price">
+                          $30.00 <span>$36.00</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="filter__item">
+              <div class="row">
+                <div class="col-lg-4 col-md-5">
+                  <div class="filter__sort">
+                    <span>Sắp xếp</span>
+                    <select onchange="filterByPrice2(this.value)">
+                      <option style="display: none;" value="" disabled selected>Chọn kiểu sắp xếp</option>
+                      <option value="asc" >Giá từ cao đến thấp</option>
+                      <option value="desc" >Giá từ thấp đến cao</option>
+                    </select>
+                  </div>
+                </div>
+                <div class="col-lg-4 col-md-4">
+                  <div class="filter__found">
+                    <h6> Có tổng cộng <span th:text="${countSP}"></span> sản phẩm</h6>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="row" id="product-container">
+              <div class="col-lg-4 col-md-6 col-sm-6" th:each="sp : ${sanpham}">
+                <div class="product__item">
+                  <div
+                    class="product__item__pic set-bg"
+                    th:attr="data-setbg=${'/img/categories/' + sp.anhSPMau}"
+                  >
+                    <ul class="product__item__pic__hover">
+                      <li>
+                        <a href="#"><i class="fa fa-heart"></i></a>
+                      </li>
+                      <li>
+                        <a th:href="@{http://localhost:8080/autokid/shop-detail(idSP=${sp.idSP})}"><i class="fa fa-retweet"></i></a>
+                      </li>
+                      <li>
+                        <a
+                                href="javascript:void(0)"
+                                th:data-id="${sp.idSP}"
+                                th:data-ten="${sp.tenSP}"
+                                th:data-gia="${sp.giaSauGiam}"
+                                onclick="addToCart(this)"
+                        >
+                          <i class="fa fa-shopping-cart"></i>
+                        </a>
+                      </li>
+                    </ul>
+                  </div>
+                  <div class="product__item__text">
+                    <h6><a href="#" th:text="${sp.tenSP}"></a></h6>
+                    <h5 th:if="${sp.donGia == sp.giaSauGiam}"><span th:text="${sp.donGia}"></span> <span> VND</span></h5>
+                    <h5 th:unless="${sp.donGia == sp.giaSauGiam}">
+                      <del style="text-decoration-thickness: 2px; opacity: 0.5;"><span th:text="${sp.donGia}"></span> <span>VNĐ</span></del><br/>
+                      <span th:text="${sp.giaSauGiam}"></span> <span> VNĐ</span>
+                    </h5>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+    <!-- Product Section End -->
+
+    <!-- Footer Section Begin -->
+    <th:block th:replace="autokid/footer :: fragment"></th:block>
+    <!-- Footer Section End -->
+
+    <!-- Js Plugins -->
+    <script src="js/jquery-3.3.1.min.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+    <script src="js/jquery.nice-select.min.js"></script>
+    <script src="js/jquery-ui.min.js"></script>
+    <script src="js/jquery.slicknav.js"></script>
+    <script src="js/mixitup.min.js"></script>
+    <script src="js/owl.carousel.min.js"></script>
+    <script src="js/main.js"></script>
+    <script src="js/shop-grid.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  </body>
+</html>

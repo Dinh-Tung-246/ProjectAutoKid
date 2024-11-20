@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Header</title>
+    <link
+            href="https://fonts.googleapis.com/css2?family=Cairo:wght@200;300;400;600;900&display=swap"
+            rel="stylesheet"
+    />
+</head>
+<body>
+<!-- Header Section -->
+<header class="header" th:fragment="fragment">
+    <div class="header__top">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-6 col-md-6">
+                    <div class="header__top__left">
+                        <ul>
+                            <li><i class="fa fa-envelope"></i> autokid@colorlib.com</li>
+                            <li>Miễn phí vận chuyển với các đơn trên 2 triệu đồng</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="col-lg-6 col-md-6">
+                    <div class="header__top__right">
+                        <div class="header__top__right__social">
+                            <a href="#"><i class="fa fa-facebook"></i></a>
+                            <a href="#"><i class="fa fa-twitter"></i></a>
+                            <a href="#"><i class="fa fa-linkedin"></i></a>
+                            <a href="#"><i class="fa fa-pinterest-p"></i></a>
+                        </div>
+                        <div class="header__top__right__language">
+                            <img th:src="@{/img/language.png}" alt="" />
+                            <div>Tiếng Việt</div>
+                            <span class="arrow_carrot-down"></span>
+                            <ul>
+                                <li><a href="#">Tiếng Việt</a></li>
+                            </ul>
+                        </div>
+                        <div class="header__top__right__auth" id="user-menu"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-3">
+                <div class="header__logo">
+                    <a th:href="@{http://localhost:8080/autokid/home}"><img th:src="@{/img/logo.png}" alt="" style="width: 120px; height: 120px;" /></a>
+                </div>
+            </div>
+            <div class="col-lg-6">
+                <nav class="header__menu">
+                    <ul>
+                        <li th:classappend="${currentPage == 'home'} ? 'active'"><a th:href="@{http://localhost:8080/autokid/home}">Trang chủ hihihi</a></li>
+                        <li th:classappend="${currentPage == 'shop'} ? 'active'"><a th:href="@{http://localhost:8080/autokid/shop}">Cửa hàng</a></li>
+                        <li>
+                            <a href="#">Trang</a>
+                            <ul class="header__menu__dropdown">
+                                <li th:classappend="${currentPage == 'shop-detail'} ? 'active'"><a th:href="@{/autokid/shop-detail(idSP=1)}">Cửa hàng chi tiết</a></li>
+                                <li th:classappend="${currentPage == 'shoping-cart'} ? 'active'"><a th:href="@{http://localhost:8080/autokid/shoping-cart}">Giỏ hàng</a></li>
+                                <li th:classappend="${currentPage == 'checkout'} ? 'active'"><a th:href="@{http://localhost:8080/autokid/checkout}">Đặt hàng</a></li>
+                            </ul>
+                        </li>
+                        <li th:classappend="${currentPage == 'contact'} ? 'active'"><a th:href="@{http://localhost:8080/autokid/contact}">Liên hệ</a></li>
+                    </ul>
+                </nav>
+            </div>
+            <div class="col-lg-3">
+                <div class="header__cart">
+                    <ul>
+                        <li th:classappend="${currentPage == 'shoping-cart'} ? 'active'"><a th:href="@{http://localhost:8080/autokid/shoping-cart}"><i class="fa fa-shopping-bag"></i> <span id="cart-count">0</span></a></li>
+                    </ul>
+                    <div class="header__cart__price">item: <span id="cart-total">0</span><span> VNĐ</span></div>
+                </div>
+            </div>
+        </div>
+        <div class="humberger__open">
+            <i class="fa fa-bars"></i>
+        </div>
+    </div>
+    <script src="js/header.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+</header>
+</body>
+</html>

@@ -1,0 +1,184 @@
+table thead, tbody{
+  display: block;
+}
+
+th, td {
+  max-width: 200px;
+  width: 200px;
+  min-width: 200px;
+  padding-right: 20px;
+  text-align: left;
+  overflow: hidden; /* Ẩn nội dung thừa */
+  text-overflow: ellipsis; /* Thêm dấu ba chấm (...) nếu nội dung quá dài */
+  white-space: nowrap; /* Ngăn nội dung xuống dòng */
+}
+
+
+table tbody {
+  max-height: 305px;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+.users-table {
+  margin-left: 50px;
+}
+
+.main table button {
+  width: 100px;
+  height: 40px;
+  border-radius: 5px;
+}
+
+.main table .update {
+  background-color: #007bff;
+  color: #fff;
+  margin-right: 20px;
+}
+
+.main table .update:hover {
+  color: #2f49d1;
+  background-color: #86cfda;
+}
+
+.darkmode .user-title {
+  color: #ffffff;
+}
+
+.main .search {
+  margin-left: 50px;
+}
+
+.main .search .txt-search,
+.main .search input::placeholder {
+  background-color: #404040;
+  color: #adb5bd;
+}
+
+.main .search .btn-search {
+  color: #adb5bd;
+  background-color: #343a40;
+  border-radius: 5px;
+  height: 40px;
+  width: 100px;
+}
+
+.main .search .btn-search:hover {
+  background-color: #adb5bd;
+  color: #000000;
+}
+
+.main table .form-modal {
+  display: none;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 1000;
+  background: white;
+  border: 1px solid #ccc;
+  padding: 20px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+  width: 80%;
+  max-width: 700px;
+  border-radius: 10px;
+}
+
+.main table .form-modal h2 {
+  text-align: center;
+  margin-bottom: 10px;
+}
+
+.main table .form-modal form input {
+  margin-top: 10px;
+}
+
+.main table .form-modal .btn-closeDetail {
+  background-color: #9fcdff;
+}
+
+.main table .form-modal .btn-closeDetail:hover {
+  background-color: #000;
+  color: #9fcdff;
+}
+
+/* CSS mới để ghi đè */
+.date:enabled:read-write:focus::-webkit-calendar-picker-indicator,
+.date:enabled:read-write:hover::-webkit-calendar-picker-indicator {
+  display: block !important; /* Hiện lại icon */
+}
+
+.users-table .end_table {
+  max-width: 160px;
+  min-width: 160px;
+  width: 160px;
+}
+
+.btn_create_customer {
+  margin: 10px 48px;
+}
+
+.btn_create_customer .show_form_create {
+  width: 190px;
+  height: 45px;
+  border-radius: 5px;
+  color: whitesmoke;
+  background-color: #007bff;
+}
+
+.btn_create_customer .show_form_create:hover {
+  color: #2f49d1;
+  background-color: #86cfda;
+}
+
+.form-modal-create {
+  display: none;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 1000;
+  background: white;
+  border: 1px solid #ccc;
+  padding: 20px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+  width: 80%;
+  max-width: 700px;
+  border-radius: 10px;
+}
+
+.form-modal-create h2 {
+  text-align: center;
+  margin-bottom: 10px;
+}
+
+.form-modal-create form input {
+  margin-top: 10px;
+}
+
+.form-modal-create .btn-closeCreate {
+  background-color: #9fcdff;
+  height: 40px;
+  width: 100px;
+  border-radius: 5px;
+  margin-top: 10px;
+  margin-left: 270px;
+}
+
+.form-modal-create .btn-closeCreate:hover {
+  background-color: #000;
+  color: #9fcdff;
+}
+
+.form-modal-create .btn-insertCustomer, .btn-reset {
+  height: 40px;
+  width: 100px;
+  border-radius: 5px;
+  margin-right: 30px;
+  background-color: palegreen;
+}
+
+.form-modal-create .btn-insertCustomer:hover, .btn-reset:hover{
+  background-color: black;
+  color: palegreen;
+}

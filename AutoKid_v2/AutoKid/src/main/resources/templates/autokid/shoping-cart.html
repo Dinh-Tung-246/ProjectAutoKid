@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="description" content="Ogani Template" />
+    <meta name="keywords" content="Ogani, unica, creative, html" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>AutoKid | Shopping-cart</title>
+    <link rel="icon" type="image/x-icon" href="img/logo.png" style="height: 10px; width: 10px">
+
+    <!-- Google Font -->
+    <link
+      href="https://fonts.googleapis.com/css2?family=Cairo:wght@200;300;400;600;900&display=swap"
+      rel="stylesheet"
+    />
+
+    <!-- Css Styles -->
+    <link rel="stylesheet" href="css/bootstrap.min.css" type="text/css" />
+    <link rel="stylesheet" href="css/font-awesome.min.css" type="text/css" />
+    <link rel="stylesheet" href="css/elegant-icons.css" type="text/css" />
+    <link rel="stylesheet" href="css/nice-select.css" type="text/css" />
+    <link rel="stylesheet" href="css/jquery-ui.min.css" type="text/css" />
+    <link rel="stylesheet" href="css/owl.carousel.min.css" type="text/css" />
+    <link rel="stylesheet" href="css/slicknav.min.css" type="text/css" />
+    <link rel="stylesheet" href="css/style.css" type="text/css" />
+    <link rel="stylesheet" href="css/customautokid.css" type="text/css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css" />
+  </head>
+
+  <body>
+    <!-- Page Preloder -->
+    <div id="preloder">
+      <div class="loader"></div>
+    </div>
+
+    <th:block th:replace="autokid/header :: fragment"></th:block>
+
+    <!-- Hero Section Begin -->
+    <section class="hero hero-normal">
+      <div class="container">
+        <div class="row">
+          <div class="col-lg-3">
+            <div class="hero__categories">
+              <div class="hero__categories__all">
+                <i class="fa fa-bars"></i>
+                <span>Danh mục</span>
+              </div>
+              <ul>
+                <li><a href="#">Fresh Meat</a></li>
+                <li><a href="#">Vegetables</a></li>
+                <li><a href="#">Fruit & Nut Gifts</a></li>
+                <li><a href="#">Fresh Berries</a></li>
+                <li><a href="#">Ocean Foods</a></li>
+                <li><a href="#">Butter & Eggs</a></li>
+                <li><a href="#">Fastfood</a></li>
+                <li><a href="#">Fresh Onion</a></li>
+                <li><a href="#">Papayaya & Crisps</a></li>
+                <li><a href="#">Oatmeal</a></li>
+                <li><a href="#">Fresh Bananas</a></li>
+              </ul>
+            </div>
+          </div>
+          <div class="col-lg-9">
+            <div class="hero__search">
+              <div class="hero__search__form">
+                <form action="#">
+                  <div class="hero__search__categories">
+                    Tất cả danh mục
+                    <span class="arrow_carrot-down"></span>
+                  </div>
+                  <input type="text" placeholder="What do yo u need?" />
+                  <button type="submit" class="site-btn">Tìm kiếm</button>
+                </form>
+              </div>
+              <div class="hero__search__phone">
+                <div class="hero__search__phone__icon">
+                  <i class="fa fa-phone"></i>
+                </div>
+                <div class="hero__search__phone__text">
+                  <h5>+65 11.188.888</h5>
+                  <span>Hỗ trợ 24/7</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+    <!-- Hero Section End -->
+
+    <!-- Breadcrumb Section Begin -->
+    <section class="breadcrumb-section set-bg" data-setbg="img/breadcrumb.jpg">
+      <div class="container">
+        <div class="row">
+          <div class="col-lg-12 text-center">
+            <div class="breadcrumb__text">
+              <h2>Giỏ hàng</h2>
+              <div class="breadcrumb__option">
+                <a th:href="@{http://localhost:8080/autokid/home}">Trang chủ</a>
+                <span>Giỏ hàng</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+    <!-- Breadcrumb Section End -->
+
+    <!-- Shoping Cart Section Begin -->
+    <section class="shoping-cart spad">
+      <div class="container">
+        <div class="row">
+          <div class="col-lg-12">
+            <div class="shoping__cart__table">
+              <table>
+                <thead>
+                  <tr>
+                    <th class="shoping__product">
+                      <input type="checkbox" class="check-all" style="margin: 30px">
+                      Sản phẩm</th>
+                    <th>Giá</th>
+                    <th>Số lượng</th>
+                    <th>Đơn giá</th>
+                    <th></th>
+                  </tr>
+                </thead>
+                <tbody id="cart-body">
+                  <tr th:if="${isLoggedIn}" th:each="item: ${cartItems}">
+                    <td class="shoping__cart__item">
+                      <input type="checkbox" class="check" style="margin: 30px">
+                      <img src="img/imgs/demo1.jpg" alt="" />
+                      <h5 th:text="${item.tenSPCT}"></h5>
+                    </td>
+                    <td class="shoping__cart__price" th:text="${item.donGia}"><span> </span></td>
+                    <td class="shoping__cart__quantity">
+                      <div class="quantity">
+                        <div class="pro-qty">
+                          <span class="dec qtybtn">-</span>
+                          <input type="text" th:text="${item.soLuong}" th:data-id="${item.idSP}"/>
+                          <span class="inc qtybtn">+</span>
+                        </div>
+                      </div>
+                    </td>
+                    <td class="shoping__cart__total" ><span th:text="${item.donGia * item.soLuong}"> </span></td>
+                    <td class="shoping__cart__item__close">
+                      <span class="icon_close" th:data-id="${item.idSP}" onclick="deleteFromCart(event)" style="margin: 30px"></span>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-lg-12">
+            <div class="shoping__cart__btns">
+              <a href="#" class="primary-btn cart-btn" id="update-cart-btn"
+                ><span class="icon_loading"></span> Cập nhật giỏ hàng</a
+              >
+              <a href="#" class="primary-btn cart-btn cart-btn-right" id="checkout-btn"
+                >Mua hàng</a
+              >
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+    <!-- Shoping Cart Section End -->
+
+    <!-- Phần footer bắt đầu -->
+    <th:block th:replace="autokid/footer :: fragment"></th:block>
+    <!-- Kết thúc phần footer -->
+
+    <!-- Js Plugins -->
+    <script src="js/jquery-3.3.1.min.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+    <script src="js/jquery.nice-select.min.js"></script>
+    <script src="js/jquery-ui.min.js"></script>
+    <script src="js/jquery.slicknav.js"></script>
+    <script src="js/mixitup.min.js"></script>
+    <script src="js/owl.carousel.min.js"></script>
+    <script src="js/main.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="js/shoping-cart.js"></script>
+  </body>
+</html>

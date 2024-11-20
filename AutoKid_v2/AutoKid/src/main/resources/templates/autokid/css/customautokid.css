@@ -1,0 +1,13 @@
+.row .cart-btn {
+  background-color: #4bde97;
+}
+
+.row .cart-btn:hover {
+  background-color: #7abaff;
+  color: #161624;
+}
+
+.hovered {
+  background-color: #9fcdff;
+  transition: background-color 0.3s ease;
+}

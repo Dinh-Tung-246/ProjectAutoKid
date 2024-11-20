@@ -1,0 +1,196 @@
+// ket noi den websocket
+const socket = new WebSocket('ws://localhost:8080/ws');
+
+// khi ket noi thanh cong
+socket.onopen = function () {
+    console.log("Da ket noi voi WebSocket");
+}
+
+//Khi nhan duoc thong bao tu server
+socket.onmessage = function (event) {
+    console.log("Du lieu nhan tu server: ", event.data);
+    // updateUI()
+    window.location.href= "http://localhost:8080/admin/customer-management/";
+}
+
+// Khi có lỗi
+socket.onerror = function(error) {
+    console.error("Lỗi WebSocket:", error);
+};
+
+// Khi kết nối bị đóng
+socket.onclose = function() {
+    console.log("Kết nối WebSocket đã đóng.");
+};
+
+function updateUI() {
+    fetch('/admin/customer-management/order-fragment')
+        .then(response => response.text())
+        .then(html => {
+            const tempDiv = document.createElement('div');
+            tempDiv.innerHTML = html;
+
+            const updateNotification = tempDiv.querySelector('.notification-wrapper').innerHTML;
+
+            document.querySelector('.notification-wrapper').innerHTML = updateNotification;
+        })
+}
+
+function showDetail(button) {
+    document.getElementById("modalTenKH").value =
+        button.getAttribute("data-ten");
+    document.getElementById("modalEmail").value =
+        button.getAttribute("data-email");
+    document.getElementById("modalSdt").value =
+        button.getAttribute("data-sdt");
+    document.getElementById("modalDiaChi").value =
+        button.getAttribute("data-diaChi");
+    document.getElementById("modalTenNN").value =
+        button.getAttribute("data-tenNN");
+    document.getElementById("modalSdtNN").value =
+        button.getAttribute("data-sdtNN");
+    document.getElementById("modalDCNN").value =
+        button.getAttribute("data-dcNN");
+    document.getElementById("detailModal").style.display = "block";
+    document.getElementById("overlay").style.display = "block";
+}
+
+function closeDetail() {
+    document.getElementById("detailModal").style.display = "none";
+    document.getElementById("overlay").style.display = "none";
+}
+
+function showCreateForm() {
+    document.getElementById("createModal").style.display = "block";
+    document.getElementById("overlay").style.display = "block";
+}
+
+function closeCreate() {
+    document.getElementById("createModal").style.display = "none";
+    document.getElementById("overlay").style.display = "none";
+}
+
+document.getElementById('submitBtn').addEventListener('click', function (event) {
+    event.preventDefault();
+    const formData = new FormData(document.getElementById('customerForm'));
+    console.log(formData);
+    fetch('/admin/customer-management/create-customer', {
+        method: 'POST',
+        body: formData
+    }) . then(response => response.text())
+        .then(result => {
+            if(result == 'sc') {
+                Swal.fire({
+                    title: "Thêm mới thành công",
+                    icon: "success",
+                    confirmButtonText: "OK",
+                }) .then(() => {
+                    window.location.href="http://localhost:8080/admin/customer-management/";
+                })
+            } else {
+                Swal.fire({
+                    title: result,
+                    icon: "warning",
+                    confirmButtonText: "OK",
+                });
+            }
+        })
+        .catch(error => {
+            alert('ERROR: ' + error);
+        });
+});
+
+function confirmOrder(event, liElement) {
+    event.preventDefault();
+
+    const trangThai = 'Đang giao hàng';
+    const idHD = liElement.querySelector('input[class="idDH"]').value.trim();
+
+    const data = {
+        trangThai: trangThai,
+        idHD: idHD
+    }
+    console.log('trangthai: ' + trangThai);
+    console.log('idDH' + idHD);
+
+    Swal.fire({
+        title: "Bạn có chắc chắn muốn xác nhận đơn hàng này?",
+        icon: "question",
+        showCancelButton: true,
+        cancelButtonText: "không",
+        confirmButtonText: "Có",
+        cancelButtonColor: "#d33",
+        confirmButtonColor: "#3085d6",
+    }).then((result) => {
+        if (result.isConfirmed) {
+            fetch('/api/update-status', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json' // Đặt kiểu Content-Type là JSON
+                },
+                body: JSON.stringify(data)
+            }).then(response => response.text())
+                .then((result) => {
+                    console.log(result);
+                })
+                .catch((error) => {
+                    alert('ERROR' + error);
+                });
+            Swal.fire({
+                title: "Xác nhận đơn hàng thành công",
+                icon: "success",
+            });
+            setTimeout(() => {
+                window.location.href = "http://localhost:8080/admin/customer-management/";
+            }, 1000);
+        }
+    })
+}
+
+
+function unconfirmOrder(event, liElement) {
+    event.preventDefault();
+
+    const trangThai = 'Hủy đơn hàng';
+    const idHD = liElement.querySelector('input[class="idDH"]').value.trim();
+
+    const data = {
+        trangThai: trangThai,
+        idHD: idHD
+    }
+    console.log('trangthai: ' + trangThai);
+    console.log('idDH' + idHD);
+
+    Swal.fire({
+        title: "Bạn có chắc chắn muốn hủy đơn hàng này?",
+        icon: "warning",
+        showCancelButton: true,
+        cancelButtonText: "không",
+        confirmButtonText: "Có",
+        cancelButtonColor: "#d33",
+        confirmButtonColor: "#3085d6",
+    }).then((result) => {
+        if (result.isConfirmed) {
+            fetch('/api/update-status', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json' // Đặt kiểu Content-Type là JSON
+                },
+                body: JSON.stringify(data)
+            }).then(response => response.text())
+                .then((result) => {
+                    console.log(result);
+                })
+                .catch((error) => {
+                    alert('ERROR' + error);
+                });
+            Swal.fire({
+                title: "Hủy đơn hàng thành công",
+                icon: "success",
+            });
+            setTimeout(() => {
+                window.location.href = "http://localhost:8080/admin/customer-management/";
+            }, 1000);
+        }
+    })
+}
