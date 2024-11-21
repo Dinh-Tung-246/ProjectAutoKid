@@ -84,9 +84,13 @@ public class QuanLySanPhamService {
         mauSacRepo.save(mauSac);
     }
 
+    public void updateMauSac(MauSac mauSac){mauSacRepo.save(mauSac);}
+
     public void deleteMauSac(Integer id){
         mauSacRepo.deleteById(id);
     }
+
+    public void updateChatLieu(ChatLieu chatLieu){chatLieuRepo.save(chatLieu);}
 
     public void detailMauSac(Integer id){
         mauSacRepo.findById(id);
@@ -99,6 +103,8 @@ public class QuanLySanPhamService {
     public void addKichCo(KichCo kichCo){
         kichCoRepo.save(kichCo);
     }
+
+    public void updateKichCo(KichCo kichCo){kichCoRepo.save(kichCo);}
 
     public void deleteKichCo(Integer id){
         kichCoRepo.deleteById(id);

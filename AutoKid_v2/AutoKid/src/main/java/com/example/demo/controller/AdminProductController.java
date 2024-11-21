@@ -101,6 +101,7 @@ public class AdminProductController {
     public String mauSac(Model model){
         List<MauSac> list = service.getAllMauSac();
         model.addAttribute("namePage", "mau-sac");
+        model.addAttribute("updateMauSac", new MauSac());
         model.addAttribute("ms", list);
         return "admin/mau-sac";
     }
@@ -111,17 +112,19 @@ public class AdminProductController {
         return "redirect:/admin/mau-sac";
     }
 
-    @GetMapping("/mau-sac/delete")
-    public String deleteMauSac(@RequestParam("id") Integer id){
-        service.deleteMauSac(id);
+    @PostMapping("/update/mau-sac")
+    public String updateMauSac(@ModelAttribute("updateMauSac") MauSac mauSac){
+        service.updateMauSac(mauSac);
         return "redirect:/admin/mau-sac";
     }
+
 
 
     @GetMapping("/kich-co")
     public String kichCo(Model model){
         List<KichCo> list = service.getAllKichCo();
         model.addAttribute("namePage", "kich-co");
+        model.addAttribute("updateKichCo", new KichCo());
         model.addAttribute("kichco", list);
         return "admin/kich-co";
     }
@@ -133,9 +136,9 @@ public class AdminProductController {
         return "redirect:/admin/kich-co";
     }
 
-    @GetMapping("/kich-co/delete")
-    public String deleteKichCo(@RequestParam("id") Integer id){
-        service.deleteKichCo(id);
+    @PostMapping("/update/kich-co")
+    public String updateKichCo(@ModelAttribute("updateKichCo") KichCo kichCo){
+        service.updateKichCo(kichCo);
         return "redirect:/admin/kich-co";
     }
 
@@ -167,9 +170,9 @@ public class AdminProductController {
         return "redirect:/admin/chat-lieu";
     }
 
-    @GetMapping("/delete/chat-lieu")
-    public String deleteChatLieu(@RequestParam("id") Integer id){
-        service.deleteChatLieu(id);
+    @PostMapping("/update/chat-lieu")
+    public String updateChatLieu(@ModelAttribute("updateChatLieu") ChatLieu chatLieu){
+        service.updateChatLieu(chatLieu);
         return "redirect:/admin/chat-lieu";
     }
 
