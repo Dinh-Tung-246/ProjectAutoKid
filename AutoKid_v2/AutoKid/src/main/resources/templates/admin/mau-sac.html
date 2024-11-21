@@ -26,10 +26,13 @@
             <div class="container">
                 <h2 class="main-title">Quản Lý Màu Sắc</h2>
                 <div class="row">
-                    <div class="col-5">
-                        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">ADD</button>
+                    <div class="col-2">
+                        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">Thêm màu sắc</button>
                     </div>
-                    <div class="col-5">
+                    <div class="col-3">
+                        <button type="button" class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#inactiveProductsModal">Danh sách màu sắc ngừng bán</button>
+                    </div>
+                    <div class="col-7">
                         <div class="row">
                             <div class="col-7"><input placeholder="Tìm kiếm màu sắc"></div>
                             <div class="col-3"><button type="button" class="btn btn-primary">Tìm kiếm</button></div>
@@ -47,7 +50,7 @@
                         </tr>
                         </thead>
                         <tbody>
-                        <tr th:each="ms : ${ms}">
+                        <tr th:each="ms : ${mss}" th:if="${ms.trangThaiMS} == 'Hoạt động'">
                             <td th:text="${ms.maMS}"></td>
                             <td th:text="${ms.tenMS}"></td>
                             <td th:text="${ms.trangThaiMS}"></td>
@@ -104,6 +107,51 @@
             </div>
         </div>
     </div>
+
+    <div class="modal fade" id="inactiveProductsModal" tabindex="-1" role="dialog" aria-labelledby="inactiveProductsModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-scrollable"  role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3 class="modal-title" id="inactiveProductsModalLabel">Màu sắc ngừng bán</h3>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <table class="posts-table">
+                        <thead>
+                        <tr class="users-table-info">
+                            <th>Mã màu sắc</th>
+                            <th>Tên màu sắc</th>
+                            <th>Trạng thái</th>
+                            <th>Hành động</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr th:each="ms : ${mss}" th:if="${ms.trangThaiMS} == 'Không hoạt động'">
+                            <td th:text="${ms.maMS}"></td>
+                            <td th:text="${ms.tenMS}"></td>
+                            <td th:text="${ms.trangThaiMS}"></td>
+                            <td>
+                                <button class="view-detail btn btn-info"
+                                        data-bs-toggle="modal"
+                                        data-bs-target="#productDetailModal"
+                                        th:data-id="${ms.id}"
+                                        th:data-mams="${ms.maMS}"
+                                        th:data-tenms="${ms.tenMS}"
+                                        th:data-trangthai="${ms.trangThaiMS}">
+                                    Cập nhật
+                                </button>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
 
     <div class="modal fade" id="productDetailModal" tabindex="-1" aria-labelledby="productDetailModalLabel" aria-hidden="true">
         <div class="modal-dialog">

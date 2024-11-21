@@ -50,13 +50,16 @@
             <div class="container">
                 <h2 class="main-title">Quản Lý Sản Phẩm</h2>
                 <div class="row">
-                    <div class="col-5">
-                        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">ADD</button>
+                    <div class="col-2">
+                        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">Thêm sản phẩm</button>
                     </div>
-                    <div class="col-5">
+                    <div class="col-3">
+                        <button type="button" class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#inactiveProductsModal">Danh sách sản phẩm ngừng bán</button>
+                    </div>
+                    <div class="col-7">
                         <form action="" method="GET" class="row">
                             <div class="col-7">
-                                <input name="tenTH" placeholder="Tìm kiếm thương hiệu" class="form-control">
+                                <input name="tenTH" placeholder="Tìm kiếm sản phẩm" class="form-control">
                             </div>
                             <div class="col-3">
                                 <button type="submit" class="btn btn-primary">Tìm kiếm</button>
@@ -68,7 +71,6 @@
                     <table class="posts-table">
                         <thead>
                         <tr class="users-table-info">
-                            <th>ID</th>
                             <th>Mã sản phẩm</th>
                             <th>Tên sản phẩm</th>
                             <th>Ảnh</th>
@@ -79,8 +81,7 @@
                         </tr>
                         </thead>
                         <tbody>
-                        <tr th:each="sp : ${sps}">
-                            <td th:text="${sp.id}"></td>
+                        <tr th:each="sp : ${sps}" th:if="${sp.trangThaiSP} == 'Đang bán'">
                             <td th:text="${sp.maSP}"></td>
                             <td th:text="${sp.tenSP}"></td>
                             <td th:text="${sp.anhSPMau}"></td>
@@ -207,9 +208,70 @@
         </div>
     </div>
 
+    <div class="modal fade" id="inactiveProductsModal" tabindex="-1" role="dialog" aria-labelledby="inactiveProductsModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-scrollable"  role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3 class="modal-title" id="inactiveProductsModalLabel">Sản phẩm ngừng bán</h3>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <table class="table">
+                        <thead>
+                        <tr class="users-table-info">
+                            <th>Mã sản phẩm</th>
+                            <th>Tên sản phẩm</th>
+                            <th>Ảnh</th>
+                            <th>Giá bán</th>
+                            <th>Mô tả</th>
+                            <th>Trang thái</th>
+                            <th>Hành động</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr th:each="sp : ${sps}" th:if="${sp.trangThaiSP} == 'Ngừng bán'">
+                            <td th:text="${sp.maSP}"></td>
+                            <td th:text="${sp.tenSP}"></td>
+                            <td th:text="${sp.anhSPMau}"></td>
+                            <td th:text="${sp.donGia}"></td>
+                            <td th:text="${sp.moTa}"></td>
+                            <td th:text="${sp.trangThaiSP}"></td>
+                            <td>
+                                <button
+                                        class="view-detail btn btn-info"
+                                        data-bs-toggle="modal"
+                                        data-bs-target="#productDetailModal"
+                                        th:data-id="${sp.id}"
+                                        th:data-maSP="${sp.maSP}"
+                                        th:data-ten="${sp.tenSP}"
+                                        th:data-anh="${sp.anhSPMau}"
+                                        th:data-gianhap="${sp.giaNhap}"
+                                        th:data-dongia="${sp.donGia}"
+                                        th:data-ngaytao="${sp.ngayTao}"
+                                        th:data-mota="${sp.moTa}"
+                                        th:data-loai="${sp.loaiSanPham.idLoaiSP}"
+                                        th:data-thuonghieu="${sp.thuongHieu.id}"
+                                        th:data-kichco="${sp.kichCo.id}"
+                                        th:data-chatlieu="${sp.chatLieu.id}"
+                                        th:data-trangthai="${sp.trangThaiSP}"
+                                >
+                                    Chi tiết
+                                </button>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Modal Chi Tiết Sản Phẩm -->
     <div class="modal fade" id="productDetailModal" tabindex="-1" aria-labelledby="productDetailModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
+        <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title" id="productDetailModalLabel">Chi Tiết Sản Phẩm</h5>

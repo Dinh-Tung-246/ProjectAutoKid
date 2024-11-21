@@ -24,10 +24,13 @@
             <div class="container">
                 <h2 class="main-title">Quản Lý Loại Sản Phẩm</h2>
                 <div class="row">
-                    <div class="col-5">
-                        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">Thêm</button>
+                    <div class="col-2">
+                        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">Thêm loại sản phẩm</button>
                     </div>
-                    <div class="col-5">
+                    <div class="col-3">
+                        <button type="button" class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#inactiveProductsModal">Danh sách sản phẩm ngừng bán</button>
+                    </div>
+                    <div class="col-7">
                         <form action="/admin/thuong-hieu/search" method="GET" class="row">
                             <div class="col-7">
                                 <input name="tenTH" placeholder="Tìm kiếm thương hiệu" class="form-control">
@@ -44,19 +47,18 @@
                         <tr class="users-table-info">
                             <th>Mã loại sản phẩm</th>
                             <th>Tên loại sản phẩm</th>
-                            <th>Trang thái</th>
                             <th>Mô tả</th>
+                            <th>Trang thái</th>
                             <th>Hành động</th>
                         </tr>
                         </thead>
                         <tbody>
-                        <tr th:each="lsp : ${lsps}">
+                        <tr th:each="lsp : ${lsps}" th:if="${lsp.trangThai} == 'Đang bán'">
                             <td th:text="${lsp.maLSP}"></td>
                             <td th:text="${lsp.tenLoai}"></td>
-                            <td th:text="${lsp.trangThai}"></td>
                             <td th:text="${lsp.moTa}"></td>
+                            <td th:text="${lsp.trangThai}"></td>
                             <td>
-                                <!-- Nút mở modal cập nhật -->
                                 <button class="view-detail btn btn-info"
                                         data-bs-toggle="modal"
                                         data-bs-target="#productDetailModal"
@@ -97,8 +99,8 @@
                         <div class="mb-3">
                             <label for="trangThai">Trạng thái</label>
                             <select class="form-control" id="trangThai" name="trangThai">
-                                <option value="Hoạt động" selected>Hoạt động</option>
-                                <option value="Không hoạt động">Không hoạt động</option>
+                                <option value="Đang bán" selected>Đang bán</option>
+                                <option value="Ngừng bán">Ngừng bán</option>
                             </select>
                         </div>
                         <div class="mb-3">
@@ -115,9 +117,56 @@
         </div>
     </div>
 
+    <div class="modal fade" id="inactiveProductsModal" tabindex="-1" role="dialog" aria-labelledby="inactiveProductsModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-scrollable"  role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3 class="modal-title" id="inactiveProductsModalLabel">Loại sản phẩm ngừng bán</h3>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <table class="posts-table">
+                        <thead>
+                        <tr class="users-table-info">
+                            <th>Mã loại sản phẩm</th>
+                            <th>Tên loại sản phẩm</th>
+                            <th>Mô tả</th>
+                            <th>Trang thái</th>
+                            <th>Hành động</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr th:each="lsp : ${lsps}" th:if="${lsp.trangThai} == 'Ngừng bán'">
+                            <td th:text="${lsp.maLSP}"></td>
+                            <td th:text="${lsp.tenLoai}"></td>
+                            <td th:text="${lsp.moTa}"></td>
+                            <td th:text="${lsp.trangThai}"></td>
+                            <td>
+                                <button class="view-detail btn btn-info"
+                                        data-bs-toggle="modal"
+                                        data-bs-target="#productDetailModal"
+                                        th:data-id="${lsp.idLoaiSP}"
+                                        th:data-ma-lsp="${lsp.maLSP}"
+                                        th:data-ten-loai="${lsp.tenLoai}"
+                                        th:data-trang-thai="${lsp.trangThai}"
+                                        th:data-mo-ta="${lsp.moTa}">
+                                    Cập nhật
+                                </button>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Modal cập nhật Loại sản phẩm -->
     <div class="modal fade" id="productDetailModal" tabindex="-1" aria-labelledby="productDetailModalLabel" aria-hidden="true">
-        <div class="modal-dialog ">
+        <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title" id="productDetailModalLabel">Chi Tiết Sản Phẩm</h5>
@@ -135,15 +184,15 @@
                             <input type="text" class="form-control border border-secondary" id="tenLoai" th:field="*{tenLoai}" required>
                         </div>
                         <div class="mb-3">
-                            <label for="trangThai" class="form-label">Trạng thái:</label>
-                            <select class="form-control" id="trangThai" th:field="*{trangThai}">
-                                <option value="Hoạt động" th:selected="*{trangThai == 'Hoạt động'}">Hoạt động</option>
-                                <option value="Không hoạt động" th:selected="*{trangThai == 'Không hoạt động'}">Không hoạt động</option>
-                            </select>
-                        </div>
-                        <div class="mb-3">
                             <label for="moTa" class="form-label">Mô tả:</label>
                             <textarea class="form-control border border-secondary" id="moTa" th:field="*{moTa}"></textarea>
+                        </div>
+                        <div class="mb-3">
+                            <label for="trangThai" class="form-label">Trạng thái:</label>
+                            <select class="form-control" id="trangThai" th:field="*{trangThai}">
+                                <option value="Đang bán" th:selected="*{trangThai == 'Đang bán'}">Đang bán</option>
+                                <option value="Ngừng bán" th:selected="*{trangThai == 'Ngừng bán'}">Ngừng bán</option>
+                            </select>
                         </div>
                         <div class="modal-footer">
                             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>

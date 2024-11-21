@@ -24,10 +24,13 @@
             <div class="container">
                 <h2 class="main-title">Quản Lý Thương Hiệu</h2>
                 <div class="row">
-                    <div class="col-5">
-                        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">ADD</button>
+                    <div class="col-2">
+                        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">Thêm thương hiệu</button>
                     </div>
-                    <div class="col-5">
+                    <div class="col-3">
+                        <button type="button" class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#inactiveProductsModal">Danh sách thương hiệu ngừng bán</button>
+                    </div>
+                    <div class="col-7">
                         <form action="/admin/thuong-hieu/search" method="GET" class="row">
                             <div class="col-7">
                                 <input name="tenTH" placeholder="Tìm kiếm thương hiệu" class="form-control">
@@ -39,7 +42,7 @@
                     </div>
                 </div>
                 <div class="users-table table-wrapper">
-                    <table class="posts-table">
+                    <table class="table">
                         <thead>
                         <tr class="users-table-info">
                             <th>Mã thương hiệu</th>
@@ -50,7 +53,7 @@
                         </tr>
                         </thead>
                         <tbody>
-                        <tr th:each="th : ${ths}">
+                        <tr th:each="th : ${ths}" th:if="${th.trangThaiTH} == 'Hoạt động'">
                             <td th:text="${th.maTH}"></td>
                             <td th:text="${th.tenTH}"></td>
                             <td th:text="${th.diaChi}"></td>
@@ -115,11 +118,59 @@
         </div>
     </div>
 
+    <div class="modal fade" id="inactiveProductsModal" tabindex="-1" role="dialog" aria-labelledby="inactiveProductsModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-scrollable"  role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3 class="modal-title" id="inactiveProductsModalLabel">Thương hiệu ngừng bán</h3>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <table class="table">
+                        <thead>
+                        <tr class="users-table-info">
+                            <th>Mã thương hiệu</th>
+                            <th>Tên thương hiệu</th>
+                            <th>Trang thái</th>
+                            <th>Địa chỉ</th>
+                            <th>Hành động</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr th:each="th : ${ths}" th:if="${th.trangThaiTH} == 'Không hoạt động'">
+                            <td th:text="${th.maTH}"></td>
+                            <td th:text="${th.tenTH}"></td>
+                            <td th:text="${th.diaChi}"></td>
+                            <td th:text="${th.trangThaiTH}"></td>
+                            <td>
+                                <!-- Nút mở modal cập nhật -->
+                                <button class="view-detail btn btn-info"
+                                        data-bs-toggle="modal"
+                                        data-bs-target="#productDetailModal"
+                                        th:data-id="${th.id}"
+                                        th:data-math="${th.maTH}"
+                                        th:data-tenth="${th.tenTH}"
+                                        th:data-trangthai="${th.trangThaiTH}"
+                                        th:data-diachi="${th.diaChi}">
+                                    Cập nhật
+                                </button>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <div class="modal fade" id="productDetailModal" tabindex="-1" aria-labelledby="productDetailModalLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="productDetailModalLabel">Chi Tiết Thương Hiệu</h5>
+                    <h5 class="modal-title" id="productDetailModalLabel">Chi Tiết Sản Phẩm</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">

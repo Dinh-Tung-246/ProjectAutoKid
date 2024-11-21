@@ -24,8 +24,14 @@
         /* Thêm viền để dễ nhìn */
         .posts-table th, .posts-table td {
             border: 1px solid #ddd;
-            padding: 8px;
         }
+
+        .modal-dialog {
+            modal-dialog-scrollable: 60%;
+            width: auto;
+        }
+
+
 
     </style>
 </head>
@@ -43,10 +49,13 @@
             <div class="container">
                 <h2 class="main-title">Danh Sách Sản Phẩm</h2>
                 <div class="row">
-                    <div class="col-5">
-                        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">Thêm</button>
+                    <div class="col-2">
+                        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">Thêm chi tiết SP</button>
                     </div>
-                    <div class="col-5">
+                    <div class="col-3">
+                        <button type="button" class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#inactiveProductsModal">Danh sách sản phẩm ngừng bán</button>
+                    </div>
+                    <div class="col-7">
                         <div class="row">
                             <div class="col-7"><input placeholder="Tìm kiếm sản phẩm"></div>
                             <div class="col-3"><button type="button" class="btn btn-primary">Tìm kiếm</button></div>
@@ -71,7 +80,7 @@
                         </tr>
                         </thead>
                         <tbody>
-                        <tr th:each="sp : ${spct}">
+                        <tr th:each="sp : ${spct}" th:if="${sp.trangThaiSPCT} == 'Còn hàng'">
                             <td th:text="${sp.maSPCT}"></td>
                             <td th:text="${sp.sanPham.tenSP}"></td>
                             <td th:text="${sp.soLuong}"></td>
@@ -145,6 +154,64 @@
                             <button type="submit" class="btn btn-primary">Lưu</button>
                         </div>
                     </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="inactiveProductsModal" tabindex="-1" role="dialog" aria-labelledby="inactiveProductsModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-scrollable"  role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3 class="modal-title" id="inactiveProductsModalLabel">Sản phẩm ngừng bán</h3>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <table class="table">
+                        <thead>
+                        <tr class="users-table-info">
+                            <th>Mã sản phẩm</th>
+                            <th>Tên sản phẩm</th>
+                            <th>Số lượng</th>
+                            <th>Giá bán</th>
+                            <th>Thương hiệu</th>
+                            <th>Chất liệu</th>
+                            <th>Kích cỡ</th>
+                            <th>Màu sắc</th>
+                            <th>Ảnh</th>
+                            <th>Trạng thái</th>
+                            <th>Hành động</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr th:each="sp : ${spct}" th:if="${sp.trangThaiSPCT} == 'Không Còn hàng'">
+                            <td th:text="${sp.maSPCT}"></td>
+                            <td th:text="${sp.sanPham.tenSP}"></td>
+                            <td th:text="${sp.soLuong}"></td>
+                            <td th:text="${sp.sanPham.donGia}"></td>
+                            <td th:text="${sp.sanPham.thuongHieu.tenTH}"></td>
+                            <td th:text="${sp.sanPham.chatLieu.tenCl}"></td>
+                            <td th:text="${sp.sanPham.kichCo.tenKC}"></td>
+                            <td th:text="${sp.mauSac.tenMS}"></td>
+                            <td th:text="${sp.anh}"></td>
+                            <td th:text="${sp.trangThaiSPCT}"></td>
+                            <td>
+                                <button  class="view-detail btn btn-info" data-bs-toggle="modal" data-bs-target="#productDetailModal"
+                                         th:data-id="${sp.id}"
+                                         th:data-ma-spct="${sp.maSPCT}"
+                                         th:data-ten-sp="${sp.sanPham.id}"
+                                         th:data-so-luong="${sp.soLuong}"
+                                         th:data-mau-sac="${sp.mauSac.id}"
+                                         th:data-trang-thai="${sp.trangThaiSPCT}">
+                                    Chi tiết
+                                </button>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
                 </div>
             </div>
         </div>
