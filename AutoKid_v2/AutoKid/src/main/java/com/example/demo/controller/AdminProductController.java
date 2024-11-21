@@ -102,7 +102,7 @@ public class AdminProductController {
         List<MauSac> list = service.getAllMauSac();
         model.addAttribute("namePage", "mau-sac");
         model.addAttribute("updateMauSac", new MauSac());
-        model.addAttribute("ms", list);
+        model.addAttribute("mss", list);
         return "admin/mau-sac";
     }
 
@@ -125,7 +125,7 @@ public class AdminProductController {
         List<KichCo> list = service.getAllKichCo();
         model.addAttribute("namePage", "kich-co");
         model.addAttribute("updateKichCo", new KichCo());
-        model.addAttribute("kichco", list);
+        model.addAttribute("kcs", list);
         return "admin/kich-co";
     }
 
@@ -161,7 +161,7 @@ public class AdminProductController {
         List<ChatLieu> list = service.getAllChatLieu();
         model.addAttribute("namePage", "chat-lieu");
         model.addAttribute("updateChatLieu", new ChatLieu());
-        model.addAttribute("cl", list);
+        model.addAttribute("cls", list);
         return "admin/chat-lieu";
     }
 

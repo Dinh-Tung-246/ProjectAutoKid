@@ -24,10 +24,13 @@
             <div class="container">
                 <h2 class="main-title">Quản Lý Chất liệu</h2>
                 <div class="row">
-                    <div class="col-5">
-                        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">ADD</button>
+                    <div class="col-2">
+                        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">Thêm chất liệu</button>
                     </div>
-                    <div class="col-5">
+                    <div class="col-3">
+                        <button type="button" class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#inactiveProductsModal">Danh sách chất liệu ngừng bán</button>
+                    </div>
+                    <div class="col-7">
                         <div class="row">
                             <div class="col-7"><input placeholder="Tìm kiếm sản phẩm"></div>
                             <div class="col-3"><button type="button" class="btn btn-primary">Tìm kiếm</button></div>
@@ -45,7 +48,7 @@
                         </tr>
                         </thead>
                         <tbody>
-                        <tr th:each="cl : ${cl}">
+                        <tr th:each="cl : ${cls}" >
                             <td th:text="${cl.maCl}"></td>
                             <td th:text="${cl.tenCl}"></td>
                             <td th:text="${cl.trangThaiCl}"></td>
@@ -103,6 +106,49 @@
         </div>
     </div>
 
+    <div class="modal fade" id="inactiveProductsModal" tabindex="-1" role="dialog" aria-labelledby="inactiveProductsModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-scrollable"  role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3 class="modal-title" id="inactiveProductsModalLabel">Chất liệu ngừng bán</h3>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <table class="table">
+                        <thead>
+                        <tr class="users-table-info">
+                            <th>Mã chất liệu</th>
+                            <th>Tên chất liệu</th>
+                            <th>Trang thái</th>
+                            <th>Hành động</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr th:each="cl : ${cls}" th:if="${cl.trangThaiCl} == 'Không hoạt động'">
+                            <td th:text="${cl.maCl}"></td>
+                            <td th:text="${cl.tenCl}"></td>
+                            <td th:text="${cl.trangThaiCl}"></td>
+                            <td>
+                                <button class="view-detail btn btn-info"
+                                        data-bs-toggle="modal"
+                                        data-bs-target="#productDetailModal"
+                                        th:data-id="${cl.id}"
+                                        th:data-macl="${cl.maCl}"
+                                        th:data-tencl="${cl.tenCl}"
+                                        th:data-trangthai="${cl.trangThaiCl}">
+                                    Cập nhật
+                                </button>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <div class="modal fade" id="productDetailModal" tabindex="-1" aria-labelledby="productDetailModalLabel" aria-hidden="true">
         <div class="modal-dialog">
