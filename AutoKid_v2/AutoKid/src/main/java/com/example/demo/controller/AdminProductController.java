@@ -160,6 +160,7 @@ public class AdminProductController {
     public String chatLieu(Model model){
         List<ChatLieu> list = service.getAllChatLieu();
         model.addAttribute("namePage", "chat-lieu");
+        model.addAttribute("updateChatLieu", new ChatLieu());
         model.addAttribute("cl", list);
         return "admin/chat-lieu";
     }
