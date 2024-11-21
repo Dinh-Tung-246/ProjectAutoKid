@@ -24,18 +24,56 @@ public class AdminProductController {
     }
 
     @GetMapping("/products")
-    public String products(@RequestParam(defaultValue = "0") int page, Model model) {
-        int pageSize = 7;
-        PageRequest pageable = PageRequest.of(page, pageSize);
-        Page<SanPhamChiTiet> sanPhamChiTiets =  service.getAllSanPhamChiTiets(pageable);
-
-        model.addAttribute("currentPage", page);
-        model.addAttribute("totalPages", sanPhamChiTiets.getTotalPages());
-        model.addAttribute("namePage", "products");
-        model.addAttribute("spcts", sanPhamChiTiets.getContent());
+    public String getAllproducts(Model model) {
+        List<SanPhamChiTiet> sanPhamChiTiets = service.getAllSanPham();
+        model.addAttribute("dsMauSac", service.getAllMauSac());
+        model.addAttribute("dsSanPham", service.DSSanPham());
+        model.addAttribute("updateSPCT", new SanPhamChiTiet());
+        model.addAttribute("spct", sanPhamChiTiets);
         return "admin/products";
     }
 
+    @PostMapping("/add/san-pham-chi-tiet")
+    public String addSPCT(@ModelAttribute SanPhamChiTiet sanPhamChiTiet){
+        service.addSanPhamChiTiet(sanPhamChiTiet);
+        return "redirect:/admin/products";
+    }
+
+    @PostMapping("/update/products")
+    public String updateSPCT(@ModelAttribute("updateSPCT") SanPhamChiTiet sanPhamChiTiet) {
+        if (sanPhamChiTiet.getId() != null) {
+            service.updateSanPhamChiTiet(sanPhamChiTiet);
+        }
+        return "redirect:/admin/products";
+    }
+
+    @GetMapping("/san-pham")
+    public String san_pham(Model model){
+        List<SanPham> sanPhams = service.DSSanPham();
+        model.addAttribute("dsChatLieu", service.getAllChatLieu());
+        model.addAttribute("dsThuongHieu", service.getAllThuongHieu());
+        model.addAttribute("dsKichCo", service.getAllKichCo());
+        model.addAttribute("dsLoaiSanPham", service.getAllLoaiSanPham());
+        model.addAttribute("addSanPham", new SanPham());
+        model.addAttribute("updateSanPham", new SanPham());
+        model.addAttribute("sps", sanPhams);
+
+        return "admin/san-pham";
+    }
+
+    @PostMapping("/add/san-pham")
+    public String addSanPham(@ModelAttribute("addSanPham") SanPham sanPham){
+        service.addSanPham(sanPham);
+        return "redirect:/admin/san-pham";
+    }
+
+    @PostMapping("/update/san-pham")
+    public String updateProduct(@ModelAttribute("updateSanPham") SanPham sanPham) {
+        if (sanPham.getId() != null) {
+            service.updateSanPham(sanPham);
+        }
+        return "redirect:/admin/san-pham";
+    }
 
     @GetMapping("/statistical")
     public String statistical() {
@@ -46,15 +84,25 @@ public class AdminProductController {
     public String thuongHieu(Model model){
         List<ThuongHieu> list = service.getAllThuongHieu();
         model.addAttribute("namePage", "thuong-hieu");
+        model.addAttribute("updateThuongHieu", new ThuongHieu());
         model.addAttribute("ths", list);
         return "admin/thuong-hieu";
+    }
+
+    @PostMapping("/update/thuong-hieu")
+    public String updateThuongHieu(@ModelAttribute("updateThuongHieu") ThuongHieu thuongHieu){
+        if (thuongHieu.getId() != null){
+            service.updateThuongHieu(thuongHieu);
+        }
+        return "redirect:/admin/thuong-hieu";
     }
 
     @GetMapping("/mau-sac")
     public String mauSac(Model model){
         List<MauSac> list = service.getAllMauSac();
         model.addAttribute("namePage", "mau-sac");
-        model.addAttribute("ms", list);
+        model.addAttribute("updateMauSac", new MauSac());
+        model.addAttribute("mss", list);
         return "admin/mau-sac";
     }
 
@@ -64,18 +112,20 @@ public class AdminProductController {
         return "redirect:/admin/mau-sac";
     }
 
-    @GetMapping("/mau-sac/delete")
-    public String deleteMauSac(@RequestParam("id") Integer id){
-        service.deleteMauSac(id);
+    @PostMapping("/update/mau-sac")
+    public String updateMauSac(@ModelAttribute("updateMauSac") MauSac mauSac){
+        service.updateMauSac(mauSac);
         return "redirect:/admin/mau-sac";
     }
+
 
 
     @GetMapping("/kich-co")
     public String kichCo(Model model){
         List<KichCo> list = service.getAllKichCo();
         model.addAttribute("namePage", "kich-co");
-        model.addAttribute("kichco", list);
+        model.addAttribute("updateKichCo", new KichCo());
+        model.addAttribute("kcs", list);
         return "admin/kich-co";
     }
 
@@ -86,9 +136,9 @@ public class AdminProductController {
         return "redirect:/admin/kich-co";
     }
 
-    @GetMapping("/kich-co/delete")
-    public String deleteKichCo(@RequestParam("id") Integer id){
-        service.deleteKichCo(id);
+    @PostMapping("/update/kich-co")
+    public String updateKichCo(@ModelAttribute("updateKichCo") KichCo kichCo){
+        service.updateKichCo(kichCo);
         return "redirect:/admin/kich-co";
     }
 
@@ -98,17 +148,6 @@ public class AdminProductController {
         return "redirect:/admin/thuong-hieu";
     }
 
-    @GetMapping("/thuong-hieu/delete")
-    public String deleteThuongHieu(@RequestParam("id") Integer id){
-        service.DeleteThuongHieu(id);
-        return "redirect:/admin/thuong-hieu";
-    }
-
-    @GetMapping("/thuong-hieu/detail")
-    public String detailThuongHieu(@RequestParam("id") Integer id){
-        service.DetailThuongHieu(id);
-        return "admin/thuong-hieu";
-    }
 
     @GetMapping("/thuong-hieu/search")
     public String searchTH(@RequestParam("tenTH") String tenTH , Model model){
@@ -121,7 +160,8 @@ public class AdminProductController {
     public String chatLieu(Model model){
         List<ChatLieu> list = service.getAllChatLieu();
         model.addAttribute("namePage", "chat-lieu");
-        model.addAttribute("cl", list);
+        model.addAttribute("updateChatLieu", new ChatLieu());
+        model.addAttribute("cls", list);
         return "admin/chat-lieu";
     }
 
@@ -131,21 +171,30 @@ public class AdminProductController {
         return "redirect:/admin/chat-lieu";
     }
 
-    @GetMapping("/delete/chat-lieu")
-    public String deleteChatLieu(@RequestParam("id") Integer id){
-        service.deleteChatLieu(id);
+    @PostMapping("/update/chat-lieu")
+    public String updateChatLieu(@ModelAttribute("updateChatLieu") ChatLieu chatLieu){
+        service.updateChatLieu(chatLieu);
         return "redirect:/admin/chat-lieu";
     }
 
     @GetMapping("/loai-san-pham")
-    public String getAllLoaiSanPham(@RequestParam(defaultValue = "0") int page, Model model) {
-        int pageSize = 7;
-        PageRequest pageable = PageRequest.of(page, pageSize);
-        Page<LoaiSanPham> loaiSanPhams = service.getAllLoaiSanPham(pageable);
-
-        model.addAttribute("currentPage", page);
-        model.addAttribute("totalPages", loaiSanPhams.getTotalPages());
-        model.addAttribute("lsps", loaiSanPhams.getContent());
+    public String getAllLoaiSanPham(Model model) {
+        model.addAttribute("lsps",service.getAllLoaiSanPham());
+        model.addAttribute("updateLoaiSanPham", new LoaiSanPham());
         return "admin/loai-san-pham";
+    }
+
+    @PostMapping("/add/loai-san-pham")
+    public String addLoaiSanPham(@ModelAttribute LoaiSanPham loaiSanPham){
+        service.addLoaiSanPham(loaiSanPham);
+        return "redirect:/admin/loai-san-pham";
+    }
+
+    @PostMapping("/update/loai-san-pham")
+    public String updateLSP(@ModelAttribute("updateLoaiSanPham") LoaiSanPham loaiSanPham) {
+        if (loaiSanPham.getIdLoaiSP() != null) {
+            service.uodateLoaiSanPham(loaiSanPham);
+        }
+        return "redirect:/admin/loai-san-pham";
     }
 }

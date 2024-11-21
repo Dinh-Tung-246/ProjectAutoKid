@@ -39,14 +39,29 @@ public class QuanLySanPhamService {
     @Autowired
     LoaiSanPhamRepo loaiSanPhamRepo;
 
-    public Page<SanPhamChiTiet> getAllSanPhamChiTiets(Pageable pageable) {
-        return sanPhamChiTietRepo.findAll(pageable);
+    public List<SanPham> DSSanPham(){
+        return sanPhamRepo.findAllByOrderByIdDesc();
+    }
+
+    public void addSanPham(SanPham sanPham){
+        sanPhamRepo.save(sanPham);
+    }
+
+    public void updateSanPham(SanPham sanPham){
+        sanPhamRepo.save(sanPham);
     }
 
     public List<SanPhamChiTiet> getAllSanPham(){
-        return sanPhamChiTietRepo.findAll();
+        return sanPhamChiTietRepo.findAllByOrderByIdDesc();
     }
 
+    public void addSanPhamChiTiet(SanPhamChiTiet sanPhamChiTiet){
+        sanPhamChiTietRepo.save(sanPhamChiTiet);
+    }
+
+    public void updateSanPhamChiTiet(SanPhamChiTiet sanPhamChiTiet){
+        sanPhamChiTietRepo.save(sanPhamChiTiet);
+    }
     public List<ThuongHieu> getAllThuongHieu(){
         return thuongHieuRepo.findAll();
     }
@@ -55,14 +70,7 @@ public class QuanLySanPhamService {
         thuongHieuRepo.save(thuongHieu);
     }
 
-
-    public void DeleteThuongHieu(Integer id){
-        thuongHieuRepo.deleteById(id);
-    }
-
-    public void DetailThuongHieu(Integer id){
-        thuongHieuRepo.findById(id);
-    }
+    public void updateThuongHieu(ThuongHieu thuongHieu){thuongHieuRepo.save(thuongHieu);}
 
     public List<ThuongHieu> searchTH(String tenTH){
         return  thuongHieuRepo.searchThuongHieu("%" + tenTH + "%");
@@ -76,9 +84,13 @@ public class QuanLySanPhamService {
         mauSacRepo.save(mauSac);
     }
 
+    public void updateMauSac(MauSac mauSac){mauSacRepo.save(mauSac);}
+
     public void deleteMauSac(Integer id){
         mauSacRepo.deleteById(id);
     }
+
+    public void updateChatLieu(ChatLieu chatLieu){chatLieuRepo.save(chatLieu);}
 
     public void detailMauSac(Integer id){
         mauSacRepo.findById(id);
@@ -91,6 +103,8 @@ public class QuanLySanPhamService {
     public void addKichCo(KichCo kichCo){
         kichCoRepo.save(kichCo);
     }
+
+    public void updateKichCo(KichCo kichCo){kichCoRepo.save(kichCo);}
 
     public void deleteKichCo(Integer id){
         kichCoRepo.deleteById(id);
@@ -112,12 +126,10 @@ public class QuanLySanPhamService {
         loaiSanPhamRepo.save(loaiSanPham);
     }
 
-    public Page<LoaiSanPham> getAllLoaiSanPham(Pageable pageable) {
-        return loaiSanPhamRepo.findAll(pageable);
-    }
+    public void uodateLoaiSanPham(LoaiSanPham loaiSanPham){loaiSanPhamRepo.save(loaiSanPham);}
 
-    public void deleteLoaiSanPham(Integer id){
-        loaiSanPhamRepo.deleteById(id);
+    public List<LoaiSanPham> getAllLoaiSanPham(){
+        return loaiSanPhamRepo.findAll();
     }
 
     public List<SanPhamKhuyenMaiResponse> getAllSP(){
