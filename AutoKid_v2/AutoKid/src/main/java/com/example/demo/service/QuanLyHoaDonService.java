@@ -49,8 +49,17 @@ public class QuanLyHoaDonService {
         return listhdct;
     }
 
-    public void DeleteHoaDon(Integer id){
-        hoaDonChiTietRepo.deleteById(id);
+    public boolean updateHoaDonStatus(String maHD, String newStatus) {
+        Optional<HoaDon> hoaDonOptional = hoaDonRepo.findHoaDonByMaHD(maHD);
+        if (hoaDonOptional.isPresent()) {
+            HoaDon hoaDon = hoaDonOptional.get();
+            if (!hoaDon.getTrangThaiHD().equals(newStatus)) {
+                hoaDon.setTrangThaiHD(newStatus);
+                hoaDonRepo.save(hoaDon);
+                return true;
+            }
+        }
+        return false;
     }
 //    public Page<HoaDon> getAll(int pageNo, int pageSize){
 //        Pageable pageable = PageRequest.of(pageNo,pageSize);
