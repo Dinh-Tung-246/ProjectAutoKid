@@ -12,26 +12,22 @@
     <link rel="stylesheet" href="./css/style.min.css" type="text/css">
 
     <style>
-        /* Đặt chiều rộng tối đa của modal dựa trên kích thước bảng */
-        .modal-dialog {
-            max-width: 90%; /* Cho phép modal rộng tối đa 90% của màn hình */
-            width: auto;    /* Tự động điều chỉnh theo nội dung */
+        .users-table.table-wrapper {
+            max-height: 450px; /* Đặt chiều cao tối đa cho khung chứa bảng */
+            overflow-y: auto;  /* Bật cuộn dọc */
+        }
+        .posts-table {
+            width: 100%; /* Đảm bảo bảng chiếm toàn bộ chiều rộng */
+            border-collapse: collapse;
         }
 
-        /* Đặt chiều cao tối đa của modal để tránh nó vượt quá chiều cao của màn hình */
-        .modal-content {
-            max-height: 90vh; /* Giới hạn chiều cao của modal ở 90% chiều cao viewport */
-            overflow-y: auto; /* Kích hoạt cuộn dọc nếu nội dung vượt quá chiều cao */
+        /* Thêm viền để dễ nhìn */
+        .posts-table th, .posts-table td {
+            border: 1px solid #ddd;
+            padding: 8px;
         }
 
-        /* Đảm bảo bảng bên trong modal có thể thu nhỏ vừa với khung modal */
-        .modal-body table {
-            width: 100%; /* Bảng sẽ chiếm toàn bộ chiều rộng của modal */
-            table-layout: auto;
-        }
     </style>
-
-
 </head>
 
 <body>
@@ -45,7 +41,7 @@
         <!-- ! Main -->
         <main class="main users chart-page" id="skip-target">
             <div class="container">
-                <h2 class="main-title">Quản Lý Sản Phẩm</h2>
+                <h2 class="main-title">Danh Sách Sản Phẩm</h2>
                 <div class="row">
                     <div class="col-5">
                         <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">Thêm</button>
@@ -62,47 +58,44 @@
                         <thead>
                         <tr class="users-table-info">
                             <th>Mã sản phẩm</th>
-<!--                            <th>Ảnh</th>-->
                             <th>Tên sản phẩm</th>
+                            <th>Số lượng</th>
+                            <th>Giá bán</th>
+                            <th>Thương hiệu</th>
+                            <th>Chất liệu</th>
+                            <th>Kích cỡ</th>
+                            <th>Màu sắc</th>
+                            <th>Ảnh</th>
                             <th>Trạng thái</th>
-                            <th>Ngày tạo</th>
                             <th>Hành động</th>
                         </tr>
                         </thead>
                         <tbody>
-                        <tr th:each="spct : ${spcts}" class="product-row"
-                            th:attr="data-ma-spct=${spct.maSPCT}, data-ten-sp=${spct.sanPham.tenSP}, data-trang-thai=${spct.trangThaiSPCT}, data-so-luong= ${spct.soLuong},
-                                    data-don-gia=${spct.donGia},data-mo-ta=${spct.moTa},
-                                    data-thuong-hieu=${spct.thuongHieu.tenTH},data-chat-lieu=${spct.chatLieu.tenCl},data-mau-sac=${spct.mauSac.tenMS},data-kich-co=${spct.kichCo.tenKC}">
-                            <td th:text="${spct.maSPCT}"></td>
-<!--                            <td>-->
-<!--                                <div class="categories-table-img">-->
-<!--                                    <img src="./img/categories/01.jpg" alt="product">-->
-<!--                                </div>-->
-<!--                            </td>-->
-                            <td th:text="${spct.sanPham.tenSP}"></td>
-                            <td th:text="${spct.trangThaiSPCT}"></td>
-<!--                            <td th:text="${spct.sanPham.ngayTao}"></td>-->
-                            <td class="view-detail" data-bs-toggle="modal" data-bs-target="#productDetailModal">Chi tiết</td>
-
+                        <tr th:each="sp : ${spct}">
+                            <td th:text="${sp.maSPCT}"></td>
+                            <td th:text="${sp.sanPham.tenSP}"></td>
+                            <td th:text="${sp.soLuong}"></td>
+                            <td th:text="${sp.sanPham.donGia}"></td>
+                            <td th:text="${sp.sanPham.thuongHieu.tenTH}"></td>
+                            <td th:text="${sp.sanPham.chatLieu.tenCl}"></td>
+                            <td th:text="${sp.sanPham.kichCo.tenKC}"></td>
+                            <td th:text="${sp.mauSac.tenMS}"></td>
+                            <td th:text="${sp.anh}"></td>
+                            <td th:text="${sp.trangThaiSPCT}"></td>
+                            <td>
+                                <button  class="view-detail btn btn-info" data-bs-toggle="modal" data-bs-target="#productDetailModal"
+                                         th:data-id="${sp.id}"
+                                         th:data-ma-spct="${sp.maSPCT}"
+                                         th:data-ten-sp="${sp.sanPham.id}"
+                                         th:data-so-luong="${sp.soLuong}"
+                                         th:data-mau-sac="${sp.mauSac.id}"
+                                         th:data-trang-thai="${sp.trangThaiSPCT}">
+                                    Chi tiết
+                                </button>
+                            </td>
                         </tr>
                         </tbody>
-
                     </table>
-                </div>
-                <div>
-                    <ul class="pagination">
-                        <li th:if="${currentPage > 0}">
-                            <a th:href="@{/admin/products(page=${currentPage - 1})}">Quay lại</a>
-                        </li>
-                        <li th:each="i : ${#numbers.sequence(0, totalPages - 1)}">
-                            <a th:href="@{/admin/products(page=${i})}"
-                               th:classappend="${i == currentPage} ? 'active'"></a>
-                        </li>
-                        <li th:if="${currentPage < totalPages - 1}">
-                            <a th:href="@{/admin/products(page=${currentPage + 1})}">Tiếp</a>
-                        </li>
-                    </ul>
                 </div>
             </div>
         </main>
@@ -117,25 +110,35 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <form action="/admin/add/chat-lieu" method="post">
+                    <form action="/admin/add/san-pham-chi-tiet" method="post">
                         <div class="mb-3">
-                            <label for="maTH" class="form-label">Mã sản phẩm:</label>
-                            <input type="text" class="form-control border border-secondary" id="maTH" name="maTH" required>
+                            <label for="maSPCT" class="form-label">Mã sản phẩm chi tiết:</label>
+                            <input type="text" class="form-control border border-secondary" id="maSPCT" name="maSPCT" required>
                         </div>
                         <div class="mb-3">
-                            <label for="tenTH" class="form-label">Tên sản phẩm:</label>
-                            <input type="text" class="form-control border border-secondary" id="tenTH" name="tenTH" required>
-                        </div>
-                        <div class="mb-3">
-                            <label for="trangThaiTH">Trạng thái</label>
-                            <select class="form-control" id="trangThaiTH" name="trangThaiTH">
-                                <option value="Hoạt động" selected>Hoạt động</option>
-                                <option value="Không hoạt động">Không hoạt động</option>
+                            <label for="sanPham" class="form-label">Tên sản phẩm:</label>
+                            <select class="form-control" id="sanPham" name="sanPham" required>
+                                <option value="" disabled selected>Chọn sản phẩm</option>
+                                <option th:each="sanPham : ${dsSanPham}" th:value="${sanPham.id}" th:text="${sanPham.tenSP}"></option>
                             </select>
                         </div>
                         <div class="mb-3">
-                            <label for="diaChi" class="form-label">Địa chỉ:</label>
-                            <input type="text" class="form-control" id="diaChi" name="diaChi">
+                            <label for="mauSac" class="form-label">Tên màu sắc:</label>
+                            <select class="form-control" id="mauSac" name="mauSac" required>
+                                <option value="" disabled selected>Chọn loại sản phẩm</option>
+                                <option th:each="mauSac : ${dsMauSac}" th:value="${mauSac.id}" th:text="${mauSac.tenMS}"></option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="soLuong" class="form-label">Số lượng:</label>
+                            <input type="number" class="form-control border border-secondary" id="soLuong" name="soLuong" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="trangThaiSPCT">Trạng thái</label>
+                            <select class="form-control" id="trangThaiSPCT" name="trangThaiSPCT">
+                                <option value="Còn hàng" selected>Còn hàng</option>
+                                <option value="Không Còn hàng">Không Còn hàng</option>
+                            </select>
                         </div>
                         <div class="modal-footer">
                             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
@@ -148,94 +151,90 @@
     </div>
 
     <!--  Chi tiet sp  -->
-    <div class="modal fade" id="productDetailModal" tabindex="-1" role="dialog" aria-labelledby="productDetailLabel" aria-hidden="true">
-        <div class="modal-dialog" role="document">
+    <div class="modal fade" id="productDetailModal" tabindex="-1" aria-labelledby="productDetailModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title text-center" id="productDetailLabel">Chi Tiết Sản Phẩm</h5>
+                    <h5 class="modal-title" id="productDetailModalLabel">Cập nhật sản phẩm</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <table class="table table-bordered text-center">
-                        <thead>
-                        <tr>
-                            <th>Mã SP</th>
-                            <th>Tên sản phẩm</th>
-                            <th>Số lượng</th>
-                            <th>Đơn giá</th>
-                            <th>Mô tả</th>
-                            <th>Ảnh</th>
-                            <th>Chất liệu</th>
-                            <th>Màu sắc</th>
-                            <th>Kích cỡ</th>
-                            <th>Thương hiệu</th>
-                            <th>Trạng thái</th>
-                            <th>Ngày tạo</th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        <tr>
-                            <td id="detailMaSPCT"></td>
-                            <td id="detailTenSP"></td>
-                            <td id="detailSL"></td>
-                            <td id="detailDG"></td>
-                            <td id="detailMT"></td>
-                            <td id="detailA"><img id="detailImage" src="./img/categories/01.jpg" alt="product" style="max-width: 100%;"></td>
-                            <td id="detailCL"></td>
-                            <td id="detailMS"></td>
-                            <td id="detailKC"></td>
-                            <td id="detailTH"></td>
-                            <td id="detailTrangThai"></td>
-<!--                            <td id="detailNgayTao"></td>-->
-                        </tr>
-                        </tbody>
-                    </table>
+                    <form th:action="@{/admin/update/products}" th:object="${updateSPCT}" method="post">
+                        <input type="hidden" id="productId" name="id" th:field="*{id}">
 
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+                        <div class="mb-3">
+                            <label for="productMaSP" class="form-label">Mã SPCT</label>
+                            <input type="text" class="form-control border border-secondary" id="productMaSP" th:field="*{maSPCT}">
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="productName" class="form-label">Tên sản phẩm:</label>
+                            <select class="form-control border border-secondary" id="productName" th:field="*{sanPham.id}" required>
+                                <option value="" disabled selected>Chọn loại sản phẩm</option>
+                                <option th:each="sanPham : ${dsSanPham}" th:value="${sanPham.id}" th:text="${sanPham.tenSP}"></option>
+                            </select>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="productQuantity" class="form-label">Số lượng</label>
+                            <input type="number" class="form-control border border-secondary" id="productQuantity" th:field="*{soLuong}">
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="productColor" class="form-label">Tên màu sắc:</label>
+                            <select class="form-control border border-secondary" id="productColor" th:field="*{mauSac.id}" required>
+                                <option value="" disabled selected>Chọn màu sắc</option>
+                                <option th:each="mauSac : ${dsMauSac}" th:value="${mauSac.id}" th:text="${mauSac.tenMS}"></option>
+                            </select>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="productStatus" class="form-label">Trạng thái</label>
+                            <select class="form-control border border-secondary" id="productStatus" th:field="*{trangThaiSPCT}">
+                                <option value="Còn hàng" th:selected="*{trangThaiSPCT == 'Còn hàng'}">Còn hàng</option>
+                                <option value="Không Còn hàng" th:selected="*{trangThaiSPCT == 'Không Còn hàng'}">Không còn hàng</option>
+                            </select>
+                        </div>
+
+                        <div class="modal-footer">
+                            <button type="submit" class="btn btn-primary">Cập nhật</button>
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+                        </div>
+                    </form>
                 </div>
             </div>
         </div>
     </div>
 
-
 </div>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
 
 <script>
-    // Lắng nghe sự kiện click trên các hàng sản phẩm
-    document.querySelectorAll('.view-detail').forEach(item => {
-        item.addEventListener('click', function () {
-            const row = this.closest('tr');
-            const maSPCT = row.getAttribute('data-ma-spct');
-            const tenSP = row.getAttribute('data-ten-sp');
-            const donGia = row.getAttribute('data-don-gia');
-            const  moTa = row.getAttribute('data-mo-ta');
-            const trangThai = row.getAttribute('data-trang-thai');
-            // const ngayTao = row.getAttribute('data-ngay-tao');
-            const  soLuong = row.getAttribute('data-so-luong');
-            const  mauSac = row.getAttribute('data-mau-sac');
-            const  thuongHieu = row.getAttribute('data-thuong-hieu');
-            const  kichCo = row.getAttribute('data-kich-co');
-            const  chatLieu = row.getAttribute('data-chat-lieu');
+    document.addEventListener('DOMContentLoaded', function () {
+        const detailButtons = document.querySelectorAll('.view-detail');
+        detailButtons.forEach(button => {
+            button.addEventListener('click', function () {
+                // Lấy các giá trị từ thuộc tính data-* của nút
+                const id = this.getAttribute('data-id');
+                const maSPCT = this.getAttribute('data-ma-spct');
+                const tenSP = this.getAttribute('data-ten-sp');
+                const soLuong = this.getAttribute('data-so-luong');
+                const mauSac = this.getAttribute('data-mau-sac');
+                const trangThaiSPCT = this.getAttribute('data-trang-thai');
 
-
-            // Cập nhật thông tin trong modal
-            document.getElementById('detailMaSPCT').textContent = maSPCT;
-            document.getElementById('detailTenSP').textContent = tenSP;
-            document.getElementById('detailTrangThai').textContent = trangThai;
-            // document.getElementById('detailNgayTao').textContent = ngayTao;
-            document.getElementById('detailSL').textContent = soLuong;
-            document.getElementById('detailCL').textContent = chatLieu;
-            document.getElementById('detailMS').textContent = mauSac;
-            document.getElementById('detailTH').textContent = thuongHieu;
-            document.getElementById('detailKC').textContent = kichCo;
-            document.getElementById('detailDG').textContent = donGia;
-            document.getElementById('detailMT').textContent = moTa;
-
-            // Nếu bạn có hình ảnh sản phẩm, bạn có thể cập nhật src của img
-            // document.getElementById('detailImage').src = 'URL của hình ảnh';
+                // Cập nhật các giá trị vào form trong modal
+                const modal = document.querySelector('#productDetailModal');
+                if (modal) {
+                    modal.querySelector('#productId').value = id || '';
+                    modal.querySelector('#productMaSP').value = maSPCT || '';
+                    modal.querySelector('#productName').value = tenSP || '';
+                    modal.querySelector('#productQuantity').value = soLuong || '';
+                    modal.querySelector('#productColor').value = mauSac || '';
+                    modal.querySelector('#productStatus').value = trangThaiSPCT || '';
+                } else {
+                    console.log("Không tìm thấy modal");
+                }
+            });
         });
     });
 </script>

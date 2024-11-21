@@ -35,7 +35,13 @@
                         </a>
                         <ul class="cat-sub-menu">
                             <li >
-                                <a th:classappend="${namePage == 'products'} ? 'active'" href="/admin/products">Quản Lý Sản phẩm</a>
+                                <a th:classappend="${namePage == 'products'} ? 'active'" href="/admin/products">Danh sách sản phẩm</a>
+                            </li>
+                            <li >
+                                <a th:classappend="${namePage == 'san-pham'} ? 'active'" href="/admin/san-pham">Sản phẩm</a>
+                            </li>
+                            <li >
+                                <a th:classappend="${namePage == 'loai-san-pham'} ? 'active'" href="/admin/loai-san-pham">Loại sản phẩm</a>
                             </li>
                             <li >
                                 <a th:classappend="${namePage == 'thuong-hieu'} ? 'active'" href="/admin/thuong-hieu">Thương hiệu</a>
