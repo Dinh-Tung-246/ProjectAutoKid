@@ -27,6 +27,9 @@ public class SanPham {
     @Column(name = "gia_ban")
     private Double donGia;
 
+    @Column(name = "ngay_tao")
+    private String ngayTao;
+
     @Column(name = "trang_thai_sp")
     private String trangThaiSP;
 

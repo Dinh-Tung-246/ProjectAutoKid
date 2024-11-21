@@ -10,6 +10,8 @@ import java.util.List;
 
 @Repository
 public interface SanPhamRepo extends JpaRepository<SanPham,Integer> {
+
+    List<SanPham> findAllByOrderByIdDesc();
     @Query("SELECT s FROM SanPham s" +
             " WHERE s.donGia >= :gia1 AND s.donGia <= :gia2 ")
     List<SanPham> searchByPrice(@Param("gia1") Double gia1, @Param("gia2") Double gia2);
