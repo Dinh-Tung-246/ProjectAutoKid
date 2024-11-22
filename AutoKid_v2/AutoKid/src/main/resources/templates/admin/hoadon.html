@@ -1,112 +1,119 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="https://www.thymeleaf.org">
-  <head>
-    <meta charset="UTF-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Elegant Dashboard | Dashboard</title>
-    <!-- Bootstrap CSS -->
-    <link
-      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
-      rel="stylesheet"
-      integrity="sha384-5kQxCQw79BfxtN4LEJw6cMmKXw7CF3YOqCwFVjFHeEU+oD5VOpHjq1PoXa5sjfH7"
-      crossorigin="anonymous"
-    />
-    <!-- Favicon -->
-    <link rel="shortcut icon" href="./img/svg/logo.svg" type="image/x-icon" />
-    <!-- Custom styles -->
-    <link rel="stylesheet" href="./css/style.min.css" />
-  </head>
-  <style>
-    .main .form-modal {
-      display: none;
-      position: fixed;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      z-index: 1000;
-      background: white;
-      border: 1px solid #ccc;
-      padding: 20px;
-      box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
-      width: 80%;
-      max-width: 700px;
-      border-radius: 10px;
-    }
+<head>
+  <meta charset="UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Elegant Dashboard | Dashboard</title>
+  <!-- Bootstrap CSS -->
+  <link
+          href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+          rel="stylesheet"
+          integrity="sha384-5kQxCQw79BfxtN4LEJw6cMmKXw7CF3YOqCwFVjFHeEU+oD5VOpHjq1PoXa5sjfH7"
+          crossorigin="anonymous"
+  />
+  <!-- Favicon -->
+  <link rel="shortcut icon" href="./img/svg/logo.svg" type="image/x-icon" />
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+  <!-- Custom styles -->
+  <link rel="stylesheet" href="./css/style.min.css" />
+</head>
+<style>
+  .main .form-modal {
+    display: none;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 1000;
+    background: white;
+    border: 1px solid #ccc;
+    padding: 20px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+    width: 80%;
+    max-width: 700px;
+    border-radius: 10px;
+  }
 
-    .main .form-modal h2 {
-      text-align: center;
-      margin-bottom: 10px;
-    }
+  .main .form-modal h2 {
+    text-align: center;
+    margin-bottom: 10px;
+  }
 
-    .main .form-modal form .label-after {
-      margin-left: 20px;
-    }
+  .main .form-modal form .label-after {
+    margin-left: 20px;
+  }
 
-    .main .form-modal form input {
-      margin-top: 10px;
-    }
+  .main .form-modal form input {
+    margin-top: 10px;
+  }
 
-    .main .form-modal .btn-closeDetail {
-      background-color: #9fcdff;
-    }
+  .main .form-modal .btn-closeDetail {
+    background-color: #9fcdff;
+  }
 
-    .main .form-modal .btn-closeDetail:hover {
-      background-color: #000;
-      color: #9fcdff;
-    }
-  </style>
-  <body>
-    <div class="layer"></div>
-    <!-- ! Body -->
-    <a class="skip-link sr-only" href="#skip-target">Skip to content</a>
-    <div class="page-flex">
-      <!-- ! Sidebar -->
-      <div th:insert="fragments/sidebar_admin :: sidebar"></div>
-      <div class="main-wrapper">
-        <!-- ! Main nav -->
-        <div th:insert="fragments/header_admin :: header"></div>
-        <!-- ! Main -->
-        <main class="main users chart-page" id="skip-target">
-          <div class="container">
-            <h2 class="mt-5">Quản lý hóa đơn</h2>
-
-            <!-- Bảng Hóa Đơn -->
-            <div class="users-table table-wrapper">
-              <table class="posts-table">
-                <thead>
-                  <tr class="users-table-info">
-                    <th>STT</th>
-                    <th>Mã Hóa Đơn</th>
-                    <th>Tên Khách Hàng</th>
-                    <th>Tên Nhân Viên</th>
-                    <th>Ngày tạo</th>
-                    <th>Phương thức thanh toán</th>
-                    <th>Tổng tiền</th>
-                    <th>Trạng thái</th>
-                    <th></th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr th:each="hdct, iterStat : ${listhdct}">
-                    <td th:text="${iterStat.count}"></td>
-                    <td th:text="${hdct.maHD}"></td>
-                    <td th:text="${hdct.tenKhachHang}"></td>
-                    <td th:text="${hdct.tenNhanVien}"></td>
-                    <td th:text="${hdct.ngayTao}"></td>
-                    <td th:text="${hdct.tenPhuongThucThanhToan}"></td>
-                    <td th:text="${hdct.tongTien}"></td>
-                    <td th:text="${hdct.trangThaiHD}"></td>
-                    <td>
-                      <!-- Nút Chi tiết -->
-                      <div
+  .main .form-modal .btn-closeDetail:hover {
+    background-color: #000;
+    color: #9fcdff;
+  }
+</style>
+<body>
+<div class="layer"></div>
+<!-- ! Body -->
+<a class="skip-link sr-only" href="#skip-target">Skip to content</a>
+<div class="page-flex">
+  <!-- ! Sidebar -->
+  <div th:insert="fragments/sidebar_admin :: sidebar"></div>
+  <div class="main-wrapper">
+    <!-- ! Main nav -->
+    <div th:insert="fragments/header_admin :: header"></div>
+    <!-- ! Main -->
+    <main class="main users chart-page" id="skip-target">
+      <div class="container">
+        <h2 class="mt-5">Quản lý hóa đơn</h2>
+        <br>
+<!--        <div class="search-container">-->
+<!--          <form action="/admin/hoadon/seachhd" method="GET">-->
+<!--            <input type="text" name="maHD" placeholder="Mã hóa đơn" />-->
+<!--            <button type="submit">Tìm kiếm</button>-->
+<!--          </form>-->
+<!--        </div>-->
+        <!-- Bảng Hóa Đơn -->
+        <div class="users-table table-wrapper">
+          <table class="posts-table">
+            <thead>
+            <tr class="users-table-info">
+              <th>STT</th>
+              <th>Mã Hóa Đơn</th>
+              <th>Tên Khách Hàng</th>
+              <th>Tên Nhân Viên</th>
+              <th>Ngày tạo</th>
+              <th>Phương thức thanh toán</th>
+              <th>Tổng tiền</th>
+              <th>Trạng thái</th>
+              <th></th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="hdct, iterStat : ${listhdct}">
+              <td th:text="${iterStat.count}"></td>
+              <td th:text="${hdct.maHD}"></td>
+              <td th:text="${hdct.tenKhachHang}"></td>
+              <td th:text="${hdct.tenNhanVien}"></td>
+              <td th:text="${hdct.ngayTao}"></td>
+              <td th:text="${hdct.tenPhuongThucThanhToan}"></td>
+              <td th:text="${hdct.tongTien}"></td>
+              <td th:text="${hdct.trangThaiHD}"></td>
+              <td>
+                <!-- Nút Chi tiết -->
+                <div
                         style="
                           display: flex;
                           align-items: center;
                           justify-content: space-around;
                         "
-                      >
-                        <button
+                >
+                  <button
                           class="update"
                           th:data-maHD="${hdct.maHD}"
                           th:data-tenKhachHang="${hdct.tenKhachHang}"
@@ -119,12 +126,12 @@
                           th:data-donGiaSauGiam="${hdct.donGiaSauGiam}"
                           th:data-trangThaiHD="${hdct.trangThaiHD}"
                           onclick="showDetail(this)"
-                        >
-                          Chi tiết
-                        </button>
-                      </div>
-                      <!-- Overlay -->
-                      <div
+                  >
+                    Chi tiết
+                  </button>
+                </div>
+                <!-- Overlay -->
+                <div
                         id="overlay"
                         style="
                           display: none;
@@ -136,138 +143,156 @@
                           background: rgba(0, 0, 0, 0.5);
                           z-index: 500;
                         "
-                      ></div>
-                      <a th:href="@{/admin/hoadon/delete(id=${hdct.id})}"
-                        >Xóa</a
-                      >
-                    </td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
+                ></div>
+            </tr>
+            </td>
+            </tr>
+            </tbody>
+          </table>
+        </div>
 
-            <!-- Bảng Lịch Sử Hóa Đơn -->
-            <h3 class="mt-5">Lịch sử Hóa Đơn</h3>
-            <div class="users-table table-wrapper">
-              <table class="posts-table">
-                <thead>
-                  <tr class="users-table-info">
-                    <th>Mã Hóa Đơn</th>
-                    <th>Ngày Tạo</th>
-                    <th>Ngày Thay Đổi</th>
-                    <th>Trạng Thái</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr th:each="hoadonhistory : ${listhds}">
-                    <td th:text="${hoadonhistory.maHD}"></td>
-                    <td th:text="${hoadonhistory.ngayTao}"></td>
-                    <td th:text="${hoadonhistory.ngayThayDoi}"></td>
-                    <td th:text="${hoadonhistory.trangThai}"></td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
-          </div>
-
-          <!-- Modal -->
-          <!-- Modal -->
-          <div id="detailModal" class="form-modal" onclick="closeDetail(event)">
-            <div class="modal-content" onclick="event.stopPropagation()">
-              <h2>Chi tiết hóa đơn</h2>
-              <form>
-                <div>
-                  <label>Mã hóa đơn: </label>
-                  <input type="text" id="modalMaHD" readonly />
-                </div>
-                <div>
-                  <label>Tên khách hàng: </label>
-                  <input type="text" id="modalTenKH" readonly />
-                </div>
-                <div>
-                  <label>Tên nhân viên: </label>
-                  <input type="text" id="modalTenNV" readonly />
-                </div>
-                <div>
-                  <label>Tên sản phẩm: </label>
-                  <input type="text" id="modalTenSP" readonly />
-                </div>
-                <div>
-                  <label>Phương thức thanh toán: </label>
-                  <input type="text" id="modalPhuongThuc" readonly />
-                </div>
-                <div>
-                  <label>Ngày tạo: </label>
-                  <input type="text" id="modalNgayTao" readonly />
-                </div>
-                <div>
-                  <label>Tổng tiền: </label>
-                  <input type="text" id="modalTongTien" readonly />
-                </div>
-                <div>
-                  <label>Số lượng: </label>
-                  <input type="text" id="modalSoLuong" readonly />
-                </div>
-                <div>
-                  <label>Đơn giá sau giảm: </label>
-                  <input type="text" id="modalDonGiaSauGiam" readonly />
-                </div>
-                <div>
-                  <label>Trạng thái hóa đơn: </label>
-                  <input type="text" id="modalTrangThai" readonly />
-                </div>
-              </form>
-              <button class="btn-closeDetail" onclick="closeDetail()">
-                Đóng
-              </button>
-            </div>
-          </div>
-        </main>
-
-        <!-- ! Footer -->
-        <div th:insert="fragments/footer_admin :: footer"></div>
+        <!-- Bảng Lịch Sử Hóa Đơn -->
+        <!--            <h3 class="mt-5">Lịch sử Hóa Đơn</h3>-->
+        <!--            <div class="users-table table-wrapper">-->
+        <!--              <table class="posts-table">-->
+        <!--                <thead>-->
+        <!--                  <tr class="users-table-info">-->
+        <!--                    <th>Mã Hóa Đơn</th>-->
+        <!--                    <th>Ngày Tạo</th>-->
+        <!--                    <th>Ngày Thay Đổi</th>-->
+        <!--                    <th>Trạng Thái</th>-->
+        <!--                  </tr>-->
+        <!--                </thead>-->
+        <!--                <tbody>-->
+        <!--                  <tr th:each="hoadonhistory : ${listhds}">-->
+        <!--                    <td th:text="${hoadonhistory.maHD}"></td>-->
+        <!--                    <td th:text="${hoadonhistory.ngayTao}"></td>-->
+        <!--                    <td th:text="${hoadonhistory.ngayThayDoi}"></td>-->
+        <!--                    <td th:text="${hoadonhistory.trangThai}"></td>-->
+        <!--                  </tr>-->
+        <!--                </tbody>-->
+        <!--              </table>-->
+        <!--            </div>-->
       </div>
-    </div>
+      <!-- Modal -->
+      <div id="detailModal" class="form-modal" onclick="closeDetail(event)">
+        <div class="modal-content" onclick="event.stopPropagation()">
+          <h2>Chi tiết hóa đơn</h2>
+          <form id="updateStatusForm" action="/admin/hoadon/updateStatus" method="POST">
+            <div>
+              <label>Mã hóa đơn: </label>
+              <input type="text" id="modalMaHD" name="maHD" readonly />
+            </div>
+            <div>
+              <label>Tên khách hàng: </label>
+              <input type="text" id="modalTenKH" name="tenKH" readonly />
+            </div>
+            <div>
+              <label>Tên nhân viên: </label>
+              <input type="text" id="modalTenNV" name="tenNV" readonly />
+            </div>
+            <div>
+              <label>Tên sản phẩm: </label>
+              <input type="text" id="modalTenSP" name="tenSP" readonly />
+            </div>
+            <div>
+              <label>Phương thức thanh toán: </label>
+              <input type="text" id="modalPhuongThuc" name="phuongThuc" readonly />
+            </div>
+            <div>
+              <label>Ngày tạo: </label>
+              <input type="text" id="modalNgayTao" name="ngayTao" readonly />
+            </div>
+            <div>
+              <label>Tổng tiền: </label>
+              <input type="text" id="modalTongTien" name="tongTien" readonly />
+            </div>
+            <div>
+              <label>Số lượng: </label>
+              <input type="text" id="modalSoLuong" name="soLuong" readonly />
+            </div>
+            <div>
+              <label>Đơn giá sau giảm: </label>
+              <input type="text" id="modalDonGiaSauGiam" name="donGiaSauGiam" readonly />
+            </div>
+            <div>
+              <label>Trạng thái hóa đơn: </label>
+              <select id="modalTrangThai" name="trangThai" onchange="showUpdateButton()">
+                <option value="Đang chờ xử lý">Đang chờ xử lý</option>
+                <option value="Đã Xác Nhận">Đã xác nhận</option>
+                <option value="Đang Giao Hàng">Đang giao hàng</option>
+                <option value="Đã Giao Hàng">Đã giao hàng</option>
+                <option value="Đã Hủy">Đã hủy</option>
+                <option value="Hoàn Tiền">Hoàn tiền</option>
+              </select>
+            </div>
+            <button id="btnUpdateStatus" class="btn-closeDetail" style="display:none;" onclick="updateStatus()">Cập nhật trạng thái</button>
+          </form>
 
-    <!-- Chart library -->
-    <script src="./plugins/chart.min.js"></script>
-    <!-- Icons library -->
-    <script src="plugins/feather.min.js"></script>
-    <!-- Bootstrap JS (requires Popper.js) -->
-    <!-- Custom scripts -->
-    <script src="js/script.js"></script>
-    <script>
-      function showDetail(button) {
-        document.getElementById("modalMaHD").value =
-          button.getAttribute("data-maHD");
-        document.getElementById("modalTenKH").value =
-          button.getAttribute("data-tenKhachHang");
-        document.getElementById("modalTenNV").value =
-          button.getAttribute("data-tenNhanVien");
-        document.getElementById("modalTenSP").value =
-          button.getAttribute("data-tenSP");
-        document.getElementById("modalPhuongThuc").value =
-          button.getAttribute("data-tenPhuongThuc");
-        document.getElementById("modalNgayTao").value =
-          button.getAttribute("data-ngayTao");
-        document.getElementById("modalTongTien").value =
-          button.getAttribute("data-tongTien");
-        document.getElementById("modalSoLuong").value =
-          button.getAttribute("data-soLuong");
-        document.getElementById("modalDonGiaSauGiam").value =
-          button.getAttribute("data-donGiaSauGiam");
-        document.getElementById("modalTrangThai").value =
-          button.getAttribute("data-trangThaiHD");
+          <button class="btn-closeDetail" onclick="closeDetail()">
+            Đóng
+          </button>
+        </div>
+      </div>
+    </main>
 
-        // Show modal
-        document.getElementById("detailModal").style.display = "block";
-        document.getElementById("overlay").style.display = "block";
-      }
+    <!-- ! Footer -->
+    <div th:insert="fragments/footer_admin :: footer"></div>
+  </div>
+</div>
 
-      function closeDetail() {
-        document.getElementById("detailModal").style.display = "none";
-        document.getElementById("overlay").style.display = "none";
-      }
-    </script>
-  </body>
+<!-- Chart library -->
+<script src="./plugins/chart.min.js"></script>
+<!-- Icons library -->
+<script src="plugins/feather.min.js"></script>
+<!-- Bootstrap JS (requires Popper.js) -->
+<!-- Custom scripts -->
+<script src="js/script.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+<script>
+  function showDetail(button) {
+    document.getElementById("modalMaHD").value = button.getAttribute("data-maHD");
+    document.getElementById("modalTenKH").value = button.getAttribute("data-tenKhachHang");
+    document.getElementById("modalTenNV").value = button.getAttribute("data-tenNhanVien");
+    document.getElementById("modalTenSP").value = button.getAttribute("data-tenSP");
+    document.getElementById("modalPhuongThuc").value = button.getAttribute("data-tenPhuongThuc");
+    document.getElementById("modalNgayTao").value = button.getAttribute("data-ngayTao");
+    document.getElementById("modalTongTien").value = button.getAttribute("data-tongTien");
+    document.getElementById("modalSoLuong").value = button.getAttribute("data-soLuong");
+    document.getElementById("modalDonGiaSauGiam").value = button.getAttribute("data-donGiaSauGiam");
+
+    const trangThai = button.getAttribute("data-trangThaiHD");
+    const selectTrangThai = document.getElementById("modalTrangThai");
+    selectTrangThai.value = trangThai;
+    selectTrangThai.setAttribute("data-original-value", trangThai);
+
+    document.getElementById("detailModal").style.display = "block";
+  }
+
+
+  function showUpdateButton() {
+    const selectTrangThai = document.getElementById("modalTrangThai");
+    const originalValue = selectTrangThai.getAttribute("data-original-value");
+
+    // Kiểm tra nếu giá trị đã thay đổi so với ban đầu
+    if (selectTrangThai.value !== originalValue) {
+      document.getElementById("btnUpdateStatus").style.display = "block";
+    } else {
+      document.getElementById("btnUpdateStatus").style.display = "none";
+    }
+  }
+
+  function updateStatus() {
+    const maHD = document.getElementById("modalMaHD").value;
+    const newStatus = document.getElementById("modalTrangThai").value;
+
+    // Thêm logic cập nhật trạng thái hóa đơn tại đây
+    console.log(`Updating status for invoice ${maHD} to ${newStatus}`);
+
+    // Ẩn modal sau khi cập nhật thành công
+    closeDetail();
+  }
+</script>
+
+</body>
 </html>
