@@ -84,7 +84,7 @@
                         <tr th:each="sp : ${sps}" th:if="${sp.trangThaiSP} == 'Đang bán'">
                             <td th:text="${sp.maSP}"></td>
                             <td th:text="${sp.tenSP}"></td>
-                            <td th:text="${sp.anhSPMau}"></td>
+                            <td><img th:src="@{'/img/categories/' + ${sp.anhSPMau}}" alt="Ảnh sản phẩm"></td>
                             <td th:text="${sp.donGia}"></td>
                             <td th:text="${sp.moTa}"></td>
                             <td th:text="${sp.trangThaiSP}"></td>
@@ -190,12 +190,18 @@
                                 </select>
                             </div>
                         </div>
-                        <div class="mb-3">
-                            <label for="trangThaiSP" class="form-label">Trạng thái sản phẩm:</label>
-                            <select class="form-control" id="trangThaiSP" name="trangThaiSP">
-                                <option value="Đang bán" selected>Đang bán</option>
-                                <option value="Ngừng bán">Ngừng bán</option>
-                            </select>
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="trangThaiSP" class="form-label">Trạng thái sản phẩm:</label>
+                                <select class="form-control" id="trangThaiSP" name="trangThaiSP">
+                                    <option value="Đang bán" selected>Đang bán</option>
+                                    <option value="Ngừng bán">Ngừng bán</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="anhSPMau" class="form-label mt-2">Ảnh</label>
+                                <input type="file" class="form-control border border-secondary" id="anhSPMau" name="anhSPMau" accept="image/*">
+                            </div>
                         </div>
 
                         <div class="modal-footer">
@@ -232,7 +238,7 @@
                         <tr th:each="sp : ${sps}" th:if="${sp.trangThaiSP} == 'Ngừng bán'">
                             <td th:text="${sp.maSP}"></td>
                             <td th:text="${sp.tenSP}"></td>
-                            <td th:text="${sp.anhSPMau}"></td>
+                            <td><img th:src="@{'/img/categories/' + ${sp.anhSPMau}}" alt="Ảnh sản phẩm"></td>
                             <td th:text="${sp.donGia}"></td>
                             <td th:text="${sp.moTa}"></td>
                             <td th:text="${sp.trangThaiSP}"></td>
@@ -356,6 +362,14 @@
 
                         <div class="row mb-3">
                             <div class="col-md-6">
+                                <label for="anhSPMau" class="form-label">Ảnh hiện tại</label>
+                                <div>
+                                    <img id="currentImage" src="" alt="Ảnh hiện tại" style="max-width: 100px; max-height: 100px;">
+                                </div>
+                                <label for="anhSPMau" class="form-label mt-2">Thay đổi ảnh</label>
+                                <input type="file" class="form-control border border-secondary" id="anhSPMau" name="anhSPMau" accept="image/*">
+                            </div>
+                            <div class="col-md-6">
                                 <label for="trangThaiSP" class="form-label">Trạng thái:</label>
                                 <select class="form-control" th:field="*{trangThaiSP}" id="trangThaiSP">
                                     <option value="Đang bán" th:selected="*{trangThaiSP == 'Đang bán'}">Đang bán</option>
@@ -382,6 +396,7 @@
                 const id = this.getAttribute('data-id');
                 const maSP = this.getAttribute('data-maSP');
                 const tenSP = this.getAttribute('data-ten');
+                const anh = this.getAttribute('data-anh');
                 const giaNhap = this.getAttribute('data-gianhap');
                 const donGia = this.getAttribute('data-dongia');
                 const ngayTao = this.getAttribute('data-ngaytao');
@@ -407,6 +422,10 @@
                     modal.querySelector('#kichCo').value = kichCo || '';
                     modal.querySelector('#chatLieu').value = chatLieu || '';
                     modal.querySelector('#trangThaiSP').value = trangThaiSP || '';
+                    const currentImage = modal.querySelector('#currentImage');
+                    if (currentImage) {
+                        currentImage.src = '/img/categories/' + (anh || '');
+                    }
                 }
             });
         });
