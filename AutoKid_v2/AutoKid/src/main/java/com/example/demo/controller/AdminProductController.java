@@ -8,6 +8,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.List;
 
@@ -62,7 +63,11 @@ public class AdminProductController {
     }
 
     @PostMapping("/add/san-pham")
-    public String addSanPham(@ModelAttribute("addSanPham") SanPham sanPham){
+    public String addSanPham(@ModelAttribute("addSanPham") SanPham sanPham, RedirectAttributes redirectAttributes){
+        if (service.isMaSPExist(sanPham.getMaSP())) {
+            redirectAttributes.addFlashAttribute("error", "Mã sản phẩm đã tồn tại!");
+            return "redirect:/admin/san-pham";
+        }
         service.addSanPham(sanPham);
         return "redirect:/admin/san-pham";
     }

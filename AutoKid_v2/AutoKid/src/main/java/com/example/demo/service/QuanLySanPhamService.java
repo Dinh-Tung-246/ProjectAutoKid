@@ -43,6 +43,9 @@ public class QuanLySanPhamService {
         return sanPhamRepo.findAllByOrderByIdDesc();
     }
 
+    public boolean isMaSPExist(String maSP) {
+        return sanPhamRepo.existsByMaSP(maSP);
+    }
     public void addSanPham(SanPham sanPham){
         sanPhamRepo.save(sanPham);
     }
