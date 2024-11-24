@@ -7,6 +7,8 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.util.Optional;
+
 @Repository
 public interface HoaDonRepo extends JpaRepository<HoaDon,Integer> {
     @Query(value = "SELECT TOP 1 * " +
@@ -18,4 +20,7 @@ public interface HoaDonRepo extends JpaRepository<HoaDon,Integer> {
     @Query(value = "UPDATE hoa_don SET trang_thai_hd = :trangThai" +
             " WHERE id_hd = :idHD ", nativeQuery = true)
     void updateHoaDon(@Param("trangThai") String trangThai,@Param("idHD") Integer idHD);
+
+
+    Optional<HoaDon> findHoaDonByMaHD(String maHD);
 }
