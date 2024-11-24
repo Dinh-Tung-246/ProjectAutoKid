@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Đăng nhập</title>
+    <style>
+        /* Reset CSS */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        /* Body */
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f7f7f7;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        /* Container */
+        .container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            width: 100%;
+        }
+
+        /* Form Container */
+        .form-container {
+            background-color: white;
+            padding: 40px;
+            border-radius: 8px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 400px;
+            text-align: center;
+        }
+
+        .logo {
+            margin-bottom: 20px;
+            height: 40px;
+        }
+
+        h2 {
+            margin-bottom: 20px;
+            font-size: 22px;
+            color: #333;
+        }
+
+        .input-group {
+            margin-bottom: 20px;
+            text-align: left;
+        }
+
+        .input-group label {
+            display: block;
+            font-size: 14px;
+            color: #555;
+        }
+
+        .input-group input {
+            width: 100%;
+            padding: 10px;
+            font-size: 16px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            margin-top: 5px;
+            box-sizing: border-box;
+        }
+
+        .input-group input:focus {
+            border-color: #4c6ef5;
+            outline: none;
+        }
+
+        .flex {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .forgot-password {
+            font-size: 12px;
+            color: #4c6ef5;
+            text-decoration: none;
+        }
+
+        .forgot-password:hover {
+            text-decoration: underline;
+        }
+
+        .submit-btn {
+            width: 100%;
+            padding: 10px;
+            font-size: 16px;
+            background-color: #4c6ef5;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .submit-btn:hover {
+            background-color: #3b57c4;
+        }
+
+        .signup {
+            margin-top: 20px;
+            font-size: 14px;
+            color: #555;
+        }
+
+        .signup a {
+            color: #4c6ef5;
+            text-decoration: none;
+        }
+
+        .signup a:hover {
+            text-decoration: underline;
+        }
+
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="form-container">
+        <img class="logo" th:src="@{../autokid/img/logo.png}">
+        <h2>Đăng nhập vào tài khoản của bạn</h2>
+
+        <!-- Form đăng nhập sử dụng Thymeleaf -->
+        <form th:action="@{/login}" method="POST">
+            <div class="input-group">
+                <label for="email">Địa chỉ Email</label>
+                <input type="email" id="email" name="email" th:value="${email}" required
+                       placeholder="Nhập email của bạn">
+            </div>
+
+            <div class="input-group">
+                <div class="flex">
+                    <label for="password">Mật khẩu</label>
+                    <a href="#" class="forgot-password">Quên mật khẩu?</a>
+                </div>
+                <input type="password" id="password" name="password" th:value="${password}" required
+                       placeholder="Nhập mật khẩu">
+            </div>
+
+            <div class="input-group">
+                <button type="submit" class="submit-btn">Đăng nhập</button>
+            </div>
+            <div th:if="${param.error}">
+                <p style="color:red;">Email hoặc mật khẩu không chính xác. Vui lòng thử lại.</p>
+            </div>
+        </form>
+
+        <p class="signup">
+            Chưa có tài khoản?
+        </p>
+    </div>
+</div>
+</body>
+</html>
