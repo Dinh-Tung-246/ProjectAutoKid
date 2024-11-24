@@ -120,7 +120,7 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <form action="/admin/add/san-pham-chi-tiet" method="post">
+                    <form action="/admin/add/san-pham-chi-tiet" method="post" enctype="multipart/form-data" onsubmit="handleAddSPCT(event, this)">
                         <div class="mb-3">
                             <label for="maSPCT" class="form-label">Mã sản phẩm chi tiết:</label>
                             <input type="text" class="form-control border border-secondary" id="maSPCT" name="maSPCT" required>
@@ -159,6 +159,7 @@
                             <button type="submit" class="btn btn-primary">Lưu</button>
                         </div>
                     </form>
+
                 </div>
             </div>
         </div>
@@ -234,7 +235,7 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <form th:action="@{/admin/update/products}" th:object="${updateSPCT}" method="post">
+                    <form th:action="@{/admin/update/products}" th:object="${updateSPCT}" method="post" onsubmit="handleUpdateSPCT(event, this)">
                         <input type="hidden" id="productId" name="id" th:field="*{id}">
 
                         <div class="mb-3">
@@ -332,6 +333,8 @@
 <script src="./plugins/feather.min.js"></script>
 <!-- Custom scripts -->
 <script src="./js/script.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<!--<script src="./js/products.js"></script>-->
 
 </body>
 

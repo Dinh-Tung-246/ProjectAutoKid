@@ -11,6 +11,16 @@
 
     <!-- Custom styles -->
     <link rel="stylesheet" href="./css/style.min.css" type="text/css">
+    <style>
+        .users-table.table-wrapper {
+            max-height: 450px; /* Đặt chiều cao tối đa cho khung chứa bảng */
+            overflow-y: auto;  /* Bật cuộn dọc */
+        }
+        .posts-table {
+            width: 100%; /* Đảm bảo bảng chiếm toàn bộ chiều rộng */
+            border-collapse: collapse;
+        }
+    </style>
 </head>
 
 <body>
@@ -82,7 +92,7 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <form action="/admin/add/mau-sac" method="post">
+                    <form action="/admin/add/mau-sac" method="post" onsubmit="handleAddMS(event, this)">
                         <div class="mb-3">
                             <label for="maMS" class="form-label">Mã màu sắc:</label>
                             <input type="text" class="form-control border border-secondary" id="maMS" name="maMS" required>
@@ -161,7 +171,7 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <form th:action="@{/admin/update/mau-sac}" th:object="${updateMauSac}" method="post">
+                    <form th:action="@{/admin/update/mau-sac}" th:object="${updateMauSac}" method="post" onsubmit="handleUpdateMS(event, this)">
                         <input type="hidden" id="id" th:field="*{id}">
                         <div class="mb-3">
                             <label for="maMS" class="form-label">Mã kích cỡ:</label>
@@ -220,6 +230,8 @@
 <script src="./plugins/feather.min.js"></script>
 <!-- Custom scripts -->
 <script src="./js/script.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script src="./js/products.js"></script>
 
 </body>
 

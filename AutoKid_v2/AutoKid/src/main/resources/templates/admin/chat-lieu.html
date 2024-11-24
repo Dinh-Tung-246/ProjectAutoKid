@@ -10,6 +10,16 @@
     <link rel="shortcut icon" href="./img/svg/logo.svg" type="image/x-icon">
     <!-- Custom styles -->
     <link rel="stylesheet" href="./css/style.min.css" type="text/css">
+    <style>
+        .users-table.table-wrapper {
+            max-height: 450px; /* Đặt chiều cao tối đa cho khung chứa bảng */
+            overflow-y: auto;  /* Bật cuộn dọc */
+        }
+        .posts-table {
+            width: 100%; /* Đảm bảo bảng chiếm toàn bộ chiều rộng */
+            border-collapse: collapse;
+        }
+    </style>
 </head>
 
 <body>
@@ -80,7 +90,7 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <form action="/admin/add/chat-lieu" method="post">
+                    <form action="/admin/add/chat-lieu" method="post" onsubmit="handleAddCL(event, this)">
                         <div class="mb-3">
                             <label for="maCl" class="form-label">Mã chất liệu:</label>
                             <input type="text" class="form-control border border-secondary" id="maCl" name="maCl" required>
@@ -158,7 +168,7 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <form th:action="@{/admin/update/chat-lieu}" th:object="${updateChatLieu}" method="post">
+                    <form th:action="@{/admin/update/chat-lieu}" th:object="${updateChatLieu}" method="post" onsubmit="handleUpdateCL(event, this)">
                         <input type="hidden" id="id" th:field="*{id}">
                         <div class="mb-3">
                             <label for="maCl" class="form-label">Mã kích cỡ:</label>
@@ -216,6 +226,8 @@
 <script src="./plugins/feather.min.js"></script>
 <!-- Custom scripts -->
 <script src="./js/script.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script src="./js/products.js"></script>
 
 </body>
 
