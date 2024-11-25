@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+    <title>Thanh toán đơn hàng</title>
+</head>
+
+<body>
+<div class="container">
+    <div class="row justify-content-center mt-5">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-body">
+                    <img th:src="@{../autokid/img/vnpay-logo.png}" style="width: 200px">
+                    <h2 class="card-title">Tạo Đơn Hàng</h2>
+                    <form th:action="@{/payment/submitOrder}" method="post">
+                        <div class="form-group">
+                            <label for="amount">Số tiền:</label>
+                            <input type="number" class="form-control" id="amount" name="amount" required readonly>
+                        </div>
+                        <div class="form-group">
+                            <label for="orderInfo">Thông tin đơn hàng:</label>
+                            <input type="text" class="form-control" id="orderInfo" name="orderInfo" required readonly>
+                        </div>
+                        <div class="form-group">
+                            <label for="vnpTxnRef">Mã đơn hàng:</label>
+                            <input type="text" class="form-control" id="vnpTxnRef" name="vnpTxnRef" required readonly>
+                        </div>
+                        <input type="hidden" id="idKH" name="idKH" >
+                        <input type="hidden" id="hdct" name="hdct" >
+                        <button type="submit" class="btn btn-primary">Thanh toán</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const paymentData = JSON.parse(localStorage.getItem("payment")) || [];
+        const infoData = JSON.parse(localStorage.getItem("info")) || [];
+        const checkoutData = JSON.parse(localStorage.getItem("checkout")) || [];
+        document.querySelector('#amount').value = paymentData.amount;
+        document.querySelector('#orderInfo').value = paymentData.orderInfo;
+        document.querySelector('#vnpTxnRef').value = paymentData.vnpTxnRef;
+        document.querySelector('#idKH').value = JSON.stringify(infoData);
+        document.querySelector('#hdct').value = JSON.stringify(checkoutData);
+
+        document.querySelector("form").addEventListener("submit", function () {
+            localStorage.removeItem("payment");
+            localStorage.removeItem("checkout");
+        })
+    });
+</script>
+</body>
+
+</html>

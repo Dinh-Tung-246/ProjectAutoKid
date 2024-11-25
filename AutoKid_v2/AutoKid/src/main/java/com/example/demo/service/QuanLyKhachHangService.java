@@ -147,15 +147,9 @@ public class QuanLyKhachHangService {
                     map.put("tenKH", kh.getTenKH());
                     map.put("emailKH", kh.getEmail());
                     map.put("pass", kh.getMatKhau());
-                    if (kh.getSdt() != null && kh.getDiaChi() != null) {
-                        map.put("sdtKH", kh.getSdt());
-                        map.put("diaChiKH", kh.getDiaChi());
-                    }
-                    if (kh.getThongTinVanChuyen() != null) {
-                        map.put("tenNN", kh.getThongTinVanChuyen().getTenNguoiNhan());
-                        map.put("sdtNN", kh.getThongTinVanChuyen().getSdt());
-                        map.put("diaChiNN", kh.getThongTinVanChuyen().getDiaChi());
-                    }
+                    map.put("sdtKH", kh.getSdt());
+                    map.put("diaChiKH", kh.getDiaChi());
+
                 }
             }
         }
@@ -168,13 +162,12 @@ public class QuanLyKhachHangService {
     }
 
     // insert thông tin vận chuyển mới
-    public void insertThongTinVanChuyen(ThongTinVanChuyen ttvc) {
-        ttvcRepo.save(ttvc);
-    }
+//    public void insertThongTinVanChuyen(ThongTinVanChuyen ttvc) {
+//        ttvcRepo.save(ttvc);
+//    }
 
     // update  thông tin khách hàng
     public void updateKhachHang(KhachHang khachHang) {
-        khachHang.setThongTinVanChuyen(ttvcRepo.getTTVC());
         khachHangRepo.save(khachHang);
     }
 
@@ -187,12 +180,6 @@ public class QuanLyKhachHangService {
         // Biểu thức regex kiểm tra định dạng email chuẩn
         String regexMail = "^[\\w._%+-]+@[\\w.-]+\\.[a-zA-Z]{2,6}$";
 
-        ThongTinVanChuyen ttvc = new ThongTinVanChuyen();
-        ttvc.setMaTTVC("TTVC" + new Date().getTime());
-        ttvc.setTenNguoiNhan(khres.getTenNguoiNhan());
-        ttvc.setSdt(khres.getSdtNguoiNhan());
-        ttvc.setDiaChi(khres.getDiaChiNhan());
-
         KhachHang khachHang = new KhachHang();
         khachHang.setTenKH(khres.getTenKH());
         khachHang.setEmail(khres.getEmailKH());
@@ -202,14 +189,8 @@ public class QuanLyKhachHangService {
         if (khachHang.getTenKH() == null || khachHang.getTenKH().trim().isEmpty()
                 || khachHang.getDiaChi() == null || khachHang.getDiaChi().trim().isEmpty()
                 || khachHang.getSdt() == null || khachHang.getSdt().trim().isEmpty()
-                || khachHang.getEmail() == null || khachHang.getEmail().trim().isEmpty()
-                || ttvc.getDiaChi() == null || ttvc.getDiaChi().trim().isEmpty()
-                || ttvc.getSdt() == null || ttvc.getSdt().trim().isEmpty()
-                || ttvc.getTenNguoiNhan() == null || ttvc.getTenNguoiNhan().trim().isEmpty()) {
+                || khachHang.getEmail() == null || khachHang.getEmail().trim().isEmpty()) {
             result = "Bạn không được để trống thông tin khách hàng!";
-        } else if (!khachHang.getTenKH().matches(regexName)
-                || !ttvc.getTenNguoiNhan().matches(regexName)) {
-            result = "Bạn cần nhập đúng tên!";
         } else if (!khachHang.getEmail().matches(regexMail)) {
             result = "Bạn cần nhập đúng định dạng gmail!";
         } else if (khachHang.getSdt().trim().length() != 10
@@ -217,15 +198,10 @@ public class QuanLyKhachHangService {
                 && !khachHang.getSdt().trim().startsWith("09")
                 && !khachHang.getSdt().trim().startsWith("03")) {
             result = "Bạn cần nhập đúng số điện thoại không chứa chữ hoặc ký tự, có độ dài 9 hoặc 10 số!";
-        } else if (ttvc.getSdt().trim().length() != 10
-                || !ttvc.getSdt().trim().startsWith("+84")
-                && !ttvc.getSdt().trim().startsWith("09")
-                && !ttvc.getSdt().trim().startsWith("03")) {
-            result = "Bạn cần nhập đúng số điện thoại không chứa chữ hoặc ký tự, có độ dài 9 hoặc 10 số!";
         } else if (!checkMail(khachHang.getEmail())) {
             result = "Email này đang được sử dụng!";
         } else {
-            insertThongTinVanChuyen(ttvc);
+//            insertThongTinVanChuyen(ttvc);
             khachHang.setThongTinVanChuyen(ttvcRepo.getTTVC());
             khachHangRepo.save(khachHang);
             result = "sc";
