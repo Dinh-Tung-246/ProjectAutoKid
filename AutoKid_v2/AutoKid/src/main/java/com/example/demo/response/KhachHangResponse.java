@@ -12,10 +12,6 @@ public class KhachHangResponse {
     private String emailKH;
     private String sdtKH;
     private String diaChiKH;
-    private String maTTVC;
-    private String diaChiNhan;
-    private String tenNguoiNhan;
-    private String sdtNguoiNhan;
     private String matKhau;
 
     public KhachHangResponse(KhachHang k){
@@ -24,14 +20,6 @@ public class KhachHangResponse {
         this.emailKH = k.getEmail();
         this.sdtKH = k.getSdt();
         this.diaChiKH = k.getDiaChi();
-        if(k.getThongTinVanChuyen() != null){
-            this.tenNguoiNhan = k.getThongTinVanChuyen().getTenNguoiNhan();
-            this.sdtNguoiNhan = k.getThongTinVanChuyen().getSdt();
-            this.diaChiNhan = k.getThongTinVanChuyen().getDiaChi();
-            this.maTTVC = k.getThongTinVanChuyen().getMaTTVC();
-        } else {
-            this.tenNguoiNhan = this.sdtNguoiNhan = this.diaChiNhan = this.maTTVC = null;
-        }
         this.matKhau = k.getMatKhau();
     }
 }

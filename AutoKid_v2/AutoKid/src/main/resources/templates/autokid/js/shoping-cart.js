@@ -16,26 +16,27 @@ function renderCartForm() {
                       <h5 class="shoping__cart__name">${item.name}</h5>
                     </td>
                     <td class="shoping__cart__price">${formatPrice(
-                      item.price
-                    )}<span> </span></td>
+        item.price
+    )}<span> </span></td>
                     <td class="shoping__cart__quantity">
                       <div class="quantity">
                         <div class="pro-qty">
                           <span class="dec qtybtn">-</span>
+                          <input type="hidden" class="shopping_cart_idProduct" value="${item.id}"/>
                           <input type="text" class="shoping__cart__quantityProduct" value="${
-                            item.quantity
-                          }" data-id="${item.id}" />
+        item.quantity
+    }" data-id="${item.id}" />
                           <span class="inc qtybtn">+</span>
                         </div>
                       </div>
                     </td>
                     <td class="shoping__cart__total"><span>${formatPrice(
-                      item.price * item.quantity
-                    )} </span></td>
+        item.price * item.quantity
+    )} </span></td>
                     <td class="shoping__cart__item__close">
                       <span class="icon_close" data-id="${
-                        item.id
-                      }" onclick="removeFromCart(event)" style="margin: 30px"></span>
+        item.id
+    }" onclick="removeFromCart(event)" style="margin: 30px"></span>
                     </td>
           `;
     tbody.appendChild(row);
@@ -105,24 +106,24 @@ function removeFromCart(event) {
     if (result.isConfirmed) {
       // Nếu người dùng chọn "Có, thực hiện!"
       Swal.fire(
-        "Đã xóa thành công!",
-        "Hành động của bạn đã được xác nhận.",
-        "success"
+          "Đã xóa thành công!",
+          "Hành động của bạn đã được xác nhận.",
+          "success"
       )
-        // Thực hiện hành động cần thiết ở đây
-        .then(() => {
-          const itemId = event.target.getAttribute("data-id");
+          // Thực hiện hành động cần thiết ở đây
+          .then(() => {
+            const itemId = event.target.getAttribute("data-id");
 
-          let cart = JSON.parse(localStorage.getItem("cart"));
+            let cart = JSON.parse(localStorage.getItem("cart"));
 
-          cart = cart.filter((item) => item.id != itemId);
+            cart = cart.filter((item) => item.id != itemId);
 
-          localStorage.setItem("cart", JSON.stringify(cart));
+            localStorage.setItem("cart", JSON.stringify(cart));
 
-          renderCartForm();
-          updateCartCount(); // Cập nhật số lượng giỏ hàng khi tải trang
-          updateCartTotal(); // cập nhật tổng tiền giỏ hàng
-        });
+            renderCartForm();
+            updateCartCount(); // Cập nhật số lượng giỏ hàng khi tải trang
+            updateCartTotal(); // cập nhật tổng tiền giỏ hàng
+          });
     } else {
       // Nếu người dùng chọn "Không, hủy!"
       Swal.fire("Đã hủy!", "Hành động của bạn đã bị hủy.", "error");
@@ -150,6 +151,7 @@ $(".check-all").on("change", function () {
   $(".check").prop("checked", isChecked).trigger("change"); // Check/unCheck tất cả
 });
 
+// Xử lý khi ấn mua hàng
 $("#checkout-btn").on("click", function (event) {
   event.preventDefault();
 
@@ -160,11 +162,20 @@ $("#checkout-btn").on("click", function (event) {
     const row = $(this).closest("tr"); //Tìm dòng sản phẩm tương ứng
     const name = row.find(".shoping__cart__name").text().trim(); // lấy tên sản phẩm
     const totalPrice = row.find(".shoping__cart__total").text().trim(); // lấy tổng giá sản phẩm
+    const quantity = row.find(".shoping__cart__quantityProduct").val().trim(); // Lấy số lượng
+    const id = row.find(".shopping_cart_idProduct").val().trim(); // Lấy id
 
-    checkoutItems.push({ name, totalPrice });
+    checkoutItems.push({id, name, quantity, totalPrice});
   });
 
-  localStorage.setItem("checkout", JSON.stringify(checkoutItems));
-
-  window.location.href = "http://localhost:8080/autokid/checkout";
+  if (checkoutItems[0] == null) {
+    Swal.fire({
+      title: "Bạn không có bất kỳ sản phẩm nào để mua",
+      icon: "warning",
+      confirmButtonText: "OK"
+    });
+  } else {
+    localStorage.setItem("checkout", JSON.stringify(checkoutItems));
+    window.location.href = "http://localhost:8080/autokid/checkout";
+  }
 });

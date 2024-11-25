@@ -1,103 +1,103 @@
 <!DOCTYPE html>
 <html lang="vi" xmlns:th="http://www.thymeleaf.org">
-  <head>
-    <meta charset="UTF-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Admin Autokid</title>
-    <!-- Favicon -->
-    <link rel="shortcut icon" href="./img/svg/logo.svg" type="image/x-icon" />
-    <!-- Custom styles -->
-    <link rel="stylesheet" href="./css/style.min.css" type="text/css" />
-    <link rel="stylesheet" th:href="@{/css/style.min.css}" type="text/css" />
-    <link
-      rel="stylesheet"
-      th:href="@{/css/customerManager.css}"
-      type="text/css"
-    />
-    <link rel="stylesheet" href="./css/customerManager.css" type="text/css" />
-    <link
-            rel="stylesheet"
-            href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css"
-    />
-    <link rel="stylesheet" href="css/header.css" type="text/css"/>
-  </head>
+<head>
+  <meta charset="UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Admin Autokid</title>
+  <!-- Favicon -->
+  <link rel="shortcut icon" href="./img/svg/logo.svg" type="image/x-icon" />
+  <!-- Custom styles -->
+  <link rel="stylesheet" href="./css/style.min.css" type="text/css" />
+  <link rel="stylesheet" th:href="@{/css/style.min.css}" type="text/css" />
+  <link
+          rel="stylesheet"
+          th:href="@{/css/customerManager.css}"
+          type="text/css"
+  />
+  <link rel="stylesheet" href="./css/customerManager.css" type="text/css" />
+  <link
+          rel="stylesheet"
+          href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css"
+  />
+  <link rel="stylesheet" href="css/header.css" type="text/css"/>
+</head>
 
-  <body>
-    <div class="layer"></div>
-    <!-- ! Body -->
-    <a class="skip-link sr-only" href="#skip-target">Skip to content</a>
-    <div class="page-flex">
-      <!-- ! Sidebar -->
-      <div th:insert="fragments/sidebar_admin :: sidebar"></div>
+<body>
+<div class="layer"></div>
+<!-- ! Body -->
+<a class="skip-link sr-only" href="#skip-target">Skip to content</a>
+<div class="page-flex">
+  <!-- ! Sidebar -->
+  <div th:insert="fragments/sidebar_admin :: sidebar"></div>
 
-      <div class="main-wrapper">
-        <!-- ! Main nav -->
-        <div th:insert="fragments/header_admin :: header"></div>
-        <!-- ! Main -->
-        <main class="main users chart-page" id="skip-target">
-          <div class="container">
-            <h2 class="main-title">Quản lý thông tin khách hàng</h2>
-            <div class="row">
-              <div class="col-lg-9">
-                <div class="search search-wrapper">
-                  <form
-                    method="get"
-                    action="/admin/customer-management/search-customer"
-                  >
-                    <i data-feather="search" aria-hidden="true"></i>
-                    <input
-                      type="text"
-                      class="txt-search"
-                      th:value="${ten}"
-                      name="ten"
-                      placeholder="Nhập tên khách hàng"
-                    />
-                    <button class="btn-search" type="submit">Tìm kiếm</button>
-                  </form>
-                </div>
-              </div>
+  <div class="main-wrapper">
+    <!-- ! Main nav -->
+    <div th:insert="fragments/header_admin :: header"></div>
+    <!-- ! Main -->
+    <main class="main users chart-page" id="skip-target">
+      <div class="container">
+        <h2 class="main-title">Quản lý thông tin khách hàng</h2>
+        <div class="row">
+          <div class="col-lg-9">
+            <div class="search search-wrapper">
+              <form
+                      method="get"
+                      action="/admin/customer-management/search-customer"
+              >
+                <i data-feather="search" aria-hidden="true"></i>
+                <input
+                        type="text"
+                        class="txt-search"
+                        th:value="${ten}"
+                        name="ten"
+                        placeholder="Nhập tên khách hàng"
+                />
+                <button class="btn-search" type="submit">Tìm kiếm</button>
+              </form>
             </div>
-            <div class="btn_create_customer">
-              <button class="show_form_create" onclick="showCreateForm()">Thêm khách hàng mới</button>
-            </div>
-            <div class="users-table">
-              <table class="posts-table">
-                <thead>
-                  <tr class="users-table-info">
-                    <th>STT</th>
-                    <th>Tên khách hàng</th>
-                    <th>Email</th>
-                    <th>Số điện thoại</th>
-                    <th>Địa chỉ</th>
-                    <th class="end_table"></th>
-                  </tr>
-                </thead>
-                <div class="scroll">
-                  <tbody>
-                    <tr th:each="khachhang,iterStat : ${khachhang}">
-                      <td th:text="${iterStat.count}"></td>
-                      <td th:text="${khachhang.tenKH}"></td>
-                      <td th:text="${khachhang.email}"></td>
-                      <td
+          </div>
+        </div>
+        <div class="btn_create_customer">
+          <button class="show_form_create" onclick="showCreateForm()">Thêm khách hàng mới</button>
+        </div>
+        <div class="users-table">
+          <table class="posts-table">
+            <thead>
+            <tr class="users-table-info">
+              <th>STT</th>
+              <th>Tên khách hàng</th>
+              <th>Email</th>
+              <th>Số điện thoại</th>
+              <th>Địa chỉ</th>
+              <th class="end_table"></th>
+            </tr>
+            </thead>
+            <div class="scroll">
+              <tbody>
+              <tr th:each="khachhang,iterStat : ${khachhang}">
+                <td th:text="${iterStat.count}"></td>
+                <td th:text="${khachhang.tenKH}"></td>
+                <td th:text="${khachhang.email}"></td>
+                <td
                         th:text="${khachhang.sdt == null ? 'Chưa có thông tin' : khachhang.sdt}"
-                      ></td>
-                      <td
+                ></td>
+                <td
                         th:text="${khachhang.diaChi == null ? 'Chưa có thông tin' : khachhang.diaChi}"
-                      ></td>
-                      <td
+                ></td>
+                <td
                         class="end_table"
                         style="max-width: 220px; width: 220px; padding: 0px"
-                      >
-                        <!-- Nút Chi tiết -->
-                        <div
+                >
+                  <!-- Nút Chi tiết -->
+                  <div
                           style="
                             display: flex;
                             align-items: center;
                             justify-content: space-around;
                           "
-                        >
-                          <button
+                  >
+                    <button
                             class="update"
                             th:data-ten="${khachhang.tenKH}"
                             th:data-email="${khachhang.email}"
@@ -107,12 +107,12 @@
                             th:data-sdtNN="${khachhang.thongTinVanChuyen == null ? 'Chưa có thông tin' : khachhang.thongTinVanChuyen.sdt}"
                             th:data-dcNN="${khachhang.thongTinVanChuyen == null ? 'Chưa có thông tin' : khachhang.thongTinVanChuyen.diaChi}"
                             onclick="showDetail(this)"
-                          >
-                            <!--                      +', '+${khachhang.thongTinVanChuyen.xa}+', '+${khachhang.thongTinVanChuyen.huyen}+', '+${khachhang.thongTinVanChuyen.tinh}-->
-                            Chi tiết
-                          </button>
-                          <!-- Overlay -->
-                          <div
+                    >
+                      <!--                      +', '+${khachhang.thongTinVanChuyen.xa}+', '+${khachhang.thongTinVanChuyen.huyen}+', '+${khachhang.thongTinVanChuyen.tinh}-->
+                      Chi tiết
+                    </button>
+                    <!-- Overlay -->
+                    <div
                             id="overlay"
                             style="
                               display: none;
@@ -124,125 +124,113 @@
                               background: rgba(0, 0, 0, 0.5);
                               z-index: 500;
                             "
-                          ></div>
+                    ></div>
+                  </div>
+                  <!-- Modal -->
+                  <div id="detailModal" class="form-modal">
+                    <div>
+                      <h2>Chi tiết thông tin khách hàng</h2>
+                      <form>
+                        <div>
+                          <label class="label-after"
+                          >Tên khách hàng:</label
+                          >
+                          <input type="text" id="modalTenKH" readonly />
                         </div>
-                        <!-- Modal -->
-                        <div id="detailModal" class="form-modal">
-                          <div>
-                            <h2>Chi tiết thông tin khách hàng</h2>
-                            <form>
-                              <div>
-                                <label class="label-after"
-                                  >Tên khách hàng:</label
-                                >
-                                <input type="text" id="modalTenKH" readonly />
-                              </div>
-                              <div>
-                                <label>Email: </label>
-                                <input type="text" id="modalEmail" readonly />
-                              </div>
-                              <div>
-                                <label>Số điện thoại: </label>
-                                <input type="text" id="modalSdt" readonly />
-                              </div>
-                              <div>
-                                <label>Địa chỉ: </label>
-                                <input type="text" id="modalDiaChi" readonly />
-                              </div>
-                            </form>
-                            <h4 style="color: #c82333; margin: 10px">
-                              Thông tin nhận hàng
-                            </h4>
-                            <form action="">
-                              <div>
-                                <label>Tên người nhận: </label>
-                                <input type="text" id="modalTenNN" readonly />
-                              </div>
-                              <div>
-                                <label>Số điện thoại: </label>
-                                <input type="text" id="modalSdtNN" readonly />
-                              </div>
-                              <div>
-                                <label>Địa chỉ nhận hàng: </label>
-                                <input
+                        <div>
+                          <label>Email: </label>
+                          <input type="text" id="modalEmail" readonly />
+                        </div>
+                        <div>
+                          <label>Số điện thoại: </label>
+                          <input type="text" id="modalSdt" readonly />
+                        </div>
+                        <div>
+                          <label>Địa chỉ: </label>
+                          <input type="text" id="modalDiaChi" readonly />
+                        </div>
+                      </form>
+                      <h4 style="color: #c82333; margin: 10px">
+                        Thông tin nhận hàng
+                      </h4>
+                      <form action="">
+                        <div>
+                          <label>Tên người nhận: </label>
+                          <input type="text" id="modalTenNN" readonly />
+                        </div>
+                        <div>
+                          <label>Số điện thoại: </label>
+                          <input type="text" id="modalSdtNN" readonly />
+                        </div>
+                        <div>
+                          <label>Địa chỉ nhận hàng: </label>
+                          <input
                                   type="text"
                                   id="modalDCNN"
                                   style="width: 80%"
                                   readonly
-                                />
-                              </div>
-                            </form>
-                            <button
+                          />
+                        </div>
+                      </form>
+                      <button
                               class="btn-closeDetail"
                               onclick="closeDetail()"
-                            >
-                              Đóng
-                            </button>
-                          </div>
-                        </div>
-                      </td>
-                    </tr>
-                  </tbody>
-                </div>
-              </table>
+                      >
+                        Đóng
+                      </button>
+                    </div>
+                  </div>
+                </td>
+              </tr>
+              </tbody>
             </div>
-          </div>
-        </main>
-
-
-<!--          Modal create customer-->
-        <div id="createModal" class="form-modal-create">
-          <div>
-            <h2>Thêm mới thông tin khách hàng</h2>
-            <form id="customerForm">
-              <div>
-                <label class="label-after">Tên khách hàng:</label>
-                <input type="text" name="tenKH" id="tenKH"/>
-              </div>
-              <div>
-                <label>Email: </label>
-                <input type="text" name="emailKH" id="emailKH"/>
-              </div>
-              <div>
-                <label>Số điện thoại: </label>
-                <input type="text" name="sdtKH" id="sdtKH"/>
-              </div>
-              <div>
-                <label>Địa chỉ: </label>
-                <input type="text" name="diaChiKH" id="diaChiKH"/>
-              </div>
-            <h3 style="color: #c82333; margin: 20px">Thông tin nhận hàng</h3>
-              <div>
-                <label>Tên người nhận: </label>
-                <input type="text" name="tenNguoiNhan" id="tenNguoiNhan"/>
-              </div>
-              <div>
-                <label>Số điện thoại: </label>
-                <input type="text" name="sdtNguoiNhan" id="sdtNguoiNhan"/>
-              </div>
-              <div>
-                <label>Địa chỉ nhận hàng: </label>
-                <input type="text" style="width: 75%;"  name="diaChiNhan" id="diaChiNhan"/>
-              </div>
-              <button type="submit" id="submitBtn" class="btn-insertCustomer">Thêm mới</button>
-              <button type="reset" class="btn-reset">Reset</button>
-              <button class="btn-closeCreate" onclick="closeCreate()">Đóng</button>
-            </form>
-
-          </div>
+          </table>
         </div>
+      </div>
+    </main>
 
-        <!-- ! Footer -->
-        <div th:insert="fragments/footer_admin :: footer"></div>
+
+    <!--          Modal create customer-->
+    <div id="createModal" class="form-modal-create">
+      <div>
+        <h2>Thêm mới thông tin khách hàng</h2>
+        <form id="customerForm">
+          <div>
+            <label class="label-after">Tên khách hàng:</label>
+            <input type="text" name="tenKH" id="tenKH"/>
+          </div>
+          <div>
+            <label>Email: </label>
+            <input type="text" name="emailKH" id="emailKH"/>
+          </div>
+          <div>
+            <label>Số điện thoại: </label>
+            <input type="text" name="sdtKH" id="sdtKH"/>
+          </div>
+          <div>
+            <label>Địa chỉ: </label>
+            <input type="text" name="diaChiKH" id="diaChiKH"/>
+          </div>
+          <button type="submit" id="submitBtn" class="btn-insertCustomer">Thêm mới</button>
+          <button type="reset" class="btn-reset">Reset</button>
+          <button class="btn-closeCreate" onclick="closeCreate()">Đóng</button>
+        </form>
+
       </div>
     </div>
-    <!-- Chart library -->
-    <script src="./plugins/chart.min.js"></script>
-    <!-- Icons library -->
-    <script src="plugins/feather.min.js"></script>
-    <!-- Custom scripts -->
-    <script src="js/script.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <script src="js/customer-mng.js"></script>
-  </body>
+
+    <!-- ! Footer -->
+    <div th:insert="fragments/footer_admin :: footer"></div>
+  </div>
+</div>
+<!-- Chart library -->
+<script src="./plugins/chart.min.js"></script>
+<!-- Icons library -->
+<script src="plugins/feather.min.js"></script>
+<!-- Custom scripts -->
+<script src="js/script.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script src="js/customer-mng.js"></script>
+<script src="js/header.js"></script>
+</body>
 </html>

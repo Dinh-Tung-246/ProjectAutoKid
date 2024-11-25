@@ -57,13 +57,6 @@ public class CustomerManagementController {
         Map<String, Object> khachHangData = (Map<String, Object>) requset.get("khachHang");
 
         KhachHang khachHang = new KhachHang();
-        ThongTinVanChuyen ttvc = new ThongTinVanChuyen();
-
-        ttvc.setMaTTVC(khachHangData.get("maNN").toString());
-        ttvc.setTenNguoiNhan(khachHangData.get("tenNN").toString());
-        ttvc.setDiaChi(khachHangData.get("diaChiNN").toString());
-        ttvc.setSdt(khachHangData.get("sdtNN").toString());
-        serviceQLKH.insertThongTinVanChuyen(ttvc);
 
         khachHang.setId(Integer.parseInt(khachHangData.get("idKH").toString()));
         khachHang.setTenKH(khachHangData.get("tenKH").toString());
