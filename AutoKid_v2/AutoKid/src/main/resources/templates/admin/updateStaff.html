@@ -105,8 +105,8 @@
 
                     <label for="gioi_tinh">Giới Tính:</label>
                     <select id="gioi_tinh" th:field="*{gioiTinh}">
-                        <option value="Nam">Nam</option>
-                        <option value="Nữ">Nữ</option>
+                        <option value="1">Nam</option>
+                        <option value="0">Nữ</option>
                     </select><br/>
 
                     <label for="ngay_sinh">Ngày Sinh:</label>
@@ -127,8 +127,21 @@
                     <label for="dia_chi">Địa Chỉ:</label>
                     <input type="text" id="dia_chi" th:field="*{diaChi}" required/><br/>
 
-                    <label for="trang_thai">Trạng Thái:</label>
-                    <input type="text" id="trang_thai" th:field="*{trangThai}" required/><br/>
+                    <div class="col-md-6">
+                        <label class="form-label">Trạng Thái:</label>
+                        <div class="form-check">
+                            <input type="radio" id="trangThaiHoatDong" name="trangThai"
+                                   value="1" class="form-check-input">
+                            <label for="trangThaiHoatDong" class="form-check-label">Đang
+                                làm</label>
+                        </div>
+                        <div class="form-check">
+                            <input type="radio" id="trangThaiNgungHoatDong" name="trangThai"
+                                   value="0" class="form-check-input">
+                            <label for="trangThaiNgungHoatDong" class="form-check-label">Đã
+                                nghỉ</label>
+                        </div>
+                    </div>
 
                     <label for="id_chuc_vu">Chức Vụ:</label>
                     <select id="id_chuc_vu" th:field="*{chucVu.id}">
@@ -142,7 +155,7 @@
             </div>
         </main>
         <!-- ! Footer -->
-        <div th:insert= "fragments/footer_admin :: footer"></div>
+        <div th:insert="fragments/footer_admin :: footer"></div>
 
     </div>
 </div>

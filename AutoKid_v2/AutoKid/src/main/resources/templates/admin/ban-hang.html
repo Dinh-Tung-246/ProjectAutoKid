@@ -173,27 +173,51 @@
 
     <!-- Modal Thanh Toán -->
     <div class="modal fade" id="paymentModal" tabindex="-1" aria-labelledby="paymentModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-lg">
+        <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="paymentModalLabel">Thông Tin Hóa Đơn</h5>
+                    <h5 class="modal-title" id="paymentModalLabel"></h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <h4>Thông Tin Hóa Đơn</h4>
-                    <ul id="invoiceDetails" class="list-group mb-3"></ul>
+                    <h4 class="text-center">Thông Tin Hóa Đơn</h4>
+                    <!-- Thông tin cơ bản của hóa đơn -->
+                    <div class="mb-3">
+                        <strong>Mã hóa đơn:</strong> <span id="invoiceCode">#123456</span><br>
+                        <strong>Tên khách hàng:</strong> <span id="customerName">Nguyễn Văn A</span><br>
+                        <strong>Tên nhân viên:</strong> <span id="staffName">Trần Thị B</span><br>
+                        <strong>Ngày tạo:</strong> <span id="creationDate">21/11/2024</span>
+                    </div>
+
+                    <!-- Bảng danh sách sản phẩm -->
+                    <table class="table table-bordered">
+                        <thead>
+                        <tr>
+                            <th scope="col">STT</th>
+                            <th scope="col">Tên Sản Phẩm</th>
+                            <th scope="col">Giá Bán</th>
+                            <th scope="col">Tổng Tiền</th>
+                        </tr>
+                        </thead>
+                        <tbody id="productTable">
+                        <!-- Các dòng sản phẩm sẽ được thêm động ở đây -->
+                        </tbody>
+                    </table>
+
+                    <!-- Tổng tiền hóa đơn -->
                     <div class="d-flex justify-content-between">
                         <h5>Tổng tiền:</h5>
                         <h5 id="modalTotal">0 VND</h5>
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
                     <button type="button" class="btn btn-primary">Thanh Toán</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
                 </div>
             </div>
         </div>
     </div>
+
 
 </div>
 

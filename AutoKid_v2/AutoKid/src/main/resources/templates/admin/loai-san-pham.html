@@ -87,7 +87,7 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <form action="/admin/add/loai-san-pham" method="post">
+                    <form action="/admin/add/loai-san-pham" method="post" onsubmit="handleAddLSP(event, this)">
                         <div class="mb-3">
                             <label for="maLSP" class="form-label">Mã loại sản phẩm:</label>
                             <input type="text" class="form-control border border-secondary" id="maLSP" name="maLSP" required>
@@ -173,7 +173,7 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <form th:action="@{/admin/update/loai-san-pham}" th:object="${updateLoaiSanPham}" method="post">
+                    <form th:action="@{/admin/update/loai-san-pham}" th:object="${updateLoaiSanPham}" method="post"onsubmit="handleUpdateLSP(event, this)">
                         <input type="hidden" id="id" th:field="*{idLoaiSP}">
                         <div class="mb-3">
                             <label for="maLSP" class="form-label">Mã loại sản phẩm:</label>
@@ -239,6 +239,8 @@
 <script src="./plugins/feather.min.js"></script>
 <!-- Custom scripts -->
 <script src="./js/script.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script src="./js/products.js"></script>
 </body>
 
 </html>

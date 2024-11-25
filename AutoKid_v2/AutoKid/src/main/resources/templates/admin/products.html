@@ -89,7 +89,7 @@
                             <td th:text="${sp.sanPham.chatLieu.tenCl}"></td>
                             <td th:text="${sp.sanPham.kichCo.tenKC}"></td>
                             <td th:text="${sp.mauSac.tenMS}"></td>
-                            <td th:text="${sp.anh}"></td>
+                            <td><img th:src="@{'/img/categories/' + ${sp.anh}}" alt="Ảnh sản phẩm"></td>
                             <td th:text="${sp.trangThaiSPCT}"></td>
                             <td>
                                 <button  class="view-detail btn btn-info" data-bs-toggle="modal" data-bs-target="#productDetailModal"
@@ -98,6 +98,7 @@
                                          th:data-ten-sp="${sp.sanPham.id}"
                                          th:data-so-luong="${sp.soLuong}"
                                          th:data-mau-sac="${sp.mauSac.id}"
+                                         th:data-anh="${sp.anh}"
                                          th:data-trang-thai="${sp.trangThaiSPCT}">
                                     Chi tiết
                                 </button>
@@ -119,7 +120,7 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <form action="/admin/add/san-pham-chi-tiet" method="post">
+                    <form action="/admin/add/san-pham-chi-tiet" method="post" enctype="multipart/form-data" onsubmit="handleAddSPCT(event, this)">
                         <div class="mb-3">
                             <label for="maSPCT" class="form-label">Mã sản phẩm chi tiết:</label>
                             <input type="text" class="form-control border border-secondary" id="maSPCT" name="maSPCT" required>
@@ -134,13 +135,17 @@
                         <div class="mb-3">
                             <label for="mauSac" class="form-label">Tên màu sắc:</label>
                             <select class="form-control" id="mauSac" name="mauSac" required>
-                                <option value="" disabled selected>Chọn loại sản phẩm</option>
+                                <option value="" disabled selected>Chọn màu sắc</option>
                                 <option th:each="mauSac : ${dsMauSac}" th:value="${mauSac.id}" th:text="${mauSac.tenMS}"></option>
                             </select>
                         </div>
                         <div class="mb-3">
                             <label for="soLuong" class="form-label">Số lượng:</label>
                             <input type="number" class="form-control border border-secondary" id="soLuong" name="soLuong" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="anh" class="form-label mt-2">Ảnh</label>
+                            <input type="file" class="form-control border border-secondary" id="anh" name="anh" accept="image/*">
                         </div>
                         <div class="mb-3">
                             <label for="trangThaiSPCT">Trạng thái</label>
@@ -154,6 +159,7 @@
                             <button type="submit" class="btn btn-primary">Lưu</button>
                         </div>
                     </form>
+
                 </div>
             </div>
         </div>
@@ -193,7 +199,9 @@
                             <td th:text="${sp.sanPham.chatLieu.tenCl}"></td>
                             <td th:text="${sp.sanPham.kichCo.tenKC}"></td>
                             <td th:text="${sp.mauSac.tenMS}"></td>
-                            <td th:text="${sp.anh}"></td>
+                           <td><img th:if="${sp.anh != null and !sp.anh.isEmpty()}"
+                                    th:src="@{'/img/categories/' + ${sp.anh}}"
+                                    alt="Ảnh sản phẩm"></td>
                             <td th:text="${sp.trangThaiSPCT}"></td>
                             <td>
                                 <button  class="view-detail btn btn-info" data-bs-toggle="modal" data-bs-target="#productDetailModal"
@@ -202,6 +210,7 @@
                                          th:data-ten-sp="${sp.sanPham.id}"
                                          th:data-so-luong="${sp.soLuong}"
                                          th:data-mau-sac="${sp.mauSac.id}"
+                                         th:data-anh="${sp.anh}"
                                          th:data-trang-thai="${sp.trangThaiSPCT}">
                                     Chi tiết
                                 </button>
@@ -226,7 +235,7 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <form th:action="@{/admin/update/products}" th:object="${updateSPCT}" method="post">
+                    <form th:action="@{/admin/update/products}" th:object="${updateSPCT}" method="post" onsubmit="handleUpdateSPCT(event, this)">
                         <input type="hidden" id="productId" name="id" th:field="*{id}">
 
                         <div class="mb-3">
@@ -254,7 +263,14 @@
                                 <option th:each="mauSac : ${dsMauSac}" th:value="${mauSac.id}" th:text="${mauSac.tenMS}"></option>
                             </select>
                         </div>
-
+                        <div class="mb-3">
+                            <label for="anh" class="form-label">Ảnh hiện tại</label>
+                            <div>
+                                <img id="currentImage" src="" alt="Ảnh hiện tại" style="max-width: 100px; max-height: 100px;">
+                            </div>
+                            <label for="anh" class="form-label mt-2">Thay đổi ảnh</label>
+                            <input type="file" class="form-control border border-secondary" id="anh" name="anh" accept="image/*">
+                        </div>
                         <div class="mb-3">
                             <label for="productStatus" class="form-label">Trạng thái</label>
                             <select class="form-control border border-secondary" id="productStatus" th:field="*{trangThaiSPCT}">
@@ -287,6 +303,7 @@
                 const tenSP = this.getAttribute('data-ten-sp');
                 const soLuong = this.getAttribute('data-so-luong');
                 const mauSac = this.getAttribute('data-mau-sac');
+                const anh = this.getAttribute('data-anh');
                 const trangThaiSPCT = this.getAttribute('data-trang-thai');
 
                 // Cập nhật các giá trị vào form trong modal
@@ -298,6 +315,10 @@
                     modal.querySelector('#productQuantity').value = soLuong || '';
                     modal.querySelector('#productColor').value = mauSac || '';
                     modal.querySelector('#productStatus').value = trangThaiSPCT || '';
+                    const currentImage = modal.querySelector('#currentImage');
+                    if (currentImage) {
+                        currentImage.src = '/img/categories/' + (anh || '');
+                    }
                 } else {
                     console.log("Không tìm thấy modal");
                 }
@@ -312,6 +333,8 @@
 <script src="./plugins/feather.min.js"></script>
 <!-- Custom scripts -->
 <script src="./js/script.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<!--<script src="./js/products.js"></script>-->
 
 </body>
 
