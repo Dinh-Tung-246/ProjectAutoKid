@@ -4,6 +4,7 @@ package com.example.demo.controller;
 import com.example.demo.model.HoaDon;
 import com.example.demo.model.HoaDonChiTiet;
 import com.example.demo.repository.KhachHangRepo;
+import com.example.demo.repository.PhuongThucThanhToanRepo;
 import com.example.demo.repository.SanPhamChiTietRepo;
 import com.example.demo.service.QuanLyDatHangService;
 import com.example.demo.service.VNPAYService;
@@ -39,6 +40,9 @@ public class VNPAYController {
 
     @Autowired
     SanPhamChiTietRepo spctRepo;
+
+    @Autowired
+    PhuongThucThanhToanRepo phuongThucThanhToanRepo;
 
     @GetMapping("/")
     public String home() {
@@ -95,6 +99,7 @@ public class VNPAYController {
 
         HoaDon hoaDon = new HoaDon();
         hoaDon.setMaHD(maHD.toString());
+        hoaDon.setPhuongThucThanhToan(phuongThucThanhToanRepo.findById(2).orElseThrow());
         hoaDon.setKhachHang(khachHangRepo.findById(idKH).orElseThrow());
         hoaDon.setPhiShip(0.0F);
         hoaDon.setTongTien(Float.parseFloat(totalPrice));
