@@ -52,7 +52,7 @@
                     </div>
                 </div>
                 <div class="users-table table-wrapper">
-                    <table id="loaiSanPhamTable" class="posts-table">
+                    <table id="loaiSanPhamTableHoatDong" class="posts-table">
                         <thead>
                         <tr class="users-table-info">
                             <th>Mã loại sản phẩm</th>
@@ -107,15 +107,15 @@
                             <input type="text" class="form-control border border-secondary" id="tenLoai" name="tenLoai" required>
                         </div>
                         <div class="mb-3">
+                            <label for="moTa" class="form-label">Mô tả:</label>
+                            <input type="text" class="form-control border border-secondary" id="moTa" name="moTa">
+                        </div>
+                        <div class="mb-3">
                             <label for="trangThai">Trạng thái</label>
                             <select class="form-control" id="trangThai" name="trangThai">
                                 <option value="Đang bán" selected>Đang bán</option>
                                 <option value="Ngừng bán">Ngừng bán</option>
                             </select>
-                        </div>
-                        <div class="mb-3">
-                            <label for="moTa" class="form-label">Mô tả:</label>
-                            <input type="text" class="form-control border border-secondary" id="moTa" name="moTa">
                         </div>
                         <div class="modal-footer">
                             <button type="submit" class="btn btn-primary">Lưu</button>
@@ -135,7 +135,7 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <table class="posts-table">
+                    <table id="loaiSanPhamTableKhongHoatDong" class="posts-table">
                         <thead>
                         <tr class="users-table-info">
                             <th>Mã loại sản phẩm</th>
@@ -176,14 +176,14 @@
 
     <!-- Modal cập nhật Loại sản phẩm -->
     <div class="modal fade" id="productDetailModal" tabindex="-1" aria-labelledby="productDetailModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-lg">
+        <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title" id="productDetailModalLabel">Chi Tiết Sản Phẩm</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <form th:action="@{/admin/update/loai-san-pham}" th:object="${updateLoaiSanPham}" method="post"onsubmit="handleUpdateLSP(event, this)">
+                    <form  th:object="${updateLoaiSanPham}" method="post"onsubmit="handleUpdateLSP(event, this)">
                         <input type="hidden" id="id" th:field="*{idLoaiSP}">
                         <div class="mb-3">
                             <label for="maLSP" class="form-label">Mã loại sản phẩm:</label>

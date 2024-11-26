@@ -73,6 +73,9 @@ public class QuanLySanPhamService {
         thuongHieuRepo.save(thuongHieu);
     }
 
+    public boolean isMaTHExist(String maTH) {
+        return thuongHieuRepo.existsByMaTH(maTH);
+    }
     public void updateThuongHieu(ThuongHieu thuongHieu){thuongHieuRepo.save(thuongHieu);}
 
     public List<ThuongHieu> searchTH(String tenTH){
@@ -87,6 +90,9 @@ public class QuanLySanPhamService {
         mauSacRepo.save(mauSac);
     }
 
+    public boolean isMaMSExist(String maMS) {
+        return mauSacRepo.existsByMaMS(maMS);
+    }
     public void updateMauSac(MauSac mauSac){mauSacRepo.save(mauSac);}
 
     public void deleteMauSac(Integer id){
@@ -107,6 +113,9 @@ public class QuanLySanPhamService {
         kichCoRepo.save(kichCo);
     }
 
+    public boolean isMaKCExist(String maKC) {
+        return kichCoRepo.existsByMaKC(maKC);
+    }
     public void updateKichCo(KichCo kichCo){kichCoRepo.save(kichCo);}
 
     public void deleteKichCo(Integer id){
@@ -121,6 +130,9 @@ public class QuanLySanPhamService {
         chatLieuRepo.save(chatLieu);
     }
 
+    public boolean isMaCLExist(String maCl) {
+        return chatLieuRepo.existsByMaCl(maCl);
+    }
     public void deleteChatLieu(Integer id){
         chatLieuRepo.deleteById(id);
     }
@@ -130,6 +142,10 @@ public class QuanLySanPhamService {
     }
 
     public void uodateLoaiSanPham(LoaiSanPham loaiSanPham){loaiSanPhamRepo.save(loaiSanPham);}
+
+    public boolean isMaLSPExist(String maLSP) {
+        return loaiSanPhamRepo.existsByMaLSP(maLSP);
+    }
 
     public List<LoaiSanPham> getAllLoaiSanPham(){
         return loaiSanPhamRepo.findAll();

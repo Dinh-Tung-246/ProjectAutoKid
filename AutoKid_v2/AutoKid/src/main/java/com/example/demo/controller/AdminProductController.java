@@ -190,10 +190,20 @@ public class AdminProductController {
     }
 
     @PostMapping("/add/mau-sac")
-    public String addMauSac(@ModelAttribute MauSac mauSac){
-        service.addMauSac(mauSac);
-        return "redirect:/admin/mau-sac";
+    @ResponseBody
+    public ResponseEntity<?> addMauSac(@ModelAttribute MauSac mauSac) {
+        try {
+            // Kiểm tra xem mã thương hiệu có trùng không
+            if (service.isMaMSExist(mauSac.getMaMS())) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Mã màu sắc đã tồn tại.");
+            }
+            service.addMauSac(mauSac);
+            return ResponseEntity.ok("Thêm màu sắc thành công!");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Có lỗi xảy ra khi thêm màu sắc.");
+        }
     }
+
 
     @GetMapping("/mau-sac/list")
     @ResponseBody
@@ -224,6 +234,10 @@ public class AdminProductController {
     @ResponseBody
     public ResponseEntity<?> addKichCo(@ModelAttribute KichCo kichCo) {
         try {
+            // Kiểm tra xem mã thương hiệu có trùng không
+            if (service.isMaKCExist(kichCo.getMaKC())) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Mã kích cỡ đã tồn tại.");
+            }
             service.addKichCo(kichCo);
             return ResponseEntity.ok("Thêm kích cỡ thành công!");
         } catch (Exception e) {
@@ -247,6 +261,10 @@ public class AdminProductController {
     @ResponseBody
     public ResponseEntity<?> addThuongHieu(@ModelAttribute ThuongHieu thuongHieu) {
         try {
+            // Kiểm tra xem mã thương hiệu có trùng không
+            if (service.isMaTHExist(thuongHieu.getMaTH())) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Mã thương hiệu đã tồn tại.");
+            }
             service.AddThuongHieu(thuongHieu);
             return ResponseEntity.ok("Thêm thương hiệu thành công!");
         } catch (Exception e) {
@@ -259,6 +277,7 @@ public class AdminProductController {
     public List<ThuongHieu> getDanhSachThuongHieu() {
         return service.getAllThuongHieu();
     }
+
 
 
     @GetMapping("/thuong-hieu/search")
@@ -281,6 +300,9 @@ public class AdminProductController {
     @ResponseBody // Thêm annotation này để trả về JSON
     public ResponseEntity<?> addChatLieu(@ModelAttribute ChatLieu chatLieu) {
         try {
+            if (service.isMaCLExist(chatLieu.getMaCl())) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Mã chất liệu đã tồn tại.");
+            }
             service.addChatLieu(chatLieu);
             return ResponseEntity.ok("Thêm chất liệu thành công!");
         } catch (Exception e) {
@@ -311,6 +333,9 @@ public class AdminProductController {
     @ResponseBody
     public ResponseEntity<?> addLoaiSanPham(@ModelAttribute LoaiSanPham loaiSanPham) {
         try {
+            if (service.isMaLSPExist(loaiSanPham.getMaLSP())) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Mã loại sản phẩm đã tồn tại.");
+            }
             service.addLoaiSanPham(loaiSanPham);
             return ResponseEntity.ok("Thêm loại sản phẩm thành công!");
         } catch (Exception e) {

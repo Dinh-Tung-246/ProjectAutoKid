@@ -20,6 +20,39 @@ socket.onclose = function() {
 function handleAddTH(event, form) {
     event.preventDefault(); // Ngăn chặn hành động mặc định của form
 
+    const maTH = form.querySelector('#maTH').value.trim();
+    const tenTH = form.querySelector('#tenTH').value.trim();
+    const diaChi = form.querySelector('#diaChi').value.trim();
+
+    // Validate phía client
+    if (!maTH) {
+        Swal.fire({
+            title: "Lỗi!",
+            text: "Mã thương hiệu không được để trống.",
+            icon: "error",
+            confirmButtonText: "OK"
+        });
+        return;
+    }
+    if (!tenTH) {
+        Swal.fire({
+            title: "Lỗi!",
+            text: "Tên thương hiệu không được để trống.",
+            icon: "error",
+            confirmButtonText: "OK"
+        });
+        return;
+    }
+    if (!diaChi) {
+        Swal.fire({
+            title: "Lỗi!",
+            text: "Địa chỉ không được để trống.",
+            icon: "error",
+            confirmButtonText: "OK"
+        });
+        return;
+    }
+
     const formData = new FormData(form);
 
     // Gửi dữ liệu form qua fetch API
@@ -76,6 +109,8 @@ function handleUpdateTH(event, form) {
                 icon: "success",
                 confirmButtonText: "OK"
             }).then(() => {
+                const modalElement = document.querySelector('#updateThuongHieuModal');
+
                 form.reset();
                 // Cập nhật danh sách thương hiệu (bạn cần định nghĩa hàm này)
                 updateThuongHieuList();
@@ -103,16 +138,16 @@ function updateThuongHieuList() {
         .then(data => {
             const thuongHieuSelect = document.querySelector('#thuongHieu');
             const thuongHieuTableBody = document.querySelector('#thuongHieuTable tbody');
+            const thuongHieuTableAnBody = document.querySelector('#thuongHieuTableAn tbody');
             const sanPhamTableBody = document.querySelector('#sanPhamTable tbody');
 
-
-
-            // Cập nhật danh sách thương hiệu
+            // Cập nhật danh sách thương hiệu "Hoạt động"
             if (thuongHieuTableBody) {
                 thuongHieuTableBody.innerHTML = '';
                 data.forEach(thuongHieu => {
-                    const row = document.createElement('tr');
-                    row.innerHTML = `
+                    if (thuongHieu.trangThaiTH === 'Hoạt động') {
+                        const row = document.createElement('tr');
+                        row.innerHTML = `
                         <td>${thuongHieu.maTH}</td>
                         <td>${thuongHieu.tenTH}</td>
                         <td>${thuongHieu.trangThaiTH}</td>
@@ -130,10 +165,43 @@ function updateThuongHieuList() {
                             </button>
                         </td>
                     `;
-                    thuongHieuTableBody.appendChild(row);
+                        thuongHieuTableBody.appendChild(row);
+                    }
                 });
                 attachUpdateButtonEvents();
             }
+
+            // Cập nhật danh sách thương hiệu "Không hoạt động"
+            if (thuongHieuTableAnBody) {
+                thuongHieuTableAnBody.innerHTML = ''; // Xóa dữ liệu cũ
+                data.forEach(thuongHieu => {
+                    if (thuongHieu.trangThaiTH === 'Không hoạt động') {
+                        const row = document.createElement('tr');
+                        row.innerHTML = `
+                        <td>${thuongHieu.maTH}</td>
+                        <td>${thuongHieu.tenTH}</td>
+                        <td>${thuongHieu.trangThaiTH}</td>
+                        <td>${thuongHieu.diaChi}</td>
+                        <td>
+                            <button class="view-detail btn btn-info"
+                                    data-bs-toggle="modal"
+                                    data-bs-target="#productDetailModal"
+                                    data-id="${thuongHieu.id}"
+                                    data-math="${thuongHieu.maTH}"
+                                    data-tenth="${thuongHieu.tenTH}"
+                                    data-trangthai="${thuongHieu.trangThaiTH}"
+                                    data-diachi="${thuongHieu.diaChi}">
+                                Cập nhật
+                            </button>
+                        </td>
+                    `;
+                        thuongHieuTableAnBody.appendChild(row);
+                    }
+                });
+                attachUpdateButtonEvents();
+            }
+
+            // Cập nhật danh sách thương hiệu trong dropdown
             if (sanPhamTableBody) {
                 thuongHieuSelect.innerHTML = '<option value="" disabled selected>Chọn thương hiệu</option>';
                 data.forEach(thuongHieu => {
@@ -305,10 +373,32 @@ function updateSPList() {
         });
 }
 
-
-
 function handleAddCL(event, form) {
     event.preventDefault(); // Ngăn chặn hành động mặc định của form
+
+    const tenCL = form.querySelector('#tenCl').value.trim(); // Lấy giá trị tên chất liệu
+    const trangThaiCL = form.querySelector('#trangThaiCl').value.trim(); // Lấy giá trị trạng thái
+
+    // Validate: Kiểm tra tên chất liệu và trạng thái
+    if (!tenCL) {
+        Swal.fire({
+            title: "Lỗi!",
+            text: "Tên chất liệu không được để trống!",
+            icon: "error",
+            confirmButtonText: "OK"
+        });
+        return;
+    }
+
+    if (!trangThaiCL) {
+        Swal.fire({
+            title: "Lỗi!",
+            text: "Trạng thái chất liệu không được để trống!",
+            icon: "error",
+            confirmButtonText: "OK"
+        });
+        return;
+    }
 
     const formData = new FormData(form);
 
@@ -318,7 +408,6 @@ function handleAddCL(event, form) {
         body: formData
     }).then(response => {
         if (response.ok) {
-            // Thêm chất liệu thành công, đóng modal và cập nhật danh sách chất liệu
             Swal.fire({
                 title: "Thêm chất liệu thành công!",
                 icon: "success",
@@ -349,8 +438,33 @@ function handleAddCL(event, form) {
     return false;
 }
 
+
 function handleUpdateCL(event, form) {
     event.preventDefault(); // Ngăn chặn hành động mặc định của form
+
+    const tenCL = form.querySelector('#tenCL').value.trim(); // Lấy giá trị tên chất liệu
+    const trangThaiCL = form.querySelector('#trangThaiCL').value.trim(); // Lấy giá trị trạng thái
+
+    // Validate: Kiểm tra tên chất liệu và trạng thái
+    if (!tenCL) {
+        Swal.fire({
+            title: "Lỗi!",
+            text: "Tên chất liệu không được để trống!",
+            icon: "error",
+            confirmButtonText: "OK"
+        });
+        return;
+    }
+
+    if (!trangThaiCL) {
+        Swal.fire({
+            title: "Lỗi!",
+            text: "Trạng thái chất liệu không được để trống!",
+            icon: "error",
+            confirmButtonText: "OK"
+        });
+        return;
+    }
 
     const formData = new FormData(form);
 
@@ -360,7 +474,6 @@ function handleUpdateCL(event, form) {
         body: formData
     }).then(response => {
         if (response.ok) {
-            // Cập nhật chất liệu thành công
             Swal.fire({
                 title: "Cập nhật chất liệu thành công!",
                 icon: "success",
@@ -387,43 +500,71 @@ function handleUpdateCL(event, form) {
     return false;
 }
 
-
-
 function updateChatLieuList() {
-    fetch('/admin/chat-lieu/list')  // URL lấy danh sách chất liệu mới
+    fetch('/admin/chat-lieu/list')  // URL để lấy danh sách chất liệu
         .then(response => response.json())
         .then(data => {
-            const chatLieuSelect = document.querySelector('#chatLieu');
             const chatLieuTableBody = document.querySelector('#chatLieuTable tbody');
+            const chatLieuTableAnBody = document.querySelector('#chatLieuTableAn tbody');
+            const chatLieuSelect = document.querySelector('#chatLieu');
 
-            // Kiểm tra nếu đang ở trang quản lý chất liệu
+            // Cập nhật danh sách chất liệu "Hoạt động"
             if (chatLieuTableBody) {
                 chatLieuTableBody.innerHTML = '';
                 data.forEach(chatLieu => {
-                    const row = document.createElement('tr');
-                    row.innerHTML = `
-                        <td>${chatLieu.maCl}</td>
-                        <td>${chatLieu.tenCl}</td>
-                        <td>${chatLieu.trangThaiCl}</td>
-                        <td>
-                            <button class="view-detail btn btn-info"
-                                    data-bs-toggle="modal"
-                                    data-bs-target="#productDetailModal"
-                                    data-id="${chatLieu.id}"
-                                    data-macl="${chatLieu.maCl}"
-                                    data-tencl="${chatLieu.tenCl}"
-                                    data-trangthai="${chatLieu.trangThaiCl}">
-                                Cập nhật
-                            </button>
-                        </td>
-                    `;
-                    chatLieuTableBody.appendChild(row);
+                    if (chatLieu.trangThaiCl === 'Hoạt động') {
+                        const row = document.createElement('tr');
+                        row.innerHTML = `
+                            <td>${chatLieu.maCl}</td>
+                            <td>${chatLieu.tenCl}</td>
+                            <td>${chatLieu.trangThaiCl}</td>
+                            <td>
+                                <button class="view-detail btn btn-info"
+                                        data-bs-toggle="modal"
+                                        data-bs-target="#productDetailModal"
+                                        data-id="${chatLieu.id}"
+                                        data-macl="${chatLieu.maCl}"
+                                        data-tencl="${chatLieu.tenCl}"
+                                        data-trangthai="${chatLieu.trangThaiCl}">
+                                    Cập nhật
+                                </button>
+                            </td>
+                        `;
+                        chatLieuTableBody.appendChild(row);
+                    }
                 });
-                // Đính kèm sự kiện vào các nút cập nhật
                 attachUpdateButtonEvents();
             }
 
-            // Cập nhật danh sách chọn chất liệu (nếu cần thiết)
+            // Cập nhật danh sách chất liệu "Không hoạt động"
+            if (chatLieuTableAnBody) {
+                chatLieuTableAnBody.innerHTML = ''; // Xóa dữ liệu cũ
+                data.forEach(chatLieu => {
+                    if (chatLieu.trangThaiCl === 'Không hoạt động') {
+                        const row = document.createElement('tr');
+                        row.innerHTML = `
+                            <td>${chatLieu.maCl}</td>
+                            <td>${chatLieu.tenCl}</td>
+                            <td>${chatLieu.trangThaiCl}</td>
+                            <td>
+                                <button class="view-detail btn btn-info"
+                                        data-bs-toggle="modal"
+                                        data-bs-target="#productDetailModal"
+                                        data-id="${chatLieu.id}"
+                                        data-macl="${chatLieu.maCl}"
+                                        data-tencl="${chatLieu.tenCl}"
+                                        data-trangthai="${chatLieu.trangThaiCl}">
+                                    Cập nhật
+                                </button>
+                            </td>
+                        `;
+                        chatLieuTableAnBody.appendChild(row);
+                    }
+                });
+                attachUpdateButtonEvents();
+            }
+
+            // Cập nhật danh sách chất liệu trong dropdown
             if (chatLieuSelect) {
                 chatLieuSelect.innerHTML = '<option value="" disabled selected>Chọn chất liệu</option>';
                 data.forEach(chatLieu => {
@@ -449,10 +590,34 @@ function handleUpdateSPCT(event, form) {
 function handleAddMS(event, form) {
     event.preventDefault(); // Ngăn chặn hành động mặc định của form
 
+    const tenMS = form.querySelector('#tenMS').value.trim(); // Lấy giá trị tên màu sắc
+    const trangThaiMS = form.querySelector('#trangThaiMS').value.trim(); // Lấy giá trị trạng thái
+
+    // Validate: Kiểm tra tên màu sắc và trạng thái
+    if (!tenMS) {
+        Swal.fire({
+            title: "Lỗi!",
+            text: "Tên màu sắc không được để trống!",
+            icon: "error",
+            confirmButtonText: "OK"
+        });
+        return;
+    }
+
+    if (!trangThaiMS) {
+        Swal.fire({
+            title: "Lỗi!",
+            text: "Trạng thái màu sắc không được để trống!",
+            icon: "error",
+            confirmButtonText: "OK"
+        });
+        return;
+    }
+
     const formData = new FormData(form);
 
     // Gửi dữ liệu form qua fetch API
-    fetch('/admin/add/mau-sac', {  // URL thêm chất liệu mới
+    fetch('/admin/add/mau-sac', {  // URL thêm màu sắc mới
         method: 'POST',
         body: formData
     }).then(response => {
@@ -467,7 +632,7 @@ function handleAddMS(event, form) {
                 const modalInstance = bootstrap.Modal.getInstance(modalElement);
                 modalInstance.hide();
                 form.reset();
-                // Cập nhật lại danh sách chất liệu
+                // Cập nhật lại danh sách màu sắc
                 updateMauSacList();
             });
         } else {
@@ -490,22 +655,46 @@ function handleAddMS(event, form) {
 function handleUpdateMS(event, form) {
     event.preventDefault(); // Ngăn chặn hành động mặc định của form
 
+    const tenMS = form.querySelector('#tenMS').value.trim(); // Lấy giá trị tên màu sắc
+    const trangThaiMS = form.querySelector('#trangThaiMS').value.trim(); // Lấy giá trị trạng thái
+
+    // Validate: Kiểm tra tên màu sắc và trạng thái
+    if (!tenMS) {
+        Swal.fire({
+            title: "Lỗi!",
+            text: "Tên màu sắc không được để trống!",
+            icon: "error",
+            confirmButtonText: "OK"
+        });
+        return;
+    }
+
+    if (!trangThaiMS) {
+        Swal.fire({
+            title: "Lỗi!",
+            text: "Trạng thái màu sắc không được để trống!",
+            icon: "error",
+            confirmButtonText: "OK"
+        });
+        return;
+    }
+
     const formData = new FormData(form);
 
     // Gửi dữ liệu form qua fetch API
-    fetch('/admin/update/mau-sac', {  // URL cập nhật chất liệu
+    fetch('/admin/update/mau-sac', {  // URL cập nhật màu sắc
         method: 'POST',
         body: formData
     }).then(response => {
         if (response.ok) {
-            // Cập nhật chất liệu thành công
+            // Cập nhật màu sắc thành công
             Swal.fire({
                 title: "Cập nhật màu sắc thành công!",
                 icon: "success",
                 confirmButtonText: "OK"
             }).then(() => {
                 form.reset();
-                // Cập nhật lại danh sách chất liệu
+                // Cập nhật lại danh sách màu sắc
                 updateMauSacList();
             });
         } else {
@@ -526,40 +715,70 @@ function handleUpdateMS(event, form) {
 }
 
 function updateMauSacList() {
-    fetch('/admin/mau-sac/list')  // URL để lấy danh sách màu sắc mới
+    fetch('/admin/mau-sac/list')  // URL để lấy danh sách màu sắc
         .then(response => response.json())
         .then(data => {
-            const mauSacTableBody = document.querySelector('.posts-table tbody');
+            const mauSacTableBody = document.querySelector('#mauSacTable tbody');
+            const mauSacTableAnBody = document.querySelector('#mauSacTableAn tbody');
             const mauSacSelect = document.querySelector('#mauSac');
 
-            // Kiểm tra nếu đang ở trang quản lý màu sắc
+            // Cập nhật danh sách màu sắc "Hoạt động"
             if (mauSacTableBody) {
                 mauSacTableBody.innerHTML = '';
                 data.forEach(mauSac => {
-                    const row = document.createElement('tr');
-                    row.innerHTML = `
-                        <td>${mauSac.maMS}</td>
-                        <td>${mauSac.tenMS}</td>
-                        <td>${mauSac.trangThaiMS}</td>
-                        <td>
-                            <button class="view-detail btn btn-info"
-                                    data-bs-toggle="modal"
-                                    data-bs-target="#productDetailModal"
-                                    data-id="${mauSac.id}"
-                                    data-mams="${mauSac.maMS}"
-                                    data-tenms="${mauSac.tenMS}"
-                                    data-trangthai="${mauSac.trangThaiMS}">
-                                Cập nhật
-                            </button>
-                        </td>
-                    `;
-                    mauSacTableBody.appendChild(row);
+                    if (mauSac.trangThaiMS === 'Hoạt động') {
+                        const row = document.createElement('tr');
+                        row.innerHTML = `
+                            <td>${mauSac.maMS}</td>
+                            <td>${mauSac.tenMS}</td>
+                            <td>${mauSac.trangThaiMS}</td>
+                            <td>
+                                <button class="view-detail btn btn-info"
+                                        data-bs-toggle="modal"
+                                        data-bs-target="#productDetailModal"
+                                        data-id="${mauSac.id}"
+                                        data-mams="${mauSac.maMS}"
+                                        data-tenms="${mauSac.tenMS}"
+                                        data-trangthai="${mauSac.trangThaiMS}">
+                                    Cập nhật
+                                </button>
+                            </td>
+                        `;
+                        mauSacTableBody.appendChild(row);
+                    }
                 });
-                // Đính kèm sự kiện vào các nút cập nhật
                 attachUpdateButtonEvents();
             }
 
-            // Cập nhật danh sách chọn màu sắc (nếu cần thiết)
+            // Cập nhật danh sách màu sắc "Không hoạt động"
+            if (mauSacTableAnBody) {
+                mauSacTableAnBody.innerHTML = ''; // Xóa dữ liệu cũ
+                data.forEach(mauSac => {
+                    if (mauSac.trangThaiMS === 'Không hoạt động') {
+                        const row = document.createElement('tr');
+                        row.innerHTML = `
+                            <td>${mauSac.maMS}</td>
+                            <td>${mauSac.tenMS}</td>
+                            <td>${mauSac.trangThaiMS}</td>
+                            <td>
+                                <button class="view-detail btn btn-info"
+                                        data-bs-toggle="modal"
+                                        data-bs-target="#productDetailModal"
+                                        data-id="${mauSac.id}"
+                                        data-mams="${mauSac.maMS}"
+                                        data-tenms="${mauSac.tenMS}"
+                                        data-trangthai="${mauSac.trangThaiMS}">
+                                    Cập nhật
+                                </button>
+                            </td>
+                        `;
+                        mauSacTableAnBody.appendChild(row);
+                    }
+                });
+                attachUpdateButtonEvents();
+            }
+
+            // Cập nhật danh sách màu sắc trong dropdown
             if (mauSacSelect) {
                 mauSacSelect.innerHTML = '<option value="" disabled selected>Chọn màu sắc</option>';
                 data.forEach(mauSac => {
@@ -575,15 +794,37 @@ function updateMauSacList() {
         });
 }
 
-
-
 function handleAddKC(event, form) {
     event.preventDefault(); // Ngăn chặn hành động mặc định của form
+
+    const tenKC = form.querySelector('#tenKC').value.trim(); // Lấy giá trị tên kích cỡ
+    const trangThaiKC = form.querySelector('#trangThaiKC').value.trim(); // Lấy giá trị trạng thái
+
+    // Validate: Kiểm tra tên kích cỡ và trạng thái
+    if (!tenKC) {
+        Swal.fire({
+            title: "Lỗi!",
+            text: "Tên kích cỡ không được để trống!",
+            icon: "error",
+            confirmButtonText: "OK"
+        });
+        return;
+    }
+
+    if (!trangThaiKC) {
+        Swal.fire({
+            title: "Lỗi!",
+            text: "Trạng thái kích cỡ không được để trống!",
+            icon: "error",
+            confirmButtonText: "OK"
+        });
+        return;
+    }
 
     const formData = new FormData(form);
 
     // Gửi dữ liệu form qua fetch API
-    fetch('/admin/add/kich-co', {  // URL thêm chất liệu mới
+    fetch('/admin/add/kich-co', {  // URL thêm kích cỡ mới
         method: 'POST',
         body: formData
     }).then(response => {
@@ -598,7 +839,7 @@ function handleAddKC(event, form) {
                 const modalInstance = bootstrap.Modal.getInstance(modalElement);
                 modalInstance.hide();
                 form.reset();
-                // Cập nhật lại danh sách chất liệu
+                // Cập nhật lại danh sách kích cỡ
                 updateKichCoList();
             });
         } else {
@@ -621,22 +862,46 @@ function handleAddKC(event, form) {
 function handleUpdateKC(event, form) {
     event.preventDefault(); // Ngăn chặn hành động mặc định của form
 
+    const tenKC = form.querySelector('#tenKC').value.trim(); // Lấy giá trị tên kích cỡ
+    const trangThaiKC = form.querySelector('#trangThaiKC').value.trim(); // Lấy giá trị trạng thái
+
+    // Validate: Kiểm tra tên kích cỡ và trạng thái
+    if (!tenKC) {
+        Swal.fire({
+            title: "Lỗi!",
+            text: "Tên kích cỡ không được để trống!",
+            icon: "error",
+            confirmButtonText: "OK"
+        });
+        return;
+    }
+
+    if (!trangThaiKC) {
+        Swal.fire({
+            title: "Lỗi!",
+            text: "Trạng thái kích cỡ không được để trống!",
+            icon: "error",
+            confirmButtonText: "OK"
+        });
+        return;
+    }
+
     const formData = new FormData(form);
 
     // Gửi dữ liệu form qua fetch API
-    fetch('/admin/update/kich-co', {  // URL cập nhật chất liệu
+    fetch('/admin/update/kich-co', {  // URL cập nhật kích cỡ
         method: 'POST',
         body: formData
     }).then(response => {
         if (response.ok) {
-            // Cập nhật chất liệu thành công
+            // Cập nhật kích cỡ thành công
             Swal.fire({
                 title: "Cập nhật kích cỡ thành công!",
                 icon: "success",
                 confirmButtonText: "OK"
             }).then(() => {
                 form.reset();
-                // Cập nhật lại danh sách chất liệu
+                // Cập nhật lại danh sách kích cỡ
                 updateKichCoList();
             });
         } else {
@@ -656,40 +921,73 @@ function handleUpdateKC(event, form) {
     return false;
 }
 
-
-
 function updateKichCoList() {
-    fetch('/admin/kich-co/list')  // URL lấy danh sách chất liệu mới
+    fetch('/admin/kich-co/list')  // URL lấy danh sách kích cỡ
         .then(response => response.json())
         .then(data => {
-            const kichCoSelect = document.querySelector('#kichCo');
             const kichCoTableBody = document.querySelector('#kichCoTable tbody');
+            const kichCoTableAnBody = document.querySelector('#kichCoTableAn tbody');
+            const kichCoSelect = document.querySelector('#kichCo');
+
+            // Kiểm tra nếu đang ở bảng "Kích cỡ Hoạt động"
             if (kichCoTableBody) {
                 kichCoTableBody.innerHTML = '';
                 data.forEach(kichCo => {
-                    const row = document.createElement('tr');
-                    row.innerHTML = `
-                        <td>${kichCo.maKC}</td>
-                        <td>${kichCo.tenKC}</td>
-                        <td>${kichCo.trangThaiKC}</td>
-                        <td>${kichCo.moTa}</td>
-                        <td>
-                            <button class="view-detail btn btn-info"
-                                    data-bs-toggle="modal"
-                                    data-bs-target="#productDetailModal"
-                                    data-id="${kichCo.id}"
-                                    data-makc="${kichCo.maKC}"
-                                    data-tenkc="${kichCo.tenKC}"
-                                    data-mota="${kichCo.moTa}"
-                                    data-trangthai="${kichCo.trangThaiKC}">
-                                Cập nhật
-                            </button>
-                        </td>
-                    `;
-                    kichCoTableBody.appendChild(row);
+                    if (kichCo.trangThaiKC === 'Hoạt động') {
+                        const row = document.createElement('tr');
+                        row.innerHTML = `
+                            <td>${kichCo.maKC}</td>
+                            <td>${kichCo.tenKC}</td>
+                            <td>${kichCo.moTa}</td>
+                            <td>${kichCo.trangThaiKC}</td>                        
+                            <td>
+                                <button class="view-detail btn btn-info"
+                                        data-bs-toggle="modal"
+                                        data-bs-target="#productDetailModal"
+                                        data-id="${kichCo.id}"
+                                        data-makc="${kichCo.maKC}"
+                                        data-tenkc="${kichCo.tenKC}"
+                                        data-mota="${kichCo.moTa}"
+                                        data-trangthai="${kichCo.trangThaiKC}">
+                                    Cập nhật
+                                </button>
+                            </td>
+                        `;
+                        kichCoTableBody.appendChild(row);
+                    }
                 });
-                attachUpdateButtonEvents();
             }
+
+            // Kiểm tra nếu đang ở bảng "Kích cỡ Không hoạt động"
+            if (kichCoTableAnBody) {
+                kichCoTableAnBody.innerHTML = '';
+                data.forEach(kichCo => {
+                    if (kichCo.trangThaiKC === 'Không hoạt động') {
+                        const row = document.createElement('tr');
+                        row.innerHTML = `
+                            <td>${kichCo.maKC}</td>
+                            <td>${kichCo.tenKC}</td>                       
+                            <td>${kichCo.moTa}</td>
+                            <td>${kichCo.trangThaiKC}</td>
+                            <td>
+                                <button class="view-detail btn btn-info"
+                                        data-bs-toggle="modal"
+                                        data-bs-target="#productDetailModal"
+                                        data-id="${kichCo.id}"
+                                        data-makc="${kichCo.maKC}"
+                                        data-tenkc="${kichCo.tenKC}"
+                                        data-mota="${kichCo.moTa}"
+                                        data-trangthai="${kichCo.trangThaiKC}">
+                                    Cập nhật
+                                </button>
+                            </td>
+                        `;
+                        kichCoTableAnBody.appendChild(row);
+                    }
+                });
+            }
+
+            // Cập nhật danh sách chọn kích cỡ (nếu cần thiết)
             if (kichCoSelect) {
                 kichCoSelect.innerHTML = '<option value="" disabled selected>Chọn kích cỡ</option>';
                 data.forEach(kichCo => {
@@ -699,6 +997,9 @@ function updateKichCoList() {
                     kichCoSelect.appendChild(option);
                 });
             }
+
+            // Gọi lại hàm để gán sự kiện cho các nút Cập nhật
+            attachUpdateButtonEvents();
         })
         .catch(error => {
             console.error('Lỗi khi cập nhật danh sách kích cỡ:', error);
@@ -710,7 +1011,7 @@ function handleAddLSP(event, form) {
     const formData = new FormData(form);
 
     // Gửi dữ liệu form qua fetch API
-    fetch('/admin/add/loai-san-pham', {  // URL thêm chất liệu mới
+    fetch('/admin/add/loai-san-pham', {  // URL thêm loại sản phẩm mới
         method: 'POST',
         body: formData
     }).then(response => {
@@ -725,7 +1026,7 @@ function handleAddLSP(event, form) {
                 const modalInstance = bootstrap.Modal.getInstance(modalElement);
                 modalInstance.hide();
                 form.reset();
-                // Cập nhật lại danh sách chất liệu
+                // Cập nhật lại danh sách loại sản phẩm
                 updateLoaiSanPhamList();
             });
         } else {
@@ -748,10 +1049,34 @@ function handleAddLSP(event, form) {
 function handleUpdateLSP(event, form) {
     event.preventDefault(); // Ngăn chặn hành động mặc định của form
 
+    const tenLoai = form.querySelector('#tenLoai').value.trim(); // Lấy giá trị tên loại sản phẩm
+    const trangThai = form.querySelector('#trangThai').value.trim(); // Lấy giá trị trạng thái
+
+    // Validate: Kiểm tra tên loại sản phẩm và trạng thái
+    if (!tenLoai) {
+        Swal.fire({
+            title: "Lỗi!",
+            text: "Tên loại sản phẩm không được để trống!",
+            icon: "error",
+            confirmButtonText: "OK"
+        });
+        return;
+    }
+
+    if (!trangThai) {
+        Swal.fire({
+            title: "Lỗi!",
+            text: "Trạng thái loại sản phẩm không được để trống!",
+            icon: "error",
+            confirmButtonText: "OK"
+        });
+        return;
+    }
+
     const formData = new FormData(form);
 
     // Gửi dữ liệu form qua fetch API
-    fetch('/admin/update/loai-san-pham', {  // URL cập nhật chất liệu
+    fetch('/admin/update/loai-san-pham', {  // URL cập nhật loại sản phẩm
         method: 'POST',
         body: formData
     }).then(response => {
@@ -762,7 +1087,7 @@ function handleUpdateLSP(event, form) {
                 confirmButtonText: "OK"
             }).then(() => {
                 form.reset();
-                updateLoaiSanPhamList();
+                updateLoaiSanPhamList();  // Cập nhật lại danh sách sau khi thay đổi
             });
         } else {
             return response.text().then(text => {
@@ -781,14 +1106,13 @@ function handleUpdateLSP(event, form) {
     return false;
 }
 
-
-
 function updateLoaiSanPhamList() {
     fetch('/admin/loai-san-pham/list')  // Lấy danh sách loại sản phẩm từ server
         .then(response => response.json())
         .then(data => {
             const loaiSanPhamSelect = document.querySelector('#loaiSanPham');  // Chọn phần tử <select> cho loại sản phẩm
-            const loaiSanPhamTableBody = document.querySelector('#loaiSanPhamTable tbody');  // Chọn <tbody> của bảng hiển thị loại sản phẩm
+            const loaiSanPhamTableHoatDong = document.querySelector('#loaiSanPhamTableHoatDong tbody');  // Bảng Hoạt động
+            const loaiSanPhamTableKhongHoatDong = document.querySelector('#loaiSanPhamTableKhongHoatDong tbody');  // Bảng Không hoạt động
 
             // Cập nhật danh sách loại sản phẩm cho phần tử <select>
             if (loaiSanPhamSelect) {
@@ -801,33 +1125,65 @@ function updateLoaiSanPhamList() {
                 });
             }
 
-            // Cập nhật bảng loại sản phẩm
-            if (loaiSanPhamTableBody) {
-                loaiSanPhamTableBody.innerHTML = '';  // Xóa các dòng cũ trong bảng
+            // Phân loại bảng loại sản phẩm theo trạng thái
+            if (loaiSanPhamTableHoatDong) {
+                loaiSanPhamTableHoatDong.innerHTML = '';  // Xóa các dòng cũ trong bảng
                 data.forEach(loaiSanPham => {
-                    const row = document.createElement('tr');
-                    row.innerHTML = `
-                        <td>${loaiSanPham.maLSP}</td>
-                        <td>${loaiSanPham.tenLoai}</td>
-                        <td>${loaiSanPham.moTa}</td>
-                        <td>${loaiSanPham.trangThai}</td>
-                        <td>
-                            <button class="view-detail btn btn-info"
-                                    data-bs-toggle="modal"
-                                    data-bs-target="#productDetailModal"
-                                    data-id="${loaiSanPham.id}"
-                                    data-ma-lsp="${loaiSanPham.maLSP}"
-                                    data-ten-loai="${loaiSanPham.tenLoai}"
-                                    data-trang-thai="${loaiSanPham.trangThai}"
-                                    data-mo-ta="${loaiSanPham.moTa}">
-                                Cập nhật
-                            </button>
-                        </td>
-                    `;
-                    loaiSanPhamTableBody.appendChild(row);
+                    if (loaiSanPham.trangThai === 'Đang bán') {
+                        const row = document.createElement('tr');
+                        row.innerHTML = `
+                            <td>${loaiSanPham.maLSP}</td>
+                            <td>${loaiSanPham.tenLoai}</td>
+                            <td>${loaiSanPham.moTa}</td>
+                            <td>${loaiSanPham.trangThai}</td>
+                            <td>
+                                <button class="view-detail btn btn-info"
+                                        data-bs-toggle="modal"
+                                        data-bs-target="#productDetailModal"
+                                        data-id="${loaiSanPham.idLoaiSP}"
+                                        data-ma-lsp="${loaiSanPham.maLSP}"
+                                        data-ten-loai="${loaiSanPham.tenLoai}"
+                                        data-trang-thai="${loaiSanPham.trangThai}"
+                                        data-mo-ta="${loaiSanPham.moTa}">
+                                    Cập nhật
+                                </button>
+                            </td>
+                        `;
+                        loaiSanPhamTableHoatDong.appendChild(row);
+                    }
                 });
-                attachUpdateButtonEvents();  // Gọi hàm để đính kèm sự kiện cho các nút Cập nhật
             }
+
+            if (loaiSanPhamTableKhongHoatDong) {
+                loaiSanPhamTableKhongHoatDong.innerHTML = '';  // Xóa các dòng cũ trong bảng
+                data.forEach(loaiSanPham => {
+                    if (loaiSanPham.trangThai === 'Ngừng bán') {
+                        const row = document.createElement('tr');
+                        row.innerHTML = `
+                            <td>${loaiSanPham.maLSP}</td>
+                            <td>${loaiSanPham.tenLoai}</td>
+                            <td>${loaiSanPham.moTa}</td>
+                            <td>${loaiSanPham.trangThai}</td>
+                            <td>
+                                <button class="view-detail btn btn-info"
+                                        data-bs-toggle="modal"
+                                        data-bs-target="#productDetailModal"
+                                        data-id="${loaiSanPham.idLoaiSP}"
+                                        data-ma-lsp="${loaiSanPham.maLSP}"
+                                        data-ten-loai="${loaiSanPham.tenLoai}"
+                                        data-trang-thai="${loaiSanPham.trangThai}"
+                                        data-mo-ta="${loaiSanPham.moTa}">
+                                    Cập nhật
+                                </button>
+                            </td>
+                        `;
+                        loaiSanPhamTableKhongHoatDong.appendChild(row);
+                    }
+                });
+            }
+
+            // Gán lại sự kiện cho các nút "Cập nhật"
+            attachUpdateButtonEvents();  // Gọi hàm để đính kèm sự kiện cho các nút Cập nhật
         })
         .catch(error => {
             console.error('Lỗi khi cập nhật danh sách loại sản phẩm:', error);
