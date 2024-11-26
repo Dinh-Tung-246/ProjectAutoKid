@@ -1,6 +1,7 @@
 package com.example.demo.response;
 
 import com.example.demo.model.SanPham;
+import com.example.demo.model.SanPhamChiTiet;
 import lombok.Data;
 
 import java.sql.Date;
@@ -27,6 +28,8 @@ public class SanPhamKhuyenMaiResponse {
     private Integer giaTriGiam;
     private LocalDate ngayBatDau;
     private LocalDate ngayKetThuc;
+    private Integer idSPCT;
+    private String mauSacSPCT;
 
     public static String formatPrice(Double price) {
         DecimalFormatSymbols symbols = new DecimalFormatSymbols();
@@ -61,6 +64,11 @@ public class SanPhamKhuyenMaiResponse {
             this.maKM = "Trống";
             this.tenKM = "Trống";
             this.giaSauGiam = formatPrice(s.getDonGia());
+        }
+        if (s.getSanPhamChiTiets().size() != 0) {
+            SanPhamChiTiet spct = s.getSanPhamChiTiets().get(0);
+            this.idSPCT = spct.getId();
+            this.mauSacSPCT = spct.getMauSac().getTenMS();
         }
     }
 

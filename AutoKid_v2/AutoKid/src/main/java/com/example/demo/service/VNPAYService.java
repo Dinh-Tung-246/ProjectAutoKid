@@ -18,7 +18,7 @@ import java.util.*;
 public class VNPAYService {
 
 
-    public String createOrder(HttpServletRequest request, int amount, String orderInfor, String urlReturn, String vnp_TxnRef){
+    public String createOrder(HttpServletRequest request, long amount, String orderInfor, String urlReturn, String vnp_TxnRef){
         //Các bạn có thể tham khảo tài liệu hướng dẫn và điều chỉnh các tham số
         String vnp_Version = "2.1.0";
         String vnp_Command = "pay";
@@ -31,7 +31,7 @@ public class VNPAYService {
         vnp_Params.put("vnp_Version", vnp_Version);
         vnp_Params.put("vnp_Command", vnp_Command);
         vnp_Params.put("vnp_TmnCode", vnp_TmnCode);
-        vnp_Params.put("vnp_Amount", String.valueOf(amount*100));
+        vnp_Params.put("vnp_Amount", String.valueOf(amount*100L));
         vnp_Params.put("vnp_CurrCode", "VND");
 
         vnp_Params.put("vnp_TxnRef", vnp_TxnRef);
@@ -134,8 +134,8 @@ public class VNPAYService {
     }
 
     public String formatPrice(String price) {
-        Integer priceInt = Integer.parseInt(price);
-        priceInt = priceInt/100;
+        Long priceInt = Long.parseLong(price);
+        priceInt = priceInt/100L;
         DecimalFormatSymbols symbols = new DecimalFormatSymbols();
         symbols.setGroupingSeparator('.');
 

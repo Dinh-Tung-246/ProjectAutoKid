@@ -36,50 +36,7 @@
       <div class="loader"></div>
     </div>
 
-    <th:block th:replace="autokid/header :: fragment"></th:block>
-
-    <!-- Hero Section Begin -->
-    <section class="hero hero-normal">
-      <div class="container">
-        <div class="row">
-          <div class="col-lg-3" >
-            <div class="hero__categories">
-              <div class="hero__categories__all">
-                <i class="fa fa-bars"></i>
-                <span>DANH MỤC</span>
-              </div>
-              <ul >
-                <li th:each="loaisp : ${loaisp}"><a th:href="@{http://localhost:8080/autokid/shop/category(idLSP=${loaisp.idLoaiSP})}" class="checkbox-text" th:text="${loaisp.tenLoai}"></a></li>
-              </ul>
-            </div>
-          </div>
-          <div class="col-lg-9">
-            <div class="hero__search">
-              <div class="hero__search__form">
-                <form action="#">
-                  <div class="hero__search__categories">
-                    DANH MỤC
-                    <span class="arrow_carrot-down"></span>
-                  </div>
-                  <input type="text" placeholder="What do yo u need?" />
-                  <button type="submit" class="site-btn">TÌM KIẾM</button>
-                </form>
-              </div>
-              <div class="hero__search__phone">
-                <div class="hero__search__phone__icon">
-                  <i class="fa fa-phone"></i>
-                </div>
-                <div class="hero__search__phone__text">
-                  <h5>+65 11.188.888</h5>
-                  <span>Hỗ trợ 24/7</span>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-    <!-- Hero Section End -->
+    <header class="header" th:insert="autokid/header :: fragment"></header>
 
     <!-- Breadcrumb Section Begin -->
     <section class="breadcrumb-section set-bg" data-setbg="img/breadcrumb.jpeg">
@@ -155,6 +112,8 @@
                                     th:data-id="${spkm.idSP}"
                                     th:data-ten="${spkm.tenSP}"
                                     th:data-gia="${spkm.giaSauGiam}"
+                                    th:data-idspct = "${spkm.idSPCT}"
+                                    th:data-mausac="${spkm.mauSacSPCT}"
                                     onclick="addToCart(this)"
                             >
                               <i class="fa fa-shopping-cart"></i>
@@ -269,6 +228,8 @@
                                 th:data-id="${sp.idSP}"
                                 th:data-ten="${sp.tenSP}"
                                 th:data-gia="${sp.giaSauGiam}"
+                                th:data-idspct = "${sp.idSPCT}"
+                                th:data-mausac="${sp.mauSacSPCT}"
                                 onclick="addToCart(this)"
                         >
                           <i class="fa fa-shopping-cart"></i>
@@ -307,6 +268,7 @@
     <script src="js/owl.carousel.min.js"></script>
     <script src="js/main.js"></script>
     <script src="js/shop-grid.js"></script>
+    <script src="js/index.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
   </body>
 </html>
