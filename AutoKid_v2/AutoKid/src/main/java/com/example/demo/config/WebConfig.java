@@ -50,6 +50,6 @@ public class WebConfig implements WebMvcConfigurer {
 //                .addResourceLocations("classpath:/templates/autokid/");
 
         registry.addResourceHandler("/img/categories/**")
-                .addResourceLocations("classpath:/static/img/categories/");
+                .addResourceLocations("file:/C:/Users/admin/ProjectAutoKid/AutoKid_v2/AutoKid/src/main/resources/static/img/categories/");
     }
 }

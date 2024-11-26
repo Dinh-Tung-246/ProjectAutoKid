@@ -6,7 +6,10 @@ import com.example.demo.service.QuanLySanPhamService;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import org.springframework.core.env.Environment;
+import org.springframework.core.io.ByteArrayResource;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -18,6 +21,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.beans.PropertyEditorSupport;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
@@ -100,7 +104,7 @@ public class AdminProductController {
 
                             try {
                                 // Đường dẫn lưu file
-                                String uploadDir = "C:\\Users\\admin\\Downloads\\ProjectAutoKid\\ProjectAutoKid\\ProjectAutoKid\\AutoKid_v2\\AutoKid\\src\\main\\resources\\static\\img\\categories";
+                                String uploadDir = "C:\\Users\\admin\\ProjectAutoKid\\AutoKid_v2\\AutoKid\\src\\main\\resources\\static\\img\\categories";
                                 Path uploadPath = Paths.get(uploadDir);
 
                                 // Tạo thư mục nếu chưa tồn tại
@@ -131,6 +135,30 @@ public class AdminProductController {
                 }
             }
         });
+    }
+    @GetMapping("/img/categories/{fileName}")
+    @ResponseBody
+    public ResponseEntity<ByteArrayResource> getImage(@PathVariable String fileName) throws IOException {
+        // Đường dẫn tới thư mục chứa ảnh
+        String imagePath = "C:/Users/admin/ProjectAutoKid/AutoKid_v2/AutoKid/src/main/resources/static/img/categories/" + fileName;
+
+        // Đọc nội dung hình ảnh từ file
+        File imageFile = new File(imagePath);
+        InputStream inputStream = new FileInputStream(imageFile);
+        byte[] imageBytes = inputStream.readAllBytes();
+
+        // Chuyển dữ liệu hình ảnh thành ByteArrayResource
+        ByteArrayResource resource = new ByteArrayResource(imageBytes);
+
+        // Xác định loại media của file (JPEG, PNG, v.v...)
+        String fileExtension = fileName.substring(fileName.lastIndexOf('.') + 1).toLowerCase();
+        MediaType mediaType = fileExtension.equals("jpg") || fileExtension.equals("jpeg") ? MediaType.IMAGE_JPEG : MediaType.IMAGE_PNG;
+
+        // Trả về ResponseEntity với dữ liệu hình ảnh
+        return ResponseEntity.ok()
+                .contentType(mediaType)   // Định dạng hình ảnh (JPEG, PNG...)
+                .header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"" + fileName + "\"")
+                .body(resource);
     }
 
     @PostMapping("/add/san-pham")
