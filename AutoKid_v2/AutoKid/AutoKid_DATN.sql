@@ -314,6 +314,7 @@ VALUES
 ('NV001', N'Trần Văn A', N'Nam', '1990-05-15', '2023-01-01', 'password123', '0901234567', 'trana@gmail.com', 1, N'Số 1, đường A', 1),
 ('NV002', N'Nguyễn Thị B', N'Nữ', '1995-08-20', '2023-02-01', 'password123', '0907654321', 'nguyenb@gmail.com', 0, N'Số 2, đường B', 2),
 ('NV003', N'Nguyễn Văn C', N'Nam', '1992-11-10', '2023-03-15', 'password123', '0902223334', 'nguyenc@gmail.com',1, N'Số 3, đường C', 3);
+('NV005', N'Nguyễn Văn T', N'Nữ', '1993-01-15', '2023-03-15', '$2a$10$0ed0A4BzYIdhUS0N75nsDOaaAXQC7PuJZ3uoh3.YIh9alKRq3zBCm', '0902223334', 'nguyenngoc@gmail.com',1, N'Số 4, đường C', 3);
 
 INSERT INTO thong_tin_van_chuyen (ma_ttvc, dia_chi, ten_nguoi_nhan, sdt) 
 VALUES 
