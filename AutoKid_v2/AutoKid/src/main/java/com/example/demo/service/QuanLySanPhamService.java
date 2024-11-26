@@ -58,7 +58,7 @@ public class QuanLySanPhamService {
         return sanPhamChiTietRepo.findAllByOrderByIdDesc();
     }
 
-    public void addSanPhamChiTiet(SanPhamChiTiet sanPhamChiTiet){
+    public void addSanPhamChiTiet(SanPhamChiTiet sanPhamChiTiet) {
         sanPhamChiTietRepo.save(sanPhamChiTiet);
     }
 
@@ -66,7 +66,7 @@ public class QuanLySanPhamService {
         sanPhamChiTietRepo.save(sanPhamChiTiet);
     }
     public List<ThuongHieu> getAllThuongHieu(){
-        return thuongHieuRepo.findAll();
+        return thuongHieuRepo.findAllByOrderByIdDesc();
     }
 
     public void AddThuongHieu(ThuongHieu thuongHieu){
@@ -100,7 +100,7 @@ public class QuanLySanPhamService {
     }
 
     public List<KichCo> getAllKichCo(){
-        return kichCoRepo.findAll();
+        return kichCoRepo.findAllByOrderByIdDesc();
     }
 
     public void addKichCo(KichCo kichCo){
@@ -114,7 +114,7 @@ public class QuanLySanPhamService {
     }
 
     public List<ChatLieu> getAllChatLieu(){
-        return chatLieuRepo.findAll();
+        return chatLieuRepo.findAllByOrderByIdDesc();
     }
 
     public void addChatLieu(ChatLieu chatLieu){

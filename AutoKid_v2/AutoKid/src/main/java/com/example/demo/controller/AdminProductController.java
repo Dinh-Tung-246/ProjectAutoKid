@@ -2,15 +2,30 @@ package com.example.demo.controller;
 
 import com.example.demo.model.*;
 import com.example.demo.service.QuanLySanPhamService;
+
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
+
+import org.springframework.core.env.Environment;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.util.StringUtils;
+import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import org.springframework.web.multipart.MultipartFile;
 
+
+import java.beans.PropertyEditorSupport;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.util.List;
+
 
 @Controller
 @RequestMapping("/admin")
@@ -18,6 +33,11 @@ public class AdminProductController {
 
     @Autowired
     QuanLySanPhamService service;
+
+    @Autowired
+    private Environment env;
+
+
 
     @GetMapping("/home")
     public String home(){
@@ -35,9 +55,9 @@ public class AdminProductController {
     }
 
     @PostMapping("/add/san-pham-chi-tiet")
-    public String addSPCT(@ModelAttribute SanPhamChiTiet sanPhamChiTiet){
-        service.addSanPhamChiTiet(sanPhamChiTiet);
-        return "redirect:/admin/products";
+    public String addSPCT(@ModelAttribute SanPhamChiTiet sanPhamChiTiet) {
+       service.addSanPhamChiTiet(sanPhamChiTiet);
+       return "redirect:/admin/products";
     }
 
     @PostMapping("/update/products")
@@ -62,16 +82,68 @@ public class AdminProductController {
         return "admin/san-pham";
     }
 
-    @PostMapping("/add/san-pham")
-    public String addSanPham(@ModelAttribute("addSanPham") SanPham sanPham, RedirectAttributes redirectAttributes){
-        if (service.isMaSPExist(sanPham.getMaSP())) {
-            redirectAttributes.addFlashAttribute("error", "Mã sản phẩm đã tồn tại!");
-            return "redirect:/admin/san-pham";
-        }
-        service.addSanPham(sanPham);
-        return "redirect:/admin/san-pham";
+    @InitBinder
+    public void initBinder(WebDataBinder binder) {
+        // Custom editor để xử lý MultipartFile và chuyển đổi sang String (tên file)
+        binder.registerCustomEditor(String.class, "anhSPMau", new PropertyEditorSupport() {
+            @Override
+            public void setValue(Object value) {
+                if (value instanceof MultipartFile) {
+                    MultipartFile file = (MultipartFile) value;
+
+                    // Kiểm tra nếu file không rỗng
+                    if (!file.isEmpty()) {
+                        String originalFilename = file.getOriginalFilename();
+                        if (originalFilename != null) {
+                            // Tạo tên file mới, loại bỏ ký tự không hợp lệ và thêm timestamp để tránh trùng lặp
+                            String fileName = System.currentTimeMillis() + "-" + originalFilename.replaceAll("[^a-zA-Z0-9\\.\\-]", "_");
+
+                            try {
+                                // Đường dẫn lưu file
+                                String uploadDir = "C:\\Users\\admin\\Downloads\\ProjectAutoKid\\ProjectAutoKid\\ProjectAutoKid\\AutoKid_v2\\AutoKid\\src\\main\\resources\\static\\img\\categories";
+                                Path uploadPath = Paths.get(uploadDir);
+
+                                // Tạo thư mục nếu chưa tồn tại
+                                if (!Files.exists(uploadPath)) {
+                                    Files.createDirectories(uploadPath);
+                                }
+
+                                // Lưu file vào thư mục
+                                Path filePath = uploadPath.resolve(fileName);
+                                try (InputStream inputStream = file.getInputStream()) {
+                                    Files.copy(inputStream, filePath, StandardCopyOption.REPLACE_EXISTING);
+                                }
+
+                                // Sau khi file được lưu, gán tên file vào model
+                                super.setValue(fileName); // Lưu tên file vào đối tượng model
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                                super.setValue(null); // Gán null nếu có lỗi khi lưu file
+                            }
+                        } else {
+                            super.setValue(null); // Gán null nếu không có tên file
+                        }
+                    } else {
+                        super.setValue(null); // Gán null nếu file rỗng
+                    }
+                } else {
+                    super.setValue(value); // Nếu không phải MultipartFile, chỉ trả về giá trị gốc
+                }
+            }
+        });
     }
 
+    @PostMapping("/add/san-pham")
+    public String addSanPham(@ModelAttribute SanPham sanPham) {
+        try {
+            // Sau khi tên file được gán vào sanPham, bạn có thể lưu sanPham vào cơ sở dữ liệu
+            service.addSanPham(sanPham);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return "redirect:/admin/san-pham?error=database_save_failed";
+        }
+        return "redirect:/admin/san-pham";
+    }
     @PostMapping("/update/san-pham")
     public String updateProduct(@ModelAttribute("updateSanPham") SanPham sanPham) {
         if (sanPham.getId() != null) {
@@ -80,6 +152,12 @@ public class AdminProductController {
         return "redirect:/admin/san-pham";
     }
 
+    @GetMapping("/san-pham/list")
+    @ResponseBody
+    public List<SanPham> getDanhSachSanPham() {
+        // Trả về danh sách sản phẩm dưới dạng JSON
+        return service.DSSanPham();
+    }
     @GetMapping("/statistical")
     public String statistical() {
         return "admin/statistical";
@@ -117,6 +195,13 @@ public class AdminProductController {
         return "redirect:/admin/mau-sac";
     }
 
+    @GetMapping("/mau-sac/list")
+    @ResponseBody
+    public List<MauSac> getDanhSacMauSac() {
+        return service.getAllMauSac();
+    }
+
+
     @PostMapping("/update/mau-sac")
     public String updateMauSac(@ModelAttribute("updateMauSac") MauSac mauSac){
         service.updateMauSac(mauSac);
@@ -136,21 +221,43 @@ public class AdminProductController {
 
 
     @PostMapping("/add/kich-co")
-    public String addKichCo(@ModelAttribute KichCo kichCo){
-        service.addKichCo(kichCo);
-        return "redirect:/admin/kich-co";
+    @ResponseBody
+    public ResponseEntity<?> addKichCo(@ModelAttribute KichCo kichCo) {
+        try {
+            service.addKichCo(kichCo);
+            return ResponseEntity.ok("Thêm kích cỡ thành công!");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Có lỗi xảy ra khi thêm kích cỡ.");
+        }
     }
-
     @PostMapping("/update/kich-co")
     public String updateKichCo(@ModelAttribute("updateKichCo") KichCo kichCo){
         service.updateKichCo(kichCo);
         return "redirect:/admin/kich-co";
     }
 
+    @GetMapping("/kich-co/list")
+    @ResponseBody
+    public List<KichCo> getDanhSacKichCo() {
+        return service.getAllKichCo();
+    }
+
+
     @PostMapping("/add/thuong-hieu")
-    public String addThuongHieu(@ModelAttribute ThuongHieu thuongHieu){
-        service.AddThuongHieu(thuongHieu);
-        return "redirect:/admin/thuong-hieu";
+    @ResponseBody
+    public ResponseEntity<?> addThuongHieu(@ModelAttribute ThuongHieu thuongHieu) {
+        try {
+            service.AddThuongHieu(thuongHieu);
+            return ResponseEntity.ok("Thêm thương hiệu thành công!");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Có lỗi xảy ra khi thêm thương hiệu.");
+        }
+    }
+
+    @GetMapping("/thuong-hieu/list")
+    @ResponseBody
+    public List<ThuongHieu> getDanhSachThuongHieu() {
+        return service.getAllThuongHieu();
     }
 
 
@@ -171,9 +278,14 @@ public class AdminProductController {
     }
 
     @PostMapping("/add/chat-lieu")
-    public String addChatLieu(@ModelAttribute ChatLieu chatLieu){
-        service.addChatLieu(chatLieu);
-        return "redirect:/admin/chat-lieu";
+    @ResponseBody // Thêm annotation này để trả về JSON
+    public ResponseEntity<?> addChatLieu(@ModelAttribute ChatLieu chatLieu) {
+        try {
+            service.addChatLieu(chatLieu);
+            return ResponseEntity.ok("Thêm chất liệu thành công!");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Có lỗi xảy ra khi thêm chất liệu.");
+        }
     }
 
     @PostMapping("/update/chat-lieu")
@@ -181,6 +293,12 @@ public class AdminProductController {
         service.updateChatLieu(chatLieu);
         return "redirect:/admin/chat-lieu";
     }
+    @GetMapping("/chat-lieu/list")
+    @ResponseBody
+    public List<ChatLieu> getDanhSacChatLieu() {
+        return service.getAllChatLieu();
+    }
+
 
     @GetMapping("/loai-san-pham")
     public String getAllLoaiSanPham(Model model) {
@@ -190,10 +308,22 @@ public class AdminProductController {
     }
 
     @PostMapping("/add/loai-san-pham")
-    public String addLoaiSanPham(@ModelAttribute LoaiSanPham loaiSanPham){
-        service.addLoaiSanPham(loaiSanPham);
-        return "redirect:/admin/loai-san-pham";
+    @ResponseBody
+    public ResponseEntity<?> addLoaiSanPham(@ModelAttribute LoaiSanPham loaiSanPham) {
+        try {
+            service.addLoaiSanPham(loaiSanPham);
+            return ResponseEntity.ok("Thêm loại sản phẩm thành công!");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Có lỗi xảy ra khi thêm loại sản phẩm.");
+        }
     }
+
+    @GetMapping("/loai-san-pham/list")
+    @ResponseBody
+    public List<LoaiSanPham> getDanhSacLoaiSanPham() {
+        return service.getAllLoaiSanPham();
+    }
+
 
     @PostMapping("/update/loai-san-pham")
     public String updateLSP(@ModelAttribute("updateLoaiSanPham") LoaiSanPham loaiSanPham) {
