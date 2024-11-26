@@ -14,7 +14,10 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 
         http
-                .authorizeHttpRequests(authz -> authz.anyRequest().authenticated()
+                .authorizeHttpRequests((authz) -> authz
+                        .requestMatchers("/admin/**").authenticated()
+                        .requestMatchers("/auto-kid/**").permitAll()
+                        .anyRequest().permitAll()
                 )
                 .formLogin(form -> form
                         .loginPage("/admin/login").permitAll()
