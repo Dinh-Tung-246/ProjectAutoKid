@@ -120,7 +120,7 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <form action="/admin/add/san-pham-chi-tiet" method="post" enctype="multipart/form-data" onsubmit="handleAddSPCT(event, this)">
+                    <form action="/admin/add/san-pham-chi-tiet" method="post"  onsubmit="handleAddSPCT(event, this)">
                         <div class="mb-3">
                             <label for="maSPCT" class="form-label">Mã sản phẩm chi tiết:</label>
                             <input type="text" class="form-control border border-secondary" id="maSPCT" name="maSPCT" required>
@@ -138,6 +138,7 @@
                                 <option value="" disabled selected>Chọn màu sắc</option>
                                 <option th:each="mauSac : ${dsMauSac}" th:value="${mauSac.id}" th:text="${mauSac.tenMS}"></option>
                             </select>
+                            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addMauSacModal">Thêm màu sắc</button>
                         </div>
                         <div class="mb-3">
                             <label for="soLuong" class="form-label">Số lượng:</label>
@@ -160,6 +161,40 @@
                         </div>
                     </form>
 
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="addMauSacModal" tabindex="-1" role="dialog" aria-labelledby="addMauSacModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="addMauSacModalLabel">Thêm màu sắc</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form action="/admin/add/mau-sac" method="post" onsubmit="handleAddMS(event, this)">
+                        <div class="mb-3">
+                            <label for="maMS" class="form-label">Mã màu sắc:</label>
+                            <input type="text" class="form-control border border-secondary" id="maMS" name="maMS" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="tenMS" class="form-label">Tên màu sắc:</label>
+                            <input type="text" class="form-control border border-secondary" id="tenMS" name="tenMS" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="trangThaiMS">Trạng thái</label>
+                            <select class="form-control" id="trangThaiMS" name="trangThaiMS">
+                                <option value="Hoạt động" selected>Hoạt động</option>
+                                <option value="Không hoạt động">Không hoạt động</option>
+                            </select>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+                            <button type="submit" class="btn btn-primary">Lưu</button>
+                        </div>
+                    </form>
                 </div>
             </div>
         </div>
@@ -235,7 +270,7 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <form th:action="@{/admin/update/products}" th:object="${updateSPCT}" method="post" onsubmit="handleUpdateSPCT(event, this)">
+                    <form th:action="@{/admin/update/products}" th:object="${updateSPCT}" method="post">
                         <input type="hidden" id="productId" name="id" th:field="*{id}">
 
                         <div class="mb-3">
@@ -293,6 +328,9 @@
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
 
 <script>
+
+
+
     document.addEventListener('DOMContentLoaded', function () {
         const detailButtons = document.querySelectorAll('.view-detail');
         detailButtons.forEach(button => {
@@ -334,7 +372,7 @@
 <!-- Custom scripts -->
 <script src="./js/script.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-<!--<script src="./js/products.js"></script>-->
+<script src="./js/products.js"></script>
 
 </body>
 
