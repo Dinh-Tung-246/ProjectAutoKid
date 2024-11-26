@@ -1,6 +1,8 @@
 package com.example.demo.controller;
 
+import com.example.demo.repository.LoaiSanPhamRepo;
 import jakarta.servlet.http.HttpSession;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -14,6 +16,9 @@ import java.util.Map;
 @Controller
 @RequestMapping("/autokid/shoping-cart")
 public class AutokidShoppingCartController {
+    @Autowired
+    LoaiSanPhamRepo loaiSanPhamRepo;
+
     @GetMapping("")
     public String showShoppingCart(HttpSession session, Model model){
         session.setAttribute("isLoggedIn", false);
@@ -27,6 +32,7 @@ public class AutokidShoppingCartController {
             model.addAttribute("cartItems", cartItems);
         }
         model.addAttribute("isLoggedIn", isLoggedIn);
+        model.addAttribute("loaisp", loaiSanPhamRepo.findAll());
         model.addAttribute("currentPage","shoping-cart");
         return "/autokid/shoping-cart";
     }

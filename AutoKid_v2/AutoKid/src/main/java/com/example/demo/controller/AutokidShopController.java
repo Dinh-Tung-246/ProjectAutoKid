@@ -30,9 +30,14 @@ public class AutokidShopController {
     ThuongHieuRepo thuongHieuRepo;
 
     @GetMapping("")
-    public String showShop(Model model){
+    public String showShop(@RequestParam(required = false) String nameProduct, Model model){
+        if (nameProduct != null && !nameProduct.isEmpty()) {
+            model.addAttribute("sanpham", qlspService.searchProductByName(nameProduct));
+        }
+        else {
+            model.addAttribute("sanpham", qlspService.getAllSP());
+        }
         model.addAttribute("currentPage","shop");
-        model.addAttribute("sanpham", qlspService.getAllSP());
         model.addAttribute("spkm", qlspService.getSPKM());
         model.addAttribute("countSP", qlspService.countSP());
         model.addAttribute("loaisp",lspRepo.findAll());

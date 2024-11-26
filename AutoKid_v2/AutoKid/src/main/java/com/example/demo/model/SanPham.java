@@ -60,6 +60,9 @@ public class SanPham {
     @JoinColumn(name = "id_km")
     private KhuyenMai khuyenMai;
 
+    @OneToMany(mappedBy = "sanPham")
+    private List<SanPhamChiTiet> sanPhamChiTiets;
+
 //    @OneToMany(mappedBy = "khuyenMai", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 //    private List<SP> sanPhams; // Danh sách sản phẩm liên kết với khuyến mãi
 }

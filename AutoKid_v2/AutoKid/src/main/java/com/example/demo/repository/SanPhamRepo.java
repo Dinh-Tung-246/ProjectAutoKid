@@ -24,4 +24,8 @@ public interface SanPhamRepo extends JpaRepository<SanPham,Integer> {
 
     @Query("SELECT s FROM SanPham s ORDER BY s.donGia")
     List<SanPham> findAllSanPham();
+
+    @Query("SELECT s FROM SanPham s " +
+            " WHERE s.tenSP LIKE %:tenSanPham%")
+    List<SanPham> findAllByName(@Param("tenSanPham") String tenSanPham);
 }

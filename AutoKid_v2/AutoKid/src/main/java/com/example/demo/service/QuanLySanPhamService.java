@@ -138,7 +138,9 @@ public class QuanLySanPhamService {
     public List<SanPhamKhuyenMaiResponse> getAllSP(){
         List<SanPhamKhuyenMaiResponse> list = new ArrayList<>();
         for(SanPham sp: sanPhamRepo.findAll()){
-            list.add(new SanPhamKhuyenMaiResponse(sp));
+            if (sp.getTrangThaiSP().equals("Đang bán")) {
+                list.add(new SanPhamKhuyenMaiResponse(sp));
+            }
         }
         return list;
     }
@@ -176,7 +178,7 @@ public class QuanLySanPhamService {
     public List<SanPhamKhuyenMaiResponse> getAllRelatedProduct(Integer idSP){
         SanPhamKhuyenMaiResponse sp = null;
         for(SanPham s: sanPhamRepo.findAll()){
-            if(s.getId() == idSP){
+            if(s.getId() == idSP && s.getTrangThaiSP().equals("Đang bán")){
                 sp = new SanPhamKhuyenMaiResponse(s);
                 break;
             }
@@ -195,7 +197,9 @@ public class QuanLySanPhamService {
     public List<SanPhamKhuyenMaiResponse> searchSPByPrice(Double gia1, Double gia2){
         List<SanPhamKhuyenMaiResponse> list = new ArrayList<>();
         for(SanPham sp: sanPhamRepo.searchByPrice(gia1, gia2)){
-            list.add(new SanPhamKhuyenMaiResponse(sp));
+            if (sp.getTrangThaiSP().equals("Đang bán")) {
+                list.add(new SanPhamKhuyenMaiResponse(sp));
+            }
         }
         return list;
     }
@@ -219,7 +223,9 @@ public class QuanLySanPhamService {
     public List<SanPhamKhuyenMaiResponse> searchSPByBrands(List<Integer> list) {
         List<SanPhamKhuyenMaiResponse> l = new ArrayList<>();
         for(SanPham sp: sanPhamRepo.searchByBrands(list)) {
-            l.add(new SanPhamKhuyenMaiResponse(sp));
+            if (sp.getTrangThaiSP().equals("Đang bán")) {
+                l.add(new SanPhamKhuyenMaiResponse(sp));
+            }
         }
         return l;
     }
@@ -228,7 +234,7 @@ public class QuanLySanPhamService {
     public List<SanPhamKhuyenMaiResponse> searchByLoai(Integer idLoai) {
         List<SanPhamKhuyenMaiResponse> l = new ArrayList<>();
         for(SanPham sp: sanPhamRepo.findAll()) {
-            if(sp.getLoaiSanPham().getIdLoaiSP() == idLoai) {
+            if(sp.getLoaiSanPham().getIdLoaiSP() == idLoai && sp.getTrangThaiSP().equals("Đang bán")) {
                 l.add(new SanPhamKhuyenMaiResponse(sp));
             }
         }
@@ -249,7 +255,20 @@ public class QuanLySanPhamService {
     public List<SanPhamKhuyenMaiResponse> filterAllSP(String filter){
         List<SanPhamKhuyenMaiResponse> list = new ArrayList<>();
         for(SanPham sp: filterSP(filter)) {
-            list.add(new SanPhamKhuyenMaiResponse(sp));
+            if (sp.getTrangThaiSP().equals("Đang bán")) {
+                list.add(new SanPhamKhuyenMaiResponse(sp));
+            }
+        }
+        return list;
+    }
+
+    // Search product by name
+    public List<SanPhamKhuyenMaiResponse> searchProductByName(String Name) {
+        List<SanPhamKhuyenMaiResponse> list = new ArrayList<>();
+        for (SanPham sp: sanPhamRepo.findAllByName(Name)) {
+            if(sp.getTrangThaiSP().equals("Đang bán")) {
+                list.add(new SanPhamKhuyenMaiResponse(sp));
+            }
         }
         return list;
     }

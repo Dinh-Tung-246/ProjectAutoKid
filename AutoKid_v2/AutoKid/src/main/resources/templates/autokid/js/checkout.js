@@ -30,8 +30,8 @@ function renderPrice() {
 
 function renderInfo() {
     const data = JSON.parse(localStorage.getItem("KH")) || [];
-
-    if (data != null) {
+    console.log(data.length)
+    if (data != null && data.length != 0) {
         document.getElementById("name-kh").value = data.tenKH;
         document.getElementById("sdt-kh").value = data.sdtKH;
         document.getElementById("diaChi-kh").value = data.diaChiKH;
@@ -137,7 +137,7 @@ document.querySelector('#checkout-form').addEventListener('submit', async functi
     };
 
     const hdct = checkoutData.map(item => ({
-        idSPCT: item.id,
+        id: item.id,
         soLuong: item.quantity,
         donGiaSauGiam: parseFloat(item.totalPrice.replace(/\./g, '')),
     }));
