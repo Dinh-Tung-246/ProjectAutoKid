@@ -9,9 +9,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
+import java.util.*;
 
 @Service
 public class QuanLySanPhamService {
@@ -287,5 +285,24 @@ public class QuanLySanPhamService {
             }
         }
         return list;
+    }
+
+
+    // Lấy ra các màu mà sản phẩm có
+    public List<Map<String, Object>> getColorOfSP(Integer idSP) {
+        List<Map<String, Object>> listColor = new ArrayList<>();
+        SanPham sanPham = sanPhamRepo.findById(idSP).orElseThrow();
+        if (sanPham.getSanPhamChiTiets().size() != 0) {
+            for (SanPhamChiTiet spct: sanPham.getSanPhamChiTiets()){
+                Map<String, Object> map = new LinkedHashMap<>();
+                map.put("idSPCT",spct.getId());
+                map.put("idMS", spct.getMauSac().getId());
+                map.put("tenMS", spct.getMauSac().getTenMS());
+                map.put("soLuong", spct.getSoLuong());
+                listColor.add(map);
+            }
+        }
+
+        return listColor;
     }
 }

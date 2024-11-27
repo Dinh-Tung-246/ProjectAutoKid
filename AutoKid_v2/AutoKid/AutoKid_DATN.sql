@@ -1,4 +1,4 @@
-﻿create database DATN_AutoKID
+﻿create database DATN_AutoKid
 go
 
 use DATN_AutoKID

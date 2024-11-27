@@ -9,6 +9,10 @@ import org.springframework.security.web.SecurityFilterChain;
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
+    @Bean
+    public CustomAuthenticatuonsuccessHandler successHanlder() {
+        return new CustomAuthenticatuonsuccessHandler();
+    }
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -16,7 +20,7 @@ public class SecurityConfig {
         http
                 .authorizeHttpRequests((authz) -> authz
                         .requestMatchers("/admin/**").authenticated()
-                        .requestMatchers("/auto-kid/**").permitAll()
+                        .requestMatchers("/autokid/**").permitAll()
                         .anyRequest().permitAll()
                 )
                 .formLogin(form -> form
@@ -25,6 +29,7 @@ public class SecurityConfig {
                         .usernameParameter("email")
                         .defaultSuccessUrl("/admin/staff/home", true)
                         .failureUrl("/admin/login?error=true")
+                        .successHandler(successHanlder())
                 )
 
                 .logout(logout -> logout

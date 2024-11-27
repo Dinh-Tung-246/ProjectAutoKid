@@ -1,3 +1,14 @@
+document.addEventListener("DOMContentLoaded", () => {
+    const cookies = document.cookie.split("; ");
+    const userCookie = cookies.find(cookie => cookie.startsWith("infoNV="));
+    if (userCookie) {
+        const jsonNhanVien = decodeURIComponent(userCookie.split("=")[1]);
+        localStorage.setItem("infoNV", jsonNhanVien);
+        const  nv = JSON.parse(jsonNhanVien);
+        console.log(nv);
+    }
+})
+
 // ket noi den websocket
 const socket = new WebSocket('ws://localhost:8080/ws');
 
