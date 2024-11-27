@@ -88,6 +88,11 @@
             display: block !important; /* Hiện lại icon */
         }
     </style>
+    <link
+            rel="stylesheet"
+            href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css"
+    />
+    <link rel="stylesheet" href="./css/header.css" type="text/css">
 </head>
 
 <body>
@@ -313,6 +318,34 @@
 <script src="plugins/feather.min.js"></script>
 <!-- Custom scripts -->
 <script src="js/script.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script src="js/header.js"></script>
+<script>
+    // ket noi den websocket
+    const socket = new WebSocket('ws://localhost:8080/ws');
+
+    // khi ket noi thanh cong
+    socket.onopen = function () {
+        console.log("Da ket noi voi WebSocket");
+    }
+
+    //Khi nhan duoc thong bao tu server
+    socket.onmessage = function (event) {
+        console.log("Du lieu nhan tu server: ", event.data);
+        // updateUI()
+        window.location.href= "http://localhost:8080/admin/staff/home";
+    }
+
+    // Khi có lỗi
+    socket.onerror = function(error) {
+        console.error("Lỗi WebSocket:", error);
+    };
+
+    // Khi kết nối bị đóng
+    socket.onclose = function() {
+        console.log("Kết nối WebSocket đã đóng.");
+    };
+</script>
 </body>
 
 </html>

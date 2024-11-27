@@ -31,10 +31,14 @@
                                     <input type="hidden" class="idDH" th:value="${dh.idDH}"/>
                                     <span class="notification-dropdown__title">Đơn hàng mã [[${dh.maDH}]]</span>
                                     <span class="notification-dropdown__subtitle">Tên anh/chị nhận hàng: [[${dh.tenNguoiNhan}]].
-                                    Số điện thoại: [[${dh.sdtNguoiNhan}]]. Giá trị đơn hàng: [[${dh.tongTien}]] VNĐ.</span>
+                                    Số điện thoại: [[${dh.sdtNguoiNhan}]]. Giá trị đơn hàng: [[${dh.tongTien}]] VNĐ.
+                                    <span th:if="${dh.trangThaiHD == 'Chờ xác nhận'}" style="color: #c82333">Đơn hàng thanh toán sau khi nhận hàng.</span>
+                                        <span th:if="${dh.trangThaiHD != 'Chờ xác nhận'}" style="color: #5887ff">Đơn hàng đã được thanh toán.</span>
+                                    </span>
                                 </div>
                                 <div class="btn-confirm">
                                     <button class="btn-submit" onclick="confirmOrder(event, this.closest('li'))">Xác nhận giao hàng</button>
+                                    <button th:if="${dh.trangThaiHD == 'Chờ xác nhận'}" class="btn-unsubmit" onclick="unconfirmOrder(event, this.closest('li'))">Hủy đơn</button>
                                 </div>
                             </div>
                         </li>

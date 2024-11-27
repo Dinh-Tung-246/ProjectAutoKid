@@ -13,6 +13,7 @@ public class DonHangResponse {
     private String tenNguoiNhan;
     private String sdtNguoiNhan;
     private String tongTien;
+    private String trangThaiHD;
 
     public static String formatPrice(Float price) {
         DecimalFormatSymbols symbols = new DecimalFormatSymbols();
@@ -28,5 +29,6 @@ public class DonHangResponse {
         this.tenNguoiNhan = h.getTenNguoiNhan();
         this.sdtNguoiNhan = h.getSdtNguoiNhan();
         this.tongTien = formatPrice(h.getTongTien());
+        this.trangThaiHD = h.getTrangThaiHD();
     }
 }
