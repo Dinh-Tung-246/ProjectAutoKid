@@ -6,7 +6,10 @@ import com.example.demo.service.QuanLySanPhamService;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import org.springframework.core.env.Environment;
+import org.springframework.core.io.ByteArrayResource;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -18,6 +21,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.beans.PropertyEditorSupport;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
@@ -100,7 +104,7 @@ public class AdminProductController {
 
                             try {
                                 // Đường dẫn lưu file
-                                String uploadDir = "C:\\Users\\admin\\Downloads\\ProjectAutoKid\\ProjectAutoKid\\ProjectAutoKid\\AutoKid_v2\\AutoKid\\src\\main\\resources\\static\\img\\categories";
+                                String uploadDir = "C:\\Users\\admin\\ProjectAutoKid\\AutoKid_v2\\AutoKid\\src\\main\\resources\\static\\img\\categories";
                                 Path uploadPath = Paths.get(uploadDir);
 
                                 // Tạo thư mục nếu chưa tồn tại
@@ -131,6 +135,30 @@ public class AdminProductController {
                 }
             }
         });
+    }
+    @GetMapping("/img/categories/{fileName}")
+    @ResponseBody
+    public ResponseEntity<ByteArrayResource> getImage(@PathVariable String fileName) throws IOException {
+        // Đường dẫn tới thư mục chứa ảnh
+        String imagePath = "C:/Users/admin/ProjectAutoKid/AutoKid_v2/AutoKid/src/main/resources/static/img/categories/" + fileName;
+
+        // Đọc nội dung hình ảnh từ file
+        File imageFile = new File(imagePath);
+        InputStream inputStream = new FileInputStream(imageFile);
+        byte[] imageBytes = inputStream.readAllBytes();
+
+        // Chuyển dữ liệu hình ảnh thành ByteArrayResource
+        ByteArrayResource resource = new ByteArrayResource(imageBytes);
+
+        // Xác định loại media của file (JPEG, PNG, v.v...)
+        String fileExtension = fileName.substring(fileName.lastIndexOf('.') + 1).toLowerCase();
+        MediaType mediaType = fileExtension.equals("jpg") || fileExtension.equals("jpeg") ? MediaType.IMAGE_JPEG : MediaType.IMAGE_PNG;
+
+        // Trả về ResponseEntity với dữ liệu hình ảnh
+        return ResponseEntity.ok()
+                .contentType(mediaType)   // Định dạng hình ảnh (JPEG, PNG...)
+                .header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"" + fileName + "\"")
+                .body(resource);
     }
 
     @PostMapping("/add/san-pham")
@@ -190,10 +218,20 @@ public class AdminProductController {
     }
 
     @PostMapping("/add/mau-sac")
-    public String addMauSac(@ModelAttribute MauSac mauSac){
-        service.addMauSac(mauSac);
-        return "redirect:/admin/mau-sac";
+    @ResponseBody
+    public ResponseEntity<?> addMauSac(@ModelAttribute MauSac mauSac) {
+        try {
+            // Kiểm tra xem mã thương hiệu có trùng không
+            if (service.isMaMSExist(mauSac.getMaMS())) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Mã màu sắc đã tồn tại.");
+            }
+            service.addMauSac(mauSac);
+            return ResponseEntity.ok("Thêm màu sắc thành công!");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Có lỗi xảy ra khi thêm màu sắc.");
+        }
     }
+
 
     @GetMapping("/mau-sac/list")
     @ResponseBody
@@ -224,6 +262,10 @@ public class AdminProductController {
     @ResponseBody
     public ResponseEntity<?> addKichCo(@ModelAttribute KichCo kichCo) {
         try {
+            // Kiểm tra xem mã thương hiệu có trùng không
+            if (service.isMaKCExist(kichCo.getMaKC())) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Mã kích cỡ đã tồn tại.");
+            }
             service.addKichCo(kichCo);
             return ResponseEntity.ok("Thêm kích cỡ thành công!");
         } catch (Exception e) {
@@ -247,6 +289,10 @@ public class AdminProductController {
     @ResponseBody
     public ResponseEntity<?> addThuongHieu(@ModelAttribute ThuongHieu thuongHieu) {
         try {
+            // Kiểm tra xem mã thương hiệu có trùng không
+            if (service.isMaTHExist(thuongHieu.getMaTH())) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Mã thương hiệu đã tồn tại.");
+            }
             service.AddThuongHieu(thuongHieu);
             return ResponseEntity.ok("Thêm thương hiệu thành công!");
         } catch (Exception e) {
@@ -259,6 +305,7 @@ public class AdminProductController {
     public List<ThuongHieu> getDanhSachThuongHieu() {
         return service.getAllThuongHieu();
     }
+
 
 
     @GetMapping("/thuong-hieu/search")
@@ -281,6 +328,9 @@ public class AdminProductController {
     @ResponseBody // Thêm annotation này để trả về JSON
     public ResponseEntity<?> addChatLieu(@ModelAttribute ChatLieu chatLieu) {
         try {
+            if (service.isMaCLExist(chatLieu.getMaCl())) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Mã chất liệu đã tồn tại.");
+            }
             service.addChatLieu(chatLieu);
             return ResponseEntity.ok("Thêm chất liệu thành công!");
         } catch (Exception e) {
@@ -311,6 +361,9 @@ public class AdminProductController {
     @ResponseBody
     public ResponseEntity<?> addLoaiSanPham(@ModelAttribute LoaiSanPham loaiSanPham) {
         try {
+            if (service.isMaLSPExist(loaiSanPham.getMaLSP())) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Mã loại sản phẩm đã tồn tại.");
+            }
             service.addLoaiSanPham(loaiSanPham);
             return ResponseEntity.ok("Thêm loại sản phẩm thành công!");
         } catch (Exception e) {

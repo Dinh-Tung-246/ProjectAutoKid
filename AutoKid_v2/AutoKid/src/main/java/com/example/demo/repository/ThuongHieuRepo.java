@@ -11,6 +11,9 @@ import java.util.List;
 @Repository
 public interface ThuongHieuRepo extends JpaRepository<ThuongHieu,Integer> {
     List<ThuongHieu> findAllByOrderByIdDesc();
+
+    boolean existsByMaTH(String maTH);
+
     @Query("select th from ThuongHieu th where th.tenTH  like ?1")
     List<ThuongHieu> searchThuongHieu(String tenTH);
 }

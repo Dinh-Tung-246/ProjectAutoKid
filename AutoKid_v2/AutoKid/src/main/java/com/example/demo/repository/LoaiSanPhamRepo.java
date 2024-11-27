@@ -9,5 +9,5 @@ import java.util.List;
 
 @Repository
 public interface LoaiSanPhamRepo extends JpaRepository<LoaiSanPham,Integer> {
-
+    boolean existsByMaLSP(String maLSP);
 }
