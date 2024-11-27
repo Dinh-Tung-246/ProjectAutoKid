@@ -173,13 +173,13 @@
                 <div class="button-container">
                     <div class="add-button-container">
                         <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#add">
-                            Thêm
+                            Áp mã khuyến mãi
                         </button>
                     </div>
-                    <form th:action="@{/admin/promotion/search-product}" method="GET" class="search-form search-container">
-                        <input type="text" class="search-input" name="keyword" placeholder="Tìm kiếm khuyến mãi...">
-                        <button class="search-button">Tìm kiếm</button>
-                    </form>
+                    <!--                    <form th:action="@{/admin/promotion/search-product}" method="GET" class="search-form search-container">-->
+                    <!--                        <input type="text" class="search-input" name="keyword" placeholder="Tìm kiếm khuyến mãi...">-->
+                    <!--                        <button class="search-button">Tìm kiếm</button>-->
+                    <!--                    </form>-->
                 </div>
                 <div>
                     <div class="table-container">
@@ -187,22 +187,22 @@
                             <table class="posts-table table-hover">
                                 <thead>
                                 <tr class="users-table-info">
-                                    <th>Mã KM</th>
+                                    <th>Mã sản phẩm</th>
+                                    <th>Tên khuyến mãi</th>
+                                    <th>Giá trị (%)</th>
                                     <th>Tên sản phẩm</th>
                                     <th>Giá gốc</th>
                                     <th>Giá sau giảm</th>
-                                    <th class="text-center">Action</th>
                                 </tr>
                                 </thead>
                                 <tbody>
-                                <tr th:each="promotion : ${promotionProducts}">
-                                    <td th:text="${promotion.maKM}"></td>
-                                    <td th:text="${promotion.tenSP}"></td>
-                                    <td th:text="${promotion.donGia}"></td>
-                                    <td th:text="${promotion.giaSauKhiGiam}"></td>
-                                    <td class="text-center">
-                                        <a class="btn btn-warning">Sửa</a>
-                                    </td>
+                                <tr th:each="list : ${ProductList}">
+                                    <td th:text="${list.maSP}"></td>
+                                    <td th:text="${list.tenKM}"></td>
+                                    <td th:text="${list.giaTriGiam}"></td>
+                                    <td th:text="${list.tenSP}"></td>
+                                    <td th:text="${list.donGia}"></td>
+                                    <td th:text="${list.giaSauGiam}"></td>
                                 </tr>
                                 </tbody>
                             </table>
@@ -213,160 +213,110 @@
                 </div>
             </div>
         </main>
-<!--        <div>-->
-<!--            &lt;!&ndash; Modal &ndash;&gt;-->
-<!--            &lt;!&ndash; add &ndash;&gt;-->
-<!--            <div class="modal fade" id="add" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">-->
-<!--                <div class="modal-dialog modal-lg">-->
-<!--                    <div class="modal-content">-->
-<!--                        <div class="modal-header">-->
-<!--                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>-->
-<!--                        </div>-->
-<!--                        <div class="modal-body">-->
-<!--                            <div class="form-container">-->
-<!--                                <h5>Nhập Thông Tin Khuyến Mại</h5>-->
-<!--                                <form th:action="@{/admin/promotion/save}" th:object="${addPromotion}" method="POST">-->
-<!--                                    <div class="form-row">-->
-<!--                                        <div class="form-group">-->
-<!--                                            <label for="maKM">Mã khuyến mại</label>-->
-<!--                                            <input type="text" th:field="*{maKM}" id="maKM" placeholder="Mã khuyến mãi" required>-->
-<!--                                        </div>-->
-<!--                                        <div class="form-group">-->
-<!--                                            <label for="tenKM">Tên khuyến mại</label>-->
-<!--                                            <input type="text" th:field="*{tenKM}" id="tenKM" placeholder="Tên khuyến mãi" required>-->
-<!--                                        </div>-->
-<!--                                    </div>-->
+        <div class="modal fade" id="add" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="form-container">
+                            <h5>Áp mã khuyến mãi</h5>
+                            <form id="promotionForm">
+                                <!-- Chọn khuyến mãi -->
+                                <div class="form-group">
+                                    <label for="promotionSelect">Chọn mã khuyến mãi:</label>
+                                    <select id="promotionSelect" name="promotionId" class="form-control">
+                                        <option th:each="km : ${promotion}" th:value="${km.id}">[[${km.tenKM}]]</option>
+                                    </select>
+                                </div>
 
-<!--                                    <div class="form-row">-->
-<!--                                        <div class="form-group">-->
-<!--                                            <label for="ngayBatDau">Ngày bắt đầu</label>-->
-<!--                                            <input type="date" th:field="*{ngayBatDau}" class="date" id="ngayBatDau">-->
-<!--                                        </div>-->
-<!--                                        <div class="form-group">-->
-<!--                                            <label for="ngayKetThuc">Ngày kết thúc</label>-->
-<!--                                            <input type="date" th:field="*{ngayKetThuc}" class="date" id="ngayKetThuc">-->
-<!--                                        </div>-->
-<!--                                    </div>-->
+                                <!-- Danh sách sản phẩm -->
+                                <table class="table table-bordered">
+                                    <thead>
+                                    <tr>
+                                        <th>
+                                            <input type="checkbox" id="checkAll"> Chọn tất cả
+                                        </th>
+                                        <th>Mã sản phẩm</th>
+                                        <th>Tên sản phẩm</th>
+                                        <th>Đơn giá</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    <tr th:each="product : ${ProductList}">
+                                        <td>
+                                            <input type="checkbox" class="checkbox-item" name="productIds" th:value="${product.idSP}">
+                                        </td>
+                                        <td th:text="${product.maSP}"></td>
+                                        <td th:text="${product.tenSP}"></td>
+                                        <td th:text="${product.donGia}"></td>
+                                    </tr>
+                                    </tbody>
+                                </table>
 
-<!--                                    <div class="form-group">-->
-<!--                                        <label for="giatri">Điều kiện</label>-->
-<!--                                        <input type="text" th:field="*{giaTri}" id="giatri" placeholder="Giá trị" required>-->
-<!--                                    </div>-->
+                                <!-- Nút áp dụng -->
+                                <button type="submit" class="btn btn-primary">Áp dụng khuyến mãi</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <script>
+            document.addEventListener("DOMContentLoaded", function () {
+                // Lấy các phần tử DOM
+                const checkAllBox = document.getElementById("checkAll");
+                const checkboxes = document.querySelectorAll(".checkbox-item");
+                const promotionForm = document.getElementById("promotionForm");
 
-<!--                                    <div class="form-row">-->
-<!--                                        <div class="form-group">-->
-<!--                                            <label for="trangThaiKM">Trạng thái</label>-->
-<!--                                            <select th:field="*{trangThaiKM}" id="trangThaiKM" required>-->
-<!--                                                <option value="" disabled selected>Chọn trạng thái</option>-->
-<!--                                                <option value="1">Hoạt động</option>-->
-<!--                                                <option value="0">Không hoạt động</option>-->
-<!--                                            </select>-->
-<!--                                        </div>-->
-<!--                                    </div>-->
+                // Xử lý tick all
+                checkAllBox.addEventListener("change", function () {
+                    const isChecked = this.checked;
+                    checkboxes.forEach((checkbox) => {
+                        checkbox.checked = isChecked;
+                    });
+                });
 
-<!--                                    <button type="submit" class="submit-btn">Thêm Khuyến Mại</button>-->
-<!--                                </form>-->
-<!--                            </div>-->
-<!--                        </div>-->
-<!--                    </div>-->
-<!--                </div>-->
-<!--            </div>-->
-<!--            &lt;!&ndash; Update &ndash;&gt;-->
-<!--            <div class="modal fade" id="hihi" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">-->
-<!--                <div class="modal-dialog modal-lg">-->
-<!--                    <div class="modal-content">-->
-<!--                        <div class="modal-header">-->
-<!--                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>-->
-<!--                        </div>-->
-<!--                        <div class="modal-body">-->
-<!--                            <div class="form-container">-->
-<!--                                <div id="detailModal"  class="form-modal" >-->
-<!--                                    <h2>Thông tin khuyến mại</h2>-->
-<!--                                    <br>-->
-<!--                                    <div>-->
-<!--                                        <form th:action="@{/admin/promotion/update}" th:object="${updatePromotion}" method="POST" class="promotion-form">-->
-<!--                                            <div class="form-row">-->
-<!--                                                <input type="hidden" id="modalIdKM" th:field="*{id}" required>-->
-<!--                                                <div class="form-group">-->
-<!--                                                    <label for="modalMaKM">Mã khuyến mãi</label>-->
-<!--                                                    <input type="text" id="modalMaKM" th:field="*{maKM}" placeholder="Mã khuyến mãi" required>-->
-<!--                                                </div>-->
-<!--                                                <div class="form-group">-->
-<!--                                                    <label for="modalTenKM">Tên khuyến mãi</label>-->
-<!--                                                    <input type="text" id="modalTenKM" th:field="*{tenKM}" placeholder="Tên khuyến mãi" required>-->
-<!--                                                </div>-->
-<!--                                            </div>-->
+                // Đảm bảo checkAll được cập nhật khi bỏ chọn từng checkbox
+                checkboxes.forEach((checkbox) => {
+                    checkbox.addEventListener("change", function () {
+                        if (!this.checked) {
+                            checkAllBox.checked = false;
+                        } else if (Array.from(checkboxes).every((box) => box.checked)) {
+                            checkAllBox.checked = true;
+                        }
+                    });
+                });
 
-<!--                                            <div class="form-row">-->
-<!--                                                <div class="form-group">-->
-<!--                                                    <label for="modalBD">Ngày bắt đầu</label>-->
-<!--                                                    <input type="date" id="modalBD" th:field="*{ngayBatDau}" class="date" required>-->
-<!--                                                </div>-->
-<!--                                                <div class="form-group">-->
-<!--                                                    <label for="modalKT">Ngày kết thúc</label>-->
-<!--                                                    <input type="date" id="modalKT" th:field="*{ngayKetThuc}" class="date" required>-->
-<!--                                                </div>-->
-<!--                                            </div>-->
+                // Gửi form khi áp dụng khuyến mãi
+                promotionForm.addEventListener("submit", function (event) {
+                    event.preventDefault(); // Ngăn trình duyệt reload
 
-<!--                                            <div class="form-group">-->
-<!--                                                <label for="modalGiaTri">Giá trị</label>-->
-<!--                                                <input type="text" id="modalGiaTri" th:field="*{giaTri}" required>-->
-<!--                                            </div>-->
+                    // Thu thập dữ liệu từ form
+                    const formData = new FormData(promotionForm);
 
-<!--                                            <div class="form-row">-->
-<!--                                                <div class="form-group">-->
-<!--                                                    <label for="modalTT">Trạng thái</label>-->
-<!--                                                    <select id="modalTT" th:field="*{trangThaiKM}">-->
-<!--                                                        <option value="1">Hoạt động</option>-->
-<!--                                                        <option value="0">Không hoạt động</option>-->
-<!--                                                    </select>-->
-<!--                                                </div>-->
-<!--                                            </div>-->
-<!--                                            <div class="form-action">-->
-<!--                                                <button class="btn btn-warning" type="submit">Lưu khuyến mại</button>-->
-<!--                                            </div>-->
-<!--                                        </form>-->
-<!--                                    </div>-->
-<!--                                </div>-->
-<!--                            </div>-->
-<!--                        </div>-->
-<!--                    </div>-->
-<!--                </div>-->
-<!--            </div>-->
-<!--            &lt;!&ndash; modal&ndash;&gt;-->
-<!--            <script>-->
-<!--                const myModal = document.getElementById('myModal')-->
-<!--                const myInput = document.getElementById('myInput')-->
+                    // Gửi dữ liệu tới server
+                    fetch("/admin/promotion/addPromotionToProducts", {
+                        method: "POST",
+                        body: formData
+                    })
+                        .then(response => {
+                            if (response.ok) {
+                                alert("Khuyến mãi đã được áp dụng thành công!");
+                                location.reload();
+                            } else {
+                                alert("Có lỗi xảy ra. Vui lòng thử lại.");
+                            }
+                        })
+                        .catch(error => {
+                            console.error("Error:", error);
+                        });
+                });
+            });
 
-<!--                myModal.addEventListener('shown.bs.modal', () => {-->
-<!--                    myInput.focus()-->
-<!--                })-->
 
-<!--                function showDetail(button) {-->
-<!--                    document.getElementById('modalIdKM').value = button.getAttribute("data-id");-->
-<!--                    document.getElementById('modalMaKM').value = button.getAttribute("data-ma");-->
-<!--                    document.getElementById('modalTenKM').value = button.getAttribute("data-ten");-->
-<!--                    document.getElementById('modalBD').value = button.getAttribute("data-batDau");-->
-<!--                    document.getElementById('modalKT').value = button.getAttribute("data-ketThuc");-->
-<!--                    document.getElementById('modalGiaTri').value = button.getAttribute("data-giaTri");-->
-<!--                    document.getElementById('modalTT').value = button.getAttribute("data-tt");-->
-<!--                    document.getElementById('detailModal').style.display = 'block';-->
-<!--                }-->
-
-<!--                const selectElement = document.getElementById('modalTT');-->
-<!--                const statusText = document.getElementById('statusText');-->
-
-<!--                function updateStatusText() {-->
-<!--                    const value = selectElement.value;-->
-<!--                    statusText.textContent = value === "1" ? "Trạng thái: Hoạt động" : "Trạng thái: Không hoạt động";-->
-<!--                }-->
-
-<!--                selectElement.addEventListener('change', updateStatusText);-->
-
-<!--                window.addEventListener('load', updateStatusText);-->
-
-<!--            </script>-->
-<!--        </div>-->
+        </script>
         <!-- ! Footer -->
         <footer class="footer">
             <div th:insert="fragments/footer_admin :: footer"></div>

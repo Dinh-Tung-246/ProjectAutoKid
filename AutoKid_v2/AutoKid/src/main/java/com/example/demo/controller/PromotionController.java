@@ -1,10 +1,11 @@
 package com.example.demo.controller;
 
 import com.example.demo.model.KhuyenMai;
-import com.example.demo.response.KhuyenMaiSanPhamRespone;
+import com.example.demo.model.SanPham;
+import com.example.demo.response.SanPhamKhuyenMaiResponse;
 import com.example.demo.service.QuanLyKhuyenMaiService;
-import com.example.demo.service.QuanLySPKhuyenMaiService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -17,9 +18,6 @@ public class PromotionController {
 
     @Autowired
     private QuanLyKhuyenMaiService service;
-
-    @Autowired
-    private QuanLySPKhuyenMaiService SPKhuyenMaiService;
 
     @GetMapping("/index")
     public String homeController(Model model){
@@ -64,11 +62,24 @@ public class PromotionController {
     }
 
     @GetMapping("/product-sale")
-    public String showActivePromotions(Model model) {
-        List<KhuyenMaiSanPhamRespone> promotions = SPKhuyenMaiService.getActivePromotionsWithDiscountedPrice();
-        model.addAttribute("namePage", "promotion");
-        model.addAttribute("promotionProducts", promotions);
+    public String getProductPromotion(Model model) {
+        List<SanPhamKhuyenMaiResponse> listProductPromotion = service.getSanPhamKhuyenMaiList();
+        model.addAttribute("ProductList", listProductPromotion);
+        List<SanPham> listProductNoPromotion = service.getProductNoPromotion();
+        model.addAttribute("NoPromotionList", listProductNoPromotion);
+        model.addAttribute("promotion", service.getPromotionNoApply());
         return "/admin/promotionProduct";
     }
+
+    @PostMapping("/addPromotionInProduct")
+    public ResponseEntity<?> addPromotionInProduct(
+            @RequestParam("promotionId") Integer promotionId,
+            @RequestParam("productIds") List<Integer> productIds){
+        for (Integer productId : productIds) {
+            service.applyPromotionToProduct(promotionId, productId);
+        }
+        return ResponseEntity.ok("Khuyến mãi đã được áp dụng thành công!");
+    }
+
 
 }

@@ -148,12 +148,12 @@
                                 <tr th:each="staff : ${listStaff}">
                                     <td th:text="${staff != null ? staff.maNV : ''}">Mã nhân viên</td>
                                     <td th:text="${staff != null ? staff.tenNV : ''}">Tên nhân viên</td>
-                                    <td th:text="${staff != null ? (staff.gioiTinh == 1 ? 'Nam' : 'Nữ') : ''}">Giới
+                                    <td th:text="${staff != null ? (staff.gioiTinh == '1' ? 'Nam' : 'Nữ') : ''}">Giới
                                         tính
                                     </td>
                                     <td th:text="${staff != null ? staff.ngaySinh : ''}">Ngày sinh</td>
                                     <td th:text="${staff != null ? staff.ngayLamViec : ''}">Ngày làm việc</td>
-                                    <td th:text="${staff != null ? (staff.trangThai  == 1 ? 'Đang làm' : 'Nghỉ làm') : ''}">
+                                    <td th:text="${staff != null ? (staff.trangThai  == '1' ? 'Đang làm' : 'Nghỉ làm') : ''}">
                                         Trạng thái
                                     </td>
                                     <td th:text="${staff != null ? staff.diaChi : ''}">Địa chỉ</td>

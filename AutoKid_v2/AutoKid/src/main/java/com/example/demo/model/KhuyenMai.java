@@ -23,7 +23,7 @@ public class KhuyenMai {
     private String tenKM;
 
     @Column(name = "gia_tri")
-    private Double giaTri;
+    private Integer giaTri;
 
     @Column(name = "ngay_bat_dau")
     private LocalDate ngayBatDau;
@@ -32,7 +32,7 @@ public class KhuyenMai {
     private LocalDate ngayKetThuc;
 
     @Column(name = "trang_thai")
-    private String trangThaiKM;
+    private Integer trangThaiKM;
 
 //    @OneToMany(mappedBy = "khuyenMai", cascade = CascadeType.ALL)
 //    private List<KhuyenMaiSanPham> khuyenMaiSanPham;
