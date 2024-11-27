@@ -1,7 +1,7 @@
 ﻿create database DATN_AutoKid
 go
 
-use DATN_AutoKID
+use DATN_AutoKid
 go
 
 -- Bảng chuc_vu
