@@ -48,6 +48,8 @@ public class CustomerManagementController {
     @GetMapping("/search-customer")
     public String searchCustomer(@RequestParam("ten") String ten, Model model) {
         model.addAttribute("khachhang", serviceQLKH.searchCustomer(ten));
+        model.addAttribute("donhang",serviceQLDH.getDonHang());
+        model.addAttribute("int", serviceQLDH.getIndex());
         return "/admin/customerManagement";
     }
 

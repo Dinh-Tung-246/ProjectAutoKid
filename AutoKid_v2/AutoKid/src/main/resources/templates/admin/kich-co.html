@@ -99,11 +99,11 @@
                     <form  method="post" onsubmit="handleAddKC(event, this)">
                         <div class="mb-3">
                             <label for="maKC" class="form-label">Mã kích cỡ:</label>
-                            <input type="text" class="form-control border border-secondary" id="maKC" name="maKC" required>
+                            <input type="text" class="form-control border border-secondary" id="maKC" name="maKC" >
                         </div>
                         <div class="mb-3">
                             <label for="tenKC" class="form-label">Tên kích cỡ:</label>
-                            <input type="text" class="form-control border border-secondary" id="tenKC" name="tenKC" required>
+                            <input type="text" class="form-control border border-secondary" id="tenKC" name="tenKC" >
                         </div>
                         <div class="mb-3">
                             <label for="trangThaiKC">Trạng thái</label>
@@ -188,11 +188,11 @@
                         <input type="hidden" id="id" th:field="*{id}">
                         <div class="mb-3">
                             <label for="maKC" class="form-label">Mã kích cỡ:</label>
-                            <input type="text" class="form-control border border-secondary" id="maKC" th:field="*{maKC}" required>
+                            <input type="text" class="form-control border border-secondary" id="maKC" th:field="*{maKC}" readonly>
                         </div>
                         <div class="mb-3">
                             <label for="tenKC" class="form-label">Tên kích cỡ:</label>
-                            <input type="text" class="form-control border border-secondary" id="tenKC" th:field="*{tenKC}" required>
+                            <input type="text" class="form-control border border-secondary" id="tenKC" th:field="*{tenKC}" >
                         </div>
                         <div class="mb-3">
                             <label for="moTa" class="form-label">Mô tả:</label>

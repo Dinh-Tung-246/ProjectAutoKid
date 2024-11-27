@@ -2,6 +2,7 @@ package com.example.demo.controller;
 
 import com.example.demo.model.NhanVien;
 import com.example.demo.repository.ChucVuRepo;
+import com.example.demo.service.QuanLyDatHangService;
 import com.example.demo.service.QuanLyNhanVienService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -20,10 +21,15 @@ public class StaffController {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
+    @Autowired
+    QuanLyDatHangService serviceQLDH;
+
     @GetMapping("/home")
     public String index(Model model) {
         model.addAttribute("danhSachChucVu" , chucVuRepo.findAll());
         model.addAttribute("namePage", "staff");
+        model.addAttribute("donhang",serviceQLDH.getDonHang());
+        model.addAttribute("int", serviceQLDH.getIndex());
         model.addAttribute("listStaff", nhanVienService.findAllStaff());
         return "/admin/staff";
     }

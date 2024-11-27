@@ -41,7 +41,7 @@ public class QuanLyDatHangService {
     public List<DonHangResponse> getDonHang(){
         List<DonHangResponse> list = new ArrayList<>();
         for (HoaDon h: hoaDonRepo.findAll()) {
-            if(h.getTrangThaiHD().equals("Chờ xác nhận")) {
+            if(h.getTrangThaiHD().equals("Chờ xác nhận") || h.getTrangThaiHD().equals("Đã thanh toán")) {
                 list.add(new DonHangResponse(h));
             }
         }
@@ -51,7 +51,7 @@ public class QuanLyDatHangService {
     public Integer getIndex(){
         Integer i = 0;
         for (HoaDon h: hoaDonRepo.findAll()) {
-            if(h.getTrangThaiHD().equals("Chờ xác nhận")) {
+            if(h.getTrangThaiHD().equals("Chờ xác nhận") || h.getTrangThaiHD().equals("Đã thanh toán")) {
                 i ++;
             }
         }

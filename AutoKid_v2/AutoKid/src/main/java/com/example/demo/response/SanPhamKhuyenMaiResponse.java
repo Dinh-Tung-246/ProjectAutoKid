@@ -4,7 +4,6 @@ import com.example.demo.model.SanPham;
 import com.example.demo.model.SanPhamChiTiet;
 import lombok.Data;
 
-import java.sql.Date;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.time.LocalDate;
@@ -60,11 +59,11 @@ public class SanPhamKhuyenMaiResponse {
             this.ngayKetThuc = s.getKhuyenMai().getNgayKetThuc();
             this.giaTriGiam = s.getKhuyenMai().getGiaTri().intValue();
         } else {
+
             this.maKM = "Chưa áp mã";
             this.tenKM = "";
             this.giaSauGiam = "";
 //            this.giaSauGiam = formatPrice(s.getDonGia());
         }
     }
-
 }

@@ -10,4 +10,6 @@ import java.util.List;
 public interface SanPhamChiTietRepo extends JpaRepository<SanPhamChiTiet,Integer> {
     List<SanPhamChiTiet> findAllByOrderByIdDesc();
     SanPhamChiTiet findByMaSPCT(String maSPCT);
+    boolean existsByMaSPCT(String maSPCT);
+
 }
