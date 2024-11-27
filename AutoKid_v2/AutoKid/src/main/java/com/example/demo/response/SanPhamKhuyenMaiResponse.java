@@ -25,11 +25,10 @@ public class SanPhamKhuyenMaiResponse {
     private String maKM;
     private String tenKM;
     private String giaSauGiam;
+    private String trangThaiKM;
     private Integer giaTriGiam;
     private LocalDate ngayBatDau;
     private LocalDate ngayKetThuc;
-    private Integer idSPCT;
-    private String mauSacSPCT;
 
     public static String formatPrice(Double price) {
         DecimalFormatSymbols symbols = new DecimalFormatSymbols();
@@ -61,14 +60,10 @@ public class SanPhamKhuyenMaiResponse {
             this.ngayKetThuc = s.getKhuyenMai().getNgayKetThuc();
             this.giaTriGiam = s.getKhuyenMai().getGiaTri().intValue();
         } else {
-            this.maKM = "Trống";
-            this.tenKM = "Trống";
-            this.giaSauGiam = formatPrice(s.getDonGia());
-        }
-        if (s.getSanPhamChiTiets().size() != 0) {
-            SanPhamChiTiet spct = s.getSanPhamChiTiets().get(0);
-            this.idSPCT = spct.getId();
-            this.mauSacSPCT = spct.getMauSac().getTenMS();
+            this.maKM = "Chưa áp mã";
+            this.tenKM = "";
+            this.giaSauGiam = "";
+//            this.giaSauGiam = formatPrice(s.getDonGia());
         }
     }
 

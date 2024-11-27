@@ -29,7 +29,7 @@ public class NhanVien implements UserDetails {
     private String tenNV;
 
     @Column(name = "gioi_tinh")
-    private Integer gioiTinh;
+    private String gioiTinh;
 
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     @Column(name = "ngay_sinh")
