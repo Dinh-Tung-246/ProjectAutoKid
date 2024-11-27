@@ -13,6 +13,7 @@ public interface ThuongHieuRepo extends JpaRepository<ThuongHieu,Integer> {
     List<ThuongHieu> findAllByOrderByIdDesc();
 
     boolean existsByMaTH(String maTH);
+    boolean existsByTenTH(String tenTH);
 
     @Query("select th from ThuongHieu th where th.tenTH  like ?1")
     List<ThuongHieu> searchThuongHieu(String tenTH);

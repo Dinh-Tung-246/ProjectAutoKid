@@ -13,6 +13,7 @@ public interface SanPhamRepo extends JpaRepository<SanPham,Integer> {
 
     List<SanPham> findAllByOrderByIdDesc();
     boolean existsByMaSP(String maSP);
+    boolean existsByTenSP(String tenSP);
     @Query("SELECT s FROM SanPham s" +
             " WHERE s.donGia >= :gia1 AND s.donGia <= :gia2 ")
     List<SanPham> searchByPrice(@Param("gia1") Double gia1, @Param("gia2") Double gia2);

@@ -63,7 +63,7 @@
                     </div>
                 </div>
                 <div class="users-table table-wrapper">
-                    <table class="posts-table">
+                    <table id="sanPhamTable" class="posts-table">
                         <thead>
                         <tr class="users-table-info">
                             <th>Mã sản phẩm</th>
@@ -116,14 +116,14 @@
         <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h3 class="modal-title text-center" id="exampleModalLabel">Thêm sản phẩm</h3>
+                    <h3 class="modal-title text-center" id="exampleModalLabel">Thêm sản phẩm chi tiết</h3>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <form action="/admin/add/san-pham-chi-tiet" method="post"  onsubmit="handleAddSPCT(event, this)">
+                    <form th:object="${addSPCT}" method="post"  onsubmit="handleAddSPCT(event, this)">
                         <div class="mb-3">
                             <label for="maSPCT" class="form-label">Mã sản phẩm chi tiết:</label>
-                            <input type="text" class="form-control border border-secondary" id="maSPCT" name="maSPCT" required>
+                            <input type="text" class="form-control border border-secondary" id="maSPCT" name="maSPCT" >
                         </div>
                         <div class="mb-3">
                             <label for="sanPham" class="form-label">Tên sản phẩm:</label>
@@ -142,7 +142,7 @@
                         </div>
                         <div class="mb-3">
                             <label for="soLuong" class="form-label">Số lượng:</label>
-                            <input type="number" class="form-control border border-secondary" id="soLuong" name="soLuong" required>
+                            <input type="number" class="form-control border border-secondary" id="soLuong" name="soLuong" >
                         </div>
                         <div class="mb-3">
                             <label for="anh" class="form-label mt-2">Ảnh</label>
@@ -174,7 +174,7 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <form action="/admin/add/mau-sac" method="post" onsubmit="handleAddMS(event, this)">
+                    <form method="post" onsubmit="handleAddMS(event, this)">
                         <div class="mb-3">
                             <label for="maMS" class="form-label">Mã màu sắc:</label>
                             <input type="text" class="form-control border border-secondary" id="maMS" name="maMS" required>
@@ -208,7 +208,7 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <table class="table">
+                    <table id="sanPhamTableAn" class="table">
                         <thead>
                         <tr class="users-table-info">
                             <th>Mã sản phẩm</th>
@@ -270,17 +270,17 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <form th:action="@{/admin/update/products}" th:object="${updateSPCT}" method="post">
-                        <input type="hidden" id="productId" name="id" th:field="*{id}">
+                    <form  th:object="${updateSPCT}" method="post" onsubmit="handleUpdateSPCT(event, this)">
+                        <input type="hidden" id="productId" name="id" th:field="*{id}" >
 
                         <div class="mb-3">
                             <label for="productMaSP" class="form-label">Mã SPCT</label>
-                            <input type="text" class="form-control border border-secondary" id="productMaSP" th:field="*{maSPCT}">
+                            <input type="text" class="form-control border border-secondary" id="productMaSP" th:field="*{maSPCT}" readonly>
                         </div>
 
                         <div class="mb-3">
                             <label for="productName" class="form-label">Tên sản phẩm:</label>
-                            <select class="form-control border border-secondary" id="productName" th:field="*{sanPham.id}" required>
+                            <select class="form-control border border-secondary" id="productName" th:field="*{sanPham.id}" >
                                 <option value="" disabled selected>Chọn loại sản phẩm</option>
                                 <option th:each="sanPham : ${dsSanPham}" th:value="${sanPham.id}" th:text="${sanPham.tenSP}"></option>
                             </select>
@@ -328,10 +328,10 @@
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
 
 <script>
-
-
-
     document.addEventListener('DOMContentLoaded', function () {
+        attachUpdateButtonEvents();
+    });
+    function attachUpdateButtonEvents() {
         const detailButtons = document.querySelectorAll('.view-detail');
         detailButtons.forEach(button => {
             button.addEventListener('click', function () {
@@ -343,8 +343,6 @@
                 const mauSac = this.getAttribute('data-mau-sac');
                 const anh = this.getAttribute('data-anh');
                 const trangThaiSPCT = this.getAttribute('data-trang-thai');
-
-                // Cập nhật các giá trị vào form trong modal
                 const modal = document.querySelector('#productDetailModal');
                 if (modal) {
                     modal.querySelector('#productId').value = id || '';
@@ -357,12 +355,13 @@
                     if (currentImage) {
                         currentImage.src = '/img/categories/' + (anh || '');
                     }
+
                 } else {
                     console.log("Không tìm thấy modal");
                 }
             });
         });
-    });
+    };
 </script>
 
 <!-- Chart library -->

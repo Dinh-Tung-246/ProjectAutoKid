@@ -28,6 +28,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
+import java.util.Date;
 import java.util.List;
 
 
@@ -53,15 +54,29 @@ public class AdminProductController {
         List<SanPhamChiTiet> sanPhamChiTiets = service.getAllSanPham();
         model.addAttribute("dsMauSac", service.getAllMauSac());
         model.addAttribute("dsSanPham", service.DSSanPham());
+        model.addAttribute("addSPCT", new SanPhamChiTiet());
         model.addAttribute("updateSPCT", new SanPhamChiTiet());
         model.addAttribute("spct", sanPhamChiTiets);
         return "admin/products";
     }
 
-    @PostMapping("/add/san-pham-chi-tiet")
-    public String addSPCT(@ModelAttribute SanPhamChiTiet sanPhamChiTiet) {
-       service.addSanPhamChiTiet(sanPhamChiTiet);
-       return "redirect:/admin/products";
+    @RequestMapping(value = "/add/products", method = RequestMethod.POST)
+    @ResponseBody
+    public ResponseEntity<?> addSPCT(@ModelAttribute SanPhamChiTiet sanPhamChiTiet) {
+        try {
+            if (service.isMaSPCTExist(sanPhamChiTiet.getMaSPCT())) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Mã sản phẩm chi tiết đã tồn tại.");
+            }
+            service.addSanPhamChiTiet(sanPhamChiTiet);
+            return ResponseEntity.ok("Thêm sản phẩm chi tiết thành công!");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Có lỗi xảy ra khi thêm sản phẩm chi tiết.");
+        }
+    }
+    @GetMapping("/products/list")
+    @ResponseBody
+    public List<SanPhamChiTiet> getDanhSachSanPhamChiTiet() {
+        return service.getAllSanPham();
     }
 
     @PostMapping("/update/products")
@@ -88,89 +103,109 @@ public class AdminProductController {
 
     @InitBinder
     public void initBinder(WebDataBinder binder) {
-        // Custom editor để xử lý MultipartFile và chuyển đổi sang String (tên file)
         binder.registerCustomEditor(String.class, "anhSPMau", new PropertyEditorSupport() {
             @Override
             public void setValue(Object value) {
                 if (value instanceof MultipartFile) {
                     MultipartFile file = (MultipartFile) value;
-
-                    // Kiểm tra nếu file không rỗng
                     if (!file.isEmpty()) {
                         String originalFilename = file.getOriginalFilename();
                         if (originalFilename != null) {
-                            // Tạo tên file mới, loại bỏ ký tự không hợp lệ và thêm timestamp để tránh trùng lặp
                             String fileName = System.currentTimeMillis() + "-" + originalFilename.replaceAll("[^a-zA-Z0-9\\.\\-]", "_");
-
                             try {
-                                // Đường dẫn lưu file
                                 String uploadDir = "C:\\Users\\admin\\ProjectAutoKid\\AutoKid_v2\\AutoKid\\src\\main\\resources\\static\\img\\categories";
                                 Path uploadPath = Paths.get(uploadDir);
-
-                                // Tạo thư mục nếu chưa tồn tại
                                 if (!Files.exists(uploadPath)) {
                                     Files.createDirectories(uploadPath);
                                 }
-
-                                // Lưu file vào thư mục
                                 Path filePath = uploadPath.resolve(fileName);
                                 try (InputStream inputStream = file.getInputStream()) {
                                     Files.copy(inputStream, filePath, StandardCopyOption.REPLACE_EXISTING);
                                 }
-
-                                // Sau khi file được lưu, gán tên file vào model
-                                super.setValue(fileName); // Lưu tên file vào đối tượng model
+                                super.setValue(fileName);
                             } catch (IOException e) {
                                 e.printStackTrace();
-                                super.setValue(null); // Gán null nếu có lỗi khi lưu file
+                                super.setValue(null);
                             }
                         } else {
-                            super.setValue(null); // Gán null nếu không có tên file
+                            super.setValue(null);
                         }
                     } else {
-                        super.setValue(null); // Gán null nếu file rỗng
+                        super.setValue(null);
                     }
                 } else {
-                    super.setValue(value); // Nếu không phải MultipartFile, chỉ trả về giá trị gốc
+                    super.setValue(value);
+                }
+            }
+        });
+        binder.registerCustomEditor(String.class, "anh", new PropertyEditorSupport() {
+            @Override
+            public void setValue(Object value) {
+                if (value instanceof MultipartFile) {
+                    MultipartFile file = (MultipartFile) value;
+                    if (!file.isEmpty()) {
+                        String originalFilename = file.getOriginalFilename();
+                        if (originalFilename != null) {
+                            String fileName = System.currentTimeMillis() + "-" + originalFilename.replaceAll("[^a-zA-Z0-9\\.\\-]", "_");
+                            try {
+                                String uploadDir = "C:\\Users\\admin\\ProjectAutoKid\\AutoKid_v2\\AutoKid\\src\\main\\resources\\static\\img\\categories";
+                                Path uploadPath = Paths.get(uploadDir);
+                                if (!Files.exists(uploadPath)) {
+                                    Files.createDirectories(uploadPath);
+                                }
+                                Path filePath = uploadPath.resolve(fileName);
+                                try (InputStream inputStream = file.getInputStream()) {
+                                    Files.copy(inputStream, filePath, StandardCopyOption.REPLACE_EXISTING);
+                                }
+                                super.setValue(fileName);
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                                super.setValue(null);
+                            }
+                        } else {
+                            super.setValue(null);
+                        }
+                    } else {
+                        super.setValue(null);
+                    }
+                } else {
+                    super.setValue(value);
                 }
             }
         });
     }
+
     @GetMapping("/img/categories/{fileName}")
     @ResponseBody
     public ResponseEntity<ByteArrayResource> getImage(@PathVariable String fileName) throws IOException {
-        // Đường dẫn tới thư mục chứa ảnh
         String imagePath = "C:/Users/admin/ProjectAutoKid/AutoKid_v2/AutoKid/src/main/resources/static/img/categories/" + fileName;
-
-        // Đọc nội dung hình ảnh từ file
         File imageFile = new File(imagePath);
         InputStream inputStream = new FileInputStream(imageFile);
         byte[] imageBytes = inputStream.readAllBytes();
-
-        // Chuyển dữ liệu hình ảnh thành ByteArrayResource
         ByteArrayResource resource = new ByteArrayResource(imageBytes);
-
-        // Xác định loại media của file (JPEG, PNG, v.v...)
         String fileExtension = fileName.substring(fileName.lastIndexOf('.') + 1).toLowerCase();
         MediaType mediaType = fileExtension.equals("jpg") || fileExtension.equals("jpeg") ? MediaType.IMAGE_JPEG : MediaType.IMAGE_PNG;
-
-        // Trả về ResponseEntity với dữ liệu hình ảnh
         return ResponseEntity.ok()
-                .contentType(mediaType)   // Định dạng hình ảnh (JPEG, PNG...)
+                .contentType(mediaType)
                 .header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"" + fileName + "\"")
                 .body(resource);
     }
 
     @PostMapping("/add/san-pham")
-    public String addSanPham(@ModelAttribute SanPham sanPham) {
+    @ResponseBody
+    public ResponseEntity<?> addSanPham(@ModelAttribute SanPham sanPham) {
         try {
-            // Sau khi tên file được gán vào sanPham, bạn có thể lưu sanPham vào cơ sở dữ liệu
+            if (service.isMaSPExist(sanPham.getMaSP())) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Mã sản phẩm đã tồn tại.");
+            }
+            if (service.isTenSPExist(sanPham.getTenSP())) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Tên sản phẩm đã tồn tại.");
+            }
             service.addSanPham(sanPham);
+            return ResponseEntity.ok("Thêm sản phẩm thành công!");
         } catch (Exception e) {
-            e.printStackTrace();
-            return "redirect:/admin/san-pham?error=database_save_failed";
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Có lỗi xảy ra khi thêm sản phẩm.");
         }
-        return "redirect:/admin/san-pham";
     }
     @PostMapping("/update/san-pham")
     public String updateProduct(@ModelAttribute("updateSanPham") SanPham sanPham) {
@@ -183,7 +218,6 @@ public class AdminProductController {
     @GetMapping("/san-pham/list")
     @ResponseBody
     public List<SanPham> getDanhSachSanPham() {
-        // Trả về danh sách sản phẩm dưới dạng JSON
         return service.DSSanPham();
     }
     @GetMapping("/statistical")
@@ -221,9 +255,11 @@ public class AdminProductController {
     @ResponseBody
     public ResponseEntity<?> addMauSac(@ModelAttribute MauSac mauSac) {
         try {
-            // Kiểm tra xem mã thương hiệu có trùng không
             if (service.isMaMSExist(mauSac.getMaMS())) {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Mã màu sắc đã tồn tại.");
+            }
+            if (service.isTenMSExist(mauSac.getTenMS())) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Tên màu sắc đã tồn tại.");
             }
             service.addMauSac(mauSac);
             return ResponseEntity.ok("Thêm màu sắc thành công!");
@@ -262,9 +298,11 @@ public class AdminProductController {
     @ResponseBody
     public ResponseEntity<?> addKichCo(@ModelAttribute KichCo kichCo) {
         try {
-            // Kiểm tra xem mã thương hiệu có trùng không
             if (service.isMaKCExist(kichCo.getMaKC())) {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Mã kích cỡ đã tồn tại.");
+            }
+            if (service.isTenKCExist(kichCo.getTenKC())) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Tên kích cỡ đã tồn tại.");
             }
             service.addKichCo(kichCo);
             return ResponseEntity.ok("Thêm kích cỡ thành công!");
@@ -289,9 +327,11 @@ public class AdminProductController {
     @ResponseBody
     public ResponseEntity<?> addThuongHieu(@ModelAttribute ThuongHieu thuongHieu) {
         try {
-            // Kiểm tra xem mã thương hiệu có trùng không
             if (service.isMaTHExist(thuongHieu.getMaTH())) {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Mã thương hiệu đã tồn tại.");
+            }
+            if (service.isTenTHExist(thuongHieu.getTenTH())) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Tên thương hiệu đã tồn tại.");
             }
             service.AddThuongHieu(thuongHieu);
             return ResponseEntity.ok("Thêm thương hiệu thành công!");
@@ -325,11 +365,14 @@ public class AdminProductController {
     }
 
     @PostMapping("/add/chat-lieu")
-    @ResponseBody // Thêm annotation này để trả về JSON
+    @ResponseBody
     public ResponseEntity<?> addChatLieu(@ModelAttribute ChatLieu chatLieu) {
         try {
             if (service.isMaCLExist(chatLieu.getMaCl())) {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Mã chất liệu đã tồn tại.");
+            }
+            if (service.isTenCLExist(chatLieu.getTenCl())) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Tên chất liệu đã tồn tại.");
             }
             service.addChatLieu(chatLieu);
             return ResponseEntity.ok("Thêm chất liệu thành công!");
@@ -363,6 +406,9 @@ public class AdminProductController {
         try {
             if (service.isMaLSPExist(loaiSanPham.getMaLSP())) {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Mã loại sản phẩm đã tồn tại.");
+            }
+            if (service.isTenLSPExist(loaiSanPham.getTenLoai())) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Tên loại sản phẩm đã tồn tại.");
             }
             service.addLoaiSanPham(loaiSanPham);
             return ResponseEntity.ok("Thêm loại sản phẩm thành công!");
