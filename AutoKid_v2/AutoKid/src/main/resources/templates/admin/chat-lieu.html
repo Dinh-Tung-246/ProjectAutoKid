@@ -58,7 +58,7 @@
                         </tr>
                         </thead>
                         <tbody>
-                        <tr th:each="cl : ${cls}" >
+                        <tr th:each="cl : ${cls}"  th:if="${cl.trangThaiCl} == 'Hoạt động'">
                             <td th:text="${cl.maCl}"></td>
                             <td th:text="${cl.tenCl}"></td>
                             <td th:text="${cl.trangThaiCl}"></td>
@@ -93,11 +93,11 @@
                     <form  method="post" onsubmit="handleAddCL(event, this)">
                         <div class="mb-3">
                             <label for="maCl" class="form-label">Mã chất liệu:</label>
-                            <input type="text" class="form-control border border-secondary" id="maCl" name="maCl" required>
+                            <input type="text" class="form-control border border-secondary" id="maCl" name="maCl" >
                         </div>
                         <div class="mb-3">
                             <label for="tenCl" class="form-label">Tên chất liệu:</label>
-                            <input type="text" class="form-control border border-secondary" id="tenCl" name="tenCl" required>
+                            <input type="text" class="form-control border border-secondary" id="tenCl" name="tenCl" >
                         </div>
                         <div class="mb-3">
                             <label for="trangThaiCl">Trạng thái</label>
@@ -173,11 +173,11 @@
                         <input type="hidden" id="id" th:field="*{id}">
                         <div class="mb-3">
                             <label for="maCl" class="form-label">Mã kích cỡ:</label>
-                            <input type="text" class="form-control border border-secondary" id="maCl" th:field="*{maCl}" required>
+                            <input type="text" class="form-control border border-secondary" id="maCl" th:field="*{maCl}" readonly>
                         </div>
                         <div class="mb-3">
                             <label for="tenCl" class="form-label">Tên kích cỡ:</label>
-                            <input type="text" class="form-control border border-secondary" id="tenCl" th:field="*{tenCl}" required>
+                            <input type="text" class="form-control border border-secondary" id="tenCl" th:field="*{tenCl}">
                         </div>
                         <div class="mb-3">
                             <label for="trangThaiCl" class="form-label">Trạng thái:</label>

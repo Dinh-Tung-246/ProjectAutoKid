@@ -11,4 +11,5 @@ import java.util.List;
 public interface KichCoRepo extends JpaRepository<KichCo,Integer> {
     List<KichCo> findAllByOrderByIdDesc();
     boolean existsByMaKC(String maKC);
+    boolean existsByTenKC(String tenKC);
 }

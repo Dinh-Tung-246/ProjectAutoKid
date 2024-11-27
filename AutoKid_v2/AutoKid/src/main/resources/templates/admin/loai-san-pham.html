@@ -100,11 +100,11 @@
                     <form method="post" onsubmit="handleAddLSP(event, this)">
                         <div class="mb-3">
                             <label for="maLSP" class="form-label">Mã loại sản phẩm:</label>
-                            <input type="text" class="form-control border border-secondary" id="maLSP" name="maLSP" required>
+                            <input type="text" class="form-control border border-secondary" id="maLSP" name="maLSP" >
                         </div>
                         <div class="mb-3">
                             <label for="tenLoai" class="form-label">Tên loại sản phẩm:</label>
-                            <input type="text" class="form-control border border-secondary" id="tenLoai" name="tenLoai" required>
+                            <input type="text" class="form-control border border-secondary" id="tenLoai" name="tenLoai">
                         </div>
                         <div class="mb-3">
                             <label for="moTa" class="form-label">Mô tả:</label>
@@ -187,11 +187,11 @@
                         <input type="hidden" id="id" th:field="*{idLoaiSP}">
                         <div class="mb-3">
                             <label for="maLSP" class="form-label">Mã loại sản phẩm:</label>
-                            <input type="text" class="form-control border border-secondary" id="maLSP" th:field="*{maLSP}" required>
+                            <input type="text" class="form-control border border-secondary" id="maLSP" th:field="*{maLSP}" readonly>
                         </div>
                         <div class="mb-3">
                             <label for="tenLoai" class="form-label">Tên loại sản phẩm:</label>
-                            <input type="text" class="form-control border border-secondary" id="tenLoai" th:field="*{tenLoai}" required>
+                            <input type="text" class="form-control border border-secondary" id="tenLoai" th:field="*{tenLoai}">
                         </div>
                         <div class="mb-3">
                             <label for="moTa" class="form-label">Mô tả:</label>

@@ -18,13 +18,10 @@ socket.onclose = function() {
 
 
 function handleAddTH(event, form) {
-    event.preventDefault(); // Ngăn chặn hành động mặc định của form
-
+    event.preventDefault();
     const maTH = form.querySelector('#maTH').value.trim();
     const tenTH = form.querySelector('#tenTH').value.trim();
     const diaChi = form.querySelector('#diaChi').value.trim();
-
-    // Validate phía client
     if (!maTH) {
         Swal.fire({
             title: "Lỗi!",
@@ -52,27 +49,21 @@ function handleAddTH(event, form) {
         });
         return;
     }
-
     const formData = new FormData(form);
-
-    // Gửi dữ liệu form qua fetch API
     fetch('/admin/add/thuong-hieu', {
         method: 'POST',
         body: formData
     }).then(response => {
         if (response.ok) {
-            // Thêm thương hiệu thành công, đóng modal và cập nhật danh sách thương hiệu
             Swal.fire({
                 title: "Thêm thương hiệu thành công!",
                 icon: "success",
                 confirmButtonText: "OK"
             }).then(() => {
-                // Đóng modal
                 const modalElement = document.querySelector('#addThuongHieuModal');
                 const modalInstance = bootstrap.Modal.getInstance(modalElement);
                 modalInstance.hide();
                 form.reset();
-                // Cập nhật lại danh sách thương hiệu
                 updateThuongHieuList();
             });
         } else {
@@ -88,10 +79,9 @@ function handleAddTH(event, form) {
             confirmButtonText: "OK"
         });
     });
-
     return false;
 }
-// Hàm cập nhật danh sách thương hiệu mà không cần tải lại trang
+
 function handleUpdateTH(event, form) {
     event.preventDefault(); // Ngăn chặn hành động mặc định của form
 
@@ -219,23 +209,122 @@ function updateThuongHieuList() {
 
 function handleAddSP(event, form) {
     event.preventDefault();
+    const maSP = form.querySelector('#maSP').value.trim();
+    const tenSP = form.querySelector('#tenSP').value.trim();
+    const giaNhap = form.querySelector('#giaNhap').value.trim();
+    const donGia = form.querySelector('#donGia').value.trim();
+    const ngayTao = form.querySelector('#ngayTao').value.trim();
+    const loaiSanPham = form.querySelector('#loaiSanPham').value;
+    const thuongHieu = form.querySelector('#thuongHieu').value;
+    const kichCo = form.querySelector('#kichCo').value;
+    const chatLieu = form.querySelector('#chatLieu').value;
+    const anhSPMau = form.querySelector('#anhSPMau').value;
+
+    if (!maSP) {
+        Swal.fire({
+            title: "Lỗi!",
+            text: "Mã sản phẩm không được để trống.",
+            icon: "error",
+            confirmButtonText: "OK"
+        });
+        return;
+    }
+    if (!tenSP) {
+        Swal.fire({
+            title: "Lỗi!",
+            text: "Tên sản phẩm không được để trống.",
+            icon: "error",
+            confirmButtonText: "OK"
+        });
+        return;
+    }
+    if (!giaNhap || giaNhap <= 0) {
+        Swal.fire({
+            title: "Lỗi!",
+            text: "Giá nhập không được để trống và phải lớn hơn 0.",
+            icon: "error",
+            confirmButtonText: "OK"
+        });
+        return;
+    }
+    if (!donGia || donGia <= 0) {
+        Swal.fire({
+            title: "Lỗi!",
+            text: "Giá bán  không được để trống và phải lớn hơn 0.",
+            icon: "error",
+            confirmButtonText: "OK"
+        });
+        return;
+    }
+    if (!ngayTao) {
+        Swal.fire({
+            title: "Lỗi!",
+            text: "Ngày tạo không được để trống.",
+            icon: "error",
+            confirmButtonText: "OK"
+        });
+        return;
+    }
+    if (!loaiSanPham) {
+        Swal.fire({
+            title: "Lỗi!",
+            text: "Vui lòng chọn loại sản phẩm.",
+            icon: "error",
+            confirmButtonText: "OK"
+        });
+        return;
+    }
+    if (!thuongHieu) {
+        Swal.fire({
+            title: "Lỗi!",
+            text: "Vui lòng chọn thương hiệu.",
+            icon: "error",
+            confirmButtonText: "OK"
+        });
+        return;
+    }
+    if (!kichCo) {
+        Swal.fire({
+            title: "Lỗi!",
+            text: "Vui lòng chọn kích cỡ.",
+            icon: "error",
+            confirmButtonText: "OK"
+        });
+        return;
+    }
+    if (!chatLieu) {
+        Swal.fire({
+            title: "Lỗi!",
+            text: "Vui lòng chọn chất liệu.",
+            icon: "error",
+            confirmButtonText: "OK"
+        });
+        return;
+    }
+    if (!anhSPMau) {
+        Swal.fire({
+            title: "Lỗi!",
+            text: "Vui lòng chọn ảnh sản phẩm.",
+            icon: "error",
+            confirmButtonText: "OK"
+        });
+        return;
+    }
 
     const formData = new FormData(form);
-
-    // Gửi dữ liệu form qua fetch API
     fetch('/admin/add/san-pham', {
         method: 'POST',
         body: formData
     })
         .then(response => {
             if (response.ok) {
-                // Thêm sản phẩm thành công, đóng modal và cập nhật danh sách sản phẩm
+                // Thêm sản phẩm thành công
                 Swal.fire({
                     title: "Thêm sản phẩm thành công!",
                     icon: "success",
                     confirmButtonText: "OK"
                 }).then(() => {
-                    // Đóng modal
+                    // Đóng modal và reset form
                     const modalElement = document.querySelector('#exampleModal');
                     const modalInstance = bootstrap.Modal.getInstance(modalElement);
                     modalInstance.hide();
@@ -261,25 +350,23 @@ function handleAddSP(event, form) {
     return false;
 }
 
-
 function handleUpdateSP(event, form) {
-    event.preventDefault(); // Ngăn chặn hành động mặc định của form
-
+    event.preventDefault();
     const formData = new FormData(form);
-
-    // Gửi dữ liệu form qua fetch API
     fetch('/admin/update/san-pham', {
         method: 'POST',
         body: formData
     }).then(response => {
         if (response.ok) {
-            // Cập nhật sản phẩm thành công
             Swal.fire({
                 title: "Cập nhật sản phẩm thành công!",
                 icon: "success",
                 confirmButtonText: "OK"
             }).then(() => {
-                // Cập nhật danh sách sản phẩm
+                const modalElement = document.querySelector('#productDetailModal');
+                const modalInstance = bootstrap.Modal.getInstance(modalElement);
+                modalInstance.hide();
+                form.reset();
                 updateSPList();
             });
         } else {
@@ -295,22 +382,19 @@ function handleUpdateSP(event, form) {
             confirmButtonText: "OK"
         });
     });
-
     return false;
 }
 
+
 function updateSPList() {
-    fetch('/admin/san-pham/list') // URL để lấy danh sách sản phẩm mới
-        .then(response => {
-            if (!response.ok) {
-                throw new Error('Không thể lấy danh sách sản phẩm');
-            }
-            return response.json();
-        })
+    fetch('/admin/san-pham/list')
+        .then(response => response.json())
         .then(data => {
-            // Cập nhật bảng sản phẩm
             const sanPhamTableBody = document.querySelector('#sanPhamTable tbody');
+            const sanPhamTableAn = document.querySelector('#sanPhamTableAn tbody');
             const sanPhamSelect = document.querySelector('#sanPhamList');
+
+            // Cập nhật danh sách sản phẩm "Đang bán"
             if (sanPhamTableBody) {
                 sanPhamTableBody.innerHTML = ''; // Xóa dữ liệu cũ
 
@@ -356,8 +440,50 @@ function updateSPList() {
                 attachUpdateButtonEvents();
             }
 
-            // Cập nhật danh sách chọn sản phẩm (nếu có)
 
+            // Cập nhật danh sách sản phẩm "Ngừng bán"
+            if (sanPhamTableAn) {
+                sanPhamTableAn.innerHTML = '';
+                data.forEach(sanPham => {
+                    if (sanPham.trangThaiSP === 'Ngừng bán') {
+                        const row = document.createElement('tr');
+                        row.innerHTML = `
+                            <td>${sanPham.maSP}</td>
+                            <td>${sanPham.tenSP}</td>
+                            <td><img src="/img/categories/${sanPham.anhSPMau}" alt="Ảnh sản phẩm"></td>
+                            <td>${sanPham.donGia}</td>
+                            <td>${sanPham.moTa}</td>
+                            <td>${sanPham.trangThaiSP}</td>
+                            <td>
+                                <button
+                                    class="view-detail btn btn-info"
+                                    data-bs-toggle="modal"
+                                    data-bs-target="#productDetailModal"
+                                    data-id="${sanPham.id}"
+                                    data-masp="${sanPham.maSP}"
+                                    data-ten="${sanPham.tenSP}"
+                                    data-anh="${sanPham.anhSPMau}"
+                                    data-gianhap="${sanPham.giaNhap}"
+                                    data-dongia="${sanPham.donGia}"
+                                    data-ngaytao="${sanPham.ngayTao}"
+                                    data-mota="${sanPham.moTa}"
+                                    data-loai="${sanPham.loaiSanPham.idLoaiSP}"
+                                    data-thuonghieu="${sanPham.thuongHieu.id}"
+                                    data-kichco="${sanPham.kichCo.id}"
+                                    data-chatlieu="${sanPham.chatLieu.id}"
+                                    data-trangthai="${sanPham.trangThaiSP}"
+                                >
+                                    Chi tiết
+                                </button>
+                            </td>
+                        `;
+                        sanPhamTableAn.appendChild(row);
+                    }
+                });
+                attachUpdateButtonEvents();
+            }
+
+            // Cập nhật danh sách sản phẩm trong dropdown
             if (sanPhamSelect) {
                 sanPhamSelect.innerHTML = '<option value="" disabled selected>Chọn sản phẩm</option>';
                 data.forEach(sanPham => {
@@ -374,13 +500,20 @@ function updateSPList() {
 }
 
 function handleAddCL(event, form) {
-    event.preventDefault(); // Ngăn chặn hành động mặc định của form
-
-    const tenCL = form.querySelector('#tenCl').value.trim(); // Lấy giá trị tên chất liệu
-    const trangThaiCL = form.querySelector('#trangThaiCl').value.trim(); // Lấy giá trị trạng thái
-
-    // Validate: Kiểm tra tên chất liệu và trạng thái
-    if (!tenCL) {
+    event.preventDefault();
+    const maCl = form.querySelector('#maCl').value.trim();
+    const tenCl = form.querySelector('#tenCl').value.trim();
+    const trangThaiCl = form.querySelector('#trangThaiCl').value.trim();
+    if (!maCl) {
+        Swal.fire({
+            title: "Lỗi!",
+            text: "Mã chất liệu không được để trống!",
+            icon: "error",
+            confirmButtonText: "OK"
+        });
+        return;
+    }
+    if (!tenCl) {
         Swal.fire({
             title: "Lỗi!",
             text: "Tên chất liệu không được để trống!",
@@ -389,8 +522,7 @@ function handleAddCL(event, form) {
         });
         return;
     }
-
-    if (!trangThaiCL) {
+    if (!trangThaiCl) {
         Swal.fire({
             title: "Lỗi!",
             text: "Trạng thái chất liệu không được để trống!",
@@ -399,11 +531,8 @@ function handleAddCL(event, form) {
         });
         return;
     }
-
     const formData = new FormData(form);
-
-    // Gửi dữ liệu form qua fetch API
-    fetch('/admin/add/chat-lieu', {  // URL thêm chất liệu mới
+    fetch('/admin/add/chat-lieu', {
         method: 'POST',
         body: formData
     }).then(response => {
@@ -418,7 +547,6 @@ function handleAddCL(event, form) {
                 const modalInstance = bootstrap.Modal.getInstance(modalElement);
                 modalInstance.hide();
                 form.reset();
-                // Cập nhật lại danh sách chất liệu
                 updateChatLieuList();
             });
         } else {
@@ -440,12 +568,9 @@ function handleAddCL(event, form) {
 
 
 function handleUpdateCL(event, form) {
-    event.preventDefault(); // Ngăn chặn hành động mặc định của form
-
-    const tenCL = form.querySelector('#tenCL').value.trim(); // Lấy giá trị tên chất liệu
-    const trangThaiCL = form.querySelector('#trangThaiCL').value.trim(); // Lấy giá trị trạng thái
-
-    // Validate: Kiểm tra tên chất liệu và trạng thái
+    event.preventDefault();
+    const tenCL = form.querySelector('#tenCl').value.trim();
+    const trangThaiCL = form.querySelector('#trangThaiCl').value.trim();
     if (!tenCL) {
         Swal.fire({
             title: "Lỗi!",
@@ -455,7 +580,6 @@ function handleUpdateCL(event, form) {
         });
         return;
     }
-
     if (!trangThaiCL) {
         Swal.fire({
             title: "Lỗi!",
@@ -465,11 +589,8 @@ function handleUpdateCL(event, form) {
         });
         return;
     }
-
     const formData = new FormData(form);
-
-    // Gửi dữ liệu form qua fetch API
-    fetch('/admin/update/chat-lieu', {  // URL cập nhật chất liệu
+    fetch('/admin/update/chat-lieu', {
         method: 'POST',
         body: formData
     }).then(response => {
@@ -479,8 +600,11 @@ function handleUpdateCL(event, form) {
                 icon: "success",
                 confirmButtonText: "OK"
             }).then(() => {
+                const modalElement = document.querySelector('#productDetailModal');
+                const modalInstance = bootstrap.Modal.getInstance(modalElement);
+                modalInstance.hide();
                 form.reset();
-                // Cập nhật lại danh sách chất liệu
+                form.reset();
                 updateChatLieuList();
             });
         } else {
@@ -501,14 +625,12 @@ function handleUpdateCL(event, form) {
 }
 
 function updateChatLieuList() {
-    fetch('/admin/chat-lieu/list')  // URL để lấy danh sách chất liệu
+    fetch('/admin/chat-lieu/list')
         .then(response => response.json())
         .then(data => {
             const chatLieuTableBody = document.querySelector('#chatLieuTable tbody');
             const chatLieuTableAnBody = document.querySelector('#chatLieuTableAn tbody');
             const chatLieuSelect = document.querySelector('#chatLieu');
-
-            // Cập nhật danh sách chất liệu "Hoạt động"
             if (chatLieuTableBody) {
                 chatLieuTableBody.innerHTML = '';
                 data.forEach(chatLieu => {
@@ -535,10 +657,8 @@ function updateChatLieuList() {
                 });
                 attachUpdateButtonEvents();
             }
-
-            // Cập nhật danh sách chất liệu "Không hoạt động"
             if (chatLieuTableAnBody) {
-                chatLieuTableAnBody.innerHTML = ''; // Xóa dữ liệu cũ
+                chatLieuTableAnBody.innerHTML = '';
                 data.forEach(chatLieu => {
                     if (chatLieu.trangThaiCl === 'Không hoạt động') {
                         const row = document.createElement('tr');
@@ -563,8 +683,6 @@ function updateChatLieuList() {
                 });
                 attachUpdateButtonEvents();
             }
-
-            // Cập nhật danh sách chất liệu trong dropdown
             if (chatLieuSelect) {
                 chatLieuSelect.innerHTML = '<option value="" disabled selected>Chọn chất liệu</option>';
                 data.forEach(chatLieu => {
@@ -580,20 +698,242 @@ function updateChatLieuList() {
         });
 }
 function handleAddSPCT(event, form) {
-    return handleFormSubmit(event, form, "Thêm chi tiết sản phẩm thành công!", "/admin/products");
+    event.preventDefault();
+    const maSPCT = form.querySelector("#maSPCT").value;
+    if (!maSPCT) {
+        Swal.fire({
+            title: "Lỗi!",
+            text: "Mã sản phẩm chi tiết không được để trống!",
+            icon: "error",
+            confirmButtonText: "OK"
+        });
+        return;
+    }
+    const sanPham = form.querySelector("#sanPham").value;
+    if (!sanPham) {
+        Swal.fire({
+            title: "Lỗi!",
+            text: "Bạn cần chọn sản phẩm!",
+            icon: "error",
+            confirmButtonText: "OK"
+        });
+        return;
+    }
+    const mauSac = form.querySelector("#mauSac").value;
+    if (!mauSac) {
+        Swal.fire({
+            title: "Lỗi!",
+            text: "Bạn cần chọn màu sắc!",
+            icon: "error",
+            confirmButtonText: "OK"
+        });
+        return;
+    }
+    const soLuong = form.querySelector("#soLuong").value;
+    if (isNaN(soLuong) || soLuong <= 0) {
+        Swal.fire({
+            title: "Lỗi!",
+            text: "Số lượng phải là một số dương!",
+            icon: "error",
+            confirmButtonText: "OK"
+        });
+        return;
+    }
+    const anh = form.querySelector("#anh").files[0];
+    if (anh) {
+        const validImageTypes = ["image/jpeg", "image/png", "image/gif"];
+        if (!validImageTypes.includes(anh.type)) {
+            Swal.fire({
+                title: "Lỗi!",
+                text: "Ảnh phải có định dạng .jpg, .png, hoặc .gif!",
+                icon: "error",
+                confirmButtonText: "OK"
+            });
+            return ;
+        }
+    }
+    const formData = new FormData(form);
+    fetch('/admin/add/products', {
+        method: 'POST',
+        body: formData
+    })
+        .then(response => {
+            if (response.ok) {
+                Swal.fire({
+                    title: "Thêm sản phẩm chi tiết thành công!",
+                    icon: "success",
+                    confirmButtonText: "OK"
+                }).then(() => {
+                    const modalElement = document.querySelector('#exampleModal');
+                    const modalInstance = bootstrap.Modal.getInstance(modalElement);
+                    modalInstance.hide();
+                    form.reset();
+                    updateSPCTList();
+                });
+            } else {
+                return response.text().then(text => {
+                    throw new Error(text || 'Có lỗi xảy ra');
+                });
+            }
+        })
+        .catch(error => {
+            Swal.fire({
+                title: "Lỗi!",
+                text: error.message,
+                icon: "error",
+                confirmButtonText: "OK"
+            });
+        });
 }
 
 function handleUpdateSPCT(event, form) {
-    return handleFormSubmit(event, form, "Cập nhật sản phẩm chi tiết thành công!", "/admin/products");
+    event.preventDefault();
+    const formData = new FormData(form);
+    fetch('/admin/update/products', {
+        method: 'POST',
+        body: formData
+    }).then(response => {
+        if (response.ok) {
+            Swal.fire({
+                title: "Cập nhật sản phẩm chi tiết thành công!",
+                icon: "success",
+                confirmButtonText: "OK"
+            }).then(() => {
+                const modalElement = document.querySelector('#productDetailModal');
+                const modalInstance = bootstrap.Modal.getInstance(modalElement);
+                modalInstance.hide();
+                form.reset();
+                updateSPCTList();
+            });
+        } else {
+            return response.text().then(text => {
+                throw new Error(text || 'Có lỗi xảy ra');
+            });
+        }
+    }).catch(error => {
+        Swal.fire({
+            title: "Lỗi!",
+            text: error.message,
+            icon: "error",
+            confirmButtonText: "OK"
+        });
+    });
+    return false;
 }
 
+function updateSPCTList() {
+    fetch('/admin/products/list')
+        .then(response => response.json())
+        .then(data => {
+            const sanPhamTableBody = document.querySelector('#sanPhamTable tbody');
+            const sanPhamTableAn = document.querySelector('#sanPhamTableAn tbody');
+            const sanPhamSelect = document.querySelector('#sanPhamList');
+            if (sanPhamTableBody) {
+                sanPhamTableBody.innerHTML = '';
+                data.forEach(spct => {
+                    if (spct.trangThaiSPCT === 'Còn hàng') {
+                        const row = document.createElement('tr');
+                        row.innerHTML = `
+                            <td>${spct.maSPCT}</td>
+                            <td>${spct.sanPham.tenSP}</td>
+                            <td>${spct.soLuong}</td>
+                            <td>${spct.sanPham.donGia}</td>
+                            <td>${spct.sanPham.thuongHieu.tenTH}</td>
+                            <td>${spct.sanPham.chatLieu.tenCl}</td>
+                            <td>${spct.sanPham.kichCo.tenKC}</td>
+                            <td>${spct.mauSac.tenMS}</td>
+                            <td><img src="/img/categories/${spct.anh}" alt="Ảnh sản phẩm"></td>
+                            <td>${spct.trangThaiSPCT}</td>
+                            <td>
+                                <button
+                                    class="view-detail btn btn-info"
+                                    data-bs-toggle="modal"
+                                    data-bs-target="#productDetailModal"
+                                    data-id="${spct.id}"
+                                    data-ma-spct="${spct.maSPCT}"
+                                    data-ten-sp="${spct.sanPham.tenSP}"
+                                    data-so-luong="${spct.soLuong}"
+                                    data-mau-sac="${spct.mauSac.id}"
+                                    data-anh="${spct.anh}"
+                                    data-trang-thai="${spct.trangThaiSPCT}"
+                                >
+                                    Chi tiết
+                                </button>
+                            </td>
+                        `;
+                        sanPhamTableBody.appendChild(row);
+                    }
+                });
+                attachUpdateButtonEvents();
+            }
+            if (sanPhamTableAn) {
+                sanPhamTableAn.innerHTML = '';
+                data.forEach(spct => {
+                    if (spct.trangThaiSPCT === 'Không còn hàng') {
+                        const row = document.createElement('tr');
+                        row.innerHTML = `
+                            <td>${spct.maSPCT}</td>
+                            <td>${spct.sanPham.tenSP}</td>
+                            <td>${spct.soLuong}</td>
+                            <td>${spct.sanPham.donGia}</td>
+                            <td>${spct.sanPham.thuongHieu.tenTH}</td>
+                            <td>${spct.sanPham.chatLieu.tenCl}</td>
+                            <td>${spct.sanPham.kichCo.tenKC}</td>
+                            <td>${spct.mauSac.tenMS}</td>
+                            <td><img src="/img/categories/${spct.anh}" alt="Ảnh sản phẩm"></td>
+                            <td>${spct.trangThaiSPCT}</td>
+                            <td>
+                                <button
+                                    class="view-detail btn btn-info"
+                                    data-bs-toggle="modal"
+                                    data-bs-target="#productDetailModal"
+                                    data-id="${spct.id}"
+                                    data-ma-spct="${spct.maSPCT}"
+                                    data-ten-sp="${spct.sanPham.tenSP}"
+                                    data-so-luong="${spct.soLuong}"
+                                    data-mau-sac="${spct.mauSac.id}"
+                                    data-anh="${spct.anh}"
+                                    data-trang-thai="${spct.trangThaiSPCT}"
+                                >
+                                    Chi tiết
+                                </button>
+                            </td>
+                        `;
+                        sanPhamTableAn.appendChild(row);
+                    }
+                });
+                attachUpdateButtonEvents();
+            }
+            if (sanPhamSelect) {
+                sanPhamSelect.innerHTML = '<option value="" disabled selected>Chọn sản phẩm</option>';
+                data.forEach(spct => {
+                    const option = document.createElement('option');
+                    option.value = spct.id;
+                    option.textContent = spct.sanPham.tenSP;
+                    sanPhamSelect.appendChild(option);
+                });
+            }
+        })
+        .catch(error => {
+            console.error('Lỗi khi cập nhật danh sách sản phẩm:', error);
+        });
+}
+
+
 function handleAddMS(event, form) {
-    event.preventDefault(); // Ngăn chặn hành động mặc định của form
-
-    const tenMS = form.querySelector('#tenMS').value.trim(); // Lấy giá trị tên màu sắc
-    const trangThaiMS = form.querySelector('#trangThaiMS').value.trim(); // Lấy giá trị trạng thái
-
-    // Validate: Kiểm tra tên màu sắc và trạng thái
+    event.preventDefault();
+    const maMS = form.querySelector('#maMS').value.trim();
+    const tenMS = form.querySelector('#tenMS').value.trim();
+    const trangThaiMS = form.querySelector('#trangThaiMS').value.trim();
+    if (!maMS) {
+        Swal.fire({
+            title: "Lỗi!",
+            text: "Mã màu sắc không được để trống!",
+            icon: "error",
+            confirmButtonText: "OK"
+        });
+        return;
+    }
     if (!tenMS) {
         Swal.fire({
             title: "Lỗi!",
@@ -603,7 +943,6 @@ function handleAddMS(event, form) {
         });
         return;
     }
-
     if (!trangThaiMS) {
         Swal.fire({
             title: "Lỗi!",
@@ -795,12 +1134,19 @@ function updateMauSacList() {
 }
 
 function handleAddKC(event, form) {
-    event.preventDefault(); // Ngăn chặn hành động mặc định của form
-
-    const tenKC = form.querySelector('#tenKC').value.trim(); // Lấy giá trị tên kích cỡ
-    const trangThaiKC = form.querySelector('#trangThaiKC').value.trim(); // Lấy giá trị trạng thái
-
-    // Validate: Kiểm tra tên kích cỡ và trạng thái
+    event.preventDefault();
+    const maKC = form.querySelector('#maKC').value.trim();
+    const tenKC = form.querySelector('#tenKC').value.trim();
+    const trangThaiKC = form.querySelector('#trangThaiKC').value.trim();
+    if (!maKC) {
+        Swal.fire({
+            title: "Lỗi!",
+            text: "Mã kích cỡ không được để trống!",
+            icon: "error",
+            confirmButtonText: "OK"
+        });
+        return;
+    }
     if (!tenKC) {
         Swal.fire({
             title: "Lỗi!",
@@ -810,11 +1156,10 @@ function handleAddKC(event, form) {
         });
         return;
     }
-
     if (!trangThaiKC) {
         Swal.fire({
             title: "Lỗi!",
-            text: "Trạng thái kích cỡ không được để trống!",
+            text: "Trạng thái kích cỡ không được chọn!",
             icon: "error",
             confirmButtonText: "OK"
         });
@@ -860,12 +1205,9 @@ function handleAddKC(event, form) {
 }
 
 function handleUpdateKC(event, form) {
-    event.preventDefault(); // Ngăn chặn hành động mặc định của form
-
-    const tenKC = form.querySelector('#tenKC').value.trim(); // Lấy giá trị tên kích cỡ
-    const trangThaiKC = form.querySelector('#trangThaiKC').value.trim(); // Lấy giá trị trạng thái
-
-    // Validate: Kiểm tra tên kích cỡ và trạng thái
+    event.preventDefault();
+    const tenKC = form.querySelector('#tenKC').value.trim();
+    const trangThaiKC = form.querySelector('#trangThaiKC').value.trim();
     if (!tenKC) {
         Swal.fire({
             title: "Lỗi!",
@@ -875,7 +1217,6 @@ function handleUpdateKC(event, form) {
         });
         return;
     }
-
     if (!trangThaiKC) {
         Swal.fire({
             title: "Lỗi!",
@@ -885,23 +1226,21 @@ function handleUpdateKC(event, form) {
         });
         return;
     }
-
     const formData = new FormData(form);
-
-    // Gửi dữ liệu form qua fetch API
-    fetch('/admin/update/kich-co', {  // URL cập nhật kích cỡ
+    fetch('/admin/update/kich-co', {
         method: 'POST',
         body: formData
     }).then(response => {
         if (response.ok) {
-            // Cập nhật kích cỡ thành công
             Swal.fire({
                 title: "Cập nhật kích cỡ thành công!",
                 icon: "success",
                 confirmButtonText: "OK"
             }).then(() => {
+                const modalElement = document.querySelector('#productDetailModal');
+                const modalInstance = bootstrap.Modal.getInstance(modalElement);
+                modalInstance.hide();
                 form.reset();
-                // Cập nhật lại danh sách kích cỡ
                 updateKichCoList();
             });
         } else {
@@ -917,7 +1256,6 @@ function handleUpdateKC(event, form) {
             confirmButtonText: "OK"
         });
     });
-
     return false;
 }
 
@@ -1006,8 +1344,37 @@ function updateKichCoList() {
         });
 }
 function handleAddLSP(event, form) {
-    event.preventDefault(); // Ngăn chặn hành động mặc định của form
-
+    event.preventDefault();
+    const maLSP = form.querySelector('#maLSP').value.trim();
+    const tenLoai = form.querySelector('#tenLoai').value.trim();
+    const moTa = form.querySelector('#moTa').value.trim();
+    if (!maLSP) {
+        Swal.fire({
+            title: "Lỗi!",
+            text: "Mã loại sản phẩm không được để trống.",
+            icon: "error",
+            confirmButtonText: "OK"
+        });
+        return false;
+    }
+    if (!tenLoai) {
+        Swal.fire({
+            title: "Lỗi!",
+            text: "Tên loại sản phẩm không được để trống.",
+            icon: "error",
+            confirmButtonText: "OK"
+        });
+        return false;
+    }
+    if (!moTa) {
+        Swal.fire({
+            title: "Lỗi!",
+            text: "Mô tả không được để trống.",
+            icon: "error",
+            confirmButtonText: "OK"
+        });
+        return false;
+    }
     const formData = new FormData(form);
 
     // Gửi dữ liệu form qua fetch API
@@ -1026,7 +1393,6 @@ function handleAddLSP(event, form) {
                 const modalInstance = bootstrap.Modal.getInstance(modalElement);
                 modalInstance.hide();
                 form.reset();
-                // Cập nhật lại danh sách loại sản phẩm
                 updateLoaiSanPhamList();
             });
         } else {
@@ -1124,10 +1490,8 @@ function updateLoaiSanPhamList() {
                     loaiSanPhamSelect.appendChild(option);
                 });
             }
-
-            // Phân loại bảng loại sản phẩm theo trạng thái
             if (loaiSanPhamTableHoatDong) {
-                loaiSanPhamTableHoatDong.innerHTML = '';  // Xóa các dòng cũ trong bảng
+                loaiSanPhamTableHoatDong.innerHTML = '';
                 data.forEach(loaiSanPham => {
                     if (loaiSanPham.trangThai === 'Đang bán') {
                         const row = document.createElement('tr');
@@ -1153,9 +1517,8 @@ function updateLoaiSanPhamList() {
                     }
                 });
             }
-
             if (loaiSanPhamTableKhongHoatDong) {
-                loaiSanPhamTableKhongHoatDong.innerHTML = '';  // Xóa các dòng cũ trong bảng
+                loaiSanPhamTableKhongHoatDong.innerHTML = '';
                 data.forEach(loaiSanPham => {
                     if (loaiSanPham.trangThai === 'Ngừng bán') {
                         const row = document.createElement('tr');
@@ -1181,9 +1544,7 @@ function updateLoaiSanPhamList() {
                     }
                 });
             }
-
-            // Gán lại sự kiện cho các nút "Cập nhật"
-            attachUpdateButtonEvents();  // Gọi hàm để đính kèm sự kiện cho các nút Cập nhật
+            attachUpdateButtonEvents();
         })
         .catch(error => {
             console.error('Lỗi khi cập nhật danh sách loại sản phẩm:', error);

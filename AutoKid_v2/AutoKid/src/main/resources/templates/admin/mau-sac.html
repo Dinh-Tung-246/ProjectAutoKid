@@ -95,11 +95,11 @@
                     <form  method="post" onsubmit="handleAddMS(event, this)">
                         <div class="mb-3">
                             <label for="maMS" class="form-label">Mã màu sắc:</label>
-                            <input type="text" class="form-control border border-secondary" id="maMS" name="maMS" required>
+                            <input type="text" class="form-control border border-secondary" id="maMS" name="maMS" >
                         </div>
                         <div class="mb-3">
                             <label for="tenMS" class="form-label">Tên màu sắc:</label>
-                            <input type="text" class="form-control border border-secondary" id="tenMS" name="tenMS" required>
+                            <input type="text" class="form-control border border-secondary" id="tenMS" name="tenMS">
                         </div>
                         <div class="mb-3">
                             <label for="trangThaiMS">Trạng thái</label>
@@ -175,11 +175,11 @@
                         <input type="hidden" id="id" th:field="*{id}">
                         <div class="mb-3">
                             <label for="maMS" class="form-label">Mã kích cỡ:</label>
-                            <input type="text" class="form-control border border-secondary" id="maMS" th:field="*{maMS}" required>
+                            <input type="text" class="form-control border border-secondary" id="maMS" th:field="*{maMS}" readonly>
                         </div>
                         <div class="mb-3">
                             <label for="tenMS" class="form-label">Tên kích cỡ:</label>
-                            <input type="text" class="form-control border border-secondary" id="tenMS" th:field="*{tenMS}" required>
+                            <input type="text" class="form-control border border-secondary" id="tenMS" th:field="*{tenMS}" >
                         </div>
                         <div class="mb-3">
                             <label for="trangThaiMS" class="form-label">Trạng thái:</label>

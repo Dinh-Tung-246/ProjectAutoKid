@@ -101,11 +101,15 @@
                     <form method="post" onsubmit="handleAddTH(event, this)">
                         <div class="mb-3">
                             <label for="maTH" class="form-label">Mã thương hiệu:</label>
-                            <input type="text" class="form-control border border-secondary" id="maTH" name="maTH" required>
+                            <input type="text" class="form-control border border-secondary" id="maTH" name="maTH" >
                         </div>
                         <div class="mb-3">
                             <label for="tenTH" class="form-label">Tên thương hiệu:</label>
-                            <input type="text" class="form-control border border-secondary" id="tenTH" name="tenTH" required>
+                            <input type="text" class="form-control border border-secondary" id="tenTH" name="tenTH" >
+                        </div>
+                        <div class="mb-3">
+                            <label for="diaChi" class="form-label">Địa chỉ:</label>
+                            <input type="text" class="form-control border border-secondary" id="diaChi" name="diaChi" >
                         </div>
                         <div class="mb-3">
                             <label for="trangThaiTH">Trạng thái</label>
@@ -113,10 +117,6 @@
                                 <option value="Hoạt động" selected>Hoạt động</option>
                                 <option value="Không hoạt động">Không hoạt động</option>
                             </select>
-                        </div>
-                        <div class="mb-3">
-                            <label for="diaChi" class="form-label">Địa chỉ:</label>
-                            <input type="text" class="form-control border border-secondary" id="diaChi" name="diaChi" required>
                         </div>
                         <div class="modal-footer">
                             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
@@ -188,7 +188,7 @@
                         <input type="hidden" id="id" th:field="*{id}">
                         <div class="mb-3">
                             <label for="maTH" class="form-label">Mã thương hiệu:</label>
-                            <input type="text" class="form-control border border-secondary" id="maTH" th:field="*{maTH}" required>
+                            <input type="text" class="form-control border border-secondary" id="maTH" th:field="*{maTH}" readonly>
                         </div>
                         <div class="mb-3">
                             <label for="tenTH" class="form-label">Tên thương hiệu:</label>

@@ -11,4 +11,5 @@ import java.util.List;
 public interface ChatLieuRepo extends JpaRepository<ChatLieu,Integer> {
     List<ChatLieu> findAllByOrderByIdDesc();
     boolean existsByMaCl(String maCl);
+    boolean existsByTenCl(String tenCl);
 }
