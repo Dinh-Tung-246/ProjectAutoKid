@@ -303,7 +303,7 @@
                             <div>
                                 <img id="currentImage" src="" alt="Ảnh hiện tại" style="max-width: 100px; max-height: 100px;">
                             </div>
-                            <input type="hidden" id="currentImageName" name="currentImageName" value="">
+                            <input type="hidden" id="anh" name="anh" value="">
                             <div class="form-check mt-2">
                                 <input class="form-check-input" type="checkbox" id="changeImageCheckbox">
                                 <label class="form-check-label" for="changeImageCheckbox">Thay đổi ảnh</label>
@@ -335,44 +335,53 @@
 
 <script>
     document.addEventListener('DOMContentLoaded', function () {
-        const changeImageCheckbox = document.getElementById('changeImageCheckbox');
-        const fileInputWrapper = document.getElementById('fileInputWrapper');
-        if (changeImageCheckbox) {
-            changeImageCheckbox.addEventListener('change', function () {
-                fileInputWrapper.style.display = this.checked ? 'block' : 'none';
-            });
-        }
+
         attachUpdateButtonEvents();
+    });
+    document.getElementById('changeImageCheckbox').addEventListener('change', function () {
+        const fileInputWrapper = document.getElementById('fileInputWrapper');
+        if (this.checked) {
+            fileInputWrapper.style.display = 'block';
+        } else {
+            fileInputWrapper.style.display = 'none';
+        }
     });
     function attachUpdateButtonEvents() {
         const detailButtons = document.querySelectorAll('.view-detail');
-        const modal = document.querySelector('#productDetailModal');
-        if (!detailButtons.length || !modal) {
-            console.error("Không tìm thấy nút chi tiết hoặc modal.");
-            return;
-        }
         detailButtons.forEach(button => {
             button.addEventListener('click', function () {
-                const id = button.dataset.id || '';
-                const maSPCT = button.dataset.maSpct || '';
-                const tenSP = button.dataset.tenSp || '';
-                const soLuong = button.dataset.soLuong || '';
-                const mauSac = button.dataset.mauSac || '';
-                const anh = button.dataset.anh || '';
-                const trangThaiSPCT = button.dataset.trangThai || '';
-                const imageUrl = anh ? `/img/categories/${anh}` : '';
-                modal.querySelector('#productId').value = id;
-                modal.querySelector('#productMaSP').value = maSPCT;
-                modal.querySelector('#productName').value = tenSP;
-                modal.querySelector('#productQuantity').value = soLuong;
-                modal.querySelector('#productColor').value = mauSac;
-                modal.querySelector('#productStatus').value = trangThaiSPCT;
-                modal.querySelector('#currentImage').src = imageUrl;
-                modal.querySelector('#currentImageName').value = anh;
+                // Lấy các giá trị từ thuộc tính data-* của nút
+                const id = this.getAttribute('data-id');
+                const maSPCT = this.getAttribute('data-ma-spct');
+                const tenSP = this.getAttribute('data-ten-sp');
+                const soLuong = this.getAttribute('data-so-luong');
+                const mauSac = this.getAttribute('data-mau-sac');
+                const anh = this.getAttribute('data-anh');
+                const trangThaiSPCT = this.getAttribute('data-trang-thai');
+                const imageName = this.getAttribute('data-anh');
+                console.log(imageName);
+                const imageUrl = `/img/categories/${imageName}`; // Đường dẫn ảnh
+                const modal = document.querySelector('#productDetailModal');
+                if (modal) {
+                    modal.querySelector('#productId').value = id || '';
+                    modal.querySelector('#productMaSP').value = maSPCT || '';
+                    modal.querySelector('#productName').value = tenSP || '';
+                    modal.querySelector('#productQuantity').value = soLuong || '';
+                    modal.querySelector('#productColor').value = mauSac || '';
+                    modal.querySelector('#productStatus').value = trangThaiSPCT || '';
+                    modal.querySelector('#currentImage').src = imageUrl;
+                    modal.querySelector('#currentImageName').value = imageName;
+                    const currentImage = modal.querySelector('#currentImage');
+                    if (currentImage) {
+                        currentImage.src = '/img/categories/' + (anh || '');
+                    }
+
+                } else {
+                    console.log("Không tìm thấy modal");
+                }
             });
         });
-    }
-
+    };
 </script>
 
 <!-- Chart library -->

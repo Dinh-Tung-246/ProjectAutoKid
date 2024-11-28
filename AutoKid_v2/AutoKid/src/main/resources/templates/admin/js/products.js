@@ -669,10 +669,14 @@ function handleUpdateSPCT(event, form) {
     event.preventDefault();
     const changeImageCheckbox = document.getElementById("changeImageCheckbox");
     const formData = new FormData(form);
+
+    // Nếu không chọn ảnh mới, giữ lại ảnh cũ
     if (!changeImageCheckbox.checked) {
-        const currentImageName = document.getElementById("currentImageName").value;
+        const currentImageName = document.getElementById("anh").value;
         if (currentImageName) {
             formData.append("anh", currentImageName);
+        } else {
+            console.warn("Current image name is empty, please check.");
         }
     }
 
@@ -701,7 +705,6 @@ function handleUpdateSPCT(event, form) {
             confirmButtonText: "OK"
         });
     });
-    return false;
 }
 
 
