@@ -146,7 +146,7 @@
                         </div>
                         <div class="mb-3">
                             <label for="anh" class="form-label mt-2">Ảnh</label>
-                            <input type="file" class="form-control border border-secondary" id="anh" name="anh" accept="image/*">
+                            <input type="file" class="form-control border border-secondary" id="anh" name="anh" accept="image/*" required>
                         </div>
                         <div class="mb-3">
                             <label for="trangThaiSPCT">Trạng thái</label>
@@ -299,12 +299,18 @@
                             </select>
                         </div>
                         <div class="mb-3">
-                            <label for="anh" class="form-label">Ảnh hiện tại</label>
+                            <label for="currentImage" class="form-label">Ảnh hiện tại</label>
                             <div>
                                 <img id="currentImage" src="" alt="Ảnh hiện tại" style="max-width: 100px; max-height: 100px;">
                             </div>
-                            <label for="anh" class="form-label mt-2">Thay đổi ảnh</label>
-                            <input type="file" class="form-control border border-secondary" id="anh" name="anh" accept="image/*">
+                            <input type="hidden" id="currentImageName" name="currentImageName" value="">
+                            <div class="form-check mt-2">
+                                <input class="form-check-input" type="checkbox" id="changeImageCheckbox">
+                                <label class="form-check-label" for="changeImageCheckbox">Thay đổi ảnh</label>
+                            </div>
+                            <div id="fileInputWrapper" class="mt-2" style="display: none;">
+                                <input type="file" class="form-control border border-secondary" id="anh" name="anh" accept="image/*">
+                            </div>
                         </div>
                         <div class="mb-3">
                             <label for="productStatus" class="form-label">Trạng thái</label>
@@ -329,39 +335,44 @@
 
 <script>
     document.addEventListener('DOMContentLoaded', function () {
+        const changeImageCheckbox = document.getElementById('changeImageCheckbox');
+        const fileInputWrapper = document.getElementById('fileInputWrapper');
+        if (changeImageCheckbox) {
+            changeImageCheckbox.addEventListener('change', function () {
+                fileInputWrapper.style.display = this.checked ? 'block' : 'none';
+            });
+        }
         attachUpdateButtonEvents();
     });
     function attachUpdateButtonEvents() {
         const detailButtons = document.querySelectorAll('.view-detail');
+        const modal = document.querySelector('#productDetailModal');
+        if (!detailButtons.length || !modal) {
+            console.error("Không tìm thấy nút chi tiết hoặc modal.");
+            return;
+        }
         detailButtons.forEach(button => {
             button.addEventListener('click', function () {
-                // Lấy các giá trị từ thuộc tính data-* của nút
-                const id = this.getAttribute('data-id');
-                const maSPCT = this.getAttribute('data-ma-spct');
-                const tenSP = this.getAttribute('data-ten-sp');
-                const soLuong = this.getAttribute('data-so-luong');
-                const mauSac = this.getAttribute('data-mau-sac');
-                const anh = this.getAttribute('data-anh');
-                const trangThaiSPCT = this.getAttribute('data-trang-thai');
-                const modal = document.querySelector('#productDetailModal');
-                if (modal) {
-                    modal.querySelector('#productId').value = id || '';
-                    modal.querySelector('#productMaSP').value = maSPCT || '';
-                    modal.querySelector('#productName').value = tenSP || '';
-                    modal.querySelector('#productQuantity').value = soLuong || '';
-                    modal.querySelector('#productColor').value = mauSac || '';
-                    modal.querySelector('#productStatus').value = trangThaiSPCT || '';
-                    const currentImage = modal.querySelector('#currentImage');
-                    if (currentImage) {
-                        currentImage.src = '/img/categories/' + (anh || '');
-                    }
-
-                } else {
-                    console.log("Không tìm thấy modal");
-                }
+                const id = button.dataset.id || '';
+                const maSPCT = button.dataset.maSpct || '';
+                const tenSP = button.dataset.tenSp || '';
+                const soLuong = button.dataset.soLuong || '';
+                const mauSac = button.dataset.mauSac || '';
+                const anh = button.dataset.anh || '';
+                const trangThaiSPCT = button.dataset.trangThai || '';
+                const imageUrl = anh ? `/img/categories/${anh}` : '';
+                modal.querySelector('#productId').value = id;
+                modal.querySelector('#productMaSP').value = maSPCT;
+                modal.querySelector('#productName').value = tenSP;
+                modal.querySelector('#productQuantity').value = soLuong;
+                modal.querySelector('#productColor').value = mauSac;
+                modal.querySelector('#productStatus').value = trangThaiSPCT;
+                modal.querySelector('#currentImage').src = imageUrl;
+                modal.querySelector('#currentImageName').value = anh;
             });
         });
-    };
+    }
+
 </script>
 
 <!-- Chart library -->
