@@ -5,6 +5,7 @@ import com.example.demo.model.HoaDon;
 import com.example.demo.model.HoaDonChiTiet;
 import com.example.demo.repository.HoaDonChiTietRepo;
 import com.example.demo.repository.HoaDonRepo;
+import com.example.demo.repository.SanPhamChiTietRepo;
 import com.example.demo.response.DonHangResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -25,6 +26,9 @@ public class QuanLyDatHangService {
     @Autowired
     HoaDonChiTietRepo hdctRepo;
 
+    @Autowired
+    SanPhamChiTietRepo spctRepo;
+
     // Tạo đơn hàng
     public void createHoaDon(HoaDon hoaDon) {
         hoaDonRepo.save(hoaDon);
@@ -32,8 +36,10 @@ public class QuanLyDatHangService {
         webSocketHandler.sendToClients("new order");
     }
 
-    // Tạo đơn hàng chi tiết
-    public void createHDCT(HoaDonChiTiet hdct){
+    // Tạo đơn hàng chi tiết đồng thời cập nhật lại số lượng hàng trong kho
+    @Transactional
+    public void createHDCT(HoaDonChiTiet hdct, Integer soLuong, Integer idSPCT){
+        spctRepo.updateSoLuongSPCT(soLuong, idSPCT);
         hdct.setHoaDon(hoaDonRepo.getHoaDon());
         hdctRepo.save(hdct);
     }

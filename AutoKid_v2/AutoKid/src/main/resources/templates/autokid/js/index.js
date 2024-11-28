@@ -8,12 +8,22 @@ function addToCart(a) {
   let donGia = parseFloat(donGiaStr); // Chuyển chuỗi thành số thực
   let idSPCT = a.getAttribute("data-idspct");
   let mauSac = a.getAttribute("data-mausac");
+  let soLuongSPCT = a.getAttribute("data-soluong");
 
-  // Lấy giỏ hàng từ Local Storage hoặc tạo mới nếu chưa có
-  let cart = JSON.parse(localStorage.getItem("cart")) || [];
+  if (soLuongSPCT === null) {
+    Swal.fire({
+      title: "Sản phẩm này hiện đang hết hàng!",
+      text: "Xin lỗi vì sự bất tiện này",
+      icon: "warning",
+      confirmButtonText: "OK",
+    });
+    return;
+  }
+
+  let cart = JSON.parse(sessionStorage.getItem("cart")) || [];
 
   // Kiểm tra xem sản phẩm đã có trong giỏ chưa
-  let sp = cart.find((item) => item.idSPCT === idSPCT);
+  let sp = cart.find((item) => item.idSPCT === idSPCT && item.idSP === idSP);
 
   if (sp) {
     // Nếu có, tăng số lượng
@@ -22,8 +32,7 @@ function addToCart(a) {
     cart.push({ idSP: idSP, name: tenSP, price: donGia, idSPCT: idSPCT, color: mauSac, quantity: 1 });
   }
 
-  // Lưu giỏ hàng vào LocalSttorage và cập nhật bảng
-  localStorage.setItem("cart", JSON.stringify(cart));
+  sessionStorage.setItem("cart", JSON.stringify(cart));
   updateCartCount();
   updateCartTotal();
   // updateCartTable();

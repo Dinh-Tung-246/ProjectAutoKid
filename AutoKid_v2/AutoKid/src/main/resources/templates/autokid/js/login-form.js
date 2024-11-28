@@ -74,7 +74,7 @@ function login(event) {
         .then(result => {
             console.log(result['result']);
             if (result['result'] === 'sc') {
-                localStorage.removeItem("KH");
+                sessionStorage.removeItem("KH");
                 const KHObject = {idKH: result['idKH']
                     , tenKH: result['tenKH']
                     , emailKH: result['emailKH']
@@ -86,7 +86,7 @@ function login(event) {
                     , diaChiNN: result['diaChiNN']
                 }
                 console.log(result['tenKH']);
-                localStorage.setItem("KH",JSON.stringify(KHObject));
+                sessionStorage.setItem("KH",JSON.stringify(KHObject));
                 Swal.fire({
                     title: "Đăng nhập thành công!",
                     icon: "success",

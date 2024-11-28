@@ -1,4 +1,11 @@
-
+document.addEventListener("DOMContentLoaded", function (){
+    const nv = JSON.parse(sessionStorage.getItem("infoNV")) || [];
+    console.log("ten before:", nv.tenNV);
+    let tenNV = nv.tenNV;
+    tenNV = tenNV.replaceAll("+", " ");
+    console.log("name after: ", tenNV);
+    document.getElementById("name-user").innerText = tenNV;
+});
 
 function confirmOrder(event, liElement) {
     event.preventDefault();
