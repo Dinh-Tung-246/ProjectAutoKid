@@ -39,51 +39,6 @@
 
 <th:block th:replace="autokid/header :: fragment"></th:block>
 
-<!-- Hero Section Begin -->
-<section class="hero hero-normal">
-    <div class="container">
-        <div class="row">
-            <div class="col-lg-3">
-                <div class="hero__categories">
-                    <div class="hero__categories__all">
-                        <i class="fa fa-bars"></i>
-                        <span>Danh Mục</span>
-                    </div>
-                    <ul>
-                        <li th:each="lsp: ${lsp}">
-                            <a href="#" th:text="${lsp.tenLoai}"></a>
-                        </li>
-                    </ul>
-                </div>
-            </div>
-            <div class="col-lg-9">
-                <div class="hero__search">
-                    <div class="hero__search__form">
-                        <form action="#">
-                            <div class="hero__search__categories">
-                                Danh mục
-                                <span class="arrow_carrot-down"></span>
-                            </div>
-                            <input type="text" placeholder="Bạn đang cần gì ?"/>
-                            <button type="submit" class="site-btn">Tìm kiếm</button>
-                        </form>
-                    </div>
-                    <div class="hero__search__phone">
-                        <div class="hero__search__phone__icon">
-                            <i class="fa fa-phone"></i>
-                        </div>
-                        <div class="hero__search__phone__text">
-                            <h5>+84 0000744333</h5>
-                            <span>Hỗ trợ 24/7 </span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</section>
-<!-- Hero Section End -->
-
 <!-- Breadcrumb Section Begin -->
 <section class="breadcrumb-section set-bg" data-setbg="img/breadcrumb.jpg">
     <div class="container">
@@ -114,19 +69,19 @@
                             <div class="col-lg-6">
                                 <div class="checkout__input">
                                     <p>Họ và tên<span>*</span></p>
-                                    <input type="text" class="name-kh">
+                                    <input type="text" class="name-kh" id="name-kh">
                                 </div>
                             </div>
                             <div class="col-lg-6">
                                 <div class="checkout__input">
                                     <p>Số điện thoại<span>*</span></p>
-                                    <input type="text" class="phone-number">
+                                    <input type="text" class="phone-number" id="sdt-kh">
                                 </div>
                             </div>
                         </div>
                         <div class="checkout__input">
                             <p>Địa chỉ nhận hàng<span>*</span></p>
-                            <input type="text" placeholder="Số nhà, tên đường, xã, huyện, thành phố" class="address-kh">
+                            <input type="text" placeholder="Số nhà, tên đường, xã, huyện, thành phố" class="address-kh" id="diaChi-kh">
                         </div>
                         <br/>
                         <p>Sau khi đặt hàng, phía Shop sẽ gọi điện thoại cho bạn để xác nhận đơn hàng.
@@ -156,7 +111,7 @@
                             <div class="checkout__input__checkbox" th:each="pttt : ${pttt}">
                                 <label th:if="${pttt.trangThai == 1}">
                                     [[${pttt.tenPTTT}]]
-                                    <input type="radio" name="payment_type" th:value="${pttt.id}"/>
+                                    <input type="radio" name="payment_type" th:id="${pttt.maPTTT}" th:value="${pttt.id}"/>
                                     <span class="checkmark"></span>
                                 </label>
                             </div>

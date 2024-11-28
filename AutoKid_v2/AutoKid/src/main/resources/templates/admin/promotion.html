@@ -204,7 +204,7 @@
                                     <td th:text="${promotion.giaTri}"></td>
                                     <td th:text="${promotion.ngayBatDau}"></td>
                                     <td th:text="${promotion.ngayKetThuc}"></td>
-                                    <td th:text="${promotion.trangThaiKM == '1' ? 'Hoạt động' : 'Không hoạt động'}" ></td>
+                                    <td th:text="${promotion.trangThaiKM == 1 ? 'Hoạt động' : 'Không hoạt động'}" ></td>
                                     <td class="text-center">
                                         <a class="update btn btn-warning" data-bs-toggle="modal" data-bs-target="#hihi"
                                            th:data-ma="${promotion.maKM}"
@@ -215,10 +215,10 @@
                                            th:data-tt="${promotion.trangThaiKM}"
                                            th:data-id="${promotion.id}"
                                            onclick="showDetail(this)">Edit</a>
-                                        <a th:href="@{/admin/promotion/delete/{id}(id=${promotion.id})}"
-                                           onclick="return confirm('Bạn có chắc muốn xóa không?');"
-                                           class="btn btn-danger">Destroy
-                                        </a>
+<!--                                        <a th:href="@{/admin/promotion/delete/{id}(id=${promotion.id})}"-->
+<!--                                           onclick="return confirm('Bạn có chắc muốn xóa không?');"-->
+<!--                                           class="btn btn-danger">Destroy-->
+<!--                                        </a>-->
                                     </td>
                                 </tr>
                                 </tbody>
@@ -264,12 +264,12 @@
                                             <input type="date" th:field="*{ngayKetThuc}" class="date" id="ngayKetThuc">
                                         </div>
                                     </div>
-
-                                    <div class="form-group">
-                                        <label for="giatri">Giá trị</label>
-                                        <input type="text" th:field="*{giaTri}" id="giatri" placeholder="Giá trị" required>
+                                    <div class="form-row">
+                                        <div class="form-group">
+                                            <label for="giatri">Giá trị</label>
+                                            <input type="text" th:field="*{giaTri}" id="giatri" placeholder="Giá trị" required>
+                                        </div>
                                     </div>
-
                                     <div class="form-row">
                                         <div class="form-group">
                                             <label for="trangThaiKM">Trạng thái</label>
@@ -324,12 +324,12 @@
                                                     <input type="date" id="modalKT" th:field="*{ngayKetThuc}" class="date" required>
                                                 </div>
                                             </div>
-
-                                            <div class="form-group">
-                                                <label for="modalGiaTri">Giá trị</label>
-                                                <input type="text" id="modalGiaTri" th:field="*{giaTri}" required>
+                                            <div class="form-row">
+                                                <div class="form-group">
+                                                    <label for="modalGiaTri">Giá trị</label>
+                                                    <input type="text" id="modalGiaTri" th:field="*{giaTri}" required>
+                                                </div>
                                             </div>
-
                                             <div class="form-row">
                                                 <div class="form-group">
                                                     <label for="modalTT">Trạng thái</label>

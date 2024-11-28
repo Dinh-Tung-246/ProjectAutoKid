@@ -1,4 +1,4 @@
-function formatPrice(price){
+function formatPrice(price) {
     return price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
 }
 
@@ -28,8 +28,20 @@ function renderPrice() {
         `;
 }
 
+function renderInfo() {
+    const data = JSON.parse(localStorage.getItem("KH")) || [];
+    console.log(data.length)
+    if (data != null && data.length != 0) {
+        document.getElementById("name-kh").value = data.tenKH;
+        document.getElementById("sdt-kh").value = data.sdtKH;
+        document.getElementById("diaChi-kh").value = data.diaChiKH;
+        console.log(data.tenKH, " - ", data.sdtKH, " - ", data.diaChiKH);
+    }
+}
+
 document.addEventListener("DOMContentLoaded", () => {
     renderPrice();
+    renderInfo();
 });
 
 //validate số điện thoại
@@ -60,6 +72,11 @@ document.querySelector('#checkout-form').addEventListener('submit', async functi
     const sdt = document.querySelector('input[class="phone-number"]').value.trim();
     const diaChi = document.querySelector('input[class="address-kh"]').value.trim();
     const paymentTypeElement = document.querySelector('input[name="payment_type"]:checked');
+    // Lấy dữ liệu từ localstorage
+    const checkoutData = JSON.parse(localStorage.getItem('checkout')) || [];
+    const cartData = JSON.parse(localStorage.getItem('cart')) || [];
+    // có thể null KHData vì trường hợp khách vãng lai
+    const KHData = JSON.parse(localStorage.getItem('KH')) || [];
 
     if (!hoTen || !sdt || !diaChi || !paymentTypeElement) {
         Swal.fire({
@@ -75,7 +92,7 @@ document.querySelector('#checkout-form').addEventListener('submit', async functi
         });
         return;
     }
-    if(validateFullName(hoTen) != 'sc'){
+    if (validateFullName(hoTen) != 'sc') {
         Swal.fire({
             title: validateFullName(hoTen),
             icon: "warning",
@@ -83,59 +100,78 @@ document.querySelector('#checkout-form').addEventListener('submit', async functi
         return;
     }
 
-        const paymentType = paymentTypeElement.value;
+    let idKH = null;
+    if (KHData != null) {
+        idKH = KHData.idKH;
+    }
 
-        // Lấy dữ liệu từ localstorage
-        const checkoutData = JSON.parse(localStorage.getItem('checkout')) || [];
-        const cartData = JSON.parse(localStorage.getItem('cart')) || []
-        // có thể null KHData vì trường hợp khách vãng lai
-        const KHData = JSON.parse(localStorage.getItem('KH')) || []
+    let TongTien = checkoutData.reduce((sum, item) => {
+        const price = parseFloat(item.totalPrice.replace(/\./g, ''));
+        return sum + price;
+    }, 0);
 
-        if (checkoutData[0] == null) {
-            Swal.fire({
-                title: "Bạn cần chọn sản phẩm để mua trước!",
-                icon: "warning",
-                confirmButtonText: "OK",
-            }).then(() => {
-                window.location.href = "http://localhost:8080/autokid/shoping-cart";
-            });
+    let vnpTxnRef = new Date().getTime().toString();
+    let orderInfo = "Thanh toan don hang " + vnpTxnRef;
+    const paymentData = {
+        amount: Math.round(TongTien),
+        orderInfo: orderInfo,
+        vnpTxnRef: vnpTxnRef,
+    }
+
+    localStorage.setItem("payment", JSON.stringify(paymentData));
+    const paymentType = paymentTypeElement.value;
+
+    //Xây dựng payload hóa đơn
+    const hoaDon = {
+        maHD: "HD" + vnpTxnRef,
+        tenNguoiNhan: hoTen,
+        sdtNguoiNhan: sdt,
+        diaChiNguoiNhan: diaChi,
+        ngayTao: getCurrentTimestamp(),
+        idPttt: parseInt(paymentType),
+        tongTien: TongTien,
+        idKH: idKH,
+        phiShip: 0,
+        hinhThucThanhToan: "",
+        trangThaiHD: "Chờ xác nhận",
+    };
+
+    const hdct = checkoutData.map(item => ({
+        id: item.id,
+        soLuong: item.quantity,
+        donGiaSauGiam: parseFloat(item.totalPrice.replace(/\./g, '')),
+    }));
+
+    if (paymentTypeElement.id === 'PTTT001') {
+        await handleCashPayment(hoaDon, hdct);
+    } else if (paymentTypeElement.id === 'PTTT002') {
+        const idKhachHang = idKH;
+        const tenNN = document.getElementById("name-kh").value.trim();
+        const diaChiNN = document.getElementById("diaChi-kh").value.trim();
+        const sdtNN = document.getElementById("sdt-kh").value.trim();
+        const InfoNN = {
+            idKH: idKhachHang,
+            tenNN: tenNN,
+            diaChiNN: diaChiNN,
+            sdt: sdtNN,
         }
 
-        let idKH = null;
-        if (KHData != null) {
-            idKH = KHData.idKH;
-        }
+        localStorage.setItem("info", JSON.stringify(InfoNN));
+        window.location.href = "http://localhost:8080/payment/";
+    }
+});
 
-        let TongTien = checkoutData.reduce((sum, item) => {
-            const price = parseFloat(item.totalPrice.replace(/\./g, ''));
-            return sum + price;
-        }, 0);
-
-        //Xây dựng payload hóa đơn
-        const hoaDon = {
-            maHD: "HD" + new Date().getTime(),
-            tenNguoiNhan: hoTen,
-            sdtNguoiNhan: sdt,
-            diaChiNguoiNhan: diaChi,
-            ngayTao: getCurrentTimestamp(),
-            idPttt: parseInt(paymentType),
-            tongTien: TongTien,
-            idKH: idKH,
-            phiShip: 0,
-            hinhThucThanhToan: "",
-            trangThaiHD: "Chờ xác nhận",
-        };
-
-        const hdct = cartData.map(item => ({
-            idSPCT: item.id,
-            soLuong: item.quantity,
-            donGiaSauGiam: item.price,
-        }));
-
-        console.log(hoaDon);
-        console.log(hdct);
-
-        if (checkoutData[0] != null) {
+async function handleCashPayment(hoaDon, hdct) {
+    Swal.fire({
+        title: "Bạn có chắc chắn muốn đặt hàng không?",
+        icon: "question",
+        confirmButtonText: "Có",
+        cancelButtonColor: "#d33",
+        confirmButtonColor: "#3085d6",
+        cancelButtonText: "Không",
+        showCancelButton: true,
+    }).then(async (confirm) => {
+        if (confirm.isConfirmed) {
             try {
                 const response = await fetch('/autokid/checkout/create', {
                     method: "POST",
@@ -162,7 +198,9 @@ document.querySelector('#checkout-form').addEventListener('submit', async functi
                 console.error("ERROR", error);
             }
         }
-});
+    })
+
+}
 
 function getCurrentTimestamp() {
     const now = new Date();

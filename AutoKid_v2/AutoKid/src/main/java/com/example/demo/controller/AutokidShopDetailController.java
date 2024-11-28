@@ -23,6 +23,7 @@ public class AutokidShopDetailController {
     public String showSPCT(@RequestParam Integer idSP, Model model){
         model.addAttribute("sp", quanLySanPhamService.getById(idSP));
         model.addAttribute("loaisp", lspRepo.findAll());
+        model.addAttribute("mauSac", quanLySanPhamService.getColorOfSP(idSP));
         model.addAttribute("sanpham", quanLySanPhamService.getAllSP());
         model.addAttribute("related",quanLySanPhamService.getAllRelatedProduct(idSP));
         return "/autokid/shop-details";

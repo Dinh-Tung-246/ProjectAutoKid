@@ -10,6 +10,16 @@
     <link rel="shortcut icon" href="./img/svg/logo.svg" type="image/x-icon">
     <!-- Custom styles -->
     <link rel="stylesheet" href="./css/style.min.css" type="text/css">
+    <style>
+        .users-table.table-wrapper {
+            max-height: 450px; /* Đặt chiều cao tối đa cho khung chứa bảng */
+            overflow-y: auto;  /* Bật cuộn dọc */
+        }
+        .posts-table {
+            width: 100%; /* Đảm bảo bảng chiếm toàn bộ chiều rộng */
+            border-collapse: collapse;
+        }
+    </style>
 </head>
 
 <body>
@@ -25,7 +35,7 @@
                 <h2 class="main-title">Quản Lý Loại Sản Phẩm</h2>
                 <div class="row">
                     <div class="col-2">
-                        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">Thêm loại sản phẩm</button>
+                        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addLoaiSanPhamModal">Thêm loại sản phẩm</button>
                     </div>
                     <div class="col-3">
                         <button type="button" class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#inactiveProductsModal">Danh sách sản phẩm ngừng bán</button>
@@ -42,7 +52,7 @@
                     </div>
                 </div>
                 <div class="users-table table-wrapper">
-                    <table class="posts-table">
+                    <table id="loaiSanPhamTableHoatDong" class="posts-table">
                         <thead>
                         <tr class="users-table-info">
                             <th>Mã loại sản phẩm</th>
@@ -79,22 +89,26 @@
         <div th:insert="fragments/footer_admin :: footer"></div>
     </div>
 
-    <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal fade" id="addLoaiSanPhamModal" tabindex="-1" role="dialog" aria-labelledby="addLoaiSanPhamModalLabel" aria-hidden="true">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalLabel">Thêm loại sản phẩm</h5>
+                    <h5 class="modal-title" id="addLoaiSanPhamModalLabel">Thêm loại sản phẩm</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <form action="/admin/add/loai-san-pham" method="post">
+                    <form method="post" onsubmit="handleAddLSP(event, this)">
                         <div class="mb-3">
                             <label for="maLSP" class="form-label">Mã loại sản phẩm:</label>
-                            <input type="text" class="form-control border border-secondary" id="maLSP" name="maLSP" required>
+                            <input type="text" class="form-control border border-secondary" id="maLSP" name="maLSP" >
                         </div>
                         <div class="mb-3">
                             <label for="tenLoai" class="form-label">Tên loại sản phẩm:</label>
-                            <input type="text" class="form-control border border-secondary" id="tenLoai" name="tenLoai" required>
+                            <input type="text" class="form-control border border-secondary" id="tenLoai" name="tenLoai">
+                        </div>
+                        <div class="mb-3">
+                            <label for="moTa" class="form-label">Mô tả:</label>
+                            <input type="text" class="form-control border border-secondary" id="moTa" name="moTa">
                         </div>
                         <div class="mb-3">
                             <label for="trangThai">Trạng thái</label>
@@ -102,10 +116,6 @@
                                 <option value="Đang bán" selected>Đang bán</option>
                                 <option value="Ngừng bán">Ngừng bán</option>
                             </select>
-                        </div>
-                        <div class="mb-3">
-                            <label for="moTa" class="form-label">Mô tả:</label>
-                            <input type="text" class="form-control border border-secondary" id="moTa" name="moTa">
                         </div>
                         <div class="modal-footer">
                             <button type="submit" class="btn btn-primary">Lưu</button>
@@ -125,7 +135,7 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <table class="posts-table">
+                    <table id="loaiSanPhamTableKhongHoatDong" class="posts-table">
                         <thead>
                         <tr class="users-table-info">
                             <th>Mã loại sản phẩm</th>
@@ -166,22 +176,22 @@
 
     <!-- Modal cập nhật Loại sản phẩm -->
     <div class="modal fade" id="productDetailModal" tabindex="-1" aria-labelledby="productDetailModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-lg">
+        <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title" id="productDetailModalLabel">Chi Tiết Sản Phẩm</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <form th:action="@{/admin/update/loai-san-pham}" th:object="${updateLoaiSanPham}" method="post">
+                    <form  th:object="${updateLoaiSanPham}" method="post"onsubmit="handleUpdateLSP(event, this)">
                         <input type="hidden" id="id" th:field="*{idLoaiSP}">
                         <div class="mb-3">
                             <label for="maLSP" class="form-label">Mã loại sản phẩm:</label>
-                            <input type="text" class="form-control border border-secondary" id="maLSP" th:field="*{maLSP}" required>
+                            <input type="text" class="form-control border border-secondary" id="maLSP" th:field="*{maLSP}" readonly>
                         </div>
                         <div class="mb-3">
                             <label for="tenLoai" class="form-label">Tên loại sản phẩm:</label>
-                            <input type="text" class="form-control border border-secondary" id="tenLoai" th:field="*{tenLoai}" required>
+                            <input type="text" class="form-control border border-secondary" id="tenLoai" th:field="*{tenLoai}">
                         </div>
                         <div class="mb-3">
                             <label for="moTa" class="form-label">Mô tả:</label>
@@ -210,7 +220,11 @@
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
 
 <script>
+
     document.addEventListener('DOMContentLoaded', function () {
+        attachUpdateButtonEvents();
+    });
+    function attachUpdateButtonEvents() {
         const updateButtons = document.querySelectorAll('.view-detail');
         updateButtons.forEach(button => {
             button.addEventListener('click', function () {
@@ -230,7 +244,7 @@
                 }
             });
         });
-    });
+    };
 </script>
 
 <!-- Chart library -->
@@ -239,6 +253,8 @@
 <script src="./plugins/feather.min.js"></script>
 <!-- Custom scripts -->
 <script src="./js/script.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script src="./js/products.js"></script>
 </body>
 
 </html>

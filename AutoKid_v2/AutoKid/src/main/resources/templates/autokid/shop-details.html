@@ -28,6 +28,7 @@
       rel="stylesheet"
       href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css"
     />
+    <link rel="stylesheet" href="css/shop-detail.css" type="text/css">
   </head>
 
   <body>
@@ -37,51 +38,6 @@
     </div>
 
     <th:block th:replace="autokid/header :: fragment"></th:block>
-
-    <!-- Hero Section Begin -->
-    <section class="hero hero-normal">
-      <div class="container">
-        <div class="row">
-          <div class="col-lg-3">
-            <div class="hero__categories">
-              <div class="hero__categories__all">
-                <i class="fa fa-bars"></i>
-                <span>Danh mục</span>
-              </div>
-              <ul>
-                <li th:each="loaisp : ${loaisp}">
-                  <a href="" th:text="${loaisp.tenLoai}"></a>
-                </li>
-              </ul>
-            </div>
-          </div>
-          <div class="col-lg-9">
-            <div class="hero__search">
-              <div class="hero__search__form">
-                <form action="#">
-                  <div class="hero__search__categories">
-                    Danh mục
-                    <span class="arrow_carrot-down"></span>
-                  </div>
-                  <input type="text" placeholder="Bạn muốn tìm kiếm gì?" />
-                  <button type="submit" class="site-btn">TÌM KIẾM</button>
-                </form>
-              </div>
-              <div class="hero__search__phone">
-                <div class="hero__search__phone__icon">
-                  <i class="fa fa-phone"></i>
-                </div>
-                <div class="hero__search__phone__text">
-                  <h5>+65 11.188.888</h5>
-                  <span>Hỗ trợ 24/7</span>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-    <!-- Hero Section End -->
 
     <!-- Breadcrumb Section Begin -->
     <section class="breadcrumb-section set-bg" data-setbg="img/breadcrumb.jpeg">
@@ -144,7 +100,16 @@
                 <span>(18 reviews)</span>
               </div>
               <div class="product__details__price">
-                <span th:text="${sp.donGia}"></span> <span>VND</span>
+                <div th:if="${sp.giaSauGiam == sp.donGia}">
+                  <span th:text="${sp.donGia}"></span> <span>VND</span>
+                </div>
+                <div th:if="${sp.giaSauGiam != sp.donGia}">
+                  <span th:text="${sp.giaSauGiam}"></span> <span>VND</span>
+                  <br>
+                  <h4>
+                    <del style="text-decoration-thickness: 2px; opacity: 0.5;"><span th:text="${sp.donGia}"></span> <span>VNĐ</span></del><br/>
+                  </h4>
+                </div>
               </div>
 <!--              <p th:text="${sp.moTa}"></p>-->
               <div class="product__details__quantity">
@@ -167,18 +132,33 @@
               >
               <ul>
                 <li>
-                  <b>Thương hiệu </b>
-<!--                  <span th:text="${spct.thuongHieu}"></span>-->
+                  <b>Màu sắc </b>
+                  <div class="custom-radio-group">
+                    <div th:each="ms: ${mauSac}" class="custom-radio-div"
+                         th:data-tenms="${ms.tenMS}"
+                         th:data-idspct="${ms.idSPCT}"
+                         th:data-soluong="${ms.soLuong}" th>[[${ms.tenMS}]]</div>
+                  </div>
+                  <input type="hidden" id="selectedValue" name="selectedValue">
+                  <input type="hidden" id="selectedValueMS" name="selectedValueMS">
                 </li>
                 <li>
-                  <b>Shipping</b>
-                  <span>01 day shipping. <samp>Free pickup today</samp></span>
+                  <b>Thương hiệu </b>
+                  <span th:text="${sp.tenThuongHieu}"></span>
+                </li>
+                <li>
+                  <b>Phí ship</b>
+                  <span> <samp></samp></span>
                 </li>
                 <li>
                   <b>Kích Thước </b>
-<!--                  <span th:text="${spct.kichCo}"></span>-->
+                  <span th:text="${sp.kichCo}"></span>
                 </li>
-                <li><b>Đã bán</b> <span>23 Chiếc</span></li>
+                <li>
+                  <b>Chất liệu </b>
+                  <span th:text="${sp.chatLieu}"></span>
+                </li>
+                <li><b>Số lượng trong kho </b> <span id="so-luong" th:text="${sp.soLuongSPCT}"></span></li>
               </ul>
             </div>
           </div>
@@ -343,6 +323,8 @@
                       th:data-id="${sptt.idSP}"
                       th:data-ten="${sptt.tenSP}"
                       th:data-gia="${sptt.donGia}"
+                      th:data-idspct = "${sptt.idSPCT}"
+                      th:data-mausac="${sptt.mauSacSPCT}"
                       onclick="addToCart(this)"
                       ><i class="fa fa-shopping-cart"></i
                     ></a>
@@ -380,5 +362,6 @@
     <script src="js/main.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="js/shop-detail.js"></script>
+    <script src="js/index.js"></script>
   </body>
 </html>

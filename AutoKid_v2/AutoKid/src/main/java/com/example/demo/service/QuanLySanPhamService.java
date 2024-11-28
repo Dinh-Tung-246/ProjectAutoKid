@@ -9,9 +9,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
+import java.util.*;
 
 @Service
 public class QuanLySanPhamService {
@@ -43,6 +41,12 @@ public class QuanLySanPhamService {
         return sanPhamRepo.findAllByOrderByIdDesc();
     }
 
+    public boolean isMaSPExist(String maSP) {
+        return sanPhamRepo.existsByMaSP(maSP);
+    }
+    public boolean isTenSPExist(String tenSP) {
+        return sanPhamRepo.existsByTenSP(tenSP);
+    }
     public void addSanPham(SanPham sanPham){
         sanPhamRepo.save(sanPham);
     }
@@ -55,7 +59,10 @@ public class QuanLySanPhamService {
         return sanPhamChiTietRepo.findAllByOrderByIdDesc();
     }
 
-    public void addSanPhamChiTiet(SanPhamChiTiet sanPhamChiTiet){
+    public boolean isMaSPCTExist(String maSPCT) {
+        return sanPhamChiTietRepo.existsByMaSPCT(maSPCT);
+    }
+    public void addSanPhamChiTiet(SanPhamChiTiet sanPhamChiTiet) {
         sanPhamChiTietRepo.save(sanPhamChiTiet);
     }
 
@@ -63,13 +70,18 @@ public class QuanLySanPhamService {
         sanPhamChiTietRepo.save(sanPhamChiTiet);
     }
     public List<ThuongHieu> getAllThuongHieu(){
-        return thuongHieuRepo.findAll();
+        return thuongHieuRepo.findAllByOrderByIdDesc();
     }
 
     public void AddThuongHieu(ThuongHieu thuongHieu){
         thuongHieuRepo.save(thuongHieu);
     }
-
+    public boolean isMaTHExist(String maTH) {
+        return thuongHieuRepo.existsByMaTH(maTH);
+    }
+    public boolean isTenTHExist(String tenTH) {
+        return thuongHieuRepo.existsByTenTH(tenTH);
+    }
     public void updateThuongHieu(ThuongHieu thuongHieu){thuongHieuRepo.save(thuongHieu);}
 
     public List<ThuongHieu> searchTH(String tenTH){
@@ -84,6 +96,12 @@ public class QuanLySanPhamService {
         mauSacRepo.save(mauSac);
     }
 
+    public boolean isMaMSExist(String maMS) {
+        return mauSacRepo.existsByMaMS(maMS);
+    }
+    public boolean isTenMSExist(String tenMS) {
+        return mauSacRepo.existsByTenMS(tenMS);
+    }
     public void updateMauSac(MauSac mauSac){mauSacRepo.save(mauSac);}
 
     public void deleteMauSac(Integer id){
@@ -97,13 +115,19 @@ public class QuanLySanPhamService {
     }
 
     public List<KichCo> getAllKichCo(){
-        return kichCoRepo.findAll();
+        return kichCoRepo.findAllByOrderByIdDesc();
     }
 
     public void addKichCo(KichCo kichCo){
         kichCoRepo.save(kichCo);
     }
 
+    public boolean isMaKCExist(String maKC) {
+        return kichCoRepo.existsByMaKC(maKC);
+    }
+    public boolean isTenKCExist(String tenKC) {
+        return kichCoRepo.existsByTenKC(tenKC);
+    }
     public void updateKichCo(KichCo kichCo){kichCoRepo.save(kichCo);}
 
     public void deleteKichCo(Integer id){
@@ -111,13 +135,19 @@ public class QuanLySanPhamService {
     }
 
     public List<ChatLieu> getAllChatLieu(){
-        return chatLieuRepo.findAll();
+        return chatLieuRepo.findAllByOrderByIdDesc();
     }
 
     public void addChatLieu(ChatLieu chatLieu){
         chatLieuRepo.save(chatLieu);
     }
 
+    public boolean isMaCLExist(String maCl) {
+        return chatLieuRepo.existsByMaCl(maCl);
+    }
+    public boolean isTenCLExist(String tenCl) {
+        return chatLieuRepo.existsByTenCl(tenCl);
+    }
     public void deleteChatLieu(Integer id){
         chatLieuRepo.deleteById(id);
     }
@@ -128,6 +158,13 @@ public class QuanLySanPhamService {
 
     public void uodateLoaiSanPham(LoaiSanPham loaiSanPham){loaiSanPhamRepo.save(loaiSanPham);}
 
+    public boolean isMaLSPExist(String maLSP) {
+        return loaiSanPhamRepo.existsByMaLSP(maLSP);
+    }
+    public boolean isTenLSPExist(String tenLoai) {
+        return loaiSanPhamRepo.existsByTenLoai(tenLoai);
+    }
+
     public List<LoaiSanPham> getAllLoaiSanPham(){
         return loaiSanPhamRepo.findAll();
     }
@@ -135,7 +172,9 @@ public class QuanLySanPhamService {
     public List<SanPhamKhuyenMaiResponse> getAllSP(){
         List<SanPhamKhuyenMaiResponse> list = new ArrayList<>();
         for(SanPham sp: sanPhamRepo.findAll()){
-            list.add(new SanPhamKhuyenMaiResponse(sp));
+            if (sp.getTrangThaiSP().equals("Đang bán")) {
+                list.add(new SanPhamKhuyenMaiResponse(sp));
+            }
         }
         return list;
     }
@@ -173,7 +212,7 @@ public class QuanLySanPhamService {
     public List<SanPhamKhuyenMaiResponse> getAllRelatedProduct(Integer idSP){
         SanPhamKhuyenMaiResponse sp = null;
         for(SanPham s: sanPhamRepo.findAll()){
-            if(s.getId() == idSP){
+            if(s.getId() == idSP && s.getTrangThaiSP().equals("Đang bán")){
                 sp = new SanPhamKhuyenMaiResponse(s);
                 break;
             }
@@ -192,7 +231,9 @@ public class QuanLySanPhamService {
     public List<SanPhamKhuyenMaiResponse> searchSPByPrice(Double gia1, Double gia2){
         List<SanPhamKhuyenMaiResponse> list = new ArrayList<>();
         for(SanPham sp: sanPhamRepo.searchByPrice(gia1, gia2)){
-            list.add(new SanPhamKhuyenMaiResponse(sp));
+            if (sp.getTrangThaiSP().equals("Đang bán")) {
+                list.add(new SanPhamKhuyenMaiResponse(sp));
+            }
         }
         return list;
     }
@@ -216,7 +257,9 @@ public class QuanLySanPhamService {
     public List<SanPhamKhuyenMaiResponse> searchSPByBrands(List<Integer> list) {
         List<SanPhamKhuyenMaiResponse> l = new ArrayList<>();
         for(SanPham sp: sanPhamRepo.searchByBrands(list)) {
-            l.add(new SanPhamKhuyenMaiResponse(sp));
+            if (sp.getTrangThaiSP().equals("Đang bán")) {
+                l.add(new SanPhamKhuyenMaiResponse(sp));
+            }
         }
         return l;
     }
@@ -225,7 +268,7 @@ public class QuanLySanPhamService {
     public List<SanPhamKhuyenMaiResponse> searchByLoai(Integer idLoai) {
         List<SanPhamKhuyenMaiResponse> l = new ArrayList<>();
         for(SanPham sp: sanPhamRepo.findAll()) {
-            if(sp.getLoaiSanPham().getIdLoaiSP() == idLoai) {
+            if(sp.getLoaiSanPham().getIdLoaiSP() == idLoai && sp.getTrangThaiSP().equals("Đang bán")) {
                 l.add(new SanPhamKhuyenMaiResponse(sp));
             }
         }
@@ -246,8 +289,40 @@ public class QuanLySanPhamService {
     public List<SanPhamKhuyenMaiResponse> filterAllSP(String filter){
         List<SanPhamKhuyenMaiResponse> list = new ArrayList<>();
         for(SanPham sp: filterSP(filter)) {
-            list.add(new SanPhamKhuyenMaiResponse(sp));
+            if (sp.getTrangThaiSP().equals("Đang bán")) {
+                list.add(new SanPhamKhuyenMaiResponse(sp));
+            }
         }
         return list;
+    }
+
+    // Search product by name
+    public List<SanPhamKhuyenMaiResponse> searchProductByName(String Name) {
+        List<SanPhamKhuyenMaiResponse> list = new ArrayList<>();
+        for (SanPham sp: sanPhamRepo.findAllByName(Name)) {
+            if(sp.getTrangThaiSP().equals("Đang bán")) {
+                list.add(new SanPhamKhuyenMaiResponse(sp));
+            }
+        }
+        return list;
+    }
+
+
+    // Lấy ra các màu mà sản phẩm có
+    public List<Map<String, Object>> getColorOfSP(Integer idSP) {
+        List<Map<String, Object>> listColor = new ArrayList<>();
+        SanPham sanPham = sanPhamRepo.findById(idSP).orElseThrow();
+        if (sanPham.getSanPhamChiTiets().size() != 0) {
+            for (SanPhamChiTiet spct: sanPham.getSanPhamChiTiets()){
+                Map<String, Object> map = new LinkedHashMap<>();
+                map.put("idSPCT",spct.getId());
+                map.put("idMS", spct.getMauSac().getId());
+                map.put("tenMS", spct.getMauSac().getTenMS());
+                map.put("soLuong", spct.getSoLuong());
+                listColor.add(map);
+            }
+        }
+
+        return listColor;
     }
 }

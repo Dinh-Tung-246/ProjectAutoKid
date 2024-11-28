@@ -43,7 +43,7 @@ public class AutokidCheckoutController {
     @GetMapping("")
     public String showCheckout(Model model){
         model.addAttribute("currentPage","checkout");
-        model.addAttribute("lsp", loaiSanPhamRepo.findAll());
+        model.addAttribute("loaisp", loaiSanPhamRepo.findAll());
         model.addAttribute("pttt", ptttRepo.findAll());
         return "/autokid/checkout";
     }
@@ -67,7 +67,7 @@ public class AutokidCheckoutController {
 
         Object idKHO = hoaDonData.get("idKH");
         if(idKHO != null) {
-        Integer idKH = Integer.parseInt(idKHO.toString());
+            Integer idKH = Integer.parseInt(idKHO.toString());
             KhachHang kh = khachHangRepo.findById(idKH).orElseThrow();
             hoaDon.setKhachHang(kh);
         }
@@ -80,15 +80,17 @@ public class AutokidCheckoutController {
         for (Map<String, Object> hdctData : hoaDonChiTietList) {
             HoaDonChiTiet hoaDonChiTiet = new HoaDonChiTiet();
 
-            // Ánh xạ sản phẩm chi tiết dựa trên tên (hoặc ID nếu có)
-            Integer idSP = Integer.parseInt(hdctData.get("idSPCT").toString()) ;
-            SanPhamChiTiet sanPhamChiTiet = sanPhamChiTietRepo.findById(idSP)
-                    .orElseThrow(() -> new RuntimeException("Không tìm thấy sản phẩm: " + idSP));
-            hoaDonChiTiet.setSanPhamChiTiet(sanPhamChiTiet);
-
-            hoaDonChiTiet.setSoLuong(((Number) hdctData.get("soLuong")).intValue());
+            Object idSPCT = hdctData.get("id");
+            if (idSPCT != null) {
+                // Ánh xạ sản phẩm chi tiết dựa trên tên (hoặc ID nếu có)
+                Integer idSP = Integer.parseInt(idSPCT.toString());
+                SanPhamChiTiet sanPhamChiTiet = sanPhamChiTietRepo.findById(idSP)
+                        .orElseThrow(() -> new RuntimeException("Không tìm thấy sản phẩm: " + idSP));
+                hoaDonChiTiet.setSanPhamChiTiet(sanPhamChiTiet);
+            }
+            hoaDonChiTiet.setSoLuong(Integer.parseInt((String) hdctData.get("soLuong")));
 //            hoaDonChiTiet.setDonGia(((Number) hdctData.get("donGia")).doubleValue());
-            hoaDonChiTiet.setDonGiaSauGiam(((Number) hdctData.get("donGiaSauGiam")).doubleValue());
+            hoaDonChiTiet.setDonGiaSauGiam(Double.parseDouble(String.valueOf((Integer) hdctData.get("donGiaSauGiam"))));
 
             // Lưu HoaDonChiTiet
             qldhService.createHDCT(hoaDonChiTiet);

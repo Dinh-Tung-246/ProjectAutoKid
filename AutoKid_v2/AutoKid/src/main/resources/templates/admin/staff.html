@@ -5,9 +5,10 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>HomeStaff_Autokid</title>
+    <title>StaffAutokid</title>
     <!-- Favicon -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
     <link rel="shortcut icon" href="./img/svg/logo.svg" type="image/x-icon">
     <!-- Custom styles -->
     <link rel="stylesheet" href="./css/style.min.css">
@@ -41,7 +42,57 @@
             font-weight: 700;
             color: #343a40;
         }
+
+        .table-wrapper {
+            border: 1px solid #dee2e6;
+            border-radius: 8px;
+            padding: 15px;
+            overflow-x: auto; /* Cho phép cuộn nếu bảng quá lớn */
+        }
+
+        .posts-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .posts-table th,
+        .posts-table td {
+            text-align: center;
+            padding: 10px;
+            border: 1px solid #dee2e6;
+        }
+
+        /* Modal Form */
+        .modal-content {
+            border-radius: 8px;
+            padding: 20px;
+        }
+
+        .form-control {
+            border-radius: 8px;
+            border: 1px solid #ced4da;
+            padding: 10px;
+            margin-bottom: 10px;
+        }
+
+        .form-label {
+            font-weight: bold;
+        }
+
+        .modal-footer button {
+            border-radius: 6px;
+        }
+        /* CSS mới để ghi đè */
+        .date:enabled:read-write:focus::-webkit-calendar-picker-indicator,
+        .date:enabled:read-write:hover::-webkit-calendar-picker-indicator {
+            display: block !important; /* Hiện lại icon */
+        }
     </style>
+    <link
+            rel="stylesheet"
+            href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css"
+    />
+    <link rel="stylesheet" href="./css/header.css" type="text/css">
 </head>
 
 <body>
@@ -49,10 +100,10 @@
 <a class="skip-link sr-only" href="#skip-target">Skip to content</a>
 <div class="page-flex">
     <!-- Sidebar -->
-    <div th:insert="fragments/sidebar_admin :: sidebar"></div>
+    <div th:insert="~{fragments/sidebar_admin :: sidebar}"></div>
     <div class="main-wrapper">
         <!-- Main nav -->
-        <div th:insert="fragments/header_admin :: header"></div>
+        <div th:insert="~{fragments/header_admin :: header}"></div>
         <!-- Main content -->
         <main class="main users chart-page" id="skip-target">
             <div class="container">
@@ -60,14 +111,15 @@
                 <div class="row">
                     <div class="col-5">
                         <!-- Button trigger modal -->
-                        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">
+                        <button type="button" class="btn btn-primary" data-bs-toggle="modal"
+                                data-bs-target="#exampleModal">
                             Thêm nhân viên
                         </button>
                     </div>
                     <div class="col-5">
                         <form action="/admin/staff/search" method="GET" class="row">
                             <div class="col-8">
-                                <input name="keyword" placeholder="Tìm kiếm nhân viên" class="form-control" />
+                                <input name="keyword" placeholder="Tìm kiếm nhân viên" class="form-control"/>
                             </div>
                             <div class="col-4">
                                 <button type="submit" class="btn btn-primary">Tìm kiếm</button>
@@ -96,24 +148,22 @@
                                 <tr th:each="staff : ${listStaff}">
                                     <td th:text="${staff != null ? staff.maNV : ''}">Mã nhân viên</td>
                                     <td th:text="${staff != null ? staff.tenNV : ''}">Tên nhân viên</td>
-                                    <td th:text="${staff != null ? staff.gioiTinh : ''}">Giới tính</td>
+                                    <td th:text="${staff != null ? (staff.gioiTinh == '1' ? 'Nam' : 'Nữ') : ''}">Giới
+                                        tính
+                                    </td>
                                     <td th:text="${staff != null ? staff.ngaySinh : ''}">Ngày sinh</td>
                                     <td th:text="${staff != null ? staff.ngayLamViec : ''}">Ngày làm việc</td>
-                                    <td th:text="${staff != null ? staff.trangThai : ''}">Trạng thái</td>
+                                    <td th:text="${staff != null ? (staff.trangThai  == '1' ? 'Đang làm' : 'Nghỉ làm') : ''}">
+                                        Trạng thái
+                                    </td>
                                     <td th:text="${staff != null ? staff.diaChi : ''}">Địa chỉ</td>
-                                    <td th:text="${staff != null && staff.chucVu != null ? staff.chucVu.tenChucVu : ''}">Chức vụ</td>
+                                    <td th:text="${staff != null && staff.chucVu != null ? staff.chucVu.tenChucVu : ''}">
+                                        Chức vụ
+                                    </td>
                                     <td>
-            <span class="p-relative">
-                <button class="dropdown-btn transparent-btn" type="button" title="More info">
-                    <div class="sr-only">More info</div>
-                    <i data-feather="more-horizontal" aria-hidden="true"></i>
-                </button>
-                <ul class="users-item-dropdown dropdown">
-                    <li><a href="##">Edit</a></li>
-                    <li><a th:href="@{/admin/staff/edit/{id}(id=${staff.id})}">Update</a></li>
-                    <li><a th:href="@{/admin/staff/delete/{id}(id=${staff.id})}">Delete</a></li>
-                </ul>
-            </span>
+                                        <a th:href="@{/admin/staff/edit/{id}(id=${staff.id})}" class="btn btn-primary" title="Cập nhật nhân viên">
+                                            Cập nhật
+                                        </a>
                                     </td>
                                 </tr>
                                 </tbody>
@@ -127,73 +177,131 @@
 
         </main>
         <!-- Footer -->
-        <div th:insert= "fragments/footer_admin :: footer"></div>
+        <div th:insert="~{fragments/footer_admin :: footer}"></div>
 
         <!-- Modal -->
-        <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel"
+             aria-hidden="true">
             <div class="modal-dialog">
                 <div class="modal-content">
                     <div class="modal-header">
                         <h1 class="modal-title fs-5" id="exampleModalLabel">Thêm Nhân Viên</h1>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
-                    <div class="modal-body">
-                        <form th:action="@{/admin/staff/save}" method="post">
-                            <div class="mb-3">
-                                <label for="maNV">Mã Nhân Viên:</label>
-                                <input type="text" id="maNV" name="maNV" required class="form-control"/>
+                    <div class="modal-dialog modal-lg">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title">Thêm Nhân Viên</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                        aria-label="Close"></button>
                             </div>
-                            <div class="mb-3">
-                                <label for="tenNV">Tên Nhân Viên:</label>
-                                <input type="text" id="tenNV" name="tenNV" required class="form-control"/>
+                            <div class="modal-body">
+                                <form th:action="@{/admin/staff/save}" method="post">
+
+                                    <div class="row mb-3">
+                                        <div class="col-12">
+                                            <label for="maNV" class="form-label">Mã Nhân Viên:</label>
+                                            <input type="text" id="maNV" name="maNV" required class="form-control"/>
+                                        </div>
+                                    </div>
+
+                                    <div class="row mb-3">
+                                        <div class="col-12">
+                                            <label for="tenNV" class="form-label">Tên Nhân Viên:</label>
+                                            <input type="text" id="tenNV" name="tenNV" required
+                                                   class="form-control"/>
+                                        </div>
+                                    </div>
+
+                                    <div class="row mb-3">
+                                        <div class="col-md-6">
+                                            <label class="form-label">Giới Tính:</label>
+                                            <div class="form-check">
+                                                <input type="radio" id="gioiTinhNam" name="gioiTinh" value="1"
+                                                       class="form-check-input">
+                                                <label for="gioiTinhNam" class="form-check-label">Nam</label>
+                                            </div>
+                                            <div class="form-check">
+                                                <input type="radio" id="gioiTinhNu" name="gioiTinh" value="0"
+                                                       class="form-check-input">
+                                                <label for="gioiTinhNu" class="form-check-label">Nữ</label>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label for="ngaySinh" class="form-label">Ngày Sinh:</label>
+                                            <input type="date" id="ngaySinh" name="ngaySinh" required
+                                                   class="date form-control"/>
+                                        </div>
+                                    </div>
+
+                                    <div class="row mb-3">
+                                        <div class="col-md-6">
+                                            <label for="ngayLamViec" class="form-label">Ngày Làm Việc:</label>
+                                            <input type="date" id="ngayLamViec" name="ngayLamViec" required
+                                                   class="date form-control"/>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label for="matKhau" class="form-label">Mật Khẩu:</label>
+                                            <input type="password" id="matKhau" name="matKhau" required
+                                                   class="form-control"/>
+                                        </div>
+                                    </div>
+
+                                    <div class="row mb-3">
+                                        <div class="col-md-6">
+                                            <label for="sdt" class="form-label">SĐT:</label>
+                                            <input type="text" id="sdt" name="sdt" required class="form-control"/>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label for="email" class="form-label">Email:</label>
+                                            <input type="email" id="email" name="email" required
+                                                   class="form-control"/>
+                                        </div>
+                                    </div>
+
+                                    <div class="row mb-3">
+                                        <div class="col-12">
+                                            <label for="diaChi" class="form-label">Địa Chỉ:</label>
+                                            <input type="text" id="diaChi" name="diaChi" required
+                                                   class="form-control"/>
+                                        </div>
+                                    </div>
+
+                                    <div class="row mb-3">
+                                        <div class="col-md-6">
+                                            <label class="form-label">Trạng Thái:</label>
+                                            <div class="form-check">
+                                                <input type="radio" id="trangThaiHoatDong" name="trangThai"
+                                                       value="1" class="form-check-input">
+                                                <label for="trangThaiHoatDong" class="form-check-label">Đang
+                                                    làm</label>
+                                            </div>
+                                            <div class="form-check">
+                                                <input type="radio" id="trangThaiNgungHoatDong" name="trangThai"
+                                                       value="0" class="form-check-input">
+                                                <label for="trangThaiNgungHoatDong" class="form-check-label">Đã
+                                                    nghỉ</label>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label for="chucVu" class="form-label">Chức Vụ:</label>
+                                            <select id="chucVu" name="chucVu.id" class="form-select">
+                                                <option value="" disabled selected>-- Chọn chức vụ --</option>
+                                                <option th:each="chucVu : ${danhSachChucVu}" th:value="${chucVu.id}"
+                                                        th:text="${chucVu.tenChucVu}"></option>
+                                            </select>
+                                        </div>
+                                    </div>
+
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                                            Đóng
+                                        </button>
+                                        <button type="submit" class="btn btn-primary">Thêm</button>
+                                    </div>
+                                </form>
                             </div>
-                            <div class="mb-3">
-                                <label for="gioiTinh">Giới Tính:</label>
-                                <select id="gioiTinh" name="gioiTinh" class="form-select">
-                                    <option value="Nam">Nam</option>
-                                    <option value="Nữ">Nữ</option>
-                                </select>
-                            </div>
-                            <div class="mb-3">
-                                <label for="ngaySinh">Ngày Sinh:</label>
-                                <input type="date" id="ngaySinh" name="ngaySinh" required class="form-control"/>
-                            </div>
-                            <div class="mb-3">
-                                <label for="ngayLamViec">Ngày Làm Việc:</label>
-                                <input type="date" id="ngayLamViec" name="ngayLamViec" required class="form-control"/>
-                            </div>
-                            <div class="mb-3">
-                                <label for="matKhau">Mật Khẩu:</label>
-                                <input type="password" id="matKhau" name="matKhau" required class="form-control"/>
-                            </div>
-                            <div class="mb-3">
-                                <label for="sdt">SĐT:</label>
-                                <input type="text" id="sdt" name="sdt" required class="form-control"/>
-                            </div>
-                            <div class="mb-3">
-                                <label for="email">Email:</label>
-                                <input type="email" id="email" name="email" required class="form-control"/>
-                            </div>
-                            <div class="mb-3">
-                                <label for="diaChi">Địa Chỉ:</label>
-                                <input type="text" id="diaChi" name="diaChi" required class="form-control"/>
-                            </div>
-                            <div class="mb-3">
-                                <label for="trangThai">Trạng Thái:</label>
-                                <input type="text" id="trangThai" name="trangThai" required class="form-control"/>
-                            </div>
-                            <div class="mb-3">
-                                <label for="chucVu">Chức Vụ:</label>
-                                <select id="chucVu" name="chucVu.id" class="form-select">
-                                    <option value="" disabled selected>-- Chọn chức vụ --</option>
-                                    <option th:each="chucVu : ${danhSachChucVu}" th:value="${chucVu.id}" th:text="${chucVu.tenChucVu}"></option>
-                                </select>
-                            </div>
-                            <div class="modal-footer">
-                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
-                                <button type="submit" class="btn btn-primary">Thêm</button>
-                            </div>
-                        </form>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -201,13 +309,43 @@
     </div>
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
+        crossorigin="anonymous"></script>
 <!-- Chart library -->
 <script src="./plugins/chart.min.js"></script>
 <!-- Icons library -->
 <script src="plugins/feather.min.js"></script>
 <!-- Custom scripts -->
 <script src="js/script.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script src="js/header.js"></script>
+<script>
+    // ket noi den websocket
+    const socket = new WebSocket('ws://localhost:8080/ws');
+
+    // khi ket noi thanh cong
+    socket.onopen = function () {
+        console.log("Da ket noi voi WebSocket");
+    }
+
+    //Khi nhan duoc thong bao tu server
+    socket.onmessage = function (event) {
+        console.log("Du lieu nhan tu server: ", event.data);
+        // updateUI()
+        window.location.href= "http://localhost:8080/admin/staff/home";
+    }
+
+    // Khi có lỗi
+    socket.onerror = function(error) {
+        console.error("Lỗi WebSocket:", error);
+    };
+
+    // Khi kết nối bị đóng
+    socket.onclose = function() {
+        console.log("Kết nối WebSocket đã đóng.");
+    };
+</script>
 </body>
 
 </html>

@@ -6,9 +6,6 @@ if (KhachHang) {
     document.querySelector('.idKH').value = KhachHang.idKH || '';
     document.querySelector('.diaChiKH').value = KhachHang.diaChiKH || '';
     document.querySelector('.sdtKH').value = KhachHang.sdtKH || '';
-    document.querySelector('.tenNN').value = KhachHang.tenNN || '';
-    document.querySelector('.sdtNN').value = KhachHang.sdtNN || '';
-    document.querySelector('.diaChiNN').value = KhachHang.diaChiNN || '';
 } else {
     console.log("No data")
 }
@@ -21,14 +18,11 @@ document.querySelector('#update-info').addEventListener('submit', async function
     const emailKH = document.querySelector('input[class="emailKH"]').value.trim();
     const sdtKH = document.querySelector('input[class="sdtKH"]').value.trim();
     const diaChiKH = document.querySelector('input[class="diaChiKH"]').value.trim();
-    const tenNN = document.querySelector('input[class="tenNN"]').value.trim();
-    const sdtNN = document.querySelector('input[class="sdtNN"]').value.trim();
-    const diaChiNN = document.querySelector('input[class="diaChiNN"]').value.trim();
 
     const dataKH = JSON.parse(localStorage.getItem('KH')) || [];
     const matKhau = dataKH['pass'];
 
-    if (!hoTenKH || !emailKH || !sdtKH || !diaChiKH || !tenNN || !sdtNN || !diaChiNN) {
+    if (!hoTenKH || !emailKH || !sdtKH || !diaChiKH) {
         Swal.fire({
            title: "Bạn không được để trống các trường!!!",
            icon: "warning",
@@ -43,10 +37,6 @@ document.querySelector('#update-info').addEventListener('submit', async function
         matKhau: matKhau,
         sdtKH: sdtKH,
         diaChiKH: diaChiKH,
-        maNN: "TTVC" + new Date().getTime(),
-        tenNN: tenNN,
-        diaChiNN: diaChiNN,
-        sdtNN: sdtNN,
     }
 
     localStorage.setItem("KH", JSON.stringify(khachHang));

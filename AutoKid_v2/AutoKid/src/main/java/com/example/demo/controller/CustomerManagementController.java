@@ -48,6 +48,8 @@ public class CustomerManagementController {
     @GetMapping("/search-customer")
     public String searchCustomer(@RequestParam("ten") String ten, Model model) {
         model.addAttribute("khachhang", serviceQLKH.searchCustomer(ten));
+        model.addAttribute("donhang",serviceQLDH.getDonHang());
+        model.addAttribute("int", serviceQLDH.getIndex());
         return "/admin/customerManagement";
     }
 
@@ -57,13 +59,6 @@ public class CustomerManagementController {
         Map<String, Object> khachHangData = (Map<String, Object>) requset.get("khachHang");
 
         KhachHang khachHang = new KhachHang();
-        ThongTinVanChuyen ttvc = new ThongTinVanChuyen();
-
-        ttvc.setMaTTVC(khachHangData.get("maNN").toString());
-        ttvc.setTenNguoiNhan(khachHangData.get("tenNN").toString());
-        ttvc.setDiaChi(khachHangData.get("diaChiNN").toString());
-        ttvc.setSdt(khachHangData.get("sdtNN").toString());
-        serviceQLKH.insertThongTinVanChuyen(ttvc);
 
         khachHang.setId(Integer.parseInt(khachHangData.get("idKH").toString()));
         khachHang.setTenKH(khachHangData.get("tenKH").toString());

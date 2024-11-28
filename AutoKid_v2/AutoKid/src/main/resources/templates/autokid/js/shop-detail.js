@@ -1,99 +1,93 @@
 $(document).ready(function () {
-  // Xóa các nút "-" và "+"
-  $(".pro-qty .dec").remove();
-  $(".pro-qty .inc").remove();
+    // Xóa các nút "-" và "+"
+    $(".pro-qty .dec").remove();
+    $(".pro-qty .inc").remove();
 });
-
-// Hàm thêm sản phẩm vào giỏ hàng
-function addToCart(a) {
-  // a.preventDefault();
-  //Lấy idSPCT, tenSPCT, donGia
-  let idSP = a.getAttribute("data-id");
-  let tenSP = a.getAttribute("data-ten");
-  // Loại bỏ dấu phân cách hàng nghìn và chuyển chuỗi giá về số
-  let donGiaStr = a.getAttribute("data-gia").replace(/\./g, "");
-  let donGia = parseFloat(donGiaStr); // Chuyển chuỗi thành số thực
-
-  // Lấy giỏ hàng từ Local Storage hoặc tạo mới nếu chưa có
-  let cart = JSON.parse(localStorage.getItem("cart")) || [];
-
-  // Kiểm tra xem sản phẩm đã có trong giỏ chưa
-  let sp = cart.find((item) => item.id === idSP);
-
-  if (sp) {
-    // Nếu có, tăng số lượng
-    sp.quantity += 1;
-  } else {
-    cart.push({ id: idSP, name: tenSP, price: donGia, quantity: 1 });
-  }
-
-  // Lưu giỏ hàng vào LocalSttorage và cập nhật bảng
-  localStorage.setItem("cart", JSON.stringify(cart));
-  updateCartCount();
-  updateCartTotal();
-  // updateCartTable();
-  Swal.fire({
-    title: "Thêm sản phẩm vào giỏ hàng thành công!",
-    icon: "success",
-    confirmButtonText: null,
-  });
-  setTimeout(function () {
-    window.location.href = "http://localhost:8080/autokid/shoping-cart";
-  }, 1000);
-}
 
 // hàm tăng số lượng
 function increaseQuantity() {
-  const quantityInput = document.getElementById("quantity-input");
-  let quantity = parseInt(quantityInput.value) || 1;
-  quantityInput.value = quantity + 1;
+    const quantityInput = document.getElementById("quantity-input");
+    let quantity = parseInt(quantityInput.value) || 1;
+    quantityInput.value = quantity + 1;
 }
 
 // hàm giảm số lượng
 function decreaseQuantity() {
-  const quantityInput = document.getElementById("quantity-input");
-  let quantity = parseInt(quantityInput.value) || 1;
-  if (quantity > 1) {
-    quantityInput.value = quantity - 1;
-  }
+    const quantityInput = document.getElementById("quantity-input");
+    let quantity = parseInt(quantityInput.value) || 1;
+    if (quantity > 1) {
+        quantityInput.value = quantity - 1;
+    }
 }
 
 // Hàm thêm sản phẩm vào giỏ từ button
 $("#add-to-cart").on("click", function (event) {
-  event.preventDefault();
+    event.preventDefault();
 
-  const a = document.getElementById("add-to-cart");
-  let idSP = a.getAttribute("data-id");
-  let tenSP = a.getAttribute("data-name");
-  let giaStr = a.getAttribute("data-price").replace(/\./g, "");
-  const giaSP = parseFloat(giaStr);
-  let quantitySP = parseInt(document.getElementById("quantity-input").value);
+    const a = document.getElementById("add-to-cart");
+    let idSP = a.getAttribute("data-id");
+    let tenSP = a.getAttribute("data-name");
+    let giaStr = a.getAttribute("data-price").replace(/\./g, "");
+    const giaSP = parseFloat(giaStr);
+    let quantitySP = parseInt(document.getElementById("quantity-input").value);
+    let idSPCT = document.getElementById('selectedValue').value;
+    let tenMS = document.getElementById('selectedValueMS').value;
 
-  let cart = JSON.parse(localStorage.getItem("cart")) || [];
+    console.log("ten", tenMS);
+    console.log("idspct", idSPCT);
+    if (tenMS == undefined || tenMS == null || tenMS.trim() == '') {
+        Swal.fire({
+            title: "Bạn cần chọn màu!",
+            icon: "error",
+            confirmButtonText: "OK"
+        });
+    } else {
+        let cart = JSON.parse(localStorage.getItem("cart")) || [];
 
-  // Kiểm tra xem sản phẩm đã có trong giỏ chưa
-  let sp = cart.find((item) => item.id === idSP);
+        // Kiểm tra xem sản phẩm đã có trong giỏ chưa
+        let sp = cart.find((item) => item.id === idSP);
 
-  if (sp) {
-    sp.quantity = sp.quantity + quantitySP;
-  } else {
-    cart.push({
-      id: idSP,
-      name: tenSP,
-      price: giaSP,
-      quantity: quantitySP,
-    });
-  }
+        if (sp) {
+            sp.quantity = sp.quantity + quantitySP;
+        } else {
+            cart.push({
+                idSP: idSP,
+                name: tenSP,
+                price: giaSP,
+                idSPCT: idSPCT,
+                color: tenMS,
+                quantity: quantitySP,
+            });
+        }
 
-  localStorage.setItem("cart", JSON.stringify(cart));
-  updateCartCount();
-  updateCartTotal();
-  Swal.fire({
-    title: "Thêm sản phẩm vào giỏ hàng thành công!",
-    icon: "success",
-    confirmButtonText: null,
-  });
-  setTimeout(function () {
-    window.location.href = "http://localhost:8080/autokid/shoping-cart";
-  }, 1000);
+        localStorage.setItem("cart", JSON.stringify(cart));
+        updateCartCount();
+        updateCartTotal();
+        Swal.fire({
+            title: "Thêm sản phẩm vào giỏ hàng thành công!",
+            icon: "success",
+            confirmButtonText: null,
+        });
+        setTimeout(function () {
+            window.location.href = "http://localhost:8080/autokid/shoping-cart";
+        }, 1000);
+    }
 });
+
+document.querySelectorAll('.custom-radio-div').forEach(item => {
+    item.addEventListener('click', function () {
+        // Bỏ class selected khoit tất cả các item
+        document.querySelectorAll('.custom-radio-div').forEach(el => el.classList.remove('selected'));
+
+        // thêm class "selected" vào item được chọn
+        this.classList.add('selected');
+
+        //Lưu lại giá trị được chọn vào input ẩn
+        document.getElementById('selectedValue').value = this.getAttribute('data-idspct');
+        document.getElementById('selectedValueMS').value = this.getAttribute('data-tenms');
+        document.getElementById('so-luong').textContent = this.getAttribute('data-soluong');
+        console.log('Selected value: ', this.getAttribute('data-idspct'));
+        console.log('So luong: ', this.getAttribute('data-soluong'));
+        console.log('Mau sac: ', this.getAttribute('data-tenms'));
+    })
+})

@@ -2,14 +2,35 @@ package com.example.demo.controller;
 
 import com.example.demo.model.*;
 import com.example.demo.service.QuanLySanPhamService;
+
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
+
+import org.springframework.core.env.Environment;
+import org.springframework.core.io.ByteArrayResource;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.util.StringUtils;
+import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+
+import java.beans.PropertyEditorSupport;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
+import java.util.Date;
 import java.util.List;
+
 
 @Controller
 @RequestMapping("/admin")
@@ -17,6 +38,11 @@ public class AdminProductController {
 
     @Autowired
     QuanLySanPhamService service;
+
+    @Autowired
+    private Environment env;
+
+
 
     @GetMapping("/home")
     public String home(){
@@ -28,15 +54,29 @@ public class AdminProductController {
         List<SanPhamChiTiet> sanPhamChiTiets = service.getAllSanPham();
         model.addAttribute("dsMauSac", service.getAllMauSac());
         model.addAttribute("dsSanPham", service.DSSanPham());
+        model.addAttribute("addSPCT", new SanPhamChiTiet());
         model.addAttribute("updateSPCT", new SanPhamChiTiet());
         model.addAttribute("spct", sanPhamChiTiets);
         return "admin/products";
     }
 
-    @PostMapping("/add/san-pham-chi-tiet")
-    public String addSPCT(@ModelAttribute SanPhamChiTiet sanPhamChiTiet){
-        service.addSanPhamChiTiet(sanPhamChiTiet);
-        return "redirect:/admin/products";
+    @RequestMapping(value = "/add/products", method = RequestMethod.POST)
+    @ResponseBody
+    public ResponseEntity<?> addSPCT(@ModelAttribute SanPhamChiTiet sanPhamChiTiet) {
+        try {
+            if (service.isMaSPCTExist(sanPhamChiTiet.getMaSPCT())) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Mã sản phẩm chi tiết đã tồn tại.");
+            }
+            service.addSanPhamChiTiet(sanPhamChiTiet);
+            return ResponseEntity.ok("Thêm sản phẩm chi tiết thành công!");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Có lỗi xảy ra khi thêm sản phẩm chi tiết.");
+        }
+    }
+    @GetMapping("/products/list")
+    @ResponseBody
+    public List<SanPhamChiTiet> getDanhSachSanPhamChiTiet() {
+        return service.getAllSanPham();
     }
 
     @PostMapping("/update/products")
@@ -61,12 +101,112 @@ public class AdminProductController {
         return "admin/san-pham";
     }
 
-    @PostMapping("/add/san-pham")
-    public String addSanPham(@ModelAttribute("addSanPham") SanPham sanPham){
-        service.addSanPham(sanPham);
-        return "redirect:/admin/san-pham";
+    @InitBinder
+    public void initBinder(WebDataBinder binder) {
+        binder.registerCustomEditor(String.class, "anhSPMau", new PropertyEditorSupport() {
+            @Override
+            public void setValue(Object value) {
+                if (value instanceof MultipartFile) {
+                    MultipartFile file = (MultipartFile) value;
+                    if (!file.isEmpty()) {
+                        String originalFilename = file.getOriginalFilename();
+                        if (originalFilename != null) {
+                            String fileName = System.currentTimeMillis() + "-" + originalFilename.replaceAll("[^a-zA-Z0-9\\.\\-]", "_");
+                            try {
+                                String uploadDir = "C:\\Users\\admin\\ProjectAutoKid\\AutoKid_v2\\AutoKid\\src\\main\\resources\\static\\img\\categories";
+                                Path uploadPath = Paths.get(uploadDir);
+                                if (!Files.exists(uploadPath)) {
+                                    Files.createDirectories(uploadPath);
+                                }
+                                Path filePath = uploadPath.resolve(fileName);
+                                try (InputStream inputStream = file.getInputStream()) {
+                                    Files.copy(inputStream, filePath, StandardCopyOption.REPLACE_EXISTING);
+                                }
+                                super.setValue(fileName);
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                                super.setValue(null);
+                            }
+                        } else {
+                            super.setValue(null);
+                        }
+                    } else {
+                        super.setValue(null);
+                    }
+                } else {
+                    super.setValue(value);
+                }
+            }
+        });
+        binder.registerCustomEditor(String.class, "anh", new PropertyEditorSupport() {
+            @Override
+            public void setValue(Object value) {
+                if (value instanceof MultipartFile) {
+                    MultipartFile file = (MultipartFile) value;
+                    if (!file.isEmpty()) {
+                        String originalFilename = file.getOriginalFilename();
+                        if (originalFilename != null) {
+                            String fileName = System.currentTimeMillis() + "-" + originalFilename.replaceAll("[^a-zA-Z0-9\\.\\-]", "_");
+                            try {
+                                String uploadDir = "C:\\Users\\admin\\ProjectAutoKid\\AutoKid_v2\\AutoKid\\src\\main\\resources\\static\\img\\categories";
+                                Path uploadPath = Paths.get(uploadDir);
+                                if (!Files.exists(uploadPath)) {
+                                    Files.createDirectories(uploadPath);
+                                }
+                                Path filePath = uploadPath.resolve(fileName);
+                                try (InputStream inputStream = file.getInputStream()) {
+                                    Files.copy(inputStream, filePath, StandardCopyOption.REPLACE_EXISTING);
+                                }
+                                super.setValue(fileName);
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                                super.setValue(null);
+                            }
+                        } else {
+                            super.setValue(null);
+                        }
+                    } else {
+                        super.setValue(null);
+                    }
+                } else {
+                    super.setValue(value);
+                }
+            }
+        });
     }
 
+    @GetMapping("/img/categories/{fileName}")
+    @ResponseBody
+    public ResponseEntity<ByteArrayResource> getImage(@PathVariable String fileName) throws IOException {
+        String imagePath = "C:/Users/admin/ProjectAutoKid/AutoKid_v2/AutoKid/src/main/resources/static/img/categories/" + fileName;
+        File imageFile = new File(imagePath);
+        InputStream inputStream = new FileInputStream(imageFile);
+        byte[] imageBytes = inputStream.readAllBytes();
+        ByteArrayResource resource = new ByteArrayResource(imageBytes);
+        String fileExtension = fileName.substring(fileName.lastIndexOf('.') + 1).toLowerCase();
+        MediaType mediaType = fileExtension.equals("jpg") || fileExtension.equals("jpeg") ? MediaType.IMAGE_JPEG : MediaType.IMAGE_PNG;
+        return ResponseEntity.ok()
+                .contentType(mediaType)
+                .header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"" + fileName + "\"")
+                .body(resource);
+    }
+
+    @PostMapping("/add/san-pham")
+    @ResponseBody
+    public ResponseEntity<?> addSanPham(@ModelAttribute SanPham sanPham) {
+        try {
+            if (service.isMaSPExist(sanPham.getMaSP())) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Mã sản phẩm đã tồn tại.");
+            }
+            if (service.isTenSPExist(sanPham.getTenSP())) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Tên sản phẩm đã tồn tại.");
+            }
+            service.addSanPham(sanPham);
+            return ResponseEntity.ok("Thêm sản phẩm thành công!");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Có lỗi xảy ra khi thêm sản phẩm.");
+        }
+    }
     @PostMapping("/update/san-pham")
     public String updateProduct(@ModelAttribute("updateSanPham") SanPham sanPham) {
         if (sanPham.getId() != null) {
@@ -75,6 +215,11 @@ public class AdminProductController {
         return "redirect:/admin/san-pham";
     }
 
+    @GetMapping("/san-pham/list")
+    @ResponseBody
+    public List<SanPham> getDanhSachSanPham() {
+        return service.DSSanPham();
+    }
     @GetMapping("/statistical")
     public String statistical() {
         return "admin/statistical";
@@ -107,10 +252,29 @@ public class AdminProductController {
     }
 
     @PostMapping("/add/mau-sac")
-    public String addMauSac(@ModelAttribute MauSac mauSac){
-        service.addMauSac(mauSac);
-        return "redirect:/admin/mau-sac";
+    @ResponseBody
+    public ResponseEntity<?> addMauSac(@ModelAttribute MauSac mauSac) {
+        try {
+            if (service.isMaMSExist(mauSac.getMaMS())) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Mã màu sắc đã tồn tại.");
+            }
+            if (service.isTenMSExist(mauSac.getTenMS())) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Tên màu sắc đã tồn tại.");
+            }
+            service.addMauSac(mauSac);
+            return ResponseEntity.ok("Thêm màu sắc thành công!");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Có lỗi xảy ra khi thêm màu sắc.");
+        }
     }
+
+
+    @GetMapping("/mau-sac/list")
+    @ResponseBody
+    public List<MauSac> getDanhSacMauSac() {
+        return service.getAllMauSac();
+    }
+
 
     @PostMapping("/update/mau-sac")
     public String updateMauSac(@ModelAttribute("updateMauSac") MauSac mauSac){
@@ -131,22 +295,57 @@ public class AdminProductController {
 
 
     @PostMapping("/add/kich-co")
-    public String addKichCo(@ModelAttribute KichCo kichCo){
-        service.addKichCo(kichCo);
-        return "redirect:/admin/kich-co";
+    @ResponseBody
+    public ResponseEntity<?> addKichCo(@ModelAttribute KichCo kichCo) {
+        try {
+            if (service.isMaKCExist(kichCo.getMaKC())) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Mã kích cỡ đã tồn tại.");
+            }
+            if (service.isTenKCExist(kichCo.getTenKC())) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Tên kích cỡ đã tồn tại.");
+            }
+            service.addKichCo(kichCo);
+            return ResponseEntity.ok("Thêm kích cỡ thành công!");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Có lỗi xảy ra khi thêm kích cỡ.");
+        }
     }
-
     @PostMapping("/update/kich-co")
     public String updateKichCo(@ModelAttribute("updateKichCo") KichCo kichCo){
         service.updateKichCo(kichCo);
         return "redirect:/admin/kich-co";
     }
 
-    @PostMapping("/add/thuong-hieu")
-    public String addThuongHieu(@ModelAttribute ThuongHieu thuongHieu){
-        service.AddThuongHieu(thuongHieu);
-        return "redirect:/admin/thuong-hieu";
+    @GetMapping("/kich-co/list")
+    @ResponseBody
+    public List<KichCo> getDanhSacKichCo() {
+        return service.getAllKichCo();
     }
+
+
+    @PostMapping("/add/thuong-hieu")
+    @ResponseBody
+    public ResponseEntity<?> addThuongHieu(@ModelAttribute ThuongHieu thuongHieu) {
+        try {
+            if (service.isMaTHExist(thuongHieu.getMaTH())) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Mã thương hiệu đã tồn tại.");
+            }
+            if (service.isTenTHExist(thuongHieu.getTenTH())) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Tên thương hiệu đã tồn tại.");
+            }
+            service.AddThuongHieu(thuongHieu);
+            return ResponseEntity.ok("Thêm thương hiệu thành công!");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Có lỗi xảy ra khi thêm thương hiệu.");
+        }
+    }
+
+    @GetMapping("/thuong-hieu/list")
+    @ResponseBody
+    public List<ThuongHieu> getDanhSachThuongHieu() {
+        return service.getAllThuongHieu();
+    }
+
 
 
     @GetMapping("/thuong-hieu/search")
@@ -166,9 +365,20 @@ public class AdminProductController {
     }
 
     @PostMapping("/add/chat-lieu")
-    public String addChatLieu(@ModelAttribute ChatLieu chatLieu){
-        service.addChatLieu(chatLieu);
-        return "redirect:/admin/chat-lieu";
+    @ResponseBody
+    public ResponseEntity<?> addChatLieu(@ModelAttribute ChatLieu chatLieu) {
+        try {
+            if (service.isMaCLExist(chatLieu.getMaCl())) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Mã chất liệu đã tồn tại.");
+            }
+            if (service.isTenCLExist(chatLieu.getTenCl())) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Tên chất liệu đã tồn tại.");
+            }
+            service.addChatLieu(chatLieu);
+            return ResponseEntity.ok("Thêm chất liệu thành công!");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Có lỗi xảy ra khi thêm chất liệu.");
+        }
     }
 
     @PostMapping("/update/chat-lieu")
@@ -176,6 +386,12 @@ public class AdminProductController {
         service.updateChatLieu(chatLieu);
         return "redirect:/admin/chat-lieu";
     }
+    @GetMapping("/chat-lieu/list")
+    @ResponseBody
+    public List<ChatLieu> getDanhSacChatLieu() {
+        return service.getAllChatLieu();
+    }
+
 
     @GetMapping("/loai-san-pham")
     public String getAllLoaiSanPham(Model model) {
@@ -185,10 +401,28 @@ public class AdminProductController {
     }
 
     @PostMapping("/add/loai-san-pham")
-    public String addLoaiSanPham(@ModelAttribute LoaiSanPham loaiSanPham){
-        service.addLoaiSanPham(loaiSanPham);
-        return "redirect:/admin/loai-san-pham";
+    @ResponseBody
+    public ResponseEntity<?> addLoaiSanPham(@ModelAttribute LoaiSanPham loaiSanPham) {
+        try {
+            if (service.isMaLSPExist(loaiSanPham.getMaLSP())) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Mã loại sản phẩm đã tồn tại.");
+            }
+            if (service.isTenLSPExist(loaiSanPham.getTenLoai())) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Tên loại sản phẩm đã tồn tại.");
+            }
+            service.addLoaiSanPham(loaiSanPham);
+            return ResponseEntity.ok("Thêm loại sản phẩm thành công!");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Có lỗi xảy ra khi thêm loại sản phẩm.");
+        }
     }
+
+    @GetMapping("/loai-san-pham/list")
+    @ResponseBody
+    public List<LoaiSanPham> getDanhSacLoaiSanPham() {
+        return service.getAllLoaiSanPham();
+    }
+
 
     @PostMapping("/update/loai-san-pham")
     public String updateLSP(@ModelAttribute("updateLoaiSanPham") LoaiSanPham loaiSanPham) {
