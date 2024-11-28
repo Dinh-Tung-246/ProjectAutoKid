@@ -21,5 +21,5 @@ public interface HoaDonRepo extends JpaRepository<HoaDon,Integer> {
             " WHERE id_hd = :idHD ", nativeQuery = true)
     void updateHoaDon(@Param("trangThai") String trangThai,@Param("idHD") Integer idHD);
 
-    Optional findHoaDonByMaHD(String maHD);
+    Optional<HoaDon> findHoaDonByMaHD(String maHD);
 }
