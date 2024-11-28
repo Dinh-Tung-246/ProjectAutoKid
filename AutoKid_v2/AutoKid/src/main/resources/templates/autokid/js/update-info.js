@@ -1,4 +1,4 @@
-const KhachHang = JSON.parse(localStorage.getItem('KH')) || [];
+const KhachHang = JSON.parse(sessionStorage.getItem('KH')) || [];
 
 if (KhachHang) {
     document.querySelector('.tenKH').value = KhachHang.tenKH || '';
@@ -19,7 +19,7 @@ document.querySelector('#update-info').addEventListener('submit', async function
     const sdtKH = document.querySelector('input[class="sdtKH"]').value.trim();
     const diaChiKH = document.querySelector('input[class="diaChiKH"]').value.trim();
 
-    const dataKH = JSON.parse(localStorage.getItem('KH')) || [];
+    const dataKH = JSON.parse(sessionStorage.getItem('KH')) || [];
     const matKhau = dataKH['pass'];
 
     if (!hoTenKH || !emailKH || !sdtKH || !diaChiKH) {
@@ -39,7 +39,7 @@ document.querySelector('#update-info').addEventListener('submit', async function
         diaChiKH: diaChiKH,
     }
 
-    localStorage.setItem("KH", JSON.stringify(khachHang));
+    sessionStorage.setItem("KH", JSON.stringify(khachHang));
 
     console.log(khachHang);
 

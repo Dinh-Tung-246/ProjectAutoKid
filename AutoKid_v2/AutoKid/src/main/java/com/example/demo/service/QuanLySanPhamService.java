@@ -209,18 +209,16 @@ public class QuanLySanPhamService {
         return count;
     }
 
+    // Danh sách sản phẩm đề xuất
     public List<SanPhamKhuyenMaiResponse> getAllRelatedProduct(Integer idSP){
-        SanPhamKhuyenMaiResponse sp = null;
-        for(SanPham s: sanPhamRepo.findAll()){
-            if(s.getId() == idSP && s.getTrangThaiSP().equals("Đang bán")){
-                sp = new SanPhamKhuyenMaiResponse(s);
-                break;
-            }
-        }
-        Integer idSPKM = sp.getIdSP();
+        SanPham sp = sanPhamRepo.findById(idSP).orElseThrow();
+
         List<SanPhamKhuyenMaiResponse> list = new ArrayList<>();
         for (SanPham s: sanPhamRepo.findAll()){
-            if(s.getId() == idSPKM){
+            if( (s.getLoaiSanPham().getIdLoaiSP() == sp.getLoaiSanPham().getIdLoaiSP() //sản phẩm cùng loại sản phẩm
+                    || s.getChatLieu().getId() == sp.getChatLieu().getId() // Sản phẩm cùng chất liệu
+                    || s.getKichCo().getId() == sp.getKichCo().getId()) // sản phẩm cùng kích cỡ
+                    && s.getTrangThaiSP().equals("Đang bán")){ // các sản phẩm này vẫn đnag được kinh doanh
                 list.add(new SanPhamKhuyenMaiResponse(s));
             }
         }

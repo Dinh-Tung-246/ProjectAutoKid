@@ -37,8 +37,12 @@
                                     </span>
                                 </div>
                                 <div class="btn-confirm">
-                                    <button class="btn-submit" onclick="confirmOrder(event, this.closest('li'))">Xác nhận giao hàng</button>
-                                    <button th:if="${dh.trangThaiHD == 'Chờ xác nhận'}" class="btn-unsubmit" onclick="unconfirmOrder(event, this.closest('li'))">Hủy đơn</button>
+                                    <button class="btn-submit" onclick="confirmOrder(event, this.closest('li'))">Xác
+                                        nhận giao hàng
+                                    </button>
+                                    <button th:if="${dh.trangThaiHD == 'Chờ xác nhận'}" class="btn-unsubmit"
+                                            onclick="unconfirmOrder(event, this.closest('li'))">Hủy đơn
+                                    </button>
                                 </div>
                             </div>
                         </li>
@@ -46,16 +50,15 @@
                 </div>
                 <div class="lang-switcher-wrapper">
                     <a class="lang-switcher transparent-btn">
-                        <span class="name-user">Hello: Nguyễn Bá Hiệp</span>
+                        <span class="name-user">Hello: <span id="name-user"></span></span>
                     </a>
                 </div>
                 <div class="nav-user-wrapper">
                     <button href="##" class="nav-user-btn dropdown-btn" title="My profile" type="button">
                         <span class="sr-only">My profile</span>
-                        <span class="nav-user-img">
-            <picture><source th:srcset="@{/img/avatar/avt-user1.webp}" type="image/webp"><img
-                    th:src="@{/img/avatar/avatar-user1.png}" alt="User name"></picture>
-          </span>
+                        <div class="notification-dropdown-icon info">
+                            <i class="profile-icon" aria-hidden="true"></i>
+                        </div>
                     </button>
                     <ul class="users-item-dropdown nav-user-dropdown dropdown">
                         <li><a href="##">

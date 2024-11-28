@@ -91,7 +91,7 @@
                     </td>
                     <td class="shoping__cart__total" ><span th:text="${item.donGia * item.soLuong}"> </span></td>
                     <td class="shoping__cart__item__close">
-                      <span class="icon_close" th:data-id="${item.idSP}" onclick="deleteFromCart(event)" style="margin: 30px"></span>
+                      <span class="icon_close" th:data-id="${item.idSP}" onclick="removeFromCart(event)" style="margin: 30px"></span>
                     </td>
                   </tr>
                 </tbody>
