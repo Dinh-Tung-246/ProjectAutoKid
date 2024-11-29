@@ -518,13 +518,19 @@
                         </div>
 
                         <div class="row mb-3">
-                            <div class="col-md-6">
-                                <label for="anhSPMau" class="form-label">Ảnh hiện tại</label>
+                            <div class="mb-3">
+                                <label for="currentImage" class="form-label">Ảnh hiện tại</label>
                                 <div>
                                     <img id="currentImage" src="" alt="Ảnh hiện tại" style="max-width: 100px; max-height: 100px;">
                                 </div>
-                                <label for="anhSPMau" class="form-label mt-2">Thay đổi ảnh</label>
-                                <input type="file" class="form-control border border-secondary" th:field="*{anhSPMau}" id="anhSPMau" name="anhSPMau" accept="image/*">
+                                <input type="hidden" id="currentImageName" name="currentImageName" value="">
+                                <div class="form-check mt-2">
+                                    <input class="form-check-input" type="checkbox" id="changeImageCheckbox">
+                                    <label class="form-check-label" for="changeImageCheckbox">Thay đổi ảnh</label>
+                                </div>
+                                <div id="fileInputWrapper" class="mt-2" style="display: none;">
+                                    <input type="file" class="form-control border border-secondary" id="anhSPMau" name="anhSPMau" accept="image/*">
+                                </div>
                             </div>
                             <div class="col-md-6">
                                 <label for="trangThaiSP" class="form-label">Trạng thái:</label>
@@ -549,6 +555,14 @@
     document.addEventListener('DOMContentLoaded', function () {
         attachUpdateButtonEvents();
     });
+    document.getElementById('changeImageCheckbox').addEventListener('change', function () {
+        const fileInputWrapper = document.getElementById('fileInputWrapper');
+        if (this.checked) {
+            fileInputWrapper.style.display = 'block';
+        } else {
+            fileInputWrapper.style.display = 'none';
+        }
+    });
 
     function attachUpdateButtonEvents() {
         const detailButtons = document.querySelectorAll('.view-detail');
@@ -567,6 +581,9 @@
                 const kichCo = this.getAttribute('data-kichco');
                 const chatLieu = this.getAttribute('data-chatlieu');
                 const trangThaiSP = this.getAttribute('data-trangthai');
+                const imageName = button.dataset.anh; // Tên ảnh từ thuộc tính data-anh
+                const imageUrl = `/img/categories/${imageName}`; // Đường dẫn ảnh
+
 
                 // Đảm bảo ID được truyền vào trường ẩn
                 const modal = document.querySelector('#productDetailModal');
@@ -583,6 +600,8 @@
                     modal.querySelector('#kichCo').value = kichCo || '';
                     modal.querySelector('#chatLieu').value = chatLieu || '';
                     modal.querySelector('#trangThaiSP').value = trangThaiSP || '';
+                    modal.querySelector('#currentImage').src = imageUrl;
+                    modal.querySelector('#currentImageName').value = imageName;
                     const currentImage = modal.querySelector('#currentImage');
                     if (currentImage) {
                         currentImage.src = '/img/categories/' + (anh || '');

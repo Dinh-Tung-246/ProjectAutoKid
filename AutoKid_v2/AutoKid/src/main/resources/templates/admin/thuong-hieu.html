@@ -57,8 +57,8 @@
                         <tr class="users-table-info">
                             <th>Mã thương hiệu</th>
                             <th>Tên thương hiệu</th>
-                            <th>Trang thái</th>
                             <th>Địa chỉ</th>
+                            <th>Trang thái</th>
                             <th>Hành động</th>
                         </tr>
                         </thead>
@@ -141,8 +141,8 @@
                         <tr class="users-table-info">
                             <th>Mã thương hiệu</th>
                             <th>Tên thương hiệu</th>
-                            <th>Trang thái</th>
                             <th>Địa chỉ</th>
+                            <th>Trang thái</th>
                             <th>Hành động</th>
                         </tr>
                         </thead>
@@ -195,15 +195,15 @@
                             <input type="text" class="form-control border border-secondary" id="tenTH" th:field="*{tenTH}" required>
                         </div>
                         <div class="mb-3">
+                            <label for="diaChi" class="form-label">Địa chỉ:</label>
+                            <textarea class="form-control border border-secondary" id="diaChi" th:field="*{diaChi}"></textarea>
+                        </div>
+                        <div class="mb-3">
                             <label for="trangThaiTH" class="form-label">Trạng thái:</label>
                             <select class="form-control" id="trangThaiTH" th:field="*{trangThaiTH}">
                                 <option value="Hoạt động" th:selected="*{trangThaiTH == 'Hoạt động'}">Hoạt động</option>
                                 <option value="Không hoạt động" th:selected="*{trangThaiTH == 'Không hoạt động'}">Không hoạt động</option>
                             </select>
-                        </div>
-                        <div class="mb-3">
-                            <label for="diaChi" class="form-label">Mô tả:</label>
-                            <textarea class="form-control border border-secondary" id="diaChi" th:field="*{diaChi}"></textarea>
                         </div>
                         <div class="modal-footer">
                             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
