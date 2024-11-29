@@ -290,18 +290,19 @@
                 });
 
                 // Gửi form khi áp dụng khuyến mãi
-                promotionForm.addEventListener("submit", function (event) {
+                promotionForm.addEventListener("submit", async function (event) {
                     event.preventDefault(); // Ngăn trình duyệt reload
 
                     // Thu thập dữ liệu từ form
                     const formData = new FormData(promotionForm);
 
                     // Gửi dữ liệu tới server
-                    fetch("/admin/promotion/addPromotionToProducts", {
+                    await fetch("/admin/promotion/addPromotionInProduct", {
                         method: "POST",
                         body: formData
                     })
                         .then(response => {
+                            console.log(response);
                             if (response.ok) {
                                 alert("Khuyến mãi đã được áp dụng thành công!");
                                 location.reload();
