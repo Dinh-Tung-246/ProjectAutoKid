@@ -64,6 +64,7 @@ public class AutokidCheckoutController {
         hoaDon.setTongTien(((Number) hoaDonData.get("tongTien")).floatValue());
         hoaDon.setPhiShip(((Number) hoaDonData.get("phiShip")).floatValue());
         hoaDon.setTrangThaiHD((String) hoaDonData.get("trangThaiHD"));
+        hoaDon.setPhiShip(50000F);
 
         PhuongThucThanhToan pttt = ptttRepo.findById(Integer.parseInt(hoaDonData.get("idPttt").toString())).orElseThrow();
         hoaDon.setPhuongThucThanhToan(pttt);

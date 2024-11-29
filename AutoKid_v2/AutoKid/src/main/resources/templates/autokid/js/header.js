@@ -47,7 +47,7 @@ function renderUserMenu() {
                     <span class="arrow_carrot-down"></span>
                       <ul class="dropdown-custom" style="width: 150px;">
                         <li><a href="http://localhost:8080/autokid/account">Cập nhật thông tin</a></li>
-                        <li><a href="#">Theo dõi đơn hàng</a></li>
+                        <li><a href="http://localhost:8080/autokid/account/order-tracking?idKH=${khachHang.idKH}">Theo dõi đơn hàng</a></li>
                         <li><a href="#" onclick="logout()">Đăng xuất</a></li>
                       </ul>
                 </div>`;
@@ -70,6 +70,9 @@ function logout() {
             }).then(() => {
                 sessionStorage.removeItem("KH");
                 renderUserMenu();
+                setTimeout(() => {
+                    window.location.href="http://localhost:8080/autokid/home";
+                }, 500)
             })
         }
     });

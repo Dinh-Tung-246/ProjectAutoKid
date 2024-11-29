@@ -110,10 +110,11 @@ public class VNPAYController {
         hoaDon.setPhuongThucThanhToan(phuongThucThanhToanRepo.findById(2).orElseThrow());
         hoaDon.setPhiShip(0.0F);
         hoaDon.setTongTien(Float.parseFloat(totalPrice)/100F);
-        hoaDon.setTrangThaiHD("Đã thanh toán");
+        hoaDon.setTrangThaiHD("Đã thanh toán, chờ giao hàng");
         hoaDon.setTenNguoiNhan(tenNN);
         hoaDon.setDiaChiNguoiNhan(diaChiNN);
         hoaDon.setSdtNguoiNhan(sdtNN);
+        hoaDon.setPhiShip(50000F);
         quanLyDatHangService.createHoaDon(hoaDon);
 
         logger.info("Data : {}", HDCT_LIST);

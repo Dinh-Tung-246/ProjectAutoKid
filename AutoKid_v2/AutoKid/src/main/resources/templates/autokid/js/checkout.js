@@ -136,7 +136,7 @@ document.querySelector('#checkout-form').addEventListener('submit', async functi
         idKH: idKH,
         phiShip: 0,
         hinhThucThanhToan: "",
-        trangThaiHD: "Chờ xác nhận",
+        trangThaiHD: "Chưa thanh toán, chờ giao hàng",
     };
 
     const hdct = checkoutData.map(item => ({
