@@ -4,6 +4,8 @@ import jakarta.persistence.*;
 import lombok.Data;
 
 import java.sql.Date;
+import java.util.List;
+
 @Data
 @Entity
 @Table(name = "hoa_don")
@@ -52,4 +54,7 @@ public class HoaDon {
 
     @Column(name = "sdt_nguoi_nhan")
     private String sdtNguoiNhan;
+
+    @OneToMany(mappedBy = "hoaDon")
+    private List<HoaDonChiTiet> hoaDonChiTiets;
 }

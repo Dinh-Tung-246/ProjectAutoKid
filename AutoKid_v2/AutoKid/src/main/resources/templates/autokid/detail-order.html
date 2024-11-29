@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="zxx" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="description" content="Ogani Template"/>
+    <meta name="keywords" content="Ogani, unica, creative, html"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <meta http-equiv="X-UA-Compatible" content="ie=edge"/>
+    <title>AutoKid | Update Info</title>
+    <link rel="icon" type="image/x-icon" href="img/logo.png" style="height: 10px; width: 10px">
+
+    <!-- Google Font -->
+    <link
+            href="https://fonts.googleapis.com/css2?family=Cairo:wght@200;300;400;600;900&display=swap"
+            rel="stylesheet"
+    />
+
+    <!-- Css Styles -->
+    <link rel="stylesheet" href="css/bootstrap.min.css" type="text/css"/>
+    <link rel="stylesheet" href="css/font-awesome.min.css" type="text/css"/>
+    <link rel="stylesheet" href="css/elegant-icons.css" type="text/css"/>
+    <link rel="stylesheet" href="css/nice-select.css" type="text/css"/>
+    <link rel="stylesheet" href="css/jquery-ui.min.css" type="text/css"/>
+    <link rel="stylesheet" href="css/owl.carousel.min.css" type="text/css"/>
+    <link rel="stylesheet" href="css/slicknav.min.css" type="text/css"/>
+    <link rel="stylesheet" href="css/style.css" type="text/css"/>
+    <link rel="stylesheet" href="css/detail-order.css" type="text/css" />
+    <link
+            rel="stylesheet"
+            href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css"
+    />
+</head>
+
+<body>
+<!-- Page Preloder -->
+<div id="preloder">
+    <div class="loader"></div>
+</div>
+
+<th:block th:replace="autokid/header :: fragment"></th:block>
+
+<!-- Breadcrumb Section Begin -->
+<section class="breadcrumb-section set-bg" data-setbg="img/breadcrumb.jpg">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-12 text-center">
+                <div class="breadcrumb__text">
+                    <h2>CHI TIẾT ĐƠN HÀNG</h2>
+                    <div class="breadcrumb__option">
+                        <a th:href="@{http://localhost:8080/autokid/home}">Trang chủ</a>
+                        <span>Chi tiết đơn hàng</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<!-- Breadcrumb Section End -->
+
+<!-- Checkout Section Begin -->
+<section class="checkout spad">
+    <div class="container">
+        <div class="checkout__form" th:object="${dh}">
+            <div>
+                <a class="btn-back" th:href="@{http://localhost:8080/autokid/account/order-tracking(idKH=${dh.idKH})}">Quay lại</a>
+            </div>
+            <div class="order-info">
+                <div class="order-info-1">
+                    <div class="text-detail"><span>Mã đơn hàng:   [[${dh.maDH}]]</span></div>
+                    <div class="text-detail"><span>Ngày mua hàng:   [[${dh.ngayMuaHang}]]</span></div>
+                    <div class="text-detail"><span>Số điện thoại:   [[${dh.sdtNguoiNhan}]]</span></div>
+                </div>
+                <div class="order-info-2">
+                    <div th:if="${dh.trangThaiDH == 'Chưa thanh toán, chờ giao hàng'}" class="text-detail">
+                        <span>Trạng thái đơn hàng:
+                            <strong style="color: #ba8b00">[[${dh.trangThaiDH}]]</strong>
+                        </span>
+                    </div>
+                    <div th:if="${dh.trangThaiDH == 'Đã thanh toán, chờ giao hàng'}" class="text-detail">
+                        <span>Trạng thái đơn hàng:
+                            <strong style="color: #5f2eea">[[${dh.trangThaiDH}]]</strong>
+                        </span>
+                    </div>
+                    <div th:if="${dh.trangThaiDH == 'Đã thanh toán, đang giao hàng'}" class="text-detail">
+                        <span>Trạng thái đơn hàng:
+                            <strong style="color: #007fff">[[${dh.trangThaiDH}]]</strong>
+                        </span>
+                    </div>
+                    <div th:if="${dh.trangThaiDH == 'Hủy đơn hàng'}" class="text-detail">
+                        <span>Trạng thái đơn hàng:
+                            <strong style="color: #c82333">[[${dh.trangThaiDH}]]</strong>
+                        </span>
+                    </div>
+                    <div th:if="${dh.trangThaiDH == 'Chưa thanh toán, đang giao hàng'}" class="text-detail">
+                        <span>Trạng thái đơn hàng:
+                            <strong style="color: orange">[[${dh.trangThaiDH}]]</strong>
+                        </span>
+                    </div>
+                    <div th:if="${dh.trangThaiDH == 'Hoàn thành'}" class="text-detail">
+                        <span>Trạng thái đơn hàng:
+                            <strong style="color: green">[[${dh.trangThaiDH}]]</strong>
+                        </span>
+                    </div>
+                    <div class="text-detail"><span>Tổng tiền:   [[${dh.tongTien}]]</span></div>
+                </div>
+            </div>
+            <div>
+                <span>Địa chỉ nhận hàng:   [[${dh.diaChiNhan}]]</span>
+            </div>
+            <div>
+                <table class="table-order-product">
+                    <thead>
+                        <th></th>
+                        <th>Tên sản phẩm</th>
+                        <th>Số lượng</th>
+                        <th>đơn giá</th>
+                    </thead>
+                    <tbody>
+                        <tr th:each="dhct : ${dh.listdhct}">
+                            <td>[[${dhct.anhSPCT}]]</td>
+                            <td>[[${dhct.tenSPCT}]]</td>
+                            <td>[[${dhct.soLuong}]]</td>
+                            <td>[[${dhct.donGia}]]</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</section>
+<!-- Kết thúc phần thanh toán -->
+
+<!-- Phần footer bắt đầu -->
+<th:block th:replace="autokid/footer :: fragment"></th:block>
+<!-- Kết thúc phần footer -->
+
+<!-- Js Plugins -->
+<script src="js/jquery-3.3.1.min.js"></script>
+<script src="js/bootstrap.min.js"></script>
+<script src="js/jquery.nice-select.min.js"></script>
+<script src="js/jquery-ui.min.js"></script>
+<script src="js/jquery.slicknav.js"></script>
+<script src="js/mixitup.min.js"></script>
+<script src="js/owl.carousel.min.js"></script>
+<script src="js/main.js"></script>
+<script src="js/update-info.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+</body>
+</html>
