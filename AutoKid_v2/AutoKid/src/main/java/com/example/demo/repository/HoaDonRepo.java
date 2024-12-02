@@ -25,5 +25,10 @@ public interface HoaDonRepo extends JpaRepository<HoaDon,Integer> {
     @Query("SELECT h FROM HoaDon h WHERE h.khachHang.id = :idKH ORDER BY h.ngayTao ASC ")
     List<HoaDon> getHDByIdKH(@Param("idKH") Integer idKH);
 
-    Optional<HoaDon> findHoaDonByMaHD(String maHD);
+    Optional<HoaDon> findByMaHD(String maHD);
+
+    @Query("SELECT h FROM HoaDon h WHERE " +
+            "(COALESCE(:tenKhachHang, '') = '' OR h.khachHang.tenKH LIKE %:tenKhachHang%) " +
+            "AND (COALESCE(:tenNhanVien, '') = '' OR h.nhanVien.tenNV LIKE %:tenNhanVien%)")
+    List<HoaDon> searchInvoices(String tenKhachHang, String tenNhanVien);
 }

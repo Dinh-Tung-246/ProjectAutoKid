@@ -35,6 +35,19 @@ public class QuanLyHoaDonService {
         return list;
     }
 
+    public List<HoaDon> searchInvoices(String tenKhachHang, String tenNhanVien) {
+        List<HoaDon> hoaDons = hoaDonRepo.searchInvoices(tenKhachHang, tenNhanVien);
+        return hoaDons;
+    }
+
+    public HoaDon findHoaDonByMaHD(Integer maHD) {
+        return hoaDonRepo.findById(maHD).orElse(null);
+    }
+
+    public List<HoaDonChiTiet> findHoaDonChiTietByMaHD(Integer maHD) {
+        return hoaDonChiTietRepo.findAllByHoaDonId(maHD);
+    }
+
     public List<HoadonhistoryRespone> fillAllHoaDonHistory(){
         List<HoadonhistoryRespone> listhdh= new ArrayList<>();
         for(HoaDonHistory hds: hoaDonHistoryRepo.findAll()){
@@ -50,8 +63,8 @@ public class QuanLyHoaDonService {
         return listhdct;
     }
 
-    public boolean updateHoaDonStatus(String maHD, String newStatus) {
-        Optional<HoaDon> hoaDonOptional = hoaDonRepo.findHoaDonByMaHD(maHD);
+    public boolean updateHoaDonStatus(Integer maHD, String newStatus) {
+        Optional<HoaDon> hoaDonOptional = hoaDonRepo.findById(maHD);
         if (hoaDonOptional.isPresent()) {
             HoaDon hoaDon = hoaDonOptional.get();
             if (!hoaDon.getTrangThaiHD().equals(newStatus)) {
@@ -62,9 +75,6 @@ public class QuanLyHoaDonService {
         }
         return false;
     }
-//    public Page<HoaDon> getAll(int pageNo, int pageSize){
-//        Pageable pageable = PageRequest.of(pageNo,pageSize);
-//        return hoaDonRepo.findAll(pageable);
-//    }
+
 
 }
