@@ -85,8 +85,7 @@ public class QuanLyDatHangService {
     public List<DonHangResponse> getDonHangOfKH(Integer idKH) {
         List<DonHangResponse> list = new ArrayList<>();
 
-        KhachHang kh = khachHangRepo.findById(idKH).orElseThrow();
-        for (HoaDon h: kh.getHoaDons()) {
+        for (HoaDon h: hoaDonRepo.getHDByIdKH(idKH)) {
             list.add(new DonHangResponse(h));
         }
 

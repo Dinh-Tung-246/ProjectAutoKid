@@ -67,7 +67,7 @@ function renderTable(table, data) {
 
         tr.innerHTML = `
             <td>${row.maDH}</td>
-            <td>${row.tongTien}</td>
+            <td>${row.tongTien} VNĐ</td>
             <td>${row.ngayMuaHang}</td>
             <td style="color: ${statusColor};"><strong>${row.trangThaiDH}</strong></td>
             <td>
