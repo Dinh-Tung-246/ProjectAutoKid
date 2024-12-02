@@ -44,18 +44,18 @@
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
 <script>
     document.addEventListener("DOMContentLoaded", function () {
-        const paymentData = JSON.parse(localStorage.getItem("payment")) || [];
-        const infoData = JSON.parse(localStorage.getItem("info")) || [];
-        const checkoutData = JSON.parse(localStorage.getItem("checkout")) || [];
-        document.querySelector('#amount').value = paymentData.amount;
+        const paymentData = JSON.parse(sessionStorage.getItem("payment")) || [];
+        const infoData = JSON.parse(sessionStorage.getItem("info")) || [];
+        const checkoutData = JSON.parse(sessionStorage.getItem("checkout")) || [];
+        document.querySelector('#amount').value = paymentData.amount + 50000;
         document.querySelector('#orderInfo').value = paymentData.orderInfo;
         document.querySelector('#vnpTxnRef').value = paymentData.vnpTxnRef;
         document.querySelector('#idKH').value = JSON.stringify(infoData);
         document.querySelector('#hdct').value = JSON.stringify(checkoutData);
 
         document.querySelector("form").addEventListener("submit", function () {
-            localStorage.removeItem("payment");
-            localStorage.removeItem("checkout");
+            sessionStorage.removeItem("payment");
+            sessionStorage.removeItem("checkout");
         })
     });
 </script>

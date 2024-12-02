@@ -3,6 +3,8 @@ package com.example.demo.model;
 import jakarta.persistence.*;
 import lombok.Data;
 
+import java.util.List;
+
 @Entity
 @Data
 @Table(name = "khach_hang")
@@ -32,4 +34,6 @@ public class KhachHang {
     @JoinColumn(name = "id_ttvc")
     private ThongTinVanChuyen thongTinVanChuyen;
 
+    @OneToMany(mappedBy = "khachHang")
+    private List<HoaDon> hoaDons;
 }

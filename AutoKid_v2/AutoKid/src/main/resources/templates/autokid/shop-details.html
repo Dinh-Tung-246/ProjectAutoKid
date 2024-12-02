@@ -91,6 +91,7 @@
           <div class="col-lg-6 col-md-6">
             <div class="product__details__text">
               <h3 th:text="${sp.tenSP}"></h3>
+              <h5 th:if="${sp.soLuongSPCT == null}">(Sản phẩm này hiện đang hết hàng)</h5>
               <div class="product__details__rating">
                 <i class="fa fa-star"></i>
                 <i class="fa fa-star"></i>
@@ -127,7 +128,8 @@
                 id="add-to-cart"
                 th:data-id="${sp.idSP}"
                 th:data-name="${sp.tenSP}"
-                th:data-price="${sp.donGia}"
+                th:data-price="${sp.giaSauGiam}"
+                th:data-soluong="${sp.soLuongSPCT}"
                 >ADD TO CARD</a
               >
               <ul>
@@ -158,7 +160,10 @@
                   <b>Chất liệu </b>
                   <span th:text="${sp.chatLieu}"></span>
                 </li>
-                <li><b>Số lượng trong kho </b> <span id="so-luong" th:text="${sp.soLuongSPCT}"></span></li>
+                <li><b>Số lượng trong kho </b>
+                  <span id="so-luong" th:text="${sp.soLuongSPCT}"></span>
+                  <span th:if="${sp.soLuongSPCT == null}">Hết hàng</span>
+                </li>
               </ul>
             </div>
           </div>
@@ -325,6 +330,7 @@
                       th:data-gia="${sptt.donGia}"
                       th:data-idspct = "${sptt.idSPCT}"
                       th:data-mausac="${sptt.mauSacSPCT}"
+                      th:data-soluong="${sptt.soLuongSPCT}"
                       onclick="addToCart(this)"
                       ><i class="fa fa-shopping-cart"></i
                     ></a>

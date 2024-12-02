@@ -1,0 +1,24 @@
+.table-donhang .header-donhang th, .body-donhang tr td{
+    max-width: 250px;
+    min-width: 250px;
+    text-align: center;
+}
+
+.table-donhang .body-donhang tr {
+    height: 80px;
+    border-top: 0.5px solid #9fcdff;
+}
+
+.table-donhang .body-donhang .btn-detail-donhang {
+    padding: 5px 15px;
+    border-radius: 5px;
+    background-color: #20c997;
+    color: #0056b3;
+    border: 2px solid black;
+}
+
+.table-donhang .body-donhang .btn-detail-donhang:hover {
+    box-shadow: 5px 10px #3c97bf;
+    background-color: #1e7e34;
+    color: #dbdbdb;
+}

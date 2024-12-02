@@ -12,6 +12,14 @@
     -webkit-mask: url(../img/svg/Bulk/Paper-white.svg) no-repeat center;
 }
 
+.nav-user-wrapper .profile-icon {
+    width: 30px;
+    height: 30px;
+    background: #5887ff; /* Màu của icon */
+    mask: url(../img/svg/Bulk/Profile.svg) no-repeat center;
+    -webkit-mask: url(../img/svg/Bulk/Profile.svg) no repeat center;
+}
+
 .main-nav .notification-dropdown {
     width: 400px;
 }
@@ -27,9 +35,9 @@
     width: 100px;
 }
 
-.notification-wrapper .btn-confirm .btn-submit, .btn-unsubmit {
+.notification-wrapper .btn-confirm .btn-submit {
     font-size: 12px;
-    border: none;
+    margin-top: 8px;
     cursor: pointer;
     transition: background-color 0.5s;
     margin-bottom: 10px;
@@ -38,12 +46,22 @@
     color: #20c997;
 }
 
+.notification-wrapper .btn-confirm .btn-unsubmit {
+    font-size: 15px;
+    cursor: pointer;
+    transition: background-color 0.5s;
+    border-radius: 5px;
+    padding: 3px 7px;
+    color: #c82333;
+    margin-left: 10px;
+}
+
 .notification-wrapper .btn-confirm .btn-submit:hover {
     color: #003eff;
 }
 
 .notification-wrapper .btn-confirm .btn-unsubmit:hover {
-    color: #c82333;
+    color: #1c1c1c;
 }
 
 .notification-wrapper li {

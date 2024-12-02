@@ -31,5 +31,4 @@ public interface HoaDonRepo extends JpaRepository<HoaDon,Integer> {
             "(COALESCE(:tenKhachHang, '') = '' OR h.khachHang.tenKH LIKE %:tenKhachHang%) " +
             "AND (COALESCE(:tenNhanVien, '') = '' OR h.nhanVien.tenNV LIKE %:tenNhanVien%)")
     List<HoaDon> searchInvoices(String tenKhachHang, String tenNhanVien);
-
 }

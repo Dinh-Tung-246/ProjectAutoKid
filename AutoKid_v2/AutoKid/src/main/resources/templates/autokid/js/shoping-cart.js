@@ -3,7 +3,7 @@ function formatPrice(price) {
 }
 
 function renderCartForm() {
-    const cartData = JSON.parse(localStorage.getItem("cart")) || [];
+    const cartData = JSON.parse(sessionStorage.getItem("cart")) || [];
     const tbody = document.getElementById("cart-body");
     tbody.innerHTML = ""; // Xóa nội dung cũ
 
@@ -22,10 +22,11 @@ function renderCartForm() {
                       <div class="quantity">
                         <div class="pro-qty">
                           <span class="dec qtybtns">-</span>
-                          <input type="hidden" class="shopping_cart_idProduct" value="${item.idSPCT === null ? item.idSP : item.idSPCT}"/>
+                          <input type="hidden" class="shopping_cart_idProduct" value="${item.idSP}"/>
+                          <input type="hidden" class="shopping_cart_idProductDetail" value="${item.idSPCT}"/>
                           <input type="text" class="shoping__cart__quantityProduct" value="${
             item.quantity
-        }" data-id="${item.idSPCT}" />
+        }" data-sp="${item.idSP + item.idSPCT}" />
                           <span class="inc qtybtns">+</span>
                         </div>
                       </div>
@@ -34,9 +35,8 @@ function renderCartForm() {
             item.price * item.quantity
         )} </span></td>
                     <td class="shoping__cart__item__close">
-                      <span class="icon_close" data-id="${
-            item.id
-        }" onclick="removeFromCart(event)" style="margin: 30px"></span>
+                      <span class="icon_close" data-idsp="${item.idSP}" data-idspct="${item.idSPCT}"
+                       onclick="removeFromCart(event)" style="margin: 30px"></span>
                     </td>
           `;
         tbody.appendChild(row);
@@ -74,13 +74,13 @@ document.addEventListener("DOMContentLoaded", () => {
 //sự kiện cho nút cập nhật giỏ hàng
 $("#update-cart-btn").on("click", function (event) {
     event.preventDefault(); // Ngăn chặn hành động mặc định của thẻ <a>
-    const cartData = JSON.parse(localStorage.getItem("cart")) || [];
+    const cartData = JSON.parse(sessionStorage.getItem("cart")) || [];
     cartData.forEach((item) => {
-        // Cập nhật lại số lượng trong localStorage
-        const quantity = $(`#cart-body input[data-id="${item.idSPCT}"]`).val();
+        // Cập nhật lại số lượng trong sessionStorage
+        const quantity = $(`#cart-body input[data-sp="${item.idSP + item.idSPCT}"]`).val();
         item.quantity = parseInt(quantity) || 0; // đảm bảo không bị NaN
     });
-    localStorage.setItem("cart", JSON.stringify(cartData));
+    sessionStorage.setItem("cart", JSON.stringify(cartData));
     renderCartForm();
     Swal.fire({
         title: "Cập nhật giỏ hàng thành công!",
@@ -112,13 +112,15 @@ function removeFromCart(event) {
             )
                 // Thực hiện hành động cần thiết ở đây
                 .then(() => {
-                    const itemId = event.target.getAttribute("data-id");
+                    const itemIdSP = event.target.getAttribute("data-idsp");
+                    const itemIdSPCT = event.target.getAttribute("data-idspct");
+                    console.log(itemIdSPCT);
+                    console.log(itemIdSP);
+                    let cart = JSON.parse(sessionStorage.getItem("cart"));
 
-                    let cart = JSON.parse(localStorage.getItem("cart"));
+                    cart = cart.filter((item) => item.idSP != itemIdSP || (item.idSP == itemIdSP && item.idSPCT != itemIdSPCT));
 
-                    cart = cart.filter((item) => item.id != itemId);
-
-                    localStorage.setItem("cart", JSON.stringify(cart));
+                    sessionStorage.setItem("cart", JSON.stringify(cart));
 
                     renderCartForm();
                     updateCartCount(); // Cập nhật số lượng giỏ hàng khi tải trang
@@ -163,9 +165,10 @@ $("#checkout-btn").on("click", function (event) {
         const name = row.find(".shoping__cart__name").text().trim(); // lấy tên sản phẩm
         const totalPrice = row.find(".shoping__cart__total").text().trim(); // lấy tổng giá sản phẩm
         const quantity = row.find(".shoping__cart__quantityProduct").val().trim(); // Lấy số lượng
-        const id = row.find(".shopping_cart_idProduct").val().trim(); // Lấy id
+        const idSP = row.find(".shopping_cart_idProduct").val().trim(); // Lấy idsp
+        const idSPCT = row.find(".shopping_cart_idProductDetail").val().trim(); // Lấy idspct
 
-        checkoutItems.push({id, name, quantity, totalPrice});
+        checkoutItems.push({idSP, idSPCT, name, quantity, totalPrice});
     });
 
     if (checkoutItems[0] == null) {
@@ -175,7 +178,7 @@ $("#checkout-btn").on("click", function (event) {
             confirmButtonText: "OK"
         });
     } else {
-        localStorage.setItem("checkout", JSON.stringify(checkoutItems));
+        sessionStorage.setItem("checkout", JSON.stringify(checkoutItems));
         window.location.href = "http://localhost:8080/autokid/checkout";
     }
 });

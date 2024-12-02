@@ -3,12 +3,12 @@ function formatPrice(price) {
 }
 
 function renderPrice() {
-    const checkoutData = JSON.parse(localStorage.getItem("checkout")) || [];
+    const checkoutData = JSON.parse(sessionStorage.getItem("checkout")) || [];
     const tbody = document.getElementById("checkout-price");
     const totalBody = document.getElementById("total-price");
     tbody.innerHTML = "";
 
-    let total = 0;
+    let total = 50000;
 
     checkoutData.forEach((item) => {
         const row = document.createElement("ul");
@@ -22,6 +22,9 @@ function renderPrice() {
     });
 
     totalBody.innerHTML = `
+                    <div style="margin-bottom: 20px; color: firebrick;">
+                        <strong>Phí ship <span style="margin-left: 310px;">50.000</span></strong>
+                    </div>
                    <div class="checkout__order__total" >
                        Tổng cộng <span>${formatPrice(total)}</span>
                    </div>
@@ -29,7 +32,7 @@ function renderPrice() {
 }
 
 function renderInfo() {
-    const data = JSON.parse(localStorage.getItem("KH")) || [];
+    const data = JSON.parse(sessionStorage.getItem("KH")) || [];
     console.log(data.length)
     if (data != null && data.length != 0) {
         document.getElementById("name-kh").value = data.tenKH;
@@ -72,11 +75,11 @@ document.querySelector('#checkout-form').addEventListener('submit', async functi
     const sdt = document.querySelector('input[class="phone-number"]').value.trim();
     const diaChi = document.querySelector('input[class="address-kh"]').value.trim();
     const paymentTypeElement = document.querySelector('input[name="payment_type"]:checked');
-    // Lấy dữ liệu từ localstorage
-    const checkoutData = JSON.parse(localStorage.getItem('checkout')) || [];
-    const cartData = JSON.parse(localStorage.getItem('cart')) || [];
+    // Lấy dữ liệu từ sessionStorage
+    const checkoutData = JSON.parse(sessionStorage.getItem('checkout')) || [];
+    const cartData = JSON.parse(sessionStorage.getItem('cart')) || [];
     // có thể null KHData vì trường hợp khách vãng lai
-    const KHData = JSON.parse(localStorage.getItem('KH')) || [];
+    const KHData = JSON.parse(sessionStorage.getItem('KH')) || [];
 
     if (!hoTen || !sdt || !diaChi || !paymentTypeElement) {
         Swal.fire({
@@ -118,7 +121,7 @@ document.querySelector('#checkout-form').addEventListener('submit', async functi
         vnpTxnRef: vnpTxnRef,
     }
 
-    localStorage.setItem("payment", JSON.stringify(paymentData));
+    sessionStorage.setItem("payment", JSON.stringify(paymentData));
     const paymentType = paymentTypeElement.value;
 
     //Xây dựng payload hóa đơn
@@ -133,11 +136,12 @@ document.querySelector('#checkout-form').addEventListener('submit', async functi
         idKH: idKH,
         phiShip: 0,
         hinhThucThanhToan: "",
-        trangThaiHD: "Chờ xác nhận",
+        trangThaiHD: "Chưa thanh toán, chờ giao hàng",
     };
 
     const hdct = checkoutData.map(item => ({
-        id: item.id,
+        idSP: item.idSP,
+        idSPCT: item.idSPCT,
         soLuong: item.quantity,
         donGiaSauGiam: parseFloat(item.totalPrice.replace(/\./g, '')),
     }));
@@ -156,7 +160,7 @@ document.querySelector('#checkout-form').addEventListener('submit', async functi
             sdt: sdtNN,
         }
 
-        localStorage.setItem("info", JSON.stringify(InfoNN));
+        sessionStorage.setItem("info", JSON.stringify(InfoNN));
         window.location.href = "http://localhost:8080/payment/";
     }
 });
@@ -182,7 +186,7 @@ async function handleCashPayment(hoaDon, hdct) {
                 });
 
                 if (response.ok) {
-                    localStorage.removeItem("checkout");
+                    sessionStorage.removeItem("checkout");
                     Swal.fire({
                         title: "Đặt hàng thành công!",
                         text: "Shop đang xác nhận đơn hàng",

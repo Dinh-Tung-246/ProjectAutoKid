@@ -146,7 +146,7 @@
                         </div>
                         <div class="mb-3">
                             <label for="anh" class="form-label mt-2">Ảnh</label>
-                            <input type="file" class="form-control border border-secondary" id="anh" name="anh" accept="image/*">
+                            <input type="file" class="form-control border border-secondary" id="anh" name="anh" accept="image/*" required>
                         </div>
                         <div class="mb-3">
                             <label for="trangThaiSPCT">Trạng thái</label>
@@ -299,12 +299,18 @@
                             </select>
                         </div>
                         <div class="mb-3">
-                            <label for="anh" class="form-label">Ảnh hiện tại</label>
+                            <label for="currentImage" class="form-label">Ảnh hiện tại</label>
                             <div>
                                 <img id="currentImage" src="" alt="Ảnh hiện tại" style="max-width: 100px; max-height: 100px;">
                             </div>
-                            <label for="anh" class="form-label mt-2">Thay đổi ảnh</label>
-                            <input type="file" class="form-control border border-secondary" id="anh" name="anh" accept="image/*">
+                            <input type="hidden" id="anh" name="anh" value="">
+                            <div class="form-check mt-2">
+                                <input class="form-check-input" type="checkbox" id="changeImageCheckbox">
+                                <label class="form-check-label" for="changeImageCheckbox">Thay đổi ảnh</label>
+                            </div>
+                            <div id="fileInputWrapper" class="mt-2" style="display: none;">
+                                <input type="file" class="form-control border border-secondary" id="anh" name="anh" accept="image/*">
+                            </div>
                         </div>
                         <div class="mb-3">
                             <label for="productStatus" class="form-label">Trạng thái</label>
@@ -329,7 +335,16 @@
 
 <script>
     document.addEventListener('DOMContentLoaded', function () {
+
         attachUpdateButtonEvents();
+    });
+    document.getElementById('changeImageCheckbox').addEventListener('change', function () {
+        const fileInputWrapper = document.getElementById('fileInputWrapper');
+        if (this.checked) {
+            fileInputWrapper.style.display = 'block';
+        } else {
+            fileInputWrapper.style.display = 'none';
+        }
     });
     function attachUpdateButtonEvents() {
         const detailButtons = document.querySelectorAll('.view-detail');
@@ -343,6 +358,9 @@
                 const mauSac = this.getAttribute('data-mau-sac');
                 const anh = this.getAttribute('data-anh');
                 const trangThaiSPCT = this.getAttribute('data-trang-thai');
+                const imageName = this.getAttribute('data-anh');
+                console.log(imageName);
+                const imageUrl = `/img/categories/${imageName}`; // Đường dẫn ảnh
                 const modal = document.querySelector('#productDetailModal');
                 if (modal) {
                     modal.querySelector('#productId').value = id || '';
@@ -351,6 +369,8 @@
                     modal.querySelector('#productQuantity').value = soLuong || '';
                     modal.querySelector('#productColor').value = mauSac || '';
                     modal.querySelector('#productStatus').value = trangThaiSPCT || '';
+                    modal.querySelector('#currentImage').src = imageUrl;
+                    modal.querySelector('#currentImageName').value = imageName;
                     const currentImage = modal.querySelector('#currentImage');
                     if (currentImage) {
                         currentImage.src = '/img/categories/' + (anh || '');

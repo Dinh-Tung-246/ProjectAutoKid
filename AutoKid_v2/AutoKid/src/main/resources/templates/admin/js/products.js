@@ -99,8 +99,9 @@ function handleUpdateTH(event, form) {
                 icon: "success",
                 confirmButtonText: "OK"
             }).then(() => {
-                const modalElement = document.querySelector('#updateThuongHieuModal');
-
+                const modalElement = document.querySelector('#productDetailModal');
+                const modalInstance = bootstrap.Modal.getInstance(modalElement);
+                modalInstance.hide();
                 form.reset();
                 // Cập nhật danh sách thương hiệu (bạn cần định nghĩa hàm này)
                 updateThuongHieuList();
@@ -139,9 +140,9 @@ function updateThuongHieuList() {
                         const row = document.createElement('tr');
                         row.innerHTML = `
                         <td>${thuongHieu.maTH}</td>
-                        <td>${thuongHieu.tenTH}</td>
-                        <td>${thuongHieu.trangThaiTH}</td>
+                        <td>${thuongHieu.tenTH}</td>                   
                         <td>${thuongHieu.diaChi}</td>
+                        <td>${thuongHieu.trangThaiTH}</td>
                         <td>
                             <button class="view-detail btn btn-info"
                                     data-bs-toggle="modal"
@@ -169,9 +170,9 @@ function updateThuongHieuList() {
                         const row = document.createElement('tr');
                         row.innerHTML = `
                         <td>${thuongHieu.maTH}</td>
-                        <td>${thuongHieu.tenTH}</td>
-                        <td>${thuongHieu.trangThaiTH}</td>
+                        <td>${thuongHieu.tenTH}</td>                      
                         <td>${thuongHieu.diaChi}</td>
+                        <td>${thuongHieu.trangThaiTH}</td>
                         <td>
                             <button class="view-detail btn btn-info"
                                     data-bs-toggle="modal"
@@ -324,13 +325,7 @@ function handleAddSP(event, form) {
                     icon: "success",
                     confirmButtonText: "OK"
                 }).then(() => {
-                    // Đóng modal và reset form
-                    const modalElement = document.querySelector('#exampleModal');
-                    const modalInstance = bootstrap.Modal.getInstance(modalElement);
-                    modalInstance.hide();
-                    form.reset();
-                    // Cập nhật danh sách sản phẩm
-                    updateSPList();
+                    location.reload();
                 });
             } else {
                 return response.text().then(text => {
@@ -352,7 +347,12 @@ function handleAddSP(event, form) {
 
 function handleUpdateSP(event, form) {
     event.preventDefault();
+    const changeImageCheckbox = document.getElementById("changeImageCheckbox");
     const formData = new FormData(form);
+    if (!changeImageCheckbox.checked) {
+        const currentImageName = document.getElementById("currentImageName").value;
+        formData.append("anh", currentImageName);
+    }
     fetch('/admin/update/san-pham', {
         method: 'POST',
         body: formData
@@ -363,11 +363,7 @@ function handleUpdateSP(event, form) {
                 icon: "success",
                 confirmButtonText: "OK"
             }).then(() => {
-                const modalElement = document.querySelector('#productDetailModal');
-                const modalInstance = bootstrap.Modal.getInstance(modalElement);
-                modalInstance.hide();
-                form.reset();
-                updateSPList();
+                location.reload();
             });
         } else {
             return response.text().then(text => {
@@ -385,119 +381,6 @@ function handleUpdateSP(event, form) {
     return false;
 }
 
-
-function updateSPList() {
-    fetch('/admin/san-pham/list')
-        .then(response => response.json())
-        .then(data => {
-            const sanPhamTableBody = document.querySelector('#sanPhamTable tbody');
-            const sanPhamTableAn = document.querySelector('#sanPhamTableAn tbody');
-            const sanPhamSelect = document.querySelector('#sanPhamList');
-
-            // Cập nhật danh sách sản phẩm "Đang bán"
-            if (sanPhamTableBody) {
-                sanPhamTableBody.innerHTML = ''; // Xóa dữ liệu cũ
-
-                // Duyệt qua danh sách sản phẩm và tạo các hàng trong bảng
-                data.forEach(sanPham => {
-                    if (sanPham.trangThaiSP === 'Đang bán') { // Kiểm tra trạng thái sản phẩm
-                        const row = document.createElement('tr');
-                        row.innerHTML = `
-                            <td>${sanPham.maSP}</td>
-                            <td>${sanPham.tenSP}</td>
-                            <td><img src="/img/categories/${sanPham.anhSPMau}" alt="Ảnh sản phẩm"></td>
-                            <td>${sanPham.donGia}</td>
-                            <td>${sanPham.moTa}</td>
-                            <td>${sanPham.trangThaiSP}</td>
-                            <td>
-                                <button
-                                    class="view-detail btn btn-info"
-                                    data-bs-toggle="modal"
-                                    data-bs-target="#productDetailModal"
-                                    data-id="${sanPham.id}"
-                                    data-masp="${sanPham.maSP}"
-                                    data-ten="${sanPham.tenSP}"
-                                    data-anh="${sanPham.anhSPMau}"
-                                    data-gianhap="${sanPham.giaNhap}"
-                                    data-dongia="${sanPham.donGia}"
-                                    data-ngaytao="${sanPham.ngayTao}"
-                                    data-mota="${sanPham.moTa}"
-                                    data-loai="${sanPham.loaiSanPham.idLoaiSP}"
-                                    data-thuonghieu="${sanPham.thuongHieu.id}"
-                                    data-kichco="${sanPham.kichCo.id}"
-                                    data-chatlieu="${sanPham.chatLieu.id}"
-                                    data-trangthai="${sanPham.trangThaiSP}"
-                                >
-                                    Chi tiết
-                                </button>
-                            </td>
-                        `;
-                        sanPhamTableBody.appendChild(row);
-                    }
-                });
-
-                // Đính kèm sự kiện vào các nút chi tiết sản phẩm
-                attachUpdateButtonEvents();
-            }
-
-
-            // Cập nhật danh sách sản phẩm "Ngừng bán"
-            if (sanPhamTableAn) {
-                sanPhamTableAn.innerHTML = '';
-                data.forEach(sanPham => {
-                    if (sanPham.trangThaiSP === 'Ngừng bán') {
-                        const row = document.createElement('tr');
-                        row.innerHTML = `
-                            <td>${sanPham.maSP}</td>
-                            <td>${sanPham.tenSP}</td>
-                            <td><img src="/img/categories/${sanPham.anhSPMau}" alt="Ảnh sản phẩm"></td>
-                            <td>${sanPham.donGia}</td>
-                            <td>${sanPham.moTa}</td>
-                            <td>${sanPham.trangThaiSP}</td>
-                            <td>
-                                <button
-                                    class="view-detail btn btn-info"
-                                    data-bs-toggle="modal"
-                                    data-bs-target="#productDetailModal"
-                                    data-id="${sanPham.id}"
-                                    data-masp="${sanPham.maSP}"
-                                    data-ten="${sanPham.tenSP}"
-                                    data-anh="${sanPham.anhSPMau}"
-                                    data-gianhap="${sanPham.giaNhap}"
-                                    data-dongia="${sanPham.donGia}"
-                                    data-ngaytao="${sanPham.ngayTao}"
-                                    data-mota="${sanPham.moTa}"
-                                    data-loai="${sanPham.loaiSanPham.idLoaiSP}"
-                                    data-thuonghieu="${sanPham.thuongHieu.id}"
-                                    data-kichco="${sanPham.kichCo.id}"
-                                    data-chatlieu="${sanPham.chatLieu.id}"
-                                    data-trangthai="${sanPham.trangThaiSP}"
-                                >
-                                    Chi tiết
-                                </button>
-                            </td>
-                        `;
-                        sanPhamTableAn.appendChild(row);
-                    }
-                });
-                attachUpdateButtonEvents();
-            }
-
-            // Cập nhật danh sách sản phẩm trong dropdown
-            if (sanPhamSelect) {
-                sanPhamSelect.innerHTML = '<option value="" disabled selected>Chọn sản phẩm</option>';
-                data.forEach(sanPham => {
-                    const option = document.createElement('option');
-                    option.value = sanPham.id;
-                    option.textContent = sanPham.tenSP;
-                    sanPhamSelect.appendChild(option);
-                });
-            }
-        })
-        .catch(error => {
-            console.error('Lỗi khi cập nhật danh sách sản phẩm:', error);
-        });
-}
 
 function handleAddCL(event, form) {
     event.preventDefault();
@@ -764,11 +647,7 @@ function handleAddSPCT(event, form) {
                     icon: "success",
                     confirmButtonText: "OK"
                 }).then(() => {
-                    const modalElement = document.querySelector('#exampleModal');
-                    const modalInstance = bootstrap.Modal.getInstance(modalElement);
-                    modalInstance.hide();
-                    form.reset();
-                    updateSPCTList();
+                    location.reload();
                 });
             } else {
                 return response.text().then(text => {
@@ -788,7 +667,19 @@ function handleAddSPCT(event, form) {
 
 function handleUpdateSPCT(event, form) {
     event.preventDefault();
+    const changeImageCheckbox = document.getElementById("changeImageCheckbox");
     const formData = new FormData(form);
+
+    // Nếu không chọn ảnh mới, giữ lại ảnh cũ
+    if (!changeImageCheckbox.checked) {
+        const currentImageName = document.getElementById("anh").value;
+        if (currentImageName) {
+            formData.append("anh", currentImageName);
+        } else {
+            console.warn("Current image name is empty, please check.");
+        }
+    }
+
     fetch('/admin/update/products', {
         method: 'POST',
         body: formData
@@ -799,11 +690,7 @@ function handleUpdateSPCT(event, form) {
                 icon: "success",
                 confirmButtonText: "OK"
             }).then(() => {
-                const modalElement = document.querySelector('#productDetailModal');
-                const modalInstance = bootstrap.Modal.getInstance(modalElement);
-                modalInstance.hide();
-                form.reset();
-                updateSPCTList();
+                location.reload();
             });
         } else {
             return response.text().then(text => {
@@ -818,106 +705,9 @@ function handleUpdateSPCT(event, form) {
             confirmButtonText: "OK"
         });
     });
-    return false;
 }
 
-function updateSPCTList() {
-    fetch('/admin/products/list')
-        .then(response => response.json())
-        .then(data => {
-            const sanPhamTableBody = document.querySelector('#sanPhamTable tbody');
-            const sanPhamTableAn = document.querySelector('#sanPhamTableAn tbody');
-            const sanPhamSelect = document.querySelector('#sanPhamList');
-            if (sanPhamTableBody) {
-                sanPhamTableBody.innerHTML = '';
-                data.forEach(spct => {
-                    if (spct.trangThaiSPCT === 'Còn hàng') {
-                        const row = document.createElement('tr');
-                        row.innerHTML = `
-                            <td>${spct.maSPCT}</td>
-                            <td>${spct.sanPham.tenSP}</td>
-                            <td>${spct.soLuong}</td>
-                            <td>${spct.sanPham.donGia}</td>
-                            <td>${spct.sanPham.thuongHieu.tenTH}</td>
-                            <td>${spct.sanPham.chatLieu.tenCl}</td>
-                            <td>${spct.sanPham.kichCo.tenKC}</td>
-                            <td>${spct.mauSac.tenMS}</td>
-                            <td><img src="/img/categories/${spct.anh}" alt="Ảnh sản phẩm"></td>
-                            <td>${spct.trangThaiSPCT}</td>
-                            <td>
-                                <button
-                                    class="view-detail btn btn-info"
-                                    data-bs-toggle="modal"
-                                    data-bs-target="#productDetailModal"
-                                    data-id="${spct.id}"
-                                    data-ma-spct="${spct.maSPCT}"
-                                    data-ten-sp="${spct.sanPham.tenSP}"
-                                    data-so-luong="${spct.soLuong}"
-                                    data-mau-sac="${spct.mauSac.id}"
-                                    data-anh="${spct.anh}"
-                                    data-trang-thai="${spct.trangThaiSPCT}"
-                                >
-                                    Chi tiết
-                                </button>
-                            </td>
-                        `;
-                        sanPhamTableBody.appendChild(row);
-                    }
-                });
-                attachUpdateButtonEvents();
-            }
-            if (sanPhamTableAn) {
-                sanPhamTableAn.innerHTML = '';
-                data.forEach(spct => {
-                    if (spct.trangThaiSPCT === 'Không còn hàng') {
-                        const row = document.createElement('tr');
-                        row.innerHTML = `
-                            <td>${spct.maSPCT}</td>
-                            <td>${spct.sanPham.tenSP}</td>
-                            <td>${spct.soLuong}</td>
-                            <td>${spct.sanPham.donGia}</td>
-                            <td>${spct.sanPham.thuongHieu.tenTH}</td>
-                            <td>${spct.sanPham.chatLieu.tenCl}</td>
-                            <td>${spct.sanPham.kichCo.tenKC}</td>
-                            <td>${spct.mauSac.tenMS}</td>
-                            <td><img src="/img/categories/${spct.anh}" alt="Ảnh sản phẩm"></td>
-                            <td>${spct.trangThaiSPCT}</td>
-                            <td>
-                                <button
-                                    class="view-detail btn btn-info"
-                                    data-bs-toggle="modal"
-                                    data-bs-target="#productDetailModal"
-                                    data-id="${spct.id}"
-                                    data-ma-spct="${spct.maSPCT}"
-                                    data-ten-sp="${spct.sanPham.tenSP}"
-                                    data-so-luong="${spct.soLuong}"
-                                    data-mau-sac="${spct.mauSac.id}"
-                                    data-anh="${spct.anh}"
-                                    data-trang-thai="${spct.trangThaiSPCT}"
-                                >
-                                    Chi tiết
-                                </button>
-                            </td>
-                        `;
-                        sanPhamTableAn.appendChild(row);
-                    }
-                });
-                attachUpdateButtonEvents();
-            }
-            if (sanPhamSelect) {
-                sanPhamSelect.innerHTML = '<option value="" disabled selected>Chọn sản phẩm</option>';
-                data.forEach(spct => {
-                    const option = document.createElement('option');
-                    option.value = spct.id;
-                    option.textContent = spct.sanPham.tenSP;
-                    sanPhamSelect.appendChild(option);
-                });
-            }
-        })
-        .catch(error => {
-            console.error('Lỗi khi cập nhật danh sách sản phẩm:', error);
-        });
-}
+
 
 
 function handleAddMS(event, form) {
@@ -1032,6 +822,9 @@ function handleUpdateMS(event, form) {
                 icon: "success",
                 confirmButtonText: "OK"
             }).then(() => {
+                const modalElement = document.querySelector('#productDetailModal');
+                const modalInstance = bootstrap.Modal.getInstance(modalElement);
+                modalInstance.hide();
                 form.reset();
                 // Cập nhật lại danh sách màu sắc
                 updateMauSacList();
@@ -1452,6 +1245,9 @@ function handleUpdateLSP(event, form) {
                 icon: "success",
                 confirmButtonText: "OK"
             }).then(() => {
+                const modalElement = document.querySelector('#productDetailModal');
+                const modalInstance = bootstrap.Modal.getInstance(modalElement);
+                modalInstance.hide();
                 form.reset();
                 updateLoaiSanPhamList();  // Cập nhật lại danh sách sau khi thay đổi
             });

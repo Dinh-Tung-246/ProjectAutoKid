@@ -1,5 +1,5 @@
 function updateCartCount() {
-    const cart = JSON.parse(localStorage.getItem('cart')) || [];
+    const cart = JSON.parse(sessionStorage.getItem('cart')) || [];
     const count = cart.reduce((total, item) => total + item.quantity, 0); // Tính tổng số lượng sản phẩm
     document.getElementById('cart-count').textContent = count; // cập nhật số lượng vào biểu tượng giỏ hàng
 }
@@ -9,7 +9,7 @@ function formatPrice(price) {
 }
 
 function updateCartTotal() {
-    const cart = JSON.parse(localStorage.getItem('cart')) || [];
+    const cart = JSON.parse(sessionStorage.getItem('cart')) || [];
 
     const total = cart.reduce((sum, item) => {
         const price = parseFloat(item.price) || 0;
@@ -33,8 +33,7 @@ window.onload = function () {
 
 function renderUserMenu() {
     const userMenu = document.getElementById("user-menu");
-    const khachHang = JSON.parse(localStorage.getItem("KH"));
-
+    const khachHang = JSON.parse(sessionStorage.getItem("KH"));
     if (!khachHang || !khachHang.tenKH) {
         userMenu.innerHTML = `<a href="http://localhost:8080/autokid/login/">
                     <i class="fa fa-user login-btn"></i> Đăng nhập
@@ -48,6 +47,7 @@ function renderUserMenu() {
                     <span class="arrow_carrot-down"></span>
                       <ul class="dropdown-custom" style="width: 150px;">
                         <li><a href="http://localhost:8080/autokid/account">Cập nhật thông tin</a></li>
+                        <li><a href="http://localhost:8080/autokid/account/order-tracking?idKH=${khachHang.idKH}">Theo dõi đơn hàng</a></li>
                         <li><a href="#" onclick="logout()">Đăng xuất</a></li>
                       </ul>
                 </div>`;
@@ -68,8 +68,11 @@ function logout() {
                 title: "Đăng xuất thành công!",
                 icon: "success"
             }).then(() => {
-                localStorage.removeItem("KH");
+                sessionStorage.removeItem("KH");
                 renderUserMenu();
+                setTimeout(() => {
+                    window.location.href="http://localhost:8080/autokid/home";
+                }, 500)
             })
         }
     });
