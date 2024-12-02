@@ -96,7 +96,8 @@
                     <div class="product__discount__item">
                       <div
                         class="product__discount__item__pic set-bg"
-                        th:attr="data-setbg=${'/img/categories/' + spkm.anhSPMau}"
+                        th:attr="data-setbg=${'/img/product/' + spkm.anhSPMau}"
+                        style="width: 262.5px; height: 270px; background-size: cover;"
                       >
                         <div class="product__discount__percent" th:text="${spkm.giaTriGiam} + '%'"></div>
                         <ul class="product__item__pic__hover">
@@ -115,6 +116,7 @@
                                     th:data-idspct = "${spkm.idSPCT}"
                                     th:data-mausac="${spkm.mauSacSPCT}"
                                     th:data-soluong="${spkm.soLuongSPCT}"
+                                    th:data-anh="${spkm.anhSPMau}"
                                     onclick="addToCart(this)"
                             >
                               <i class="fa fa-shopping-cart"></i>
@@ -214,7 +216,8 @@
                 <div class="product__item">
                   <div
                     class="product__item__pic set-bg"
-                    th:attr="data-setbg=${'/img/categories/' + sp.anhSPMau}"
+                    th:attr="data-setbg=${'/img/product/' + sp.anhSPMau}"
+                    style="width: 262.5px; height: 270px; background-size: cover;"
                   >
                     <ul class="product__item__pic__hover">
                       <li>
@@ -232,6 +235,7 @@
                                 th:data-idspct = "${sp.idSPCT}"
                                 th:data-mausac="${sp.mauSacSPCT}"
                                 th:data-soluong="${sp.soLuongSPCT}"
+                                th:data-anh="${sp.anhSPMau}"
                                 onclick="addToCart(this)"
                         >
                           <i class="fa fa-shopping-cart"></i>

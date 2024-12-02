@@ -67,8 +67,9 @@
               <div class="product__details__pic__item">
                 <img
                   class="product__details__pic__item--large"
-                  th:src="@{'/img/categories/'+ ${sp.anhSPMau}}"
-                  alt=""
+                  id="image__product_detail"
+                  th:src="@{'/img/product/'+ ${sp.anhSPMau}}"
+                  style="width: 555px; height: 575.55px; background-size: cover;"
                 />
               </div>
               <div
@@ -80,8 +81,8 @@
                     th:href="@{http://localhost:8080/autokid/shop-detail(idSP=${sanpham.idSP})}"
                   >
                     <img
-                      th:src="@{'/img/categories/' + ${sanpham.anhSPMau}}"
-                      alt=""
+                      th:src="@{'/img/product/' + ${sanpham.anhSPMau}}"
+                      style="width: 120px; height: 120px; background-size: cover;"
                     />
                   </a>
                 </div>
@@ -139,7 +140,8 @@
                     <div th:each="ms: ${mauSac}" class="custom-radio-div"
                          th:data-tenms="${ms.tenMS}"
                          th:data-idspct="${ms.idSPCT}"
-                         th:data-soluong="${ms.soLuong}" th>[[${ms.tenMS}]]</div>
+                         th:data-soluong="${ms.soLuong}"
+                         th:data-anhspct="${ms.anhSPCT}">[[${ms.tenMS}]]</div>
                   </div>
                   <input type="hidden" id="selectedValue" name="selectedValue">
                   <input type="hidden" id="selectedValueMS" name="selectedValueMS">
@@ -310,7 +312,8 @@
             <div class="product__item">
               <div
                 class="product__item__pic set-bg"
-                th:attr="data-setbg=${'/img/categories/' + sptt.anhSPMau}"
+                th:attr="data-setbg=${'/img/product/' + sptt.anhSPMau}"
+                style="width: 262.5px; height: 270px; background-size: cover;"
               >
                 <ul class="product__item__pic__hover">
                   <li>
@@ -331,6 +334,7 @@
                       th:data-idspct = "${sptt.idSPCT}"
                       th:data-mausac="${sptt.mauSacSPCT}"
                       th:data-soluong="${sptt.soLuongSPCT}"
+                      th:data-anh="${sptt.anhSPMau}"
                       onclick="addToCart(this)"
                       ><i class="fa fa-shopping-cart"></i
                     ></a>

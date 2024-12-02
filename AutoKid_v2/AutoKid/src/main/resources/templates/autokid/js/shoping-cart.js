@@ -12,7 +12,7 @@ function renderCartForm() {
         row.innerHTML = `
             <td class="shoping__cart__item">
             <input type="checkbox" class="check" style="margin: 30px">
-                      <img src="img/imgs/demo1.jpg" alt="" />
+                      <img src="img/product/${item.anhSP}" alt="" style="width: 120px; height: 120px; background-size: cover;"/>
                       <h5 class="shoping__cart__name">${item.name} (${item.color === null ? 'Màu mặc định' : item.color})</h5>
                     </td>
                     <td class="shoping__cart__price">${formatPrice(

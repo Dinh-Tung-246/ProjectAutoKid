@@ -4,6 +4,8 @@ import com.example.demo.model.*;
 import com.example.demo.repository.*;
 import com.example.demo.repository.SanPhamRepo;
 import com.example.demo.response.SanPhamKhuyenMaiResponse;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -13,6 +15,8 @@ import java.util.*;
 
 @Service
 public class QuanLySanPhamService {
+    private static Logger logger = LoggerFactory.getLogger(QuanLySanPhamService.class);
+
     @Autowired
     SanPhamChiTietRepo spctRepo;
 
@@ -176,6 +180,7 @@ public class QuanLySanPhamService {
                 list.add(new SanPhamKhuyenMaiResponse(sp));
             }
         }
+        logger.info("Data : {}", list);
         return list;
     }
 
@@ -204,7 +209,9 @@ public class QuanLySanPhamService {
     public Integer countSP() {
         Integer count = 0;
         for (SanPham sp: sanPhamRepo.findAll()){
-            count ++;
+            if (sp.getTrangThaiSP().equals("Đang bán")) {
+                count++;
+            }
         }
         return count;
     }
@@ -317,6 +324,7 @@ public class QuanLySanPhamService {
                 map.put("idMS", spct.getMauSac().getId());
                 map.put("tenMS", spct.getMauSac().getTenMS());
                 map.put("soLuong", spct.getSoLuong());
+                map.put("anhSPCT", spct.getAnh());
                 listColor.add(map);
             }
         }

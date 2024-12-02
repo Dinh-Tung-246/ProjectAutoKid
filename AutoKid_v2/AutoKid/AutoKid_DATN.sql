@@ -264,7 +264,20 @@ VALUES
 ('MS002', N'Xanh lá', N'Hoạt động'),
 ('MS003', N'Vàng', N'Hoạt động'),
 ('MS004', N'Đen', N'Hoạt động'),
-('MS005', N'Hồng', N'Hoạt động');
+('MS005', N'Hồng', N'Hoạt động'),
+('MS006', N'Xanh lam', N'Hoạt động'),
+('MS007', N'Tím', N'Hoạt động'),
+('MS008', N'Cam', N'Hoạt động'),
+('MS009', N'Đen pha cam', N'Hoạt động'),
+('MS010', N'Đen pha vàng', N'Hoạt động'),
+('MS011', N'Trắng pha xanh lam', N'Hoạt động'),
+('MS012', N'Trắng pha hồng', N'Hoạt động'),
+('MS013', N'Đen pha xanh lam', N'Hoạt động'),
+('MS014', N'Xám', N'Hoạt động'),
+('MS015', N'Lam pha lục', N'Hoạt động'),
+('MS016', N'Cam pha lam', N'Hoạt động'),
+('MS017', N'Xanh lam nhạt', N'Hoạt động'),
+('MS018', N'Xanh lục nhạt', N'Hoạt động')
 
 INSERT INTO kich_co (ma_kc, ten_kc, trang_thai_kc, mo_ta) 
 VALUES 
@@ -284,24 +297,53 @@ VALUES
 
 INSERT INTO san_pham (ma_sp, ten_sp, gia_nhap,gia_ban, trang_thai_sp,mo_ta, id_loai_sp, id_kich_co, id_chat_lieu, id_thuong_hieu, id_km, anh_sp_mau) 
 VALUES 
-('SP001', N'Xe đạp 3 bánh ABC', 400000, 500000, N'Còn hàng', N'Xe đạp 3 bánh ABC màu đỏ, khung thép, kích cỡ nhỏ', 1, 1, 1, 1, 1, 'abc_red.jpg'),
-('SP002', N'Xe đạp có bánh phụ XYZ', 500000, 700000, N'Còn hàng', N'Xe đạp có bánh phụ XYZ màu xanh, khung hợp kim, kích cỡ trung bình', 2, 2, 2, 2, 1, 'xyz_green.jpg'),
-('SP003', N'Xe đạp thể thao KidsSport', 600000, 800000, N'Còn hàng', N'Xe đạp thăng bằng JoyBalance màu hồng, khung nhôm, kích cỡ nhỏ', 3, 3, 3, 3, null, 'joybalance_pink.jpg'),
-('SP004', N'Xe đạp thăng bằng JoyBalance', 700000, 1000000, N'Còn hàng', N'Xe đạp điện mini E-Bike màu đen, khung thép, kích cỡ lớn', 4, 4, 4, 4, null, 'ebike_black.jpg'),
-('SP005', N'Xe đạp điện mini E-Bike', 400000, 550000, N'Còn hàng', N'Xe đạp 3 bánh ABC màu xanh, khung thép, kích cỡ nhỏ', 5, 5, 5, 5, null, 'ebike_white.jpg')
+('SP001', N'FORNIX Panda', 400000, 500000, N'Đang bán', N'Xe đạp 3 bánh ABC màu đỏ, khung thép, kích cỡ nhỏ', 1, 1, 1, 1, 1, 'PandaPurpleBlue.jpg'),
+('SP002', N'ROYALBABY Little Swan', 500000, 700000, N'Đang bán', N'Xe đạp có bánh phụ XYZ màu xanh, khung hợp kim, kích cỡ trung bình', 2, 2, 2, 2, 1, 'RoyPink.jpg'),
+('SP003', N'Youth LIV Adore FW', 600000, 800000, N'Đang bán', N'Xe đạp thăng bằng JoyBalance màu hồng, khung nhôm, kích cỡ nhỏ', 3, 3, 3, 3, null, 'AdoreGreen.jpg'),
+('SP004', N'Youth MAX BIKE Bambi', 700000, 1000000, N'Đang bán', N'Xe đạp điện mini E-Bike màu đen, khung thép, kích cỡ lớn', 4, 4, 4, 4, null, 'BambiBluOrange.jpg'),
+('SP005', N'YOUTH MAX BIKE Barbie', 400000, 550000, N'Đang bán', N'Xe đạp 3 bánh ABC màu xanh, khung thép, kích cỡ nhỏ', 5, 5, 5, 5, null, 'BabyGreen.jpg'),
+('SP006', N'Youth MAX BIKE Bella', 600000, 750000, N'Đang bán', N'Xe đạp 3 bánh ABC màu xanh, khung thép, kích cỡ nhỏ', 5, 5, 5, 5, null, 'Pink.jpg'),
+('SP007', N'Youth MAX BIKE Hola', 800000, 1100000, N'Đang bán', N'Xe đạp 3 bánh ABC màu xanh, khung thép, kích cỡ nhỏ', 5, 5, 5, 5, null, 'Black.jpg'),
+('SP008', N'Youth MAX BIKE Mini', 400000, 600000, N'Đang bán', N'Xe đạp 3 bánh ABC màu xanh, khung thép, kích cỡ nhỏ', 5, 5, 5, 5, null, 'Blue.jpg'),
+('SP009', N'Youth MAX BIKE Subasa', 650000, 850000, N'Đang bán', N'Xe đạp 3 bánh ABC màu xanh, khung thép, kích cỡ nhỏ', 5, 5, 5, 5, null, 'SubasaBlue.jpg'),
+('SP010', N'Youth MAX BIKE Zira', 600000, 850000, N'Đang bán', N'Xe đạp 3 bánh ABC màu xanh, khung thép, kích cỡ nhỏ', 5, 5, 5, 5, null, 'ZiraBlue.jpg'),
+('SP011', N'Youth MISAKI Luka', 550000, 7000000, N'Đang bán', N'Xe đạp 3 bánh ABC màu xanh, khung thép, kích cỡ nhỏ', 5, 5, 5, 5, null, 'LukaLightBlueGreen.jpg'),
+('SP012', N'Youth VINBIKE Mochi', 500000, 650000, N'Đang bán', N'Xe đạp 3 bánh ABC màu xanh, khung thép, kích cỡ nhỏ', 5, 5, 5, 5, null, 'MochiBlack.jpg');
 
 INSERT INTO san_pham_chi_tiet (ma_spct, id_san_pham, id_mau_sac, so_luong, anh, trang_thai_spct) 
 VALUES 
-('SPCT001', 1, 1, 50, 'abc_red.jpg', N'Còn hàng'),
-('SPCT002', 2, 2, 30, 'xyz_green.jpg', N'Còn hàng'),
-('SPCT003', 3, 3, 20, 'kidsport_yellow.jpg', N'Còn hàng'),
-('SPCT004', 4, 4, 40, 'joybalance_pink.jpg', N'Còn hàng'),
-('SPCT005', 5, 5, 15, 'ebike_black.jpg', N'Còn hàng'),
-('SPCT006', 1, 1, 45, 'abc_green.jpg', N'Còn hàng'),
-('SPCT007', 2, 2,35, 'xyz_yellow.jpg', N'Còn hàng'),
-('SPCT008', 3, 3, 18, 'kidsport_black.jpg', N'Còn hàng'),
-('SPCT009', 4, 4, 37, 'joybalance_blue.jpg', N'Còn hàng'),
-('SPCT010', 5, 5, 20, 'ebike_white.jpg', N'Còn hàng');
+('SPCT001', 1, 6, 50, 'PandaPurpleBlue.jpg', N'Còn hàng'),
+('SPCT002', 1, 5, 30, 'PandaWhitePink.jpg', N'Còn hàng'),
+('SPCT003', 2, 5, 20, 'RoyPink.jpg', N'Còn hàng'),
+('SPCT004', 3, 2, 40, 'AdoreGreen.jpg', N'Còn hàng'),
+('SPCT005', 3, 7, 15, 'AdorePurple.jpg', N'Còn hàng'),
+('SPCT006', 4, 8, 45, 'BambiBluOrange.jpg', N'Còn hàng'),
+('SPCT007', 4, 2,35, 'BambiGreyGreen.jpg', N'Còn hàng'),
+('SPCT008', 4, 6, 18, 'BambiRedBlue.jpg', N'Còn hàng'),
+('SPCT009', 5, 2, 37, 'BabyGreen.jpg', N'Còn hàng'),
+('SPCT010', 5, 5, 20, 'BabyPink.jpg', N'Còn hàng'),
+('SPCT011', 5, 7, 25, 'BabyPurple.jpg', N'Còn hàng'),
+('SPCT012', 6, 5, 30, 'Pink.jpg', N'Còn hàng'),
+('SPCT013', 6, 7, 35, 'Purple.jpg', N'Còn hàng'),
+('SPCT014', 7, 4, 40, 'Black.jpg', N'Còn hàng'),
+('SPCT015', 7, 9, 50, 'BlackOrange.jpg', N'Còn hàng'),
+('SPCT016', 7, 10, 30, 'BlackYellow.jpg', N'Còn hàng'),
+('SPCT017', 7, 11, 20, 'WhiteBlue.jpg', N'Còn hàng'),
+('SPCT018', 8, 6, 40, 'Blue.jpg', N'Còn hàng'),
+('SPCT019', 8, 12, 25, 'WhitePink.jpg', N'Còn hàng'),
+('SPCT020', 9, 6, 35, 'SubasaBlue.jpg', N'Còn hàng'),
+('SPCT021', 9, 13, 25, 'SubasaDarkBlue.jpg', N'Còn hàng'),
+('SPCT022', 9, 2, 30, 'SubasaGreen.jpg', N'Còn hàng'),
+('SPCT023', 9, 14, 15, 'SubasaGrey.jpg', N'Còn hàng'),
+('SPCT024', 10, 6, 25, 'ZiraBlue.jpg', N'Còn hàng'),
+('SPCT025', 10, 8, 10, 'ZiraOrange.jpg', N'Còn hàng'),
+('SPCT026', 11, 15, 30, 'LukaLightBlueGreen.jpg', N'Còn hàng'),
+('SPCT027', 11, 16, 40, 'LukaOrangeBlue.jpg', N'Còn hàng'),
+('SPCT028', 12, 4, 25, 'MochiBlack.jpg', N'Còn hàng'),
+('SPCT029', 12, 17, 20, 'MochiLightBlue.jpg', N'Còn hàng'),
+('SPCT030', 12, 18, 15, 'MochiLightGreen.jpg', N'Còn hàng'),
+('SPCT031', 12, 5, 20, 'MochiPink.jpg', N'Còn hàng'),
+('SPCT032', 12, 1, 25, 'MochiRed.jpg', N'Còn hàng')
 
 INSERT INTO chuc_vu (ma_chuc_vu, ten_chuc_vu) 
 VALUES 
@@ -313,7 +355,7 @@ INSERT INTO nhan_vien (ma_nv, ten_nv, gioi_tinh, ngay_sinh, ngay_lam_viec, mat_k
 VALUES 
 ('NV001', N'Trần Văn A', N'Nam', '1990-05-15', '2023-01-01', 'password123', '0901234567', 'trana@gmail.com', 1, N'Số 1, đường A', 1),
 ('NV002', N'Nguyễn Thị B', N'Nữ', '1995-08-20', '2023-02-01', 'password123', '0907654321', 'nguyenb@gmail.com', 0, N'Số 2, đường B', 2),
-('NV003', N'Nguyễn Văn C', N'Nam', '1992-11-10', '2023-03-15', 'password123', '0902223334', 'nguyenc@gmail.com',1, N'Số 3, đường C', 3);
+('NV003', N'Nguyễn Văn C', N'Nam', '1992-11-10', '2023-03-15', 'password123', '0902223334', 'nguyenc@gmail.com',1, N'Số 3, đường C', 3),
 ('NV005', N'Nguyễn Văn T', N'Nữ', '1993-01-15', '2023-03-15', '$2a$10$0ed0A4BzYIdhUS0N75nsDOaaAXQC7PuJZ3uoh3.YIh9alKRq3zBCm', '0902223334', 'nguyenngoc@gmail.com',1, N'Số 4, đường C', 3);
 
 INSERT INTO thong_tin_van_chuyen (ma_ttvc, dia_chi, ten_nguoi_nhan, sdt) 
@@ -332,8 +374,8 @@ VALUES
 INSERT INTO phuong_thuc_thanh_toan (ma_pttt, ten_pttt, ma_code, thong_tin_thanh_toan, trang_thai) 
 VALUES 
 ('PTTT001', N'Thanh toán khi nhận hàng', 'TP004', N'Thanh toán bằng tiền mặt khi nhận hàng', 1),
-('PTTT002', N'Chuyển khoản nhanh', 'TP005', N'Chuyển khoản qua dịch vụ ngân hàng nhanh', 1),
-('PTTT003', N'Thẻ ghi nợ', 'TP006', N'Sử dụng thẻ ghi nợ để thanh toán', 1),
+('PTTT002', N'Chuyển khoản nhanh', 'TP005', N'Chuyển khoản qua VNpay', 1),
+('PTTT003', N'Thẻ ghi nợ', 'TP006', N'Sử dụng thẻ ghi nợ để thanh toán', 0),
 ('PTTT004', N'Thẻ tín dụng', 'TP007', N'Sử dụng thẻ tín dụng để thanh toán', 0);
 
 INSERT INTO hoa_don (ma_hd, id_kh, id_nv, id_pttt, ngay_tao, phi_ship, hinh_thuc_thanh_toan, tong_tien, trang_thai_hd, ten_nguoi_nhan, dia_chi_nguoi_nhan, sdt_nguoi_nhan) 

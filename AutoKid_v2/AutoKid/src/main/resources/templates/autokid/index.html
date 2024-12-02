@@ -49,7 +49,7 @@
               >
                 <div
                   class="categories__item"
-                  th:style="'background-image: url(\'/img/categories/' + ${sanpham.anhSPMau} + '\'); background-repeat: no-repeat;'"
+                  th:style="'background-image: url(\'/img/product/' + ${sanpham.anhSPMau} + '\'); background-repeat: no-repeat; width: 262.5px; height: 270px; background-size: cover;'"
                 >
                   <h5 th:text="${sanpham.tenSP}"></h5>
                 </div>
@@ -90,7 +90,8 @@
             <div class="featured__item">
               <div
                 class="featured__item__pic set-bg"
-                th:attr="data-setbg=${'/img/categories/' + sp.anhSPMau}"
+                th:attr="data-setbg=${'/img/product/' + sp.anhSPMau}"
+                style="width: 262.5px; height: 270px; background-size: cover;"
               >
                 <ul class="featured__item__pic__hover">
                   <li>
@@ -108,6 +109,7 @@
                       th:data-idspct = "${sp.idSPCT}"
                       th:data-mausac="${sp.mauSacSPCT}"
                       th:data-soluong="${sp.soLuongSPCT}"
+                      th:data-anh="${sp.anhSPMau}"
                       onclick="addToCart(this)"
                     >
                       <i class="fa fa-shopping-cart"></i>

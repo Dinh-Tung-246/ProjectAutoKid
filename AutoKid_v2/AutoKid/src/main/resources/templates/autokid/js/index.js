@@ -9,6 +9,7 @@ function addToCart(a) {
   let idSPCT = a.getAttribute("data-idspct");
   let mauSac = a.getAttribute("data-mausac");
   let soLuongSPCT = a.getAttribute("data-soluong");
+  let anhSP = a.getAttribute('data-anh');
 
   if (soLuongSPCT === null) {
     Swal.fire({
@@ -29,7 +30,7 @@ function addToCart(a) {
     // Nếu có, tăng số lượng
     sp.quantity += 1;
   } else {
-    cart.push({ idSP: idSP, name: tenSP, price: donGia, idSPCT: idSPCT, color: mauSac, quantity: 1 });
+    cart.push({ idSP: idSP, name: tenSP, price: donGia, idSPCT: idSPCT, color: mauSac, anhSP: anhSP, quantity: 1 });
   }
 
   sessionStorage.setItem("cart", JSON.stringify(cart));

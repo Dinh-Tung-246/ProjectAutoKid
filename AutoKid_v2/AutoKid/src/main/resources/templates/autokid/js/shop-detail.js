@@ -33,8 +33,11 @@ $("#add-to-cart").on("click", function (event) {
     let idSPCT = document.getElementById('selectedValue').value;
     let tenMS = document.getElementById('selectedValueMS').value;
     let soLuongSPCT = a.getAttribute("data-soluong");
+    const anhSP = document.getElementById('image__product_detail').src;
+    const anhStr = anhSP.split('/').pop();
+    console.log("anh SP:", anhStr);
 
-    if (soLuongSPCT === null) {
+    if (soLuongSPCT === null || soLuongSPCT === 0) {
         Swal.fire({
             title: "Sản phẩm này hiện đang hết hàng!",
             text: "Xin lỗi vì sự bất tiện này",
@@ -46,7 +49,7 @@ $("#add-to-cart").on("click", function (event) {
 
     console.log("ten", tenMS);
     console.log("idspct", idSPCT);
-    if (tenMS == undefined || tenMS == null || tenMS.trim() == '') {
+    if (tenMS === undefined || tenMS === null || tenMS.trim() === '') {
         Swal.fire({
             title: "Bạn cần chọn màu!",
             icon: "error",
@@ -67,6 +70,7 @@ $("#add-to-cart").on("click", function (event) {
                 price: giaSP,
                 idSPCT: idSPCT,
                 color: tenMS,
+                anhSP: anhStr,
                 quantity: quantitySP,
             });
         }
@@ -93,10 +97,21 @@ document.querySelectorAll('.custom-radio-div').forEach(item => {
         // thêm class "selected" vào item được chọn
         this.classList.add('selected');
 
+        const anhSPCT = this.getAttribute('data-anhspct');
+        const soLuong =this.getAttribute('data-soluong');
+        if (soLuong === 0) {
+            document.getElementById('so-luong').textContent = 'Hết hàng';
+        } else {
+            document.getElementById('so-luong').textContent = soLuong;
+        }
+
         //Lưu lại giá trị được chọn vào input ẩn
         document.getElementById('selectedValue').value = this.getAttribute('data-idspct');
         document.getElementById('selectedValueMS').value = this.getAttribute('data-tenms');
-        document.getElementById('so-luong').textContent = this.getAttribute('data-soluong');
+
+        const imgE = document.getElementById('image__product_detail');
+        imgE.src = '/img/product/' + anhSPCT;
+
         console.log('Selected value: ', this.getAttribute('data-idspct'));
         console.log('So luong: ', this.getAttribute('data-soluong'));
         console.log('Mau sac: ', this.getAttribute('data-tenms'));
