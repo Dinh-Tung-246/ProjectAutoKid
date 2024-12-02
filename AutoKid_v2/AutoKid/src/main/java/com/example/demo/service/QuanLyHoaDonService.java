@@ -35,8 +35,18 @@ public class QuanLyHoaDonService {
         return list;
     }
 
-    public List<HoaDon> searchInvoices(String tenKhachHang, String tenNhanVien) {
-        List<HoaDon> hoaDons = hoaDonRepo.searchInvoices(tenKhachHang, tenNhanVien);
+    // Tạo hóa đơn
+    public HoaDon createHoaDon(HoaDon hoaDon) {
+        return hoaDonRepo.save(hoaDon);
+    }
+
+    // Tạo chi tiết hóa đơn
+    public void createHoaDonChiTiet(HoaDonChiTiet hoaDonChiTiet) {
+        hoaDonChiTietRepo.save(hoaDonChiTiet);
+    }
+
+    public List<HoaDon> searchInvoices(String maHd) {
+        List<HoaDon> hoaDons = hoaDonRepo.searchInvoices(maHd);
         return hoaDons;
     }
 

@@ -45,13 +45,12 @@ public class QuanlyhoadonController {
     }
 
     @GetMapping("/search")
-    public String searchInvoices(@RequestParam(required = false) String tenKhachHang,
-                                 @RequestParam(required = false) String tenNhanVien,
+    public String searchInvoices(@RequestParam(required = false) String maHd,
                                  Model model) {
-        if(tenKhachHang.equals("") && tenNhanVien.equals("")) {
+        if(maHd.equals("")) {
             return "redirect:/admin/hoadon";
         }
-        List<HoaDon> filteredInvoices = quanLyHoaDonService.searchInvoices(tenKhachHang, tenNhanVien);
+        List<HoaDon> filteredInvoices = quanLyHoaDonService.searchInvoices(maHd);
         model.addAttribute("listhd", filteredInvoices);
         return "admin/hoadon";
     }

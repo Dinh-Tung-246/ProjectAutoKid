@@ -1,6 +1,10 @@
 package com.example.demo.controller;
 
 import com.example.demo.model.*;
+import com.example.demo.repository.HoaDonRepo;
+import com.example.demo.repository.KhachHangRepo;
+import com.example.demo.repository.NhanVienRepo;
+import com.example.demo.repository.SanPhamRepo;
 import com.example.demo.service.QuanLySanPhamService;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,6 +45,18 @@ public class AdminProductController {
 
     @Autowired
     private Environment env;
+
+    @Autowired
+    private SanPhamRepo sanPhamRepo;
+
+    @Autowired
+    private KhachHangRepo khachHangRepo;
+
+    @Autowired
+    private NhanVienRepo nhanVienRepo;
+
+    @Autowired
+    private HoaDonRepo hoaDonRepo;
 
 
 
@@ -221,7 +237,18 @@ public class AdminProductController {
         return service.DSSanPham();
     }
     @GetMapping("/statistical")
-    public String statistical() {
+    public String statistical(Model model) {
+        long numberOfOrders = hoaDonRepo.count();
+        long numberOfCustomers = khachHangRepo.count();
+        long numberOfEmployees = nhanVienRepo.count();
+        long numberOfProducts = sanPhamRepo.count();
+
+        model.addAttribute("numberOfOrders", numberOfOrders);
+        model.addAttribute("numberOfCustomers", numberOfCustomers);
+        model.addAttribute("numberOfEmployees", numberOfEmployees);
+        model.addAttribute("numberOfProducts", numberOfProducts);
+
+
         return "admin/statistical";
     }
 
