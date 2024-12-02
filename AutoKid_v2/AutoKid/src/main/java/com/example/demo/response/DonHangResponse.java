@@ -39,8 +39,10 @@ public class DonHangResponse {
         this.trangThaiDH = h.getTrangThaiHD();
         this.ngayMuaHang = h.getNgayTao().toString();
         this.diaChiNhan = h.getDiaChiNguoiNhan();
-        this.idKH = h.getKhachHang().getId();
 
+        if (h.getKhachHang() != null) {
+            this.idKH = h.getKhachHang().getId();
+        }
         try {
             List<DonHangChiTietResponse> list = new ArrayList<>();
             for (HoaDonChiTiet hdct: h.getHoaDonChiTiets()){
