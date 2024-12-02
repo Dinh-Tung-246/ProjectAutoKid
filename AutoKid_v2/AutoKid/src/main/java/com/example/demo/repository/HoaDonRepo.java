@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.Optional;
 
 @Repository
@@ -20,6 +21,9 @@ public interface HoaDonRepo extends JpaRepository<HoaDon,Integer> {
     @Query(value = "UPDATE hoa_don SET trang_thai_hd = :trangThai" +
             " WHERE id_hd = :idHD ", nativeQuery = true)
     void updateHoaDon(@Param("trangThai") String trangThai,@Param("idHD") Integer idHD);
+
+    @Query("SELECT h FROM HoaDon h WHERE h.khachHang.id = :idKH ORDER BY h.ngayTao ASC ")
+    List<HoaDon> getHDByIdKH(@Param("idKH") Integer idKH);
 
     Optional<HoaDon> findHoaDonByMaHD(String maHD);
 }
