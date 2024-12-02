@@ -176,17 +176,17 @@
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="paymentModalLabel"></h5>
+                    <h5 class="modal-title" id="paymentModalLabel">Thông Tin Hóa Đơn</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
                     <h4 class="text-center">Thông Tin Hóa Đơn</h4>
                     <!-- Thông tin cơ bản của hóa đơn -->
                     <div class="mb-3">
-                        <strong>Mã hóa đơn:</strong> <span id="invoiceCode">#123456</span><br>
-                        <strong>Tên khách hàng:</strong> <span id="customerName">Nguyễn Văn A</span><br>
-                        <strong>Tên nhân viên:</strong> <span id="staffName">Trần Thị B</span><br>
-                        <strong>Ngày tạo:</strong> <span id="creationDate">21/11/2024</span>
+                        <strong>Mã hóa đơn:</strong> <input id="invoiceCode" type="text"></input><br>
+                        <strong>Tên khách hàng:</strong> <input type="text" id="customerName"><br>
+                        <strong>Tên nhân viên:</strong> <input type="text" id="staffName"><br>
+                        <strong>Ngày tạo:</strong> <input type="date" id="creationDate">
                     </div>
 
                     <!-- Bảng danh sách sản phẩm -->
@@ -211,7 +211,7 @@
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-primary">Thanh Toán</button>
+                    <button type="button" class="btn btn-primary" onclick="createInvoice()">Thanh Toán</button>
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
                 </div>
             </div>
@@ -219,11 +219,11 @@
     </div>
 
 
+
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
 <script>
-    // Thêm vào giỏ hàng
     let cartItems = [];
 
     function selectProduct(row) {
@@ -248,13 +248,15 @@
         <td>${thanhTien.toLocaleString('vi-VN')} VND</td>
     `;
 
-        // Thêm vào bảng
+        // Thêm vào bảng của tab hiện tại
         invoiceItems.appendChild(tableRow);
 
-        // Cập nhật tổng tiền
+        // Cập nhật tổng tiền của tab
         updateTotal(activeTab);
-    }
 
+        // Update the payment modal
+        updatePaymentModal(tenSP, donGia, soLuong, thanhTien);
+    }
 
     // Hàm để cập nhật tổng tiền
     function updateTotal(activeTab) {
@@ -264,10 +266,42 @@
             total += parseFloat(item.textContent.replace(/[^0-9]/g, ''));
         });
 
-        // Hiển thị tổng tiền
+        // Hiển thị tổng tiền của tab
         const totalElement = activeTab.querySelector('.total');
         totalElement.textContent = total.toLocaleString('vi-VN') + ' VND';
     }
+
+    // Update the payment modal with selected product details
+    function updatePaymentModal(tenSP, donGia, soLuong, thanhTien) {
+        const productTable = document.getElementById('productTable');
+
+        // Create a new row for the payment modal
+        const row = document.createElement('tr');
+        row.innerHTML = `
+        <td>${productTable.children.length + 1}</td>
+        <td>${tenSP}</td>
+        <td>${donGia.toLocaleString('vi-VN')} VND</td>
+        <td>${thanhTien.toLocaleString('vi-VN')} VND</td>
+    `;
+
+        productTable.appendChild(row);
+
+        // Update the total amount in the modal
+        updateModalTotal();
+    }
+
+    // Update the total amount in the payment modal
+    function updateModalTotal() {
+        let modalTotal = 0;
+        const rows = document.querySelectorAll('#productTable tr td:last-child');
+        rows.forEach(td => {
+            modalTotal += parseFloat(td.textContent.replace(/[^0-9]/g, ''));
+        });
+
+        const modalTotalElement = document.getElementById('modalTotal');
+        modalTotalElement.textContent = modalTotal.toLocaleString('vi-VN') + ' VND';
+    }
+
 
     let tabCount = 1;
 
@@ -327,6 +361,69 @@
             firstTab.classList.add('active');
             firstTabContent.classList.add('show', 'active');
         }
+    }
+
+    function createInvoice() {
+        const activeTab = document.querySelector('.tab-pane.active');
+        const invoiceItems = activeTab.querySelectorAll('.invoice-items tr');
+
+        const products = [];
+        let totalAmount = 0;
+
+        invoiceItems.forEach((row, index) => {
+            const productName = row.querySelector('td:nth-child(1)').textContent;
+            const quantity = parseInt(row.querySelector('td:nth-child(2)').textContent);
+            const price = parseFloat(row.querySelector('td:nth-child(3)').textContent.replace(/[^0-9.-]+/g, ""));
+            const totalPrice = parseFloat(row.querySelector('td:nth-child(4)').textContent.replace(/[^0-9.-]+/g, ""));
+
+            products.push({
+                productName,
+                quantity,
+                price,
+                totalPrice
+            });
+
+            totalAmount += totalPrice;
+        });
+
+        const currentDate = new Date();
+        const year = currentDate.getFullYear();
+        const month = String(currentDate.getMonth() + 1).padStart(2, '0'); // Tháng bắt đầu từ 0, cộng 1
+        const day = String(currentDate.getDate()).padStart(2, '0');
+        const hours = String(currentDate.getHours()).padStart(2, '0');
+        const minutes = String(currentDate.getMinutes()).padStart(2, '0');
+        const seconds = String(currentDate.getSeconds()).padStart(2, '0');
+
+        // Tạo mã hóa đơn với định dạng: YYYYMMDDHHMMSS + số ngẫu nhiên (ví dụ: 6 chữ số)
+        const randomNum = Math.floor(Math.random() * 900000 + 100000); // Số ngẫu nhiên từ 100000 đến 999999
+        const invoiceCode = `HD${year}${month}${day}${hours}${minutes}${seconds}${randomNum}`;
+
+        // Collecting other invoice data
+        const invoiceData = {
+            invoiceCode: invoiceCode,  // Mã hóa đơn
+            customerName: document.getElementById('customerName').textContent,  // Tên khách hàng
+            staffName: document.getElementById('staffName').textContent,  // Tên nhân viên
+            creationDate: document.getElementById('creationDate').textContent,  // Ngày tạo
+            products,
+            totalAmount
+        };
+
+        fetch('/admin/ban-hang/create', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ hoaDon: invoiceData, hdct: products })
+        })
+            .then(response => response.json())
+            .then(data => {
+                // alert('Hóa đơn đã được tạo thành công');
+                $('#paymentModal').modal('hide');
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                // alert('Đã xảy ra lỗi trong quá trình tạo hóa đơn');
+            });
     }
 
 </script>

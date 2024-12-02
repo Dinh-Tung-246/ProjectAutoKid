@@ -69,71 +69,42 @@
     <div th:insert="fragments/header_admin :: header"></div>
     <!-- ! Main -->
     <main class="main users chart-page" id="skip-target">
-      <div class="container">
-        <h2 class="mt-5">Quản lý hóa đơn</h2>
-        <br>
-        <div class="search-container">
-          <form action="/admin/hoadon/search" method="GET">
-            <div class="row">
-              <div class="col">
-                <input type="text" name="maHd" placeholder="Mã hoá đơn" class="form-control" />
-              </div>
-              <div class="col">
-                <button type="submit" class="btn btn-primary">Tìm kiếm</button>
+      <div class="container mt-5">
+        <h2>Thống Kê</h2>
+        <div class="row mt-4">
+          <div class="col-md-3">
+            <div class="card">
+              <div class="card-body">
+                <h5 class="card-title">Số Hóa Đơn</h5>
+                <p class="card-text" th:text="${numberOfOrders}"></p>
               </div>
             </div>
-          </form>
+          </div>
+          <div class="col-md-3">
+            <div class="card">
+              <div class="card-body">
+                <h5 class="card-title">Số Khách Hàng</h5>
+                <p class="card-text" th:text="${numberOfCustomers}"></p>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-3">
+            <div class="card">
+              <div class="card-body">
+                <h5 class="card-title">Số Nhân Viên</h5>
+                <p class="card-text" th:text="${numberOfEmployees}"></p>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-3">
+            <div class="card">
+              <div class="card-body">
+                <h5 class="card-title">Số Sản Phẩm</h5>
+                <p class="card-text" th:text="${numberOfProducts}"></p>
+              </div>
+            </div>
+          </div>
         </div>
-        <div class="users-table table-wrapper">
-          <table class="posts-table">
-            <thead>
-            <tr class="users-table-info">
-              <th>STT</th>
-              <th>Mã Hóa Đơn</th>
-              <th>Tên Khách Hàng</th>
-              <th>Tên Nhân Viên</th>
-              <th>Ngày tạo</th>
-              <th>Phương thức thanh toán</th>
-              <th>Tổng tiền</th>
-              <th>Trạng thái</th>
-              <th></th>
-            </tr>
-            </thead>
-            <tbody>
-            <tr th:each="hdct, iterStat : ${listhd}">
-              <td th:text="${iterStat.count}"></td>
-              <td th:text="${hdct.maHD}"></td> <!-- Display HD + id instead of maHD -->
-              <td th:text="${hdct.tenKhachHang}"></td>
-              <td th:text="${hdct.tenNhanVien}"></td>
-              <td th:text="${hdct.ngayTao}"></td>
-              <td th:text="${hdct.tenPhuongThucThanhToan}"></td>
-              <td th:text="${hdct.tongTien}"></td>
-              <td>
-                <!-- Dropdown to update the status with AJAX -->
-                <form id="statusForm" style="display: inline-block;">
-                  <input type="hidden" name="maHD" th:value="${hdct.id}" />
-                  <select name="trangThai" class="form-select" onchange="updateStatus(this)">
-                    <option value="Đã thanh toán, chờ giao hàng" th:selected="${hdct.trangThaiHD == 'Đã thanh toán, chờ giao hàng'}">Đã thanh toán, chờ giao hàng</option>
-                    <option value="Chưa thanh toán, chờ giao hàng" th:selected="${hdct.trangThaiHD == 'Chưa thanh toán, chờ giao hàng'}">Chưa thanh toán, chờ giao hàng</option>
-                    <option value="Hoàn thành" th:selected="${hdct.trangThaiHD == 'Hoàn thành'}">Hoàn thành</option>
-                    <option value="Đã thanh toán, đang giao hàng" th:selected="${hdct.trangThaiHD == 'Đã thanh toán, đang giao hàng'}">Đã thanh toán, đang giao hàng</option>
-                    <option value="Chưa thanh toán, đang giao hàng" th:selected="${hdct.trangThaiHD == 'Chưa thanh toán, đang giao hàng'}">Chưa thanh toán, đang giao hàng</option>
-                    <option value="Huỷ đơn hàng" th:selected="${hdct.trangThaiHD == 'Huỷ đơn hàng'}">Huỷ đơn hàng</option>
-                  </select>
-                </form>
-              </td>
-              <td>
-                <div style="display: flex; align-items: center; justify-content: space-around;">
-                  <a th:href="@{/admin/hoadon/chitiethoadon/{id}(id=${hdct.id})}" class="btn btn-info">Chi tiết</a> <!-- Use id here -->
-                </div>
-              </td>
-            </tr>
-            </tbody>
-
-
-          </table>
-        </div>
-
       </div>
     </main>
 
