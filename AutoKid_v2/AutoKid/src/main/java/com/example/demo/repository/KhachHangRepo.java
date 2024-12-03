@@ -27,4 +27,7 @@ public interface KhachHangRepo extends JpaRepository<KhachHang,Integer> {
                        @Param("matKhau") String matKhau);
 
 
+    boolean existsBySdt(String sdt);
+
+    KhachHang findBySdt(String sdt);
 }

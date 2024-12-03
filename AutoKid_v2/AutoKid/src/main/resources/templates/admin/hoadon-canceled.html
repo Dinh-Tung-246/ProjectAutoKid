@@ -94,7 +94,7 @@
         <h2 class="mt-5">Quản lý hóa đơn</h2>
         <br>
         <div class="search-container">
-          <form action="/admin/hoadon/search" method="GET">
+          <form action="/admin/hoadon/search-canceled" method="GET">
             <div class="row">
               <div class="col">
                 <input type="text" name="maHd" placeholder="Mã hoá đơn" class="form-control" />
@@ -133,12 +133,7 @@
                 <!-- Dropdown to update the status with AJAX -->
                 <form id="statusForm" style="display: inline-block;">
                   <input type="hidden" name="maHD" th:value="${hdct.id}" />
-                  <select name="trangThai" class="form-select" onchange="updateStatus(this)">
-                    <option value="Đã thanh toán, chờ giao hàng" th:selected="${hdct.trangThaiHD == 'Đã thanh toán, chờ giao hàng'}">Đã thanh toán, chờ giao hàng</option>
-                    <option value="Chưa thanh toán, chờ giao hàng" th:selected="${hdct.trangThaiHD == 'Chưa thanh toán, chờ giao hàng'}">Chưa thanh toán, chờ giao hàng</option>
-                    <option value="Hoàn thành" th:selected="${hdct.trangThaiHD == 'Hoàn thành'}">Hoàn thành</option>
-                    <option value="Đã thanh toán, đang giao hàng" th:selected="${hdct.trangThaiHD == 'Đã thanh toán, đang giao hàng'}">Đã thanh toán, đang giao hàng</option>
-                    <option value="Chưa thanh toán, đang giao hàng" th:selected="${hdct.trangThaiHD == 'Chưa thanh toán, đang giao hàng'}">Chưa thanh toán, đang giao hàng</option>
+                  <select name="trangThai" class="form-select" disabled>
                     <option value="Huỷ đơn hàng" th:selected="${hdct.trangThaiHD == 'Huỷ đơn hàng'}">Huỷ đơn hàng</option>
                   </select>
                 </form>
@@ -173,27 +168,6 @@
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
-  function updateStatus(selectElement) {
-    // Retrieve the ID (maHD) from the hidden input field in the same row
-    var maHD = $(selectElement).closest('tr').find('input[name="maHD"]').val();  // Get value from hidden input
-    var trangThai = $(selectElement).val();  // Get the selected status
-
-    // Perform AJAX request to update the status
-    $.ajax({
-      url: '/admin/hoadon/updateStatus',
-      method: 'POST',
-      data: {
-        maHD: maHD,  // Send the ID (maHD)
-        trangThai: trangThai  // Send the selected status
-      },
-      success: function(response) {
-        alert('Cập nhật trạng thái thành công');
-      },
-      error: function(xhr, status, error) {
-        alert('Có lỗi!');
-      }
-    });
-  }
 
 </script>
 
