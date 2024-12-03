@@ -52,4 +52,9 @@ public class HoaDon {
 
     @Column(name = "sdt_nguoi_nhan")
     private String sdtNguoiNhan;
+
+    @PrePersist
+    public void setNgayTao() {
+        this.ngayTao = new Date(System.currentTimeMillis());
+    }
 }

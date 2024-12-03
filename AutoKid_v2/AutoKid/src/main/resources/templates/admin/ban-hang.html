@@ -38,6 +38,10 @@
             width: 100%;
             margin-bottom: 15px;
         }
+        .table-active {
+            background-color: #e3f2fd !important;
+            font-weight: bold;
+        }
 
     </style>
 </head>
@@ -93,74 +97,86 @@
                 </div>
                 <hr>
                 <div class="row">
-                    <div class="col-9">
-                        <div class="table-wrapper">
+                    <div class="col-8">
+                        <div>
+                            <button type="button" class="btn btn-primary" onclick="createInvoice()">Tạo Hóa Đơn</button>
                             <table class="table table-bordered">
                                 <thead>
                                 <tr class="users-table-info ">
-                                    <th>Mã sản phẩm</th>
-                                    <th>Tên sản phẩm</th>
-                                    <th>Số lượng</th>
-                                    <th>Giá bán</th>
-                                    <th>Thương hiệu</th>
-                                    <th>Chất liệu</th>
-                                    <th>Kích cỡ</th>
-                                    <th>Màu sắc</th>
+                                    <th>Mã hóa đơn</th>
+                                    <th>Ngày tạo</th>
+                                    <th>Trạng thái</th>
                                 </tr>
                                 </thead>
-                                <tbody>
-                                <tr th:each="sp : ${spcts}"
-                                    th:attr="data-tenSP=${sp.sanPham.tenSP}, data-donGia=${sp.sanPham.donGia}, data-soLuong=${sp.soLuong}"
-                                    onclick="selectProduct(this)">
-                                    <td th:text="${sp.maSPCT}"></td>
-                                    <td th:text="${sp.sanPham.tenSP}"></td>
-                                    <td th:text="${sp.soLuong}"></td>
-                                    <td th:text="${sp.sanPham.donGia}"></td>
-                                    <td th:text="${sp.sanPham.thuongHieu.tenTH}"></td>
-                                    <td th:text="${sp.sanPham.chatLieu.tenCl}"></td>
-                                    <td th:text="${sp.sanPham.kichCo.tenKC}"></td>
-                                    <td th:text="${sp.mauSac.tenMS}"></td>
+                                <tbody class="invoice-table">
+                                <tr th:each="hd : ${lhd}" th:data-id="${hd.id}">
+                                    <td th:text="${hd.maHD}"></td>
+                                    <td th:text="${hd.ngayTao}"></td>
+                                    <td th:text="${hd.trangThaiHD}"></td>
                                 </tr>
                                 </tbody>
                             </table>
                         </div>
+                        <div>
+                            <div class="table-wrapper">
+                                <table class="table table-bordered">
+                                    <thead>
+                                    <tr class="users-table-info ">
+                                        <th>Mã sản phẩm</th>
+                                        <th>Tên sản phẩm</th>
+                                        <th>Số lượng</th>
+                                        <th>Giá bán</th>
+                                        <th>Thương hiệu</th>
+                                        <th>Chất liệu</th>
+                                        <th>Kích cỡ</th>
+                                        <th>Màu sắc</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    <tr th:each="sp : ${spcts}"
+                                        th:attr="data-id=${sp.id},data-tenSP=${sp.sanPham.tenSP}, data-donGia=${sp.sanPham.donGia}, data-soLuong=${sp.soLuong}"
+                                        onclick="selectProduct(this)">
+                                        <td th:text="${sp.id}"></td>
+                                        <td th:text="${sp.maSPCT}"></td>
+                                        <td th:text="${sp.sanPham.tenSP}"></td>
+                                        <td th:text="${sp.soLuong}"></td>
+                                        <td th:text="${sp.sanPham.donGia}"></td>
+                                        <td th:text="${sp.sanPham.thuongHieu.tenTH}"></td>
+                                        <td th:text="${sp.sanPham.chatLieu.tenCl}"></td>
+                                        <td th:text="${sp.sanPham.kichCo.tenKC}"></td>
+                                        <td th:text="${sp.mauSac.tenMS}"></td>
+                                    </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
                     </div>
-                    <div class="col-3">
-                        <!-- Tabs hóa đơn -->
-                        <ul class="nav nav-tabs" id="invoiceTabs" role="tablist">
-                            <li class="nav-item" role="presentation">
-                                <button class="nav-link active" id="tab1" data-bs-toggle="tab" data-bs-target="#invoice1" type="button" role="tab" aria-controls="invoice1" aria-selected="true">
-                                    Phiếu 1 <span class="close-tab" onclick="removeTab(this)">&#10006;</span>
-                                </button>
-                            </li>
-                            <li class="nav-item">
-                                <button class="nav-link" onclick="addNewTab()">+</button>
-                            </li>
-                        </ul>
-
+                    <div class="col-4">
                         <!-- Nội dung hóa đơn -->
                         <div class="tab-content" id="invoiceTabContent">
                             <div class="tab-pane fade show active" id="invoice1" role="tabpanel" aria-labelledby="tab1">
+                                <h3>Giỏ hàng</h3>
                                 <table class="table">
                                     <thead>
                                     <tr>
-                                        <th>Sản phẩm</th>
+                                        <th>Tên sản phẩm</th>
                                         <th>Số lượng</th>
-                                        <th>Giá</th>
+                                        <th>Đơn giá</th>
                                         <th>Thành tiền</th>
                                     </tr>
                                     </thead>
                                     <tbody class="invoice-items">
-                                    <!-- Các sản phẩm được chọn sẽ hiển thị tại đây -->
+                                    <!-- Các sản phẩm sẽ được thêm vào đây -->
                                     </tbody>
+                                    <tfoot>
+                                    <tr>
+                                        <td colspan="3" class="text-end">Tổng tiền:</td>
+                                        <td class="total">0 VND</td>
+                                    </tr>
+                                    </tfoot>
                                 </table>
-                                <div class="invoice-summary">
-                                    <div class="d-flex justify-content-between align-items-center">
-                                        <h5>Tổng:</h5>
-                                        <h5 class="total">0 VND</h5>
-                                    </div>
-                                    <button class="btn btn-success mt-3 w-100" data-bs-toggle="modal" data-bs-target="#paymentModal">Tạo Hóa Đơn</button>
-                                </div>
+                                <button class="btn btn-success mt-3 w-100" data-bs-toggle="modal" data-bs-target="#paymentModal">Thanh toán</button>
+
                             </div>
                         </div>
 
@@ -223,111 +239,157 @@
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
 <script>
-    // Thêm vào giỏ hàng
-    let cartItems = [];
+    let selectedInvoiceId = null; // Lưu mã hóa đơn đang chọn
+    let carts = {}; // Lưu trữ giỏ hàng theo từng mã hóa đơn
+    window.addEventListener('load', function () {
+        if (selectedInvoiceId) {
+            fetchInvoiceDetails(selectedInvoiceId);
+        }
+    });
+    function fetchInvoiceDetails(invoiceId) {
+        fetch(`/admin/ban-hang/invoice-details?hoaDonId=${invoiceId}`)
+            .then(response => response.json())
+            .then(data => {
+                // Lưu trữ các chi tiết hóa đơn vào giỏ hàng
+                carts[invoiceId] = data.map(product => ({
+                    tenSP: product.sanPhamChiTiet.tenSP, // Giả sử bạn có thuộc tính này
+                    donGia: product.donGia,
+                    soLuong: product.soLuong,
+                    id: product.sanPhamChiTiet.id // Lấy ID của sản phẩm chi tiết
+                }));
 
-    function selectProduct(row) {
-        const activeTab = document.querySelector('.tab-pane.active'); // Tab đang hoạt động
-        const invoiceItems = activeTab.querySelector('.invoice-items'); // Vùng sản phẩm của tab đó
-        const totalElement = activeTab.querySelector('.total'); // Tổng tiền của tab đó
+                // Hiển thị giỏ hàng
+                displayCart();
+            })
+            .catch(error => {
+                console.error("Lỗi khi lấy chi tiết hóa đơn:", error);
+            });
+    }
 
-        // Lấy thông tin sản phẩm
-        const tenSP = row.getAttribute('data-tenSP');
-        const donGia = parseFloat(row.getAttribute('data-donGia'));
-        const soLuong = parseInt(row.getAttribute('data-soLuong'), 10);
 
-        // Tính thành tiền
-        const thanhTien = donGia * soLuong;
+    // Khi click vào dòng hóa đơn
+    document.querySelectorAll('tbody.invoice-table tr').forEach(row => {
+        row.addEventListener('click', function () {
+            // Xóa highlight cho các dòng khác
+            document.querySelectorAll('tbody.invoice-table tr').forEach(r => r.classList.remove('table-active'));
+            // Highlight dòng được chọn
+            this.classList.add('table-active');
+            // Lưu mã hóa đơn
+            selectedInvoiceId = this.getAttribute('data-id');
+            // Lấy và hiển thị giỏ hàng của hóa đơn đã chọn
+            fetchInvoiceDetails(selectedInvoiceId);
+        });
+    });
 
-        // Tạo hàng mới
-        const tableRow = document.createElement('tr');
-        tableRow.innerHTML = `
-        <td>${tenSP}</td>
-        <td>${soLuong}</td>
-        <td>${donGia.toLocaleString('vi-VN')} VND</td>
-        <td>${thanhTien.toLocaleString('vi-VN')} VND</td>
-    `;
+    // Hiển thị giỏ hàng của hóa đơn đang chọn
+    function displayCart() {
+        const cartBody = document.querySelector('.invoice-items');
+        const totalElement = document.querySelector('.total');
+        cartBody.innerHTML = ''; // Xóa giỏ hàng hiện tại
+        let total = 0;
 
-        // Thêm vào bảng
-        invoiceItems.appendChild(tableRow);
+        // Kiểm tra xem có giỏ hàng cho hóa đơn đã chọn không
+        if (carts[selectedInvoiceId]) {
+            carts[selectedInvoiceId].forEach(product => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+            <td>${product.tenSP}</td>
+            <td>${product.soLuong}</td>
+            <td>${product.donGia.toLocaleString()} VND</td>
+            <td>${(product.soLuong * product.donGia).toLocaleString()} VND</td>
+        `;
+                cartBody.appendChild(row);
+                total += product.soLuong * product.donGia;
+            });
+        }
 
         // Cập nhật tổng tiền
-        updateTotal(activeTab);
+        totalElement.innerText = `${total.toLocaleString()} VND`;
     }
 
+    // Khi chọn sản phẩm từ bảng sản phẩm
+    function selectProduct(row) {
+        if (!selectedInvoiceId) {
+            alert('Vui lòng chọn hóa đơn trước!');
+            return;
+        }
 
-    // Hàm để cập nhật tổng tiền
-    function updateTotal(activeTab) {
-        let total = 0;
-        const items = activeTab.querySelectorAll('.invoice-items tr td:last-child');
-        items.forEach(item => {
-            total += parseFloat(item.textContent.replace(/[^0-9]/g, ''));
-        });
+        const tenSP = row.getAttribute('data-tenSP');
+        const donGia = parseFloat(row.getAttribute('data-donGia'));
 
-        // Hiển thị tổng tiền
-        const totalElement = activeTab.querySelector('.total');
-        totalElement.textContent = total.toLocaleString('vi-VN') + ' VND';
-    }
+        // Hiển thị prompt để nhập số lượng
+        const quantity = prompt(`Nhập số lượng cho sản phẩm "${tenSP}":`);
+        if (quantity && !isNaN(quantity) && parseInt(quantity) > 0) {
+            const product = {
+                tenSP: tenSP,
+                donGia: donGia,
+                soLuong: parseInt(quantity),
+                id: row.getAttribute('data-id')  // Lấy ID sản phẩm chi tiết
+            };
 
-    let tabCount = 1;
+            // Lưu sản phẩm vào giỏ hàng của hóa đơn
+            if (!carts[selectedInvoiceId]) {
+                carts[selectedInvoiceId] = [];
+            }
+            carts[selectedInvoiceId].push(product);
 
-    function addNewTab() {
-        tabCount++;
+            // Hiển thị giỏ hàng sau khi thêm sản phẩm
+            displayCart();
 
-        const newTab = document.createElement('li');
-        newTab.classList.add('nav-item');
-        newTab.setAttribute('role', 'presentation');
-        newTab.innerHTML = `
-      <button class="nav-link" id="tab${tabCount}" data-bs-toggle="tab" data-bs-target="#invoice${tabCount}" type="button" role="tab" aria-controls="invoice${tabCount}" aria-selected="false">
-        Phiếu ${tabCount} <span class="close-tab" onclick="removeTab(this)">&#10006;</span>
-      </button>`;
-
-        document.getElementById('invoiceTabs').insertBefore(newTab, document.getElementById('invoiceTabs').lastElementChild);
-
-        const newTabContent = document.createElement('div');
-        newTabContent.classList.add('tab-pane', 'fade');
-        newTabContent.id = `invoice${tabCount}`;
-        newTabContent.setAttribute('role', 'tabpanel');
-        newTabContent.setAttribute('aria-labelledby', `tab${tabCount}`);
-        newTabContent.innerHTML = `
-        <table class="table">
-            <thead>
-            <tr>
-                <th>Sản phẩm</th>
-                <th>Số lượng</th>
-                <th>Giá</th>
-                <th>Thành tiền</th>
-            </tr>
-            </thead>
-            <tbody class="invoice-items"></tbody>
-        </table>
-        <div class="invoice-summary">
-            <div class="d-flex justify-content-between align-items-center">
-                <h5>Tổng:</h5>
-                <h5 class="total">0 VND</h5>
-            </div>
-            <button class="btn btn-success mt-3 w-100" data-bs-toggle="modal" data-bs-target="#paymentModal">Tạo Hóa Đơn</button>
-        </div>`;
-
-        document.getElementById('invoiceTabContent').appendChild(newTabContent);
-    }
-
-
-    function removeTab(element) {
-        const tabButton = element.closest('button');
-        const tabPaneId = tabButton.getAttribute('data-bs-target');
-
-        tabButton.closest('li').remove();
-        document.querySelector(tabPaneId).remove();
-
-        // Kích hoạt tab đầu tiên nếu còn
-        const firstTab = document.querySelector('#invoiceTabs button:not(.btn)');
-        const firstTabContent = document.querySelector('#invoiceTabContent .tab-pane');
-        if (firstTab && firstTabContent) {
-            firstTab.classList.add('active');
-            firstTabContent.classList.add('show', 'active');
+            // Tạo chi tiết hóa đơn ngay lập tức
+            addProductToInvoice(product);
+        } else {
+            alert('Vui lòng nhập số lượng hợp lệ!');
         }
     }
+
+    // Tạo chi tiết hóa đơn và thêm sản phẩm vào hóa đơn
+    function addProductToInvoice(product) {
+        const hoaDonId = selectedInvoiceId;
+        const sanPhamChiTietId = product.id;
+        const soLuong = product.soLuong;
+        const donGia = product.donGia;
+
+        fetch(`/admin/ban-hang/add-product-to-invoice?hoaDonId=${hoaDonId}&sanPhamChiTietId=${sanPhamChiTietId}&soLuong=${soLuong}&donGia=${donGia}`, {
+            method: "POST",
+        })
+            .then(response => {
+                if (response.ok) {
+                    return response.text();
+                }
+                throw new Error("Không thể thêm sản phẩm vào hóa đơn!");
+            })
+            .then(data => alert(data))
+            .catch(error => console.error("Lỗi:", error));
+    }
+    // Tạo hóa đơn mới
+    function createInvoice() {
+        const invoiceData = {
+            maHD: "HD" + new Date().getTime(),
+            trangThaiHD: "Chưa thanh toán",
+        };
+
+        fetch('/admin/ban-hang/create', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(invoiceData),
+        })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Không thể tạo hóa đơn!');
+                }
+                return response.json();
+            })
+            .then(data => {
+                alert('Hóa đơn đã được tạo thành công!');
+                location.reload(); // Reload lại trang để cập nhật danh sách hóa đơn
+            })
+            .catch(error => {
+                console.error('Lỗi:', error);
+                alert('Có lỗi xảy ra khi tạo hóa đơn!');
+            });
+    }
+
 
 </script>
 </body>

@@ -6,6 +6,7 @@ import com.example.demo.model.HoaDonHistory;
 import com.example.demo.repository.HoaDonChiTietRepo;
 import com.example.demo.repository.HoaDonHistoryRepo;
 import com.example.demo.repository.HoaDonRepo;
+import com.example.demo.repository.SanPhamChiTietRepo;
 import com.example.demo.response.HoaDonResponse;
 import com.example.demo.response.HoadonhistoryRespone;
 import com.example.demo.response.hoadonchitietRespone;
@@ -27,6 +28,32 @@ public class QuanLyHoaDonService {
     @Autowired
     private HoaDonChiTietRepo hoaDonChiTietRepo;
 
+    @Autowired
+    private SanPhamChiTietRepo sanPhamChiTietRepo;
+
+
+    public List<HoaDon> getHoaDon(){
+        return hoaDonRepo.findAllByOrderByIdDesc();
+    }
+
+    public HoaDon createInvoice(HoaDon hoaDon) {
+        HoaDon createdInvoice = hoaDonRepo.save(hoaDon); // Lưu hóa đơn
+
+        // Tạo hóa đơn chi tiết trống
+        HoaDonChiTiet hoaDonChiTiet = new HoaDonChiTiet();
+        hoaDonChiTiet.setHoaDon(createdInvoice); // Liên kết hóa đơn chi tiết với hóa đơn mới tạo
+        hoaDonChiTiet.setSanPhamChiTiet(null); // Không có sản phẩm chi tiết
+        hoaDonChiTiet.setSoLuong(0); // Không có số lượng
+        hoaDonChiTiet.setDonGia(0.0); // Không có đơn giá
+        hoaDonChiTiet.setDonGiaSauGiam(0.0); // Không có giá sau giảm
+
+        hoaDonChiTietRepo.save(hoaDonChiTiet); // Lưu hóa đơn chi tiết vào cơ sở dữ liệu
+
+        return createdInvoice; // Trả về hóa đơn vừa tạo
+    }
+    public List<HoaDonChiTiet> getInvoiceDetails(Integer hoaDonId) {
+        return hoaDonChiTietRepo.findByHoaDonId(hoaDonId); // Giả sử bạn có phương thức này trong repo
+    }
     public List<HoaDonResponse> fillAllHoaDon(){
         List<HoaDonResponse> list= new ArrayList<>();
         for(HoaDon h: hoaDonRepo.findAll()){
@@ -66,5 +93,6 @@ public class QuanLyHoaDonService {
 //        Pageable pageable = PageRequest.of(pageNo,pageSize);
 //        return hoaDonRepo.findAll(pageable);
 //    }
+
 
 }
