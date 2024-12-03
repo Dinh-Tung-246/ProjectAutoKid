@@ -110,7 +110,7 @@
                                 </thead>
                                 <tbody>
                                 <tr th:each="sp : ${spcts}"
-                                    th:attr="data-tenSP=${sp.sanPham.tenSP}, data-donGia=${sp.sanPham.donGia}, data-soLuong=${sp.soLuong}"
+                                    th:attr="data-tenSP=${sp.sanPham.tenSP}, data-donGia=${sp.sanPham.donGia}, data-soLuong=${sp.soLuong}, data-id=${sp.maSPCT}"
                                     onclick="selectProduct(this)">
                                     <td th:text="${sp.maSPCT}"></td>
                                     <td th:text="${sp.sanPham.tenSP}"></td>
@@ -159,7 +159,7 @@
                                         <h5>Tổng:</h5>
                                         <h5 class="total">0 VND</h5>
                                     </div>
-                                    <button class="btn btn-success mt-3 w-100" data-bs-toggle="modal" data-bs-target="#paymentModal">Tạo Hóa Đơn</button>
+                                    <button onclick="loadDataModal()" class="btn btn-success mt-3 w-100" data-bs-toggle="modal" data-bs-target="#paymentModal">Tạo Hóa Đơn</button>
                                 </div>
                             </div>
                         </div>
@@ -173,7 +173,7 @@
 
     <!-- Modal Thanh Toán -->
     <div class="modal fade" id="paymentModal" tabindex="-1" aria-labelledby="paymentModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
+        <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title" id="paymentModalLabel">Thông Tin Hóa Đơn</h5>
@@ -183,10 +183,10 @@
                     <h4 class="text-center">Thông Tin Hóa Đơn</h4>
                     <!-- Thông tin cơ bản của hóa đơn -->
                     <div class="mb-3">
-                        <strong>Mã hóa đơn:</strong> <input id="invoiceCode" type="text"></input><br>
-                        <strong>Tên khách hàng:</strong> <input type="text" id="customerName"><br>
-                        <strong>Tên nhân viên:</strong> <input type="text" id="staffName"><br>
-                        <strong>Ngày tạo:</strong> <input type="date" id="creationDate">
+                        <strong>Mã hóa đơn:</strong> <input disabled style="border: 1px solid #ddd !important;" id="invoiceCode" class="form-control mt-1" type="text"></input><br>
+                        <strong>Số điện thoại KH:</strong> <input style="border: 1px solid #ddd !important;" type="text" class="form-control mt-1" id="customerSdt"><br>
+<!--                        <strong>Tên nhân viên:</strong> <input type="text" id="staffName"><br>-->
+<!--                        <strong>Ngày tạo:</strong> <input type="date" id="creationDate">-->
                     </div>
 
                     <!-- Bảng danh sách sản phẩm -->
@@ -194,7 +194,9 @@
                         <thead>
                         <tr>
                             <th scope="col">STT</th>
+                            <th scope="col">Mã sản phẩm</th>
                             <th scope="col">Tên Sản Phẩm</th>
+                            <th scope="col">Số lượng</th>
                             <th scope="col">Giá Bán</th>
                             <th scope="col">Tổng Tiền</th>
                         </tr>
@@ -223,53 +225,118 @@
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
 <script>
     let cartItems = [];
 
     function selectProduct(row) {
+        const productQty = parseInt(row.querySelector('td:nth-child(3)').textContent);
+        if(productQty === 0){
+            alert("Số lượng không đủ");
+            return;
+        }
+        else{
+            row.querySelector('td:nth-child(3)').textContent = productQty - 1;
+        }
+
         const activeTab = document.querySelector('.tab-pane.active'); // Tab đang hoạt động
         const invoiceItems = activeTab.querySelector('.invoice-items'); // Vùng sản phẩm của tab đó
         const totalElement = activeTab.querySelector('.total'); // Tổng tiền của tab đó
+        const productId = row.getAttribute('data-id');
 
         // Lấy thông tin sản phẩm
         const tenSP = row.getAttribute('data-tenSP');
         const donGia = parseFloat(row.getAttribute('data-donGia'));
-        const soLuong = parseInt(row.getAttribute('data-soLuong'), 10);
 
-        // Tính thành tiền
-        const thanhTien = donGia * soLuong;
+        // Check xem id đã tồn tại chưa
+        let existingRow = Array.from(invoiceItems.querySelectorAll('tr')).find(tr => tr.getAttribute('data-id') === productId);
+        if (existingRow) {
+            // Nếu đã tồn tại, tăng số lượng thêm 1
+            const quantityInput = existingRow.querySelector('input'); // Ô nhập số lượng
+            quantityInput.value = parseInt(quantityInput.value, 10) + 1; // Tăng số lượng
+            updateRowTotal(existingRow, donGia); // Cập nhật thành tiền cho hàng này
 
-        // Tạo hàng mới
-        const tableRow = document.createElement('tr');
-        tableRow.innerHTML = `
-        <td>${tenSP}</td>
-        <td>${soLuong}</td>
-        <td>${donGia.toLocaleString('vi-VN')} VND</td>
-        <td>${thanhTien.toLocaleString('vi-VN')} VND</td>
-    `;
+        } else {
+            // Nếu chưa tồn tại, thêm hàng mới
+            const soLuong = 1;
+            const thanhTien = donGia * soLuong;
 
-        // Thêm vào bảng của tab hiện tại
-        invoiceItems.appendChild(tableRow);
+            const tableRow = document.createElement('tr');
+            tableRow.setAttribute('data-id', productId);
+            tableRow.innerHTML = `
+            <td>${tenSP}</td>
+            <td>
+                <input type="number" value="${soLuong}" min="1" class="quantity-input w-100">
+            </td>
+            <td>${donGia}</td>
+            <td class="total-price">${thanhTien}</td>
+        `;
+
+            // Thêm hàng vào bảng sản phẩm
+            invoiceItems.appendChild(tableRow);
+
+            // Lắng nghe sự kiện thay đổi số lượng
+            const quantityInput = tableRow.querySelector('.quantity-input');
+            quantityInput.addEventListener('change', (e) => {
+                const newQuantity = parseInt(e.target.value, 10) || 1; // Đảm bảo giá trị hợp lệ
+                if (newQuantity < 1) {
+                    e.target.value = 1; // Đặt giá trị tối thiểu
+                }
+                const qty = productQty - newQuantity;
+                if(qty <= 0){
+                    alert("Không đủ số lượng");
+                    e.target.value = productQty;
+                    row.querySelector('td:nth-child(3)').textContent = 0;
+                }
+                else{
+                    row.querySelector('td:nth-child(3)').textContent = productQty - newQuantity;
+                    updateRowTotal(tableRow, donGia);
+                    updateTotal(activeTab);
+                }
+
+            });
+        }
 
         // Cập nhật tổng tiền của tab
         updateTotal(activeTab);
 
-        // Update the payment modal
-        updatePaymentModal(tenSP, donGia, soLuong, thanhTien);
+
+    }
+    // Hàm cập nhật thành tiền của hàng
+    function updateRowTotal(row, unitPrice) {
+        const quantityInput = row.querySelector('.quantity-input');
+        const quantity = parseInt(quantityInput.value, 10);
+        const totalPriceCell = row.querySelector('.total-price');
+        const total = quantity * unitPrice;
+        totalPriceCell.textContent = total;
+    }
+
+    // Hàm cập nhật tổng tiền
+    function updateTotal(activeTab) {
+        const invoiceItems = activeTab.querySelectorAll('.invoice-items tr');
+        let total = 0;
+        invoiceItems.forEach(row => {
+            const totalPriceCell = row.querySelector('.total-price');
+            const rowTotal = parseFloat(totalPriceCell.textContent.replace(/[^\d.-]/g, ''));
+            total += rowTotal;
+        });
+
+        const totalElement = activeTab.querySelector('.total');
+        totalElement.textContent = total;
     }
 
     // Hàm để cập nhật tổng tiền
-    function updateTotal(activeTab) {
-        let total = 0;
-        const items = activeTab.querySelectorAll('.invoice-items tr td:last-child');
-        items.forEach(item => {
-            total += parseFloat(item.textContent.replace(/[^0-9]/g, ''));
-        });
-
-        // Hiển thị tổng tiền của tab
-        const totalElement = activeTab.querySelector('.total');
-        totalElement.textContent = total.toLocaleString('vi-VN') + ' VND';
-    }
+    // function updateTotal(activeTab) {
+    //     let total = 0;
+    //     const items = activeTab.querySelectorAll('.invoice-items tr td:last-child');
+    //     items.forEach(item => {
+    //         total += parseFloat(item.textContent.replace(/[^0-9]/g, ''));
+    //     });
+    //
+    //     // Hiển thị tổng tiền của tab
+    //     const totalElement = activeTab.querySelector('.total');
+    //     totalElement.textContent = total.toLocaleString('vi-VN') + ' VND';
+    // }
 
     // Update the payment modal with selected product details
     function updatePaymentModal(tenSP, donGia, soLuong, thanhTien) {
@@ -280,6 +347,7 @@
         row.innerHTML = `
         <td>${productTable.children.length + 1}</td>
         <td>${tenSP}</td>
+        <td>${soLuong}</td>
         <td>${donGia.toLocaleString('vi-VN')} VND</td>
         <td>${thanhTien.toLocaleString('vi-VN')} VND</td>
     `;
@@ -340,10 +408,51 @@
                 <h5>Tổng:</h5>
                 <h5 class="total">0 VND</h5>
             </div>
-            <button class="btn btn-success mt-3 w-100" data-bs-toggle="modal" data-bs-target="#paymentModal">Tạo Hóa Đơn</button>
+            <button onclick="loadDataModal()" class="btn btn-success mt-3 w-100" data-bs-toggle="modal" data-bs-target="#paymentModal">Tạo Hóa Đơn</button>
         </div>`;
 
         document.getElementById('invoiceTabContent').appendChild(newTabContent);
+    }
+
+    function loadDataModal() {
+        const activeTab = document.querySelector('.tab-pane.active'); // Tab đang hoạt động
+        const invoiceItems = activeTab.querySelector('.invoice-items'); // Vùng sản phẩm của tab đó
+        const productTable = document.getElementById('productTable'); // Bảng sản phẩm trong modal
+
+        // Xóa hết nội dung bảng sản phẩm trong modal trước khi thêm dữ liệu mới
+        productTable.innerHTML = '';
+
+        let totalAmount = 0;
+
+        // Lấy tất cả các hàng sản phẩm trong invoiceItems
+        const rows = invoiceItems.querySelectorAll('tr');
+
+        rows.forEach((row, index) => {
+            const tenSP = row.querySelector('td:nth-child(1)').textContent; // Tên sản phẩm
+            const soLuong = row.querySelector('input').value; // Số lượng
+            const donGia = row.querySelector('td:nth-child(3)').textContent; // Đơn giá
+            const thanhTien = row.querySelector('td:nth-child(4)').textContent; // Thành tiền
+            const productId = row.getAttribute('data-id');
+
+            totalAmount += parseFloat(thanhTien);
+            // Tạo một hàng mới cho bảng productTable trong modal
+            const newRow = document.createElement('tr');
+
+            // Thêm số thứ tự (index + 1) vào ô đầu tiên
+            newRow.innerHTML = `
+            <td>${index + 1}</td> <!-- Số thứ tự -->
+            <td>${productId}</td>
+            <td>${tenSP}</td>
+            <td>${soLuong}</td>
+            <td>${donGia}</td>
+            <td>${thanhTien}</td>
+        `;
+
+            // Thêm hàng mới vào bảng productTable
+            productTable.appendChild(newRow);
+
+        });
+        document.getElementById("modalTotal").textContent = totalAmount + " VND";
     }
 
 
@@ -364,66 +473,90 @@
     }
 
     function createInvoice() {
-        const activeTab = document.querySelector('.tab-pane.active');
-        const invoiceItems = activeTab.querySelectorAll('.invoice-items tr');
-
-        const products = [];
-        let totalAmount = 0;
-
-        invoiceItems.forEach((row, index) => {
-            const productName = row.querySelector('td:nth-child(1)').textContent;
-            const quantity = parseInt(row.querySelector('td:nth-child(2)').textContent);
-            const price = parseFloat(row.querySelector('td:nth-child(3)').textContent.replace(/[^0-9.-]+/g, ""));
-            const totalPrice = parseFloat(row.querySelector('td:nth-child(4)').textContent.replace(/[^0-9.-]+/g, ""));
-
-            products.push({
-                productName,
-                quantity,
-                price,
-                totalPrice
-            });
-
-            totalAmount += totalPrice;
-        });
-
-        const currentDate = new Date();
-        const year = currentDate.getFullYear();
-        const month = String(currentDate.getMonth() + 1).padStart(2, '0'); // Tháng bắt đầu từ 0, cộng 1
-        const day = String(currentDate.getDate()).padStart(2, '0');
-        const hours = String(currentDate.getHours()).padStart(2, '0');
-        const minutes = String(currentDate.getMinutes()).padStart(2, '0');
-        const seconds = String(currentDate.getSeconds()).padStart(2, '0');
-
-        // Tạo mã hóa đơn với định dạng: YYYYMMDDHHMMSS + số ngẫu nhiên (ví dụ: 6 chữ số)
-        const randomNum = Math.floor(Math.random() * 900000 + 100000); // Số ngẫu nhiên từ 100000 đến 999999
-        const invoiceCode = `HD${year}${month}${day}${hours}${minutes}${seconds}${randomNum}`;
-
-        // Collecting other invoice data
-        const invoiceData = {
-            invoiceCode: invoiceCode,  // Mã hóa đơn
-            customerName: document.getElementById('customerName').textContent,  // Tên khách hàng
-            staffName: document.getElementById('staffName').textContent,  // Tên nhân viên
-            creationDate: document.getElementById('creationDate').textContent,  // Ngày tạo
-            products,
-            totalAmount
-        };
-
-        fetch('/admin/ban-hang/create', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ hoaDon: invoiceData, hdct: products })
-        })
-            .then(response => response.json())
+        const sdt = document.getElementById("customerSdt").value;
+        if(sdt === ''){
+            alert("Số điện thoại khách hàng không được rỗng");
+            return;
+        }
+        fetch(`/api/user/${sdt}`)
+            .then(res => res.json())
             .then(data => {
-                // alert('Hóa đơn đã được tạo thành công');
-                $('#paymentModal').modal('hide');
+                if(data === false){
+                    alert("Không tìm thấy khách hàng");
+                }
+                else{
+                    const activeTab = document.querySelector('.tab-pane.active');
+                    const invoiceItems = activeTab.querySelectorAll('.invoice-items tr');
+
+                    const products = [];
+                    let totalAmount = 0;
+
+                    invoiceItems.forEach((row, index) => {
+                        const productId = row.getAttribute("data-id");
+                        const quantity = parseInt(row.querySelector('td:nth-child(2) input').value);
+                        const price = parseFloat(row.querySelector('td:nth-child(3)').textContent.replace(/[^0-9.-]+/g, ""));
+                        const totalPrice = parseFloat(row.querySelector('td:nth-child(4').textContent.replace(/[^0-9.-]+/g, ""));
+
+                        products.push({
+                            productId,
+                            quantity,
+                            price,
+                            totalPrice
+                        });
+
+                        totalAmount += totalPrice;
+                    });
+
+                    const currentDate = new Date();
+                    const year = currentDate.getFullYear();
+                    const month = String(currentDate.getMonth() + 1).padStart(2, '0'); // Tháng bắt đầu từ 0, cộng 1
+                    const day = String(currentDate.getDate()).padStart(2, '0');
+                    const hours = String(currentDate.getHours()).padStart(2, '0');
+                    const minutes = String(currentDate.getMinutes()).padStart(2, '0');
+                    const seconds = String(currentDate.getSeconds()).padStart(2, '0');
+
+                    // Tạo mã hóa đơn với định dạng: YYYYMMDDHHMMSS + số ngẫu nhiên (ví dụ: 6 chữ số)
+                    const randomNum = Math.floor(Math.random() * 900000 + 100000); // Số ngẫu nhiên từ 100000 đến 999999
+                    const invoiceCode = `HD${year}${month}${day}${hours}${minutes}${seconds}${randomNum}`;
+
+                    // Collecting other invoice data
+                    const invoiceData = {
+                        invoiceCode: invoiceCode,  // Mã hóa đơn
+                        customerPhone: sdt,  // sdt khách hàng
+                        staffId: JSON.parse(sessionStorage.getItem("infoNV")).maNV,  // ma nhân viên
+                        products,
+                        totalAmount
+                    };
+
+
+
+
+                    fetch('/admin/ban-hang/create', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({ hoaDon: invoiceData })
+                    })
+                        .then(response => response.json())
+                        .then(data => {
+                            console.log(data);
+                            if(data === true){
+                                alert('Hóa đơn đã được tạo thành công');
+                                $('#paymentModal').modal('hide');
+                            }
+                            else alert("Lỗi khi khi bán hàng");
+
+                        })
+                        .catch(error => {
+                            console.error('Error:', error);
+                            // alert('Đã xảy ra lỗi trong quá trình tạo hóa đơn');
+                        });
+                }
             })
-            .catch(error => {
-                console.error('Error:', error);
-                // alert('Đã xảy ra lỗi trong quá trình tạo hóa đơn');
-            });
+
+
+
     }
 
 </script>

@@ -50,7 +50,7 @@ public class QuanlyhoadonController {
         if(maHd.equals("")) {
             return "redirect:/admin/hoadon";
         }
-        List<HoaDon> filteredInvoices = quanLyHoaDonService.searchInvoices(maHd);
+        List<HoaDonResponse> filteredInvoices = quanLyHoaDonService.searchInvoices(maHd);
         model.addAttribute("listhd", filteredInvoices);
         return "admin/hoadon";
     }
@@ -71,6 +71,75 @@ public class QuanlyhoadonController {
         }
     }
 
+    @GetMapping("/pending")
+    public String HoaDonPending(Model model) {
+        model.addAttribute("listhd", quanLyHoaDonService.findAllByPending());
+        model.addAttribute("namePage", "pending");
+        return "admin/hoadon-pending";
+    }
+
+    @GetMapping("/in-progress")
+    public String HoaDonInProgress(Model model) {
+        model.addAttribute("listhd", quanLyHoaDonService.findAllByInProgress());
+        model.addAttribute("namePage", "in-progress");
+        return "admin/hoadon-in-progress";
+    }
+
+    @GetMapping("/completed")
+    public String HoaDonCompleted(Model model) {
+        model.addAttribute("listhd", quanLyHoaDonService.findAllByCompleted());
+        model.addAttribute("namePage", "completed");
+        return "admin/hoadon-completed";
+    }
+
+    @GetMapping("/canceled")
+    public String HoaDonCanceled(Model model) {
+        model.addAttribute("listhd", quanLyHoaDonService.findAllByCanceled());
+        model.addAttribute("namePage", "canceled");
+        return "admin/hoadon-canceled";
+    }
+
+
+    @GetMapping("/search-pending")
+    public String searchHoaDonPending(@RequestParam(required = false) String maHd,
+                                 Model model) {
+        if(maHd.equals("")) {
+            return "redirect:/admin/hoadon/pending";
+        }
+        List<HoaDonResponse> filteredInvoices = quanLyHoaDonService.searchHoaDonPending(maHd);
+        model.addAttribute("listhd", filteredInvoices);
+        return "admin/hoadon-pending";
+    }
+    @GetMapping("/search-in-progress")
+    public String searchHoaDonInProgress(@RequestParam(required = false) String maHd,
+                                      Model model) {
+        if(maHd.equals("")) {
+            return "redirect:/admin/hoadon/in-progress";
+        }
+        List<HoaDonResponse> filteredInvoices = quanLyHoaDonService.searchHoaDonInProgress(maHd);
+        model.addAttribute("listhd", filteredInvoices);
+        return "admin/hoadon-in-progress";
+    }
+    @GetMapping("/search-completed")
+    public String searchHoaDonCompleted(@RequestParam(required = false) String maHd,
+                                      Model model) {
+        if(maHd.equals("")) {
+            return "redirect:/admin/hoadon/completed";
+        }
+        List<HoaDonResponse> filteredInvoices = quanLyHoaDonService.searchHoaDonCompleted(maHd);
+        model.addAttribute("listhd", filteredInvoices);
+        return "admin/hoadon-completed";
+    }
+    @GetMapping("/search-canceled")
+    public String searchHoaDonCanceled(@RequestParam(required = false) String maHd,
+                                      Model model) {
+        if(maHd.equals("")) {
+            return "redirect:/admin/hoadon/canceled";
+        }
+        List<HoaDonResponse> filteredInvoices = quanLyHoaDonService.searchHoaDonCanceled(maHd);
+        model.addAttribute("listhd", filteredInvoices);
+        return "admin/hoadon-canceled";
+    }
 
 }
 

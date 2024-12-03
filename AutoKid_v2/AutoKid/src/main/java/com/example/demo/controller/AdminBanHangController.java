@@ -1,6 +1,8 @@
 package com.example.demo.controller;
 
-import com.example.demo.model.SanPhamChiTiet;
+import com.example.demo.model.*;
+import com.example.demo.repository.KhachHangRepo;
+import com.example.demo.repository.NhanVienRepo;
 import com.example.demo.repository.SanPhamChiTietRepo;
 import com.example.demo.service.QuanLyHoaDonService;
 import com.example.demo.service.QuanLySanPhamService;
@@ -9,11 +11,10 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import com.example.demo.model.HoaDon;
-import com.example.demo.model.HoaDonChiTiet;
 
 import org.springframework.web.bind.annotation.*;
 
+import java.sql.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -32,6 +33,11 @@ public class AdminBanHangController {
     @Autowired
     QuanLyHoaDonService hoaDonService;
 
+    @Autowired
+    KhachHangRepo khachHangRepo;
+    @Autowired
+    NhanVienRepo nhanVienRepo;
+
     @GetMapping("/home")
     public String products(Model model) {
         List<SanPhamChiTiet> sanPhamChiTiets = service.getAllSanPham();
@@ -43,55 +49,60 @@ public class AdminBanHangController {
 
     @PostMapping("/create")
     @ResponseBody
-    public String createInvoice(@RequestBody Map<String, Object> request) {
+    public boolean createInvoice(@RequestBody Map<String, Object> request) {
         System.out.println(request);
 
         // Lấy dữ liệu hóa đơn từ request
         Map<String, Object> hoaDonData = (Map<String, Object>) request.get("hoaDon");
 
+        KhachHang khachHang = khachHangRepo.findBySdt((String)hoaDonData.get("customerPhone"));
+        NhanVien nhanVien = nhanVienRepo.findByMaNV((String)hoaDonData.get("staffId"));
         // Tạo đối tượng HoaDon
         HoaDon hoaDon = new HoaDon();
         hoaDon.setMaHD((String) hoaDonData.get("invoiceCode"));
-        hoaDon.setTenNguoiNhan((String) hoaDonData.get("customerName"));
-        hoaDon.setSdtNguoiNhan((String) hoaDonData.get("customerPhone"));  // Nếu có
-        hoaDon.setDiaChiNguoiNhan((String) hoaDonData.get("customerAddress"));  // Nếu có
-        hoaDon.setTongTien(((Number) hoaDonData.get("totalAmount")).floatValue());
+        hoaDon.setKhachHang(khachHang);
+        hoaDon.setNhanVien(nhanVien);
+        hoaDon.setPhuongThucThanhToan(null);
+        hoaDon.setNgayTao(new Date(System.currentTimeMillis()));
         hoaDon.setPhiShip(50000F);  // Phí vận chuyển cố định
-        hoaDon.setTrangThaiHD((String) hoaDonData.get("status"));  // Nếu có
+        hoaDon.setHinhThucThanhToan(null);
+        hoaDon.setTongTien(((Number) hoaDonData.get("totalAmount")).floatValue());
+        hoaDon.setTrangThaiHD("Chưa thanh toán, chờ giao hàng");  // Nếu có
 
-        // Lưu thông tin hóa đơn vào cơ sở dữ liệu
+
+//         Lưu thông tin hóa đơn vào cơ sở dữ liệu
         hoaDon = hoaDonService.createHoaDon(hoaDon);
-
         // Lấy dữ liệu chi tiết hóa đơn từ request
-        List<Map<String, Object>> hoaDonChiTietList = (List<Map<String, Object>>) request.get("hdct");
+        List<Map<String, Object>> hoaDonChiTietList = (List<Map<String, Object>>) hoaDonData.get("products");
 
         // Xử lý từng chi tiết hóa đơn (hdct)
         for (Map<String, Object> hdctData : hoaDonChiTietList) {
             HoaDonChiTiet hoaDonChiTiet = new HoaDonChiTiet();
 
-            // Lấy số lượng sản phẩm
             Integer soLuong = Integer.parseInt(hdctData.get("quantity").toString());
+            String idSPCT = hdctData.get("productId").toString();
+            double donGia = Double.parseDouble(hdctData.get("price").toString());
+            Double donGiaSauGiam = Double.parseDouble(hdctData.get("totalPrice").toString());
 
-            // Lấy ID sản phẩm chi tiết và tìm kiếm trong cơ sở dữ liệu
-            Object idSPCT = hdctData.get("productId");
+            SanPhamChiTiet sanPhamChiTiet = sanPhamChiTietRepo.findByMaSPCT(idSPCT);
+            sanPhamChiTiet.setSoLuong(sanPhamChiTiet.getSoLuong() - soLuong);
+            sanPhamChiTietRepo.save(sanPhamChiTiet);
 
-            if (idSPCT != null) {
-                Integer idSP = Integer.parseInt(idSPCT.toString());
-                SanPhamChiTiet sanPhamChiTiet = sanPhamChiTietRepo.findById(idSP)
-                        .orElseThrow(() -> new RuntimeException("Không tìm thấy sản phẩm chi tiết: " + idSP));
-                hoaDonChiTiet.setSanPhamChiTiet(sanPhamChiTiet);
-            }
+            hoaDonChiTiet.setSanPhamChiTiet(sanPhamChiTiet);
+
 
             // Lấy giá sau khi giảm giá
             hoaDonChiTiet.setSoLuong(soLuong);
             hoaDonChiTiet.setHoaDon(hoaDon);
+            hoaDonChiTiet.setDonGia(donGia);
+            hoaDonChiTiet.setDonGiaSauGiam(donGiaSauGiam);
 
             // Lưu thông tin chi tiết hóa đơn vào cơ sở dữ liệu
             hoaDonService.createHoaDonChiTiet(hoaDonChiTiet);
         }
 
         // Trả về thông báo thành công
-        return "Đặt hàng thành công";
+        return true;
     }
 
 }

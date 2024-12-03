@@ -1,12 +1,10 @@
 package com.example.demo.controller;
 
+import com.example.demo.repository.KhachHangRepo;
 import com.example.demo.service.QuanLyDatHangService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
 
@@ -15,6 +13,8 @@ import java.util.Map;
 public class ApiCustomController {
     @Autowired
     QuanLyDatHangService serviceQLDH;
+    @Autowired
+    KhachHangRepo khachHangRepo;
 
     @PostMapping("/update-status")
     @ResponseBody
@@ -22,5 +22,11 @@ public class ApiCustomController {
         String trangThai = map.get("trangThai").toString();
         Integer idHD = Integer.parseInt(map.get("idHD").toString());
         return serviceQLDH.updateStatusHD(trangThai, idHD);
+    }
+
+    @GetMapping("/user/{sdt}")
+    @ResponseBody
+    public boolean checkExistsCustomer(@PathVariable String sdt){
+        return khachHangRepo.existsBySdt(sdt);
     }
 }
