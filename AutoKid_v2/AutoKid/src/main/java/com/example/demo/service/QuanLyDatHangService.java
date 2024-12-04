@@ -9,6 +9,7 @@ import com.example.demo.repository.HoaDonRepo;
 import com.example.demo.repository.KhachHangRepo;
 import com.example.demo.repository.SanPhamChiTietRepo;
 import com.example.demo.response.DonHangResponse;
+import com.example.demo.response.KhachHangResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -97,5 +98,16 @@ public class QuanLyDatHangService {
         HoaDon hd = hoaDonRepo.findById(idDH).orElseThrow();
         DonHangResponse dhRes = new DonHangResponse(hd);
         return dhRes;
+    }
+
+    @Transactional
+    public boolean createUser(KhachHangResponse response){
+        KhachHang khachHang = new KhachHang();
+        khachHang.setTenKH(response.getTenKH());
+        khachHang.setSdt(response.getSdtKH());
+        khachHang.setDiaChi(response.getDiaChiKH());
+
+        khachHangRepo.save(khachHang);
+        return true;
     }
 }
