@@ -17,7 +17,9 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Controller
 @RequestMapping("/admin/ban-hang")
@@ -78,6 +80,13 @@ public class AdminBanHangController {
             SanPhamChiTiet sanPhamChiTiet = sanPhamChiTietRepo.findById(sanPhamChiTietId)
                     .orElseThrow(() -> new RuntimeException("Sản phẩm không tồn tại"));
 
+            if (sanPhamChiTiet.getSoLuong() < soLuong) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                        .body("Số lượng sản phẩm không đủ trong kho!");
+            }
+            // Cập nhật số lượng sản phẩm còn lại
+            sanPhamChiTiet.setSoLuong(sanPhamChiTiet.getSoLuong() - soLuong);
+            sanPhamChiTietRepo.save(sanPhamChiTiet);
             HoaDonChiTiet hoaDonChiTiet = new HoaDonChiTiet();
             hoaDonChiTiet.setHoaDon(hoaDon);
             hoaDonChiTiet.setSanPhamChiTiet(sanPhamChiTiet);
@@ -93,12 +102,28 @@ public class AdminBanHangController {
         }
     }
     @GetMapping("/invoice-details")
-    public ResponseEntity<List<HoaDonChiTiet>> getInvoiceDetails(@RequestParam Integer hoaDonId) {
+    public ResponseEntity<?> getInvoiceDetails(@RequestParam Integer hoaDonId) {
         try {
+            // Lấy chi tiết hóa đơn
             List<HoaDonChiTiet> hoaDonChiTietList = hoaDonChiTietRepo.findByHoaDonId(hoaDonId);
-            return ResponseEntity.ok(hoaDonChiTietList);
+            if (hoaDonChiTietList.isEmpty()) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Không có chi tiết hóa đơn");
+            }
+
+            // Chuyển đổi dữ liệu thành một dạng JSON hợp lệ
+            List<Map<String, Object>> response = new ArrayList<>();
+            for (HoaDonChiTiet chiTiet : hoaDonChiTietList) {
+                Map<String, Object> product = new HashMap<>();
+                product.put("tenSP", chiTiet.getSanPhamChiTiet().getSanPham().getTenSP());
+                product.put("soLuong", chiTiet.getSoLuong());
+                product.put("donGia", chiTiet.getDonGia());
+                product.put("sanPhamChiTiet", chiTiet.getSanPhamChiTiet().getId());
+                response.add(product);
+            }
+
+            return ResponseEntity.ok(response);  // Trả về dữ liệu dưới dạng JSON hợp lệ
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Lỗi khi lấy chi tiết hóa đơn");
         }
     }
 }

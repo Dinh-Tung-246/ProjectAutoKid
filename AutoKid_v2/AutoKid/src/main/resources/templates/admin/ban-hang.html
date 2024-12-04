@@ -136,7 +136,6 @@
                                     <tr th:each="sp : ${spcts}"
                                         th:attr="data-id=${sp.id},data-tenSP=${sp.sanPham.tenSP}, data-donGia=${sp.sanPham.donGia}, data-soLuong=${sp.soLuong}"
                                         onclick="selectProduct(this)">
-                                        <td th:text="${sp.id}"></td>
                                         <td th:text="${sp.maSPCT}"></td>
                                         <td th:text="${sp.sanPham.tenSP}"></td>
                                         <td th:text="${sp.soLuong}"></td>
@@ -248,18 +247,28 @@
     });
     function fetchInvoiceDetails(invoiceId) {
         fetch(`/admin/ban-hang/invoice-details?hoaDonId=${invoiceId}`)
-            .then(response => response.json())
+            .then(response => {
+                console.log("Phản hồi từ server:", response);  // Kiểm tra phản hồi
+                return response.text();  // Lấy dưới dạng văn bản thay vì JSON
+            })
             .then(data => {
-                // Lưu trữ các chi tiết hóa đơn vào giỏ hàng
-                carts[invoiceId] = data.map(product => ({
-                    tenSP: product.sanPhamChiTiet.tenSP, // Giả sử bạn có thuộc tính này
-                    donGia: product.donGia,
-                    soLuong: product.soLuong,
-                    id: product.sanPhamChiTiet.id // Lấy ID của sản phẩm chi tiết
-                }));
+                console.log("Nội dung phản hồi từ server:", data);  // Kiểm tra nội dung phản hồi
+                try {
+                    const parsedData = JSON.parse(data);  // Cố gắng chuyển đổi sang JSON
+                    console.log("Dữ liệu chi tiết hóa đơn:", parsedData);
 
-                // Hiển thị giỏ hàng
-                displayCart();
+                    carts[invoiceId] = parsedData.map(product => ({
+                        tenSP: product.tenSP,
+                        donGia: product.donGia,
+                        soLuong: product.soLuong,
+                        id: product.sanPhamChiTiet?.id
+                    }));
+
+                    displayCart();
+                } catch (e) {
+                    console.error("Lỗi khi phân tích cú pháp JSON:", e);
+                    console.error("Nội dung không hợp lệ:", data);
+                }
             })
             .catch(error => {
                 console.error("Lỗi khi lấy chi tiết hóa đơn:", error);
