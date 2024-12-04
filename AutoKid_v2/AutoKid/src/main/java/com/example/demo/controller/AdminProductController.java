@@ -1,8 +1,13 @@
 package com.example.demo.controller;
 
 import com.example.demo.model.*;
+import com.example.demo.repository.HoaDonRepo;
+import com.example.demo.repository.KhachHangRepo;
+import com.example.demo.repository.NhanVienRepo;
+import com.example.demo.repository.SanPhamRepo;
 import com.example.demo.service.QuanLySanPhamService;
 
+import com.example.demo.service.ThongKeService;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import org.springframework.core.env.Environment;
@@ -28,6 +33,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
+import java.text.DecimalFormat;
 import java.util.Date;
 import java.util.List;
 
@@ -41,6 +47,21 @@ public class AdminProductController {
 
     @Autowired
     private Environment env;
+
+    @Autowired
+    private SanPhamRepo sanPhamRepo;
+
+    @Autowired
+    private KhachHangRepo khachHangRepo;
+
+    @Autowired
+    private NhanVienRepo nhanVienRepo;
+
+    @Autowired
+    private HoaDonRepo hoaDonRepo;
+
+    @Autowired
+    private ThongKeService thongKeService;
 
 
 
@@ -220,10 +241,66 @@ public class AdminProductController {
     public List<SanPham> getDanhSachSanPham() {
         return service.DSSanPham();
     }
-    @GetMapping("/statistical")
-    public String statistical() {
-        return "admin/statistical";
+
+//    @GetMapping("/statistical")
+//    public String statistical(Model model) {
+//        long numberOfOrders = hoaDonRepo.count();
+//        long numberOfCustomers = khachHangRepo.count();
+//        long numberOfEmployees = nhanVienRepo.count();
+//        long numberOfProducts = sanPhamRepo.count();
+//
+//        model.addAttribute("numberOfOrders", numberOfOrders);
+//        model.addAttribute("numberOfCustomers", numberOfCustomers);
+//        model.addAttribute("numberOfEmployees", numberOfEmployees);
+//        model.addAttribute("numberOfProducts", numberOfProducts);
+//
+//
+//        return "admin/statistical-year";
+//    }
+    @GetMapping("/statistical-year")
+    public String statisticalYear(Model model) {
+
+        DecimalFormat decimalFormat = new DecimalFormat("#,### đ");
+        long numberOfEmployees = nhanVienRepo.count();
+        long numberOfProducts = sanPhamRepo.count();
+
+        model.addAttribute("totalRevenue", decimalFormat.format(thongKeService.calculateTotalRevenue()));
+        model.addAttribute("invoiceCount", thongKeService.getInvoiceCount());
+        model.addAttribute("numberOfEmployees", numberOfEmployees);
+        model.addAttribute("numberOfProducts", numberOfProducts);
+
+
+        return "admin/statistical-year";
     }
+    @GetMapping("/statistical-month")
+    public String statisticalMonth(Model model) {
+
+        DecimalFormat decimalFormat = new DecimalFormat("#,### đ");
+        long numberOfEmployees = nhanVienRepo.count();
+        long numberOfProducts = sanPhamRepo.count();
+
+        model.addAttribute("totalRevenue", decimalFormat.format(thongKeService.calculateTotalRevenue()));
+        model.addAttribute("invoiceCount", thongKeService.getInvoiceCount());
+        model.addAttribute("numberOfEmployees", numberOfEmployees);
+        model.addAttribute("numberOfProducts", numberOfProducts);
+
+
+        return "admin/statistical-month";
+    }
+    @GetMapping("/statistical-product")
+    public String statisticalProduct(Model model) {
+        DecimalFormat decimalFormat = new DecimalFormat("#,### đ");
+        long numberOfEmployees = nhanVienRepo.count();
+        long numberOfProducts = sanPhamRepo.count();
+        model.addAttribute("totalRevenue", decimalFormat.format(thongKeService.calculateTotalRevenue()));
+        model.addAttribute("invoiceCount", thongKeService.getInvoiceCount());
+        model.addAttribute("data", thongKeService.findTop5BestSellingProducts());
+        model.addAttribute("numberOfEmployees", numberOfEmployees);
+        model.addAttribute("numberOfProducts", numberOfProducts);
+
+        return "admin/statistical-product";
+    }
+
 
     @GetMapping("/thuong-hieu")
     public String thuongHieu(Model model){

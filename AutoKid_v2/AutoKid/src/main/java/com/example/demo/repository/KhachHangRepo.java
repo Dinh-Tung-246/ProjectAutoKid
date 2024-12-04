@@ -28,4 +28,9 @@ public interface KhachHangRepo extends JpaRepository<KhachHang,Integer> {
 
     @Query(value = "SELECT TOP 1 * FROM khach_hang ORDER BY id_kh DESC", nativeQuery = true)
     KhachHang getKHByIdDESC();
+
+    boolean existsBySdt(String sdt);
+
+    KhachHang findBySdt(String sdt);
+
 }

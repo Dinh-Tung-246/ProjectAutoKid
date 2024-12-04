@@ -1,5 +1,6 @@
 package com.example.demo.controller;
 
+import com.example.demo.repository.KhachHangRepo;
 import com.example.demo.service.QuanLyDatHangService;
 import com.example.demo.service.QuanLyGioHangService;
 import org.slf4j.Logger;
@@ -8,10 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
 
@@ -22,6 +20,8 @@ public class ApiCustomController {
 
     @Autowired
     QuanLyDatHangService serviceQLDH;
+    @Autowired
+    KhachHangRepo khachHangRepo;
 
     @Autowired
     QuanLyGioHangService qlghService;
@@ -47,5 +47,11 @@ public class ApiCustomController {
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of("error", e.getMessage()));
         }
+    }
+      
+    @GetMapping("/user/{sdt}")
+    @ResponseBody
+    public boolean checkExistsCustomer(@PathVariable String sdt){
+        return khachHangRepo.existsBySdt(sdt);
     }
 }
