@@ -1,3 +1,15 @@
+// Gọi hàm render sau khi trang load nếu chưa đăng nhập
+document.addEventListener("DOMContentLoaded", () => {
+    const KH = JSON.parse(sessionStorage.getItem("KH")) || [];
+    if (KH.length === 0) {
+        renderCartForm();
+        console.log("Ban chua dang nhap");
+    } else {
+        console.log("Bạn đã đang nhập");
+    }
+});
+
+
 function formatPrice(price) {
     return price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
 }
@@ -62,14 +74,6 @@ function handleQuantityChange() {
         $button.parent().find(".shoping__cart__quantityProduct").val(newVal);
     });
 }
-
-// Gọi hàm render sau khi trang load nếu chưa đăng nhập
-document.addEventListener("DOMContentLoaded", () => {
-    const isLoggedIn = /*[[${isLoggedIn}]]*/ false;
-    if (!isLoggedIn) {
-        renderCartForm();
-    }
-});
 
 //sự kiện cho nút cập nhật giỏ hàng
 $("#update-cart-btn").on("click", function (event) {

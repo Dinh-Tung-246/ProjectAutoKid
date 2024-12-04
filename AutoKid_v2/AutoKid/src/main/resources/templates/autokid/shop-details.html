@@ -130,7 +130,6 @@
                 th:data-id="${sp.idSP}"
                 th:data-name="${sp.tenSP}"
                 th:data-price="${sp.giaSauGiam}"
-                th:data-soluong="${sp.soLuongSPCT}"
                 >ADD TO CARD</a
               >
               <ul>
@@ -164,7 +163,6 @@
                 </li>
                 <li><b>Số lượng trong kho </b>
                   <span id="so-luong" th:text="${sp.soLuongSPCT}"></span>
-                  <span th:if="${sp.soLuongSPCT == null}">Hết hàng</span>
                 </li>
               </ul>
             </div>

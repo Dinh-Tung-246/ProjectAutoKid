@@ -93,7 +93,7 @@ function login(event) {
                     confirmButtonText: null,
                 });
                 setTimeout(function () {
-                    window.location.href = "http://localhost:8080/autokid/home";
+                    window.location.href = `http://localhost:8080/autokid/home?idKH=${result['idKH']}`;
                 }, 1000);
 
             } else {

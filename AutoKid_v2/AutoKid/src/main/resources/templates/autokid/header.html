@@ -71,9 +71,9 @@
             <div class="col-lg-3">
                 <div class="header__cart">
                     <ul>
-                        <li th:classappend="${currentPage == 'shoping-cart'} ? 'active'"><a th:href="@{http://localhost:8080/autokid/shoping-cart}"><i class="fa fa-shopping-bag"></i> <span id="cart-count">0</span></a></li>
+                        <li th:classappend="${currentPage == 'shoping-cart'} ? 'active'"><a th:href="@{http://localhost:8080/autokid/shoping-cart}"><i class="fa fa-shopping-bag"></i> <span id="cart-count">[[${countCart}]]</span></a></li>
                     </ul>
-                    <div class="header__cart__price">item: <span id="cart-total">0</span><span> VNĐ</span></div>
+                    <div class="header__cart__price">item: <span id="cart-total">[[${totalPrice}]]</span><span> VNĐ</span></div>
                 </div>
             </div>
         </div>

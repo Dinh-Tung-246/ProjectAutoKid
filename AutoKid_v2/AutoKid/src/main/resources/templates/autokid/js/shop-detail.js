@@ -32,14 +32,24 @@ $("#add-to-cart").on("click", function (event) {
     let quantitySP = parseInt(document.getElementById("quantity-input").value);
     let idSPCT = document.getElementById('selectedValue').value;
     let tenMS = document.getElementById('selectedValueMS').value;
-    let soLuongSPCT = a.getAttribute("data-soluong");
+    let soLuongSPCT = document.getElementById('so-luong').textContent;
     const anhSP = document.getElementById('image__product_detail').src;
     const anhStr = anhSP.split('/').pop();
     console.log("anh SP:", anhStr);
 
-    if (soLuongSPCT === null || soLuongSPCT === 0) {
+    console.log(soLuongSPCT, "=======")
+    if (soLuongSPCT === null || soLuongSPCT == 0) {
         Swal.fire({
             title: "Sản phẩm này hiện đang hết hàng!",
+            text: "Xin lỗi vì sự bất tiện này",
+            icon: "warning",
+            confirmButtonText: "OK",
+        });
+        return;
+    }
+    if (quantitySP > soLuongSPCT) {
+        Swal.fire({
+            title: "Số lượng sản phẩm quá lớn, hiện tại shop không thể kịp cung cấp!",
             text: "Xin lỗi vì sự bất tiện này",
             icon: "warning",
             confirmButtonText: "OK",
@@ -99,6 +109,7 @@ document.querySelectorAll('.custom-radio-div').forEach(item => {
 
         const anhSPCT = this.getAttribute('data-anhspct');
         const soLuong =this.getAttribute('data-soluong');
+        console.log(soLuong);
         if (soLuong === 0) {
             document.getElementById('so-luong').textContent = 'Hết hàng';
         } else {

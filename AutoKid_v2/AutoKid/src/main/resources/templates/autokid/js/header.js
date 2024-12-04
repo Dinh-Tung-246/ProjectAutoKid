@@ -22,13 +22,18 @@ function updateCartTotal() {
 
 // Gọi hàm sau khi DOM đã tải xong
 document.addEventListener('DOMContentLoaded', () => {
-    updateCartCount();
-    updateCartTotal();
+
 });
 
 window.onload = function () {
-    updateCartCount(); // Cập nhật số lượng giỏ hàng khi tải trang
-    updateCartTotal(); // cập nhật tổng tiền giỏ hàng
+    const infoKH = JSON.parse(sessionStorage.getItem("KH")) || [];
+    if (infoKH.length === 0) {
+        updateCartCount();
+        updateCartTotal();
+        console.log()
+    } else {
+        console.log("ban da dang nhap");
+    }
 };
 
 function renderUserMenu() {
