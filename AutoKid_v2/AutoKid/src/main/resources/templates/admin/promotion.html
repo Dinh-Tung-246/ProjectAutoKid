@@ -200,7 +200,7 @@
                                 <tr th:each="promotion : ${promotions}">
                                     <td th:text="${promotion.maKM}"></td>
                                     <td th:text="${promotion.tenKM}"></td>
-                                    <td th:text="${promotion.giaTri}"></td>
+                                    <td th:text="${promotion.formattedgiaTri}"></td>
                                     <td th:text="${promotion.ngayBatDau}"></td>
                                     <td th:text="${promotion.ngayKetThuc}"></td>
                                     <td th:text="${promotion.trangThaiKM == 1 ? 'Hoạt động' : 'Không hoạt động'}" ></td>
@@ -214,10 +214,10 @@
                                            th:data-tt="${promotion.trangThaiKM}"
                                            th:data-id="${promotion.id}"
                                            onclick="showDetail(this)"> Chi tiết</a>
-<!--                                        <a th:href="@{/admin/promotion/delete/{id}(id=${promotion.id})}"-->
-<!--                                           onclick="return confirm('Bạn có chắc muốn xóa không?');"-->
-<!--                                           class="btn btn-danger">Destroy-->
-<!--                                        </a>-->
+                                        <a th:href="@{/admin/promotion/delete/{id}(id=${promotion.id})}"
+                                           onclick="return confirm('Bạn có chắc muốn xóa không?');"
+                                           class="btn btn-danger">Destroy
+                                        </a>
                                     </td>
                                 </tr>
                                 </tbody>

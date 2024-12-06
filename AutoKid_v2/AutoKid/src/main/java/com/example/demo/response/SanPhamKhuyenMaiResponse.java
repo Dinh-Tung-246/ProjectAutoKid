@@ -65,7 +65,7 @@ public class SanPhamKhuyenMaiResponse {
         } else {
             this.tenKM = "Chưa áp mã";
             this.giaTriGiam = null;
-            this.giaSauGiam = "";
+            this.giaSauGiam = this.donGia;
         }
         if (s.getSanPhamChiTiets().size() != 0) {
             SanPhamChiTiet spct = s.getSanPhamChiTiets().get(0);
@@ -74,6 +74,7 @@ public class SanPhamKhuyenMaiResponse {
             this.soLuongSPCT = spct.getSoLuong();
         }
     }
+
 
 //    public SanPhamKhuyenMaiResponse(SanPham s, int idSPCT) {
 //        this.idSP = s.getId();
