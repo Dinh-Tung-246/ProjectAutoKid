@@ -3,6 +3,9 @@ package com.example.demo.controller;
 import com.example.demo.model.SanPhamChiTiet;
 import com.example.demo.repository.KhachHangRepo;
 import com.example.demo.repository.SanPhamChiTietRepo;
+import com.example.demo.model.KhachHang;
+import com.example.demo.repository.KhachHangRepo;
+import com.example.demo.response.KhachHangResponse;
 import com.example.demo.service.QuanLyDatHangService;
 import com.example.demo.service.QuanLyGioHangService;
 import org.slf4j.Logger;
@@ -59,8 +62,13 @@ public class ApiCustomController {
       
     @GetMapping("/user/{sdt}")
     @ResponseBody
-    public boolean checkExistsCustomer(@PathVariable String sdt){
-        return khachHangRepo.existsBySdt(sdt);
+    public ResponseEntity<?> checkExists(@PathVariable String sdt){
+        return ResponseEntity.ok().body(khachHangRepo.existsBySdt(sdt));
+    }
+
+    @PostMapping("/create-user")
+    public ResponseEntity<?> createUser(@RequestBody KhachHangResponse response){
+        return ResponseEntity.ok().body(serviceQLDH.createUser(response));
     }
 
     @PostMapping("/check-checkout")

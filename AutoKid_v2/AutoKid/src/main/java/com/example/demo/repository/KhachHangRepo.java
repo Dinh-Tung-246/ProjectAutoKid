@@ -10,6 +10,7 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface KhachHangRepo extends JpaRepository<KhachHang,Integer> {
@@ -32,5 +33,4 @@ public interface KhachHangRepo extends JpaRepository<KhachHang,Integer> {
     boolean existsBySdt(String sdt);
 
     KhachHang findBySdt(String sdt);
-
 }
