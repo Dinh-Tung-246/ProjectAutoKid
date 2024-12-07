@@ -190,7 +190,6 @@
                                     <th>Mã</th>
                                     <th>Tên</th>
                                     <th>Loại</th>
-                                    <th>Điều kiện</th>
                                     <th>Giá trị</th>
                                     <th>Giá trị tối đa</th>
                                     <th>Ngày bắt đầu</th>
@@ -203,12 +202,13 @@
                                 <tr th:each="voucher : ${voucher}">
                                     <td th:text="${voucher.ma}"></td>
                                     <td th:text="${voucher.ten}"></td>
-                                    <td th:text="${voucher.loaiVoucher}"></td>
-                                    <td th:text="${voucher.formattedgiaTri}"></td>
-                                    <td th:text="${voucher.formattedgiaTriToiDa}"></td>
+                                    <td th:text="${voucher.loaiVoucher == 1 ? 'Phần trăm' : 'Tiền'}"></td>
+                                    <td th:text="${voucher.loaiVoucher == 1 ? voucher.formattedgiaTri + '%' : voucher.formattedgiaTri + ' VND'}"></td>
+                                    <td th:text="${voucher.giaTriToiDa}"></td>
                                     <td th:text="${voucher.ngayBatDau}"></td>
                                     <td th:text="${voucher.ngayKetThuc}"></td>
                                     <td th:text="${voucher.trangThai == 1 ? 'Hoạt động' : 'Không hoạt động'}" ></td>
+                                    <td th:text="${voucher.dieuKien}"></td>
 <!--                                    <td class="text-center">-->
 <!--                                        <a class="update btn btn-primary" data-bs-toggle="modal" data-bs-target="#hihi"-->
 <!--                                           th:data-ma="${promotion.maKM}"-->
@@ -234,6 +234,24 @@
                 </div>
             </div>
         </main>
+        <form th:action="@{/admin/voucher/aplly}" method="POST">
+            <label for="ma">Mã Voucher:</label>
+            <input type="text" id="ma" name="ma" placeholder="Nhập mã voucher">
+
+            <label for="tongHoaDon">Tổng hóa đơn:</label>
+            <input type="number" id="tongHoaDon" name="tongHoaDon" placeholder="Nhập tổng hóa đơn" step="0.01" min="0">
+
+            <button type="submit">Áp dụng</button>
+        </form>
+
+        <!-- Hiển thị kết quả -->
+        <div th:if="${error}">
+            <p style="color: red;" th:text="${error}"></p>
+        </div>
+        <div th:if="${discount}">
+            <p>Giảm giá: <span th:text="${discount}"></span> VND</p>
+            <p>Tổng tiền sau giảm giá: <span th:text="${finalTotal}"></span> VND</p>
+        </div>
         <div>
             <!-- Modal -->
             <!-- add -->

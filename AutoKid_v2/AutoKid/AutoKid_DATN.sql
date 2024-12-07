@@ -154,6 +154,20 @@ CREATE TABLE san_pham_chi_tiet (
     FOREIGN KEY (id_mau_sac) REFERENCES mau_sac(id_mau_sac)
 );
 
+-- Bảng voucher
+CREATE TABLE voucher (
+    id_voucher INT PRIMARY KEY IDENTITY,
+    ma_voucher VARCHAR(50) NOT NULL UNIQUE,      
+    ten_voucher VARCHAR(100) NOT NULL,        
+    loai_voucher int NOT NULL, 
+    dieu_kien FLOAT NOT NULL,                   
+    gia_tri FLOAT NOT NULL,                     
+    gia_tri_toi_da FLOAT NULL,             
+    ngay_bat_dau DATE NOT NULL,                  
+    ngay_ket_thuc DATE NOT NULL,                
+    trang_thai int NOT NULL,     
+);
+
 -- Bảng hoa_don
 CREATE TABLE hoa_don (
     id_hd INT PRIMARY KEY IDENTITY,
@@ -161,6 +175,7 @@ CREATE TABLE hoa_don (
     id_kh INT,
     id_nv INT,
     id_pttt INT,
+	id_voucher INT,
     ngay_tao DATETIME,
     phi_ship MONEY,
     hinh_thuc_thanh_toan NVARCHAR(50),
@@ -171,6 +186,7 @@ CREATE TABLE hoa_don (
 	sdt_nguoi_nhan VARCHAR(10),
     FOREIGN KEY (id_kh) REFERENCES khach_hang(id_kh),
     FOREIGN KEY (id_nv) REFERENCES nhan_vien(id_nv),
+	FOREIGN KEY (id_voucher) REFERENCES voucher(id_voucher),
     FOREIGN KEY (id_pttt) REFERENCES phuong_thuc_thanh_toan(id_pttt)
 );
 
@@ -405,6 +421,15 @@ VALUES
 (1, N'Sản phẩm rất tốt, trẻ em thích.', GETDATE(), 5),
 (2, N'Chất lượng tốt nhưng giá hơi cao.', GETDATE(), 4);
 
+INSERT INTO voucher (ma_voucher, ten_voucher, loai_voucher, dieu_kien, gia_tri, gia_tri_toi_da, ngay_bat_dau, ngay_ket_thuc, trang_thai)
+VALUES
+('VC001', 'Giảm 20% cho đơn hàng trên 500k', 1, 20000, 20, 5000, '2024-12-01', '2024-12-31', 1),
+('VC002', 'Giảm 10K cho đơn hàng trên 300k', 2, 20000, 10000, NULL, '2024-12-01', '2024-12-15', 1);
+
+
+
+select * from voucher
+
 --INSERT INTO hoa_don_history (id_hd, ngay_thay_doi, ngay_tao, trang_thai) 
 --VALUES 
 --(1, GETDATE(), GETDATE(), N'Hoạt động'),
@@ -413,4 +438,3 @@ VALUES
 --INSERT INTO khuyen_mai_san_pham(khuyen_mai_id, san_pham_id) VALUES
 --(1, 1);
 
-select * from khach_hang

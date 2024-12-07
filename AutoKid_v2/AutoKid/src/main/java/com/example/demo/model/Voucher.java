@@ -27,10 +27,10 @@ public class Voucher {
     private int loaiVoucher;
 
     @Column(name = "dieu_kien")
-    private Float dieuKien;
+    private double dieuKien;
 
     @Column(name = "gia_tri")
-    private Double giaTri;
+    private double giaTri;
 
     @Column(name = "gia_tri_toi_da")
     private Double giaTriToiDa;
@@ -44,15 +44,12 @@ public class Voucher {
     @Column(name = "trang_thai")
     private int trangThai;
 
-    @Column(name = "mo_ta")
-    private String moTa;
-
     public String getFormattedgiaTri() {
         NumberFormat formatter = NumberFormat.getCurrencyInstance(new Locale("vi", "VN"));
-        return formatter.format(giaTri).replace("₫", "VND");
+        return formatter.format(giaTri).replace("₫", "");
     }
     public String getFormattedgiaTriToiDa() {
         NumberFormat formatter = NumberFormat.getCurrencyInstance(new Locale("vi", "VN"));
-        return formatter.format(giaTri).replace("₫", "VND");
+        return formatter.format(giaTriToiDa).replace("₫", "VND");
     }
 }

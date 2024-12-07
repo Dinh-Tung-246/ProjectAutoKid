@@ -5,6 +5,7 @@ import com.example.demo.repository.VoucherRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @Service
@@ -15,5 +16,37 @@ public class QuanLyVoucherService {
 
     public List<Voucher> getAll(){
         return voucherRepo.findAll();
+    }
+
+    public Voucher findCode(String ma) {
+        return voucherRepo.findByMa(ma);
+    }
+
+    public double applyVoucher(Voucher voucher, double tongHoaDon){
+        LocalDate now = LocalDate.now();
+
+        if (voucher.getTrangThai() != 1) {
+            throw new IllegalArgumentException("Trạng thái không hợp lệ !");
+        }
+
+        if(now.isBefore(voucher.getNgayBatDau()) || now.isAfter(voucher.getNgayKetThuc())) {
+            throw new IllegalArgumentException("Voucher không nằm trong thời hạn áp dụng");
+        }
+
+        if(tongHoaDon < voucher.getDieuKien()) {
+            throw new IllegalArgumentException("Tổng đơn hàng không đủ điều kiện");
+        }
+
+        double discout;
+        if (voucher.getLoaiVoucher() == 1) {
+            discout = tongHoaDon * (voucher.getGiaTri() / 100);
+        } else {
+            discout = voucher.getGiaTri();
+        }
+
+        if (voucher.getGiaTriToiDa() != null) {
+            discout = Math.min(discout, voucher.getGiaTriToiDa());
+        }
+        return discout;
     }
 }
