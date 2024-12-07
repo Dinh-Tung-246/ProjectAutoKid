@@ -1,6 +1,8 @@
 package com.example.demo.controller;
 
+import com.example.demo.model.SanPhamChiTiet;
 import com.example.demo.repository.KhachHangRepo;
+import com.example.demo.repository.SanPhamChiTietRepo;
 import com.example.demo.service.QuanLyDatHangService;
 import com.example.demo.service.QuanLyGioHangService;
 import org.slf4j.Logger;
@@ -11,6 +13,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
 @RequestMapping("/api")
@@ -20,11 +24,15 @@ public class ApiCustomController {
 
     @Autowired
     QuanLyDatHangService serviceQLDH;
+
     @Autowired
     KhachHangRepo khachHangRepo;
 
     @Autowired
     QuanLyGioHangService qlghService;
+
+    @Autowired
+    SanPhamChiTietRepo spctRepo;
 
     @PostMapping("/update-status")
     @ResponseBody
@@ -53,5 +61,37 @@ public class ApiCustomController {
     @ResponseBody
     public boolean checkExistsCustomer(@PathVariable String sdt){
         return khachHangRepo.existsBySdt(sdt);
+    }
+
+    @PostMapping("/check-checkout")
+    @ResponseBody
+    public ResponseEntity<?> checkCheckout(@RequestBody List<Map<String, Object>> hdct) {
+        int i = 1;
+        for (Map<String, Object> item : hdct){
+            Integer idSPCT = Integer.parseInt(item.get("idSPCT").toString());
+            Integer soLuongMua = Integer.parseInt(item.get("soLuong").toString());
+            SanPhamChiTiet spct = spctRepo.findById(idSPCT).orElseThrow();
+            if (spct.getSoLuong() < soLuongMua) {
+                i = 0;
+                break;
+            }
+        }
+        if (i == 1) {
+            return ResponseEntity.ok().body("Thanh cong");
+        } else {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Loi");
+        }
+    }
+
+    @PostMapping("/gen-cart")
+    @ResponseBody
+    public Map<String, Object> genCart(@RequestBody Map<String, Object> map) {
+        Map<String, Object> map1 = new LinkedHashMap<>();
+        if (map.get("idKH") != null) {
+            Integer idKH = Integer.parseInt(map.get("idKH").toString());
+            map1.put("cartCount", qlghService.getSoLuongSPCTInCart(idKH));
+            map1.put("totalPrice", qlghService.getTotalPrice(idKH));
+        }
+        return map1;
     }
 }

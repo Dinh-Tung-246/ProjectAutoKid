@@ -19,8 +19,9 @@ function addToCartNoLogin(a) {
   let mauSac = a.getAttribute("data-mausac");
   let soLuongSPCT = a.getAttribute("data-soluong");
   let anhSP = a.getAttribute('data-anh');
+  console.log("so luong spct:", soLuongSPCT);
 
-  if (soLuongSPCT === null || soLuongSPCT === 0) {
+  if (soLuongSPCT == null || soLuongSPCT == 0) {
     Swal.fire({
       title: "Sản phẩm này hiện đang hết hàng!",
       text: "Xin lỗi vì sự bất tiện này",
@@ -103,6 +104,8 @@ async function addToCartLogined(a) {
         text: "Sản phẩm đã được thêm vào giỏ hàng.",
         icon: "success",
         confirmButtonText: "OK",
+      }).then(() => {
+        window.location.reload();
       });
     } else {
       const errorData = await response.json();

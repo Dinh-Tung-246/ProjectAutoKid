@@ -23,12 +23,8 @@ public class AutokidHomeController {
     QuanLyGioHangService qlghService;
 
     @GetMapping("")
-    public String home(@RequestParam(required = false) Integer idKH, Model model){
+    public String home(Model model){
         model.addAttribute("currentPage","home");
-        if (idKH != null){
-            model.addAttribute("countCart", qlghService.getSoLuongSPCTInCart(idKH));
-            model.addAttribute("totalPrice", qlghService.getTotalPrice(idKH));
-        }
         model.addAttribute("sanpham", quanLySanPhamService.getAllSP());
         model.addAttribute("loaisp", loaiSanPhamRepo.findAll());
         return "/autokid/index";
