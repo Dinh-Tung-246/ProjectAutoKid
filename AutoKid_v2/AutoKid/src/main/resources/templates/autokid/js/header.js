@@ -1,3 +1,12 @@
+document.addEventListener("DOMContentLoaded", () => {
+    const KH = JSON.parse(sessionStorage.getItem("KH")) || [];
+    renderUserMenu();
+    if (KH.length != 0) {
+        console.log("Ban vua dang nhap");
+        updateCartAfterLogin();
+    }
+});
+
 function updateCartCount() {
     const cart = JSON.parse(sessionStorage.getItem('cart')) || [];
     const count = cart.reduce((total, item) => total + item.quantity, 0); // Tính tổng số lượng sản phẩm
@@ -20,15 +29,33 @@ function updateCartTotal() {
     document.getElementById('cart-total').textContent = formatPrice(total); // cập nhật tổng giá
 }
 
-// Gọi hàm sau khi DOM đã tải xong
-document.addEventListener('DOMContentLoaded', () => {
-    updateCartCount();
-    updateCartTotal();
-});
+async function updateCartAfterLogin() {
+    const KH = JSON.parse(sessionStorage.getItem("KH")) || [];
+    let idKH = KH.idKH;
+    try {
+        const response = await fetch('/api/gen-cart', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({idKH}),
+        })
+        const result = await response.json();
+        document.getElementById('cart-count').textContent = result.cartCount;
+        document.getElementById('cart-total').textContent = result.totalPrice;
+    } catch (error) {
+        alert("error");
+    }
+}
 
 window.onload = function () {
-    updateCartCount(); // Cập nhật số lượng giỏ hàng khi tải trang
-    updateCartTotal(); // cập nhật tổng tiền giỏ hàng
+    const infoKH = JSON.parse(sessionStorage.getItem("KH")) || [];
+    if (infoKH.length === 0) {
+        updateCartCount();
+        updateCartTotal();
+    } else {
+        console.log("ban da dang nhap");
+    }
 };
 
 function renderUserMenu() {
@@ -78,4 +105,3 @@ function logout() {
     });
 }
 
-document.addEventListener("DOMContentLoaded", renderUserMenu);
