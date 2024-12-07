@@ -9,10 +9,12 @@ import com.example.demo.response.HoaDonResponse;
 import com.example.demo.service.QuanLyHoaDonService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Controller
@@ -44,6 +46,15 @@ public class QuanlyhoadonController {
         return "admin/hoadonchitiet";
     }
 
+    @GetMapping("/ctht/{id}")
+    @ResponseBody
+    public ResponseEntity<?> getChiTietHoaDon(@PathVariable Integer id){
+        HoaDon hoaDon = quanLyHoaDonService.findHoaDonByMaHD(id);
+        HoaDonResponse hoaDonResponse = new HoaDonResponse(hoaDon);
+        return ResponseEntity.ok().body(hoaDonResponse);
+
+    }
+
     @GetMapping("/search")
     public String searchInvoices(@RequestParam(required = false) String maHd,
                                  Model model) {
@@ -58,17 +69,12 @@ public class QuanlyhoadonController {
 
     @PostMapping("/updateStatus")
     @ResponseBody
-    public String updateHoaDonStatus(@RequestParam("maHD") Integer maHD, @RequestParam("trangThai") String trangThai) {
+    public ResponseEntity<?> updateHoaDonStatus(@RequestParam("maHD") Integer maHD, @RequestParam("trangThai") String trangThai) {
 
         System.out.println(maHD);
         System.out.println(trangThai);
-        try {
-            quanLyHoaDonService.updateHoaDonStatus(maHD, trangThai);
-            return "{\"status\": \"success\", \"message\": \"Cập nhật trạng thái thành công\"}";
-        } catch (Exception e) {
-            // Return error message if something goes wrong
-            return "{\"status\": \"error\", \"message\": \"Cập nhật trạng thái lỗi\"}";
-        }
+        boolean check = quanLyHoaDonService.updateHoaDonStatus(maHD, trangThai);
+        return ResponseEntity.ok().body(check);
     }
 
     @GetMapping("/pending")

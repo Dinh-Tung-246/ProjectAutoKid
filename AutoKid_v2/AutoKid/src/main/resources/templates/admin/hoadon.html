@@ -113,7 +113,7 @@
               <th>Mã Hóa Đơn</th>
               <th>Tên Khách Hàng</th>
               <th>Tên Nhân Viên</th>
-              <th>Ngày tạo</th>
+              <th>Hình thức</th>
               <th>Phương thức thanh toán</th>
               <th>Tổng tiền</th>
               <th>Trạng thái</th>
@@ -126,7 +126,7 @@
               <td th:text="${hdct.maHD}"></td> <!-- Display HD + id instead of maHD -->
               <td th:text="${hdct.tenKhachHang}"></td>
               <td th:text="${hdct.tenNhanVien}"></td>
-              <td th:text="${hdct.ngayTao}"></td>
+              <td th:text="${hdct.online == true ? 'Trực tuyến' : 'Tại quầy'}"></td>
               <td th:text="${hdct.tenPhuongThucThanhToan}"></td>
               <td th:text="${hdct.tongTien}"></td>
               <td>
@@ -145,7 +145,7 @@
               </td>
               <td>
                 <div style="display: flex; align-items: center; justify-content: space-around;">
-                  <a th:href="@{/admin/hoadon/chitiethoadon/{id}(id=${hdct.id})}" class="btn btn-info">Chi tiết</a> <!-- Use id here -->
+                  <button th:data-id="${hdct.id}" onclick="handleClick(this.getAttribute('data-id'))" data-bs-toggle="modal" data-bs-target="#chiTietHoaDon" class="btn btn-info">Chi tiết</button> <!-- Use id here -->
                 </div>
               </td>
             </tr>
@@ -157,6 +157,45 @@
 
       </div>
     </main>
+
+    <div class="modal fade" id="chiTietHoaDon" tabindex="-1" aria-labelledby="paymentModalLabel" aria-hidden="true">
+      <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="paymentModalLabel">Chi tiết hóa đơn</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <div class="mb-3">
+              <p class="mb-4"><strong>Mã Hóa Đơn:</strong> <span id="invoiceCode"></span></p>
+              <p class="mb-4"><strong>Tên Khách Hàng:</strong> <span id="customerName"></span></p>
+              <p class="mb-4"><strong>Tên Nhân Viên:</strong> <span id="employeeName"></span></p>
+              <p class="mb-4"><strong>Ngày Tạo:</strong> <span id="creationDate"></span></p>
+              <p class="mb-4"><strong>Phương thức thanh toán:</strong> <span id="paymentMethod"></span></p>
+              <p class="mb-4"><strong>Tổng tiền:</strong> <span id="totalAmount"></span></p>
+              <p class="mb-4"><strong>Trạng thái:</strong> <span id="status"></span></p>
+            </div>
+            <h4 style="margin-bottom: 10px">Chi tiết sản phẩm</h4>
+            <table class="table table-bordered">
+              <thead>
+              <tr>
+                <th scope="col">Tên sản phẩm</th>
+                <th scope="col">Số lượng</th>
+                <th scope="col">Đơn giá</th>
+                <th scope="col">Thành tiền</th>
+              </tr>
+              </thead>
+              <tbody id="productTable">
+              <!-- Các dòng sản phẩm sẽ được thêm động ở đây -->
+              </tbody>
+            </table>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+          </div>
+        </div>
+      </div>
+    </div>
 
     <!-- ! Footer -->
     <div th:insert="fragments/footer_admin :: footer"></div>
@@ -187,12 +226,54 @@
         trangThai: trangThai  // Send the selected status
       },
       success: function(response) {
-        alert('Cập nhật trạng thái thành công');
+          if(response){
+              alert('Cập nhật trạng thái thành công');
+          }
+          else alert('Không được cập nhật trạng thái khác')
+
       },
       error: function(xhr, status, error) {
         alert('Có lỗi!');
       }
     });
+  }
+  function handleClick(id) {
+      fetch(`/admin/hoadon/ctht/${id}`)
+          .then(res => res.json())
+          .then(data => {
+              // Populate invoice details
+              document.querySelector("span#invoiceCode").textContent = data.maHD;
+              document.querySelector("span#customerName").textContent = data.tenKhachHang;
+              document.querySelector("span#employeeName").textContent = data.tenNhanVien;
+              document.querySelector("span#creationDate").textContent = new Date(data.ngayTao).toLocaleDateString();
+              document.querySelector("span#paymentMethod").textContent = data.tenPhuongThucThanhToan;
+              document.querySelector("span#totalAmount").textContent = data.tongTien.toLocaleString("vi-VN", {
+                  style: "currency",
+                  currency: "VND",
+              });
+              document.querySelector("span#status").textContent = data.trangThaiHD;
+
+              // Populate product table
+              const productTable = document.querySelector("tbody#productTable");
+              productTable.innerHTML = ""; // Clear existing rows
+              data.hoaDonChiTietRPS.forEach(product => {
+                  const row = document.createElement("tr");
+                  row.innerHTML = `
+                    <td>${product.name}</td>
+                    <td>${product.soLuong}</td>
+                    <td>${product.donGia.toLocaleString("vi-VN", {
+                      style: "currency",
+                      currency: "VND",
+                  })}</td>
+                    <td>${product.thanhTien.toLocaleString("vi-VN", {
+                      style: "currency",
+                      currency: "VND",
+                  })}</td>
+                `;
+                  productTable.appendChild(row);
+              });
+          })
+          .catch(err => console.error("Error fetching invoice details:", err));
   }
 
 </script>
