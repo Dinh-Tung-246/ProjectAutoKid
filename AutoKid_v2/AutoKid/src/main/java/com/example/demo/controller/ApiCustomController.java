@@ -3,6 +3,9 @@ package com.example.demo.controller;
 import com.example.demo.model.SanPhamChiTiet;
 import com.example.demo.repository.KhachHangRepo;
 import com.example.demo.repository.SanPhamChiTietRepo;
+import com.example.demo.model.KhachHang;
+import com.example.demo.repository.KhachHangRepo;
+import com.example.demo.response.KhachHangResponse;
 import com.example.demo.service.QuanLyDatHangService;
 import com.example.demo.service.QuanLyGioHangService;
 import org.slf4j.Logger;
@@ -56,18 +59,23 @@ public class ApiCustomController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of("error", e.getMessage()));
         }
     }
-      
+
     @GetMapping("/user/{sdt}")
     @ResponseBody
-    public boolean checkExistsCustomer(@PathVariable String sdt){
-        return khachHangRepo.existsBySdt(sdt);
+    public ResponseEntity<?> checkExists(@PathVariable String sdt) {
+        return ResponseEntity.ok().body(khachHangRepo.existsBySdt(sdt));
+    }
+
+    @PostMapping("/create-user")
+    public ResponseEntity<?> createUser(@RequestBody KhachHangResponse response) {
+        return ResponseEntity.ok().body(serviceQLDH.createUser(response));
     }
 
     @PostMapping("/check-checkout")
     @ResponseBody
     public ResponseEntity<?> checkCheckout(@RequestBody List<Map<String, Object>> hdct) {
         int i = 1;
-        for (Map<String, Object> item : hdct){
+        for (Map<String, Object> item : hdct) {
             Integer idSPCT = Integer.parseInt(item.get("idSPCT").toString());
             Integer soLuongMua = Integer.parseInt(item.get("soLuong").toString());
             SanPhamChiTiet spct = spctRepo.findById(idSPCT).orElseThrow();
