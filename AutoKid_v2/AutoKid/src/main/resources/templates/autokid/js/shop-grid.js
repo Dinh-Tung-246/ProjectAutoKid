@@ -10,7 +10,7 @@ function updateProductList(products) {
                 <div class="product__item">
                   <div
                     class="product__item__pic set-bg"
-                    style="background-image: url('/img/categories/${product.anhSPMau}')"
+                    style="background-image: url('/img/product/${product.anhSPMau}')"
                   >
                     <ul class="product__item__pic__hover">
                       <li>

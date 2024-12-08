@@ -24,22 +24,50 @@ function decreaseQuantity() {
 $("#add-to-cart").on("click", function (event) {
     event.preventDefault();
 
+    const cartData = JSON.parse(sessionStorage.getItem("cart")) || [];
     const a = document.getElementById("add-to-cart");
     let idSP = a.getAttribute("data-id");
     let tenSP = a.getAttribute("data-name");
     let giaStr = a.getAttribute("data-price").replace(/\./g, "");
     const giaSP = parseFloat(giaStr);
-    let quantitySP = parseInt(document.getElementById("quantity-input").value);
+    let quantitySP = parseInt(document.getElementById("quantity-input").value); // so luong muon mua
     let idSPCT = document.getElementById('selectedValue').value;
     let tenMS = document.getElementById('selectedValueMS').value;
-    let soLuongSPCT = a.getAttribute("data-soluong");
+    let soLuongSPCT = document.getElementById('so-luong').textContent; // số lượng trong kho
     const anhSP = document.getElementById('image__product_detail').src;
     const anhStr = anhSP.split('/').pop();
-    console.log("anh SP:", anhStr);
+    console.log("id spct", idSPCT);
 
-    if (soLuongSPCT === null || soLuongSPCT === 0) {
+    //Lay san pham chi tiet trong sessionStorage
+    let item = cartData.find(product => product.idSPCT === idSPCT);
+
+    console.log("item", item);
+    if (item !== undefined) {
+        let tongSoLuong = item.quantity + quantitySP;
+        if (tongSoLuong > soLuongSPCT - 1) {
+            Swal.fire({
+                title: "Số lượng sản phẩm quá lớn, hiện tại shop không thể kịp cung cấp!",
+                text: "Xin lỗi vì sự bất tiện này",
+                icon: "warning",
+                confirmButtonText: "OK",
+            });
+            return;
+        }
+    }
+
+    console.log(soLuongSPCT, "=======")
+    if (soLuongSPCT === null || soLuongSPCT == 0) {
         Swal.fire({
             title: "Sản phẩm này hiện đang hết hàng!",
+            text: "Xin lỗi vì sự bất tiện này",
+            icon: "warning",
+            confirmButtonText: "OK",
+        });
+        return;
+    }
+    if (quantitySP > soLuongSPCT-1) {
+        Swal.fire({
+            title: "Số lượng sản phẩm quá lớn, hiện tại shop không thể kịp cung cấp!",
             text: "Xin lỗi vì sự bất tiện này",
             icon: "warning",
             confirmButtonText: "OK",
@@ -55,6 +83,7 @@ $("#add-to-cart").on("click", function (event) {
             icon: "error",
             confirmButtonText: "OK"
         });
+        return;
     } else {
         let cart = JSON.parse(sessionStorage.getItem("cart")) || [];
 
@@ -81,11 +110,8 @@ $("#add-to-cart").on("click", function (event) {
         Swal.fire({
             title: "Thêm sản phẩm vào giỏ hàng thành công!",
             icon: "success",
-            confirmButtonText: null,
-        });
-        setTimeout(function () {
-            window.location.href = "http://localhost:8080/autokid/shoping-cart";
-        }, 1000);
+            confirmButtonText: "OK",
+        }).then(() => {window.location.reload();});
     }
 });
 
@@ -99,6 +125,7 @@ document.querySelectorAll('.custom-radio-div').forEach(item => {
 
         const anhSPCT = this.getAttribute('data-anhspct');
         const soLuong =this.getAttribute('data-soluong');
+        console.log(soLuong);
         if (soLuong === 0) {
             document.getElementById('so-luong').textContent = 'Hết hàng';
         } else {

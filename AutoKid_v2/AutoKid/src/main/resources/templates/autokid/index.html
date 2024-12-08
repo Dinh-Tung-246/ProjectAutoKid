@@ -92,6 +92,7 @@
                 class="featured__item__pic set-bg"
                 th:attr="data-setbg=${'/img/product/' + sp.anhSPMau}"
                 style="width: 262.5px; height: 270px; background-size: cover;"
+                th:onclick="'window.location.href=\'/autokid/shop-detail?idSP=' + ${sp.idSP} + '\''"
               >
                 <ul class="featured__item__pic__hover">
                   <li>

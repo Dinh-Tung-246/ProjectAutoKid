@@ -146,26 +146,55 @@ document.querySelector('#checkout-form').addEventListener('submit', async functi
         donGiaSauGiam: parseFloat(item.totalPrice.replace(/\./g, '')),
     }));
 
-    if (paymentTypeElement.id === 'PTTT001') {
-        await handleCashPayment(hoaDon, hdct);
-    } else if (paymentTypeElement.id === 'PTTT002') {
-        const idKhachHang = idKH;
-        const tenNN = document.getElementById("name-kh").value.trim();
-        const diaChiNN = document.getElementById("diaChi-kh").value.trim();
-        const sdtNN = document.getElementById("sdt-kh").value.trim();
-        const InfoNN = {
-            idKH: idKhachHang,
-            tenNN: tenNN,
-            diaChiNN: diaChiNN,
-            sdt: sdtNN,
-        }
+    const response = await fetch('/api/check-checkout', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(hdct),
+    });
 
-        sessionStorage.setItem("info", JSON.stringify(InfoNN));
-        window.location.href = "http://localhost:8080/payment/";
+    if (!response.ok) {
+        Swal.fire({
+            title: "Sản phẩm bạn mua đã bị hết hàng!",
+            text: "Xin lỗi vì sự bất tiện này",
+            icon: "error",
+            confirmButtonText: "OK",
+        })
+    } else {
+
+        if (paymentTypeElement.id === 'PTTT001') {
+            await handleCashPayment(hoaDon, hdct);
+        } else if (paymentTypeElement.id === 'PTTT002') {
+            let cartData = JSON.parse(sessionStorage.getItem("cart")) || [];
+
+            let hdctIdSPCTs = hdct.map(item => item.idSPCT); // lấy ra danh sách idSPCT
+
+            cartData = cartData.filter(product => !hdctIdSPCTs.includes(product.idSPCT));
+            const idKhachHang = idKH;
+            const tenNN = document.getElementById("name-kh").value.trim();
+            const diaChiNN = document.getElementById("diaChi-kh").value.trim();
+            const sdtNN = document.getElementById("sdt-kh").value.trim();
+            const InfoNN = {
+                idKH: idKhachHang,
+                tenNN: tenNN,
+                diaChiNN: diaChiNN,
+                sdt: sdtNN,
+            }
+
+            sessionStorage.setItem("info", JSON.stringify(InfoNN));
+            window.location.href = "http://localhost:8080/payment/";
+        }
     }
 });
 
 async function handleCashPayment(hoaDon, hdct) {
+    let cartData = JSON.parse(sessionStorage.getItem("cart")) || [];
+
+    let hdctIdSPCTs = hdct.map(item => item.idSPCT); // lấy ra danh sách idSPCT
+
+    cartData = cartData.filter(product => !hdctIdSPCTs.includes(product.idSPCT));
+
     Swal.fire({
         title: "Bạn có chắc chắn muốn đặt hàng không?",
         icon: "question",
@@ -187,6 +216,7 @@ async function handleCashPayment(hoaDon, hdct) {
 
                 if (response.ok) {
                     sessionStorage.removeItem("checkout");
+                    sessionStorage.setItem("cart", JSON.stringify(cartData));
                     Swal.fire({
                         title: "Đặt hàng thành công!",
                         text: "Shop đang xác nhận đơn hàng",
@@ -196,7 +226,7 @@ async function handleCashPayment(hoaDon, hdct) {
                         window.location.href = "http://localhost:8080/autokid/home";
                     });
                 } else {
-                    alert('ERROR');
+                    alert("error");
                 }
             } catch (error) {
                 console.error("ERROR", error);
