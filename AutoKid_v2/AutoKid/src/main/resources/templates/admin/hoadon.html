@@ -129,20 +129,7 @@
               <td th:text="${hdct.online == true ? 'Trực tuyến' : 'Tại quầy'}"></td>
               <td th:text="${hdct.tenPhuongThucThanhToan}"></td>
               <td th:text="${hdct.tongTien}"></td>
-              <td>
-                <!-- Dropdown to update the status with AJAX -->
-                <form id="statusForm" style="display: inline-block;">
-                  <input type="hidden" name="maHD" th:value="${hdct.id}" />
-                  <select name="trangThai" class="form-select" onchange="updateStatus(this)">
-                    <option value="Đã thanh toán, chờ giao hàng" th:selected="${hdct.trangThaiHD == 'Đã thanh toán, chờ giao hàng'}">Đã thanh toán, chờ giao hàng</option>
-                    <option value="Chưa thanh toán, chờ giao hàng" th:selected="${hdct.trangThaiHD == 'Chưa thanh toán, chờ giao hàng'}">Chưa thanh toán, chờ giao hàng</option>
-                    <option value="Hoàn thành" th:selected="${hdct.trangThaiHD == 'Hoàn thành'}">Hoàn thành</option>
-                    <option value="Đã thanh toán, đang giao hàng" th:selected="${hdct.trangThaiHD == 'Đã thanh toán, đang giao hàng'}">Đã thanh toán, đang giao hàng</option>
-                    <option value="Chưa thanh toán, đang giao hàng" th:selected="${hdct.trangThaiHD == 'Chưa thanh toán, đang giao hàng'}">Chưa thanh toán, đang giao hàng</option>
-                    <option value="Huỷ đơn hàng" th:selected="${hdct.trangThaiHD == 'Huỷ đơn hàng'}">Huỷ đơn hàng</option>
-                  </select>
-                </form>
-              </td>
+              <td th:text="${hdct.trangThaiHD}"></td>
               <td>
                 <div style="display: flex; align-items: center; justify-content: space-around;">
                   <button th:data-id="${hdct.id}" onclick="handleClick(this.getAttribute('data-id'))" data-bs-toggle="modal" data-bs-target="#chiTietHoaDon" class="btn btn-info">Chi tiết</button> <!-- Use id here -->
@@ -173,7 +160,12 @@
               <p class="mb-4"><strong>Ngày Tạo:</strong> <span id="creationDate"></span></p>
               <p class="mb-4"><strong>Phương thức thanh toán:</strong> <span id="paymentMethod"></span></p>
               <p class="mb-4"><strong>Tổng tiền:</strong> <span id="totalAmount"></span></p>
-              <p class="mb-4"><strong>Trạng thái:</strong> <span id="status"></span></p>
+              <div class="mb-4" style="display: flex; align-items: center">
+                <strong>Trạng thái:</strong>
+                <input id="maHD" type="hidden" name="maHD" value="12345">
+                <select name="trangThai" class="form-select" id="statusSelect" onchange="updateStatus(this)">
+                </select>
+              </div>
             </div>
             <h4 style="margin-bottom: 10px">Chi tiết sản phẩm</h4>
             <table class="table table-bordered">
@@ -214,30 +206,64 @@
 <script>
   function updateStatus(selectElement) {
     // Retrieve the ID (maHD) from the hidden input field in the same row
-    var maHD = $(selectElement).closest('tr').find('input[name="maHD"]').val();  // Get value from hidden input
-    var trangThai = $(selectElement).val();  // Get the selected status
+      var maHD = $(selectElement).siblings('input[name="maHD"]').val();
+      var trangThai = $(selectElement).val();
 
-    // Perform AJAX request to update the status
-    $.ajax({
-      url: '/admin/hoadon/updateStatus',
-      method: 'POST',
-      data: {
-        maHD: maHD,  // Send the ID (maHD)
-        trangThai: trangThai  // Send the selected status
-      },
-      success: function(response) {
-          if(response){
-              alert('Cập nhật trạng thái thành công');
-          }
-          else alert('Không được cập nhật trạng thái khác')
-
-      },
-      error: function(xhr, status, error) {
-        alert('Có lỗi!');
+      if(confirm('Bạn có muốn cập nhật trạng thái đơn hàng ?')){
+          $.ajax({
+              url: '/admin/hoadon/updateStatus',
+              method: 'POST',
+              data: {
+                  maHD: maHD,  // Send the ID (maHD)
+                  trangThai: trangThai  // Send the selected status
+              },
+              success: function(response) {
+                  alert('Cập nhật trạng thái thành công');
+                  window.location.href = 'http://localhost:8080/admin/hoadon';
+              },
+              error: function(xhr, status, error) {
+                  alert('Có lỗi!');
+              }
+          });
       }
-    });
+
+  }
+  function getStatusOptions(currentStatus) {
+      const statusMapping = {
+          "Đã thanh toán, chờ giao hàng": [
+              { value: "Đã thanh toán, chờ giao hàng", text: "Đã thanh toán, chờ giao hàng", selected: true },
+              { value: "Hoàn thành", text: "Hoàn thành" },
+              { value: "Đã thanh toán, đang giao hàng", text: "Đã thanh toán, đang giao hàng" },
+              { value: "Huỷ đơn hàng", text: "Huỷ đơn hàng" },
+          ],
+          "Chưa thanh toán, chờ giao hàng": [
+              { value: "Chưa thanh toán, chờ giao hàng", text: "Chưa thanh toán, chờ giao hàng", selected: true },
+              { value: "Hoàn thành", text: "Hoàn thành" },
+              { value: "Chưa thanh toán, đang giao hàng", text: "Chưa thanh toán, đang giao hàng" },
+              { value: "Huỷ đơn hàng", text: "Huỷ đơn hàng" },
+          ],
+          "Hoàn thành": [
+              { value: "Hoàn thành", text: "Hoàn thành", selected: true },
+          ],
+          "Huỷ đơn hàng": [
+              { value: "Huỷ đơn hàng", text: "Huỷ đơn hàng", selected: true },
+          ],
+          "Đã thanh toán, đang giao hàng": [
+              { value: "Đã thanh toán, đang giao hàng", text: "Đã thanh toán, đang giao hàng", selected: true },
+              { value: "Hoàn thành", text: "Hoàn thành" },
+              { value: "Huỷ đơn hàng", text: "Huỷ đơn hàng" },
+          ],
+          "Chưa thanh toán, đang giao hàng": [
+              { value: "Chưa thanh toán, đang giao hàng", text: "Chưa thanh toán, đang giao hàng", selected: true },
+              { value: "Hoàn thành", text: "Hoàn thành" },
+              { value: "Huỷ đơn hàng", text: "Huỷ đơn hàng" },
+          ],
+      };
+
+      return statusMapping[currentStatus] || [];
   }
   function handleClick(id) {
+      document.getElementById("maHD").value = id;
       fetch(`/admin/hoadon/ctht/${id}`)
           .then(res => res.json())
           .then(data => {
@@ -251,7 +277,22 @@
                   style: "currency",
                   currency: "VND",
               });
-              document.querySelector("span#status").textContent = data.trangThaiHD;
+              // document.querySelector("span#status").textContent = data.trangThaiHD;
+
+              const currentStatus = data.trangThaiHD; // Assuming this is the current status
+              const statusOptions = getStatusOptions(currentStatus);
+              const statusSelect = document.getElementById("statusSelect");
+              statusSelect.innerHTML = ""; // Clear existing options
+
+              statusOptions.forEach(option => {
+                  const opt = document.createElement("option");
+                  opt.value = option.value;
+                  opt.textContent = option.text;
+                  if (option.selected) {
+                      opt.selected = true;
+                  }
+                  statusSelect.appendChild(opt);
+              });
 
               // Populate product table
               const productTable = document.querySelector("tbody#productTable");

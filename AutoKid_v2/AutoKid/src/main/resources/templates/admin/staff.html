@@ -148,7 +148,7 @@
                                 <tr th:each="staff : ${listStaff}">
                                     <td th:text="${staff != null ? staff.maNV : ''}">Mã nhân viên</td>
                                     <td th:text="${staff != null ? staff.tenNV : ''}">Tên nhân viên</td>
-                                    <td th:text="${staff != null ? (staff.gioiTinh == '1' ? 'Nam' : 'Nữ') : ''}">Giới
+                                    <td th:text="${staff != null ? (staff.gioiTinh == 'Nam' ? 'Nam' : 'Nữ') : ''}">Giới
                                         tính
                                     </td>
                                     <td th:text="${staff != null ? staff.ngaySinh : ''}">Ngày sinh</td>
@@ -188,121 +188,103 @@
                         <h1 class="modal-title fs-5" id="exampleModalLabel">Thêm Nhân Viên</h1>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
-                    <div class="modal-dialog modal-lg">
-                        <div class="modal-content">
-                            <div class="modal-header">
-                                <h5 class="modal-title">Thêm Nhân Viên</h5>
-                                <button type="button" class="btn-close" data-bs-dismiss="modal"
-                                        aria-label="Close"></button>
-                            </div>
-                            <div class="modal-body">
-                                <form th:action="@{/admin/staff/save}" method="post">
-
-                                    <div class="row mb-3">
-                                        <div class="col-12">
-                                            <label for="maNV" class="form-label">Mã Nhân Viên:</label>
-                                            <input type="text" id="maNV" name="maNV" required class="form-control"/>
-                                        </div>
-                                    </div>
-
-                                    <div class="row mb-3">
-                                        <div class="col-12">
-                                            <label for="tenNV" class="form-label">Tên Nhân Viên:</label>
-                                            <input type="text" id="tenNV" name="tenNV" required
-                                                   class="form-control"/>
-                                        </div>
-                                    </div>
-
-                                    <div class="row mb-3">
-                                        <div class="col-md-6">
-                                            <label class="form-label">Giới Tính:</label>
-                                            <div class="form-check">
-                                                <input type="radio" id="gioiTinhNam" name="gioiTinh" value="1"
-                                                       class="form-check-input">
-                                                <label for="gioiTinhNam" class="form-check-label">Nam</label>
-                                            </div>
-                                            <div class="form-check">
-                                                <input type="radio" id="gioiTinhNu" name="gioiTinh" value="0"
-                                                       class="form-check-input">
-                                                <label for="gioiTinhNu" class="form-check-label">Nữ</label>
-                                            </div>
-                                        </div>
-                                        <div class="col-md-6">
-                                            <label for="ngaySinh" class="form-label">Ngày Sinh:</label>
-                                            <input type="date" id="ngaySinh" name="ngaySinh" required
-                                                   class="date form-control"/>
-                                        </div>
-                                    </div>
-
-                                    <div class="row mb-3">
-                                        <div class="col-md-6">
-                                            <label for="ngayLamViec" class="form-label">Ngày Làm Việc:</label>
-                                            <input type="date" id="ngayLamViec" name="ngayLamViec" required
-                                                   class="date form-control"/>
-                                        </div>
-                                        <div class="col-md-6">
-                                            <label for="matKhau" class="form-label">Mật Khẩu:</label>
-                                            <input type="password" id="matKhau" name="matKhau" required
-                                                   class="form-control"/>
-                                        </div>
-                                    </div>
-
-                                    <div class="row mb-3">
-                                        <div class="col-md-6">
-                                            <label for="sdt" class="form-label">SĐT:</label>
-                                            <input type="text" id="sdt" name="sdt" required class="form-control"/>
-                                        </div>
-                                        <div class="col-md-6">
-                                            <label for="email" class="form-label">Email:</label>
-                                            <input type="email" id="email" name="email" required
-                                                   class="form-control"/>
-                                        </div>
-                                    </div>
-
-                                    <div class="row mb-3">
-                                        <div class="col-12">
-                                            <label for="diaChi" class="form-label">Địa Chỉ:</label>
-                                            <input type="text" id="diaChi" name="diaChi" required
-                                                   class="form-control"/>
-                                        </div>
-                                    </div>
-
-                                    <div class="row mb-3">
-                                        <div class="col-md-6">
-                                            <label class="form-label">Trạng Thái:</label>
-                                            <div class="form-check">
-                                                <input type="radio" id="trangThaiHoatDong" name="trangThai"
-                                                       value="1" class="form-check-input">
-                                                <label for="trangThaiHoatDong" class="form-check-label">Đang
-                                                    làm</label>
-                                            </div>
-                                            <div class="form-check">
-                                                <input type="radio" id="trangThaiNgungHoatDong" name="trangThai"
-                                                       value="0" class="form-check-input">
-                                                <label for="trangThaiNgungHoatDong" class="form-check-label">Đã
-                                                    nghỉ</label>
-                                            </div>
-                                        </div>
-                                        <div class="col-md-6">
-                                            <label for="chucVu" class="form-label">Chức Vụ:</label>
-                                            <select id="chucVu" name="chucVu.id" class="form-select">
-                                                <option value="" disabled selected>-- Chọn chức vụ --</option>
-                                                <option th:each="chucVu : ${danhSachChucVu}" th:value="${chucVu.id}"
-                                                        th:text="${chucVu.tenChucVu}"></option>
-                                            </select>
-                                        </div>
-                                    </div>
-
-                                    <div class="modal-footer">
-                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
-                                            Đóng
-                                        </button>
-                                        <button type="submit" class="btn btn-primary">Thêm</button>
-                                    </div>
-                                </form>
-                            </div>
+                    <div class="modal-body">
+                    <form id="addNV" th:action="@{/admin/staff/save}" method="post">
+                      <div class="row mb-3">
+                        <div class="col-12">
+                          <label for="maNV" class="form-label">Mã Nhân Viên:</label>
+                          <input style="border: 1px solid #ddd !important" type="text" id="maNV" name="maNV" class="form-control"/>
                         </div>
-                    </div>
+                      </div>
+
+                      <div class="row mb-3">
+                        <div class="col-12">
+                          <label for="tenNV" class="form-label">Tên Nhân Viên:</label>
+                          <input style="border: 1px solid #ddd !important" type="text" id="tenNV" name="tenNV"
+                                 class="form-control"/>
+                        </div>
+                      </div>
+
+                      <div class="row mb-3">
+                        <div class="col-md-6">
+                          <label class="form-label">Giới Tính:</label>
+                          <div class="mb-2" style="display: flex; align-items: center">
+                            <input type="radio" id="gioiTinhNam" name="gioiTinh" value="Nam" checked>
+                            <label for="gioiTinhNam" class="form-check-label">Nam</label>
+                          </div>
+                          <div style="display: flex; align-items: center">
+                            <input type="radio" id="gioiTinhNu" name="gioiTinh" value="Nữ">
+                            <label for="gioiTinhNu" class="form-check-label">Nữ</label>
+                          </div>
+                        </div>
+                        <div class="col-md-6">
+                          <label for="ngaySinh" class="form-label">Ngày Sinh:</label>
+                          <input style="border: 1px solid #ddd !important" type="date" id="ngaySinh" name="ngaySinh"
+                                 class="date form-control"/>
+                        </div>
+                      </div>
+
+                      <div class="row mb-3">
+                        <div class="col-md-6">
+                          <label for="ngayLamViec" class="form-label">Ngày Làm Việc:</label>
+                          <input style="border: 1px solid #ddd !important" type="date" id="ngayLamViec" name="ngayLamViec"
+                                 class="date form-control"/>
+                        </div>
+                        <div class="col-md-6">
+                          <label for="matKhau" class="form-label">Mật Khẩu:</label>
+                          <input style="border: 1px solid #ddd !important" type="password" id="matKhau" name="matKhau"
+                                 class="form-control"/>
+                        </div>
+                      </div>
+
+                      <div class="row mb-3">
+                        <div class="col-md-6">
+                          <label for="sdt" class="form-label">SĐT:</label>
+                          <input style="border: 1px solid #ddd !important" type="text" id="sdt" name="sdt"  class="form-control"/>
+                        </div>
+                        <div class="col-md-6">
+                          <label for="email" class="form-label">Email:</label>
+                          <input style="border: 1px solid #ddd !important" type="text" id="email" name="email"
+                                 class="form-control"/>
+                        </div>
+                      </div>
+
+                      <div class="row mb-3">
+                        <div class="col-12">
+                          <label for="diaChi" class="form-label">Địa Chỉ:</label>
+                          <input style="border: 1px solid #ddd !important" type="text" id="diaChi" name="diaChi"
+                                 class="form-control"/>
+                        </div>
+                      </div>
+
+                      <div class="row mb-3">
+                        <div class="col-md-6">
+                          <label class="form-label">Trạng Thái:</label>
+                          <div class="mb-2" style="display: flex; align-items: center">
+                            <input type="radio" id="trangThaiHoatDong" name="trangThai" value="1" checked>
+                            <label for="trangThaiHoatDong" class="form-check-label">Đang làm</label>
+                          </div>
+                          <div style="display: flex; align-items: center">
+                            <input type="radio" id="trangThaiNgungHoatDong" name="trangThai" value="0">
+                            <label for="trangThaiNgungHoatDong" class="form-check-label">Đã nghỉ</label>
+                          </div>
+                        </div>
+                        <div class="col-md-6">
+                          <label for="chucVu" class="form-label">Chức Vụ:</label>
+                          <select id="chucVu" name="chucVu.id" class="form-select">
+                            <option th:each="chucVu : ${danhSachChucVu}" th:value="${chucVu.id}"
+                                    th:text="${chucVu.tenChucVu}"></option>
+                          </select>
+                        </div>
+                      </div>
+                      <div class="mt-2 text-end">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                          Đóng
+                        </button>
+                        <button type="submit" class="btn btn-primary">Thêm</button>
+                      </div>
+                    </form>
+                  </div>
                 </div>
             </div>
         </div>
@@ -321,6 +303,91 @@
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script src="js/header.js"></script>
 <script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const form = document.getElementById("addNV");
+        form.addEventListener('submit', function async (e) {
+            e.preventDefault();
+
+            const maNV = document.getElementById('maNV').value.trim();
+            const tenNV = document.getElementById('tenNV').value.trim();
+            const ngaySinh = document.getElementById('ngaySinh').value;
+            const ngayLamViec = document.getElementById('ngayLamViec').value;
+            const matKhau = document.getElementById('matKhau').value;
+            const sdt = document.getElementById('sdt').value.trim();
+            const email = document.getElementById('email').value.trim();
+            const diaChi = document.getElementById('diaChi').value.trim();
+
+
+            if (maNV === '') {
+                alert('Mã nhân viên không được để trống');
+            }
+            else{
+                fetch(`/api/staff/${maNV}`)
+                    .then(res => res.json())
+                    .then(data => {
+                        if(data){
+                            alert("Mã nhân viên đã tồn tại");
+                        }
+                        else{
+                            if (tenNV === '') {
+                                alert('Tên nhân viên không được để trống.');
+                                return;
+                            }
+
+                            let regName = /^[a-zA-ZÀ-ỹ\s]+$/;
+                            if (!regName.test(tenNV)) {
+                                alert('Tên nhân viên không được chứa ký tự đặc biệt');
+                                return;
+                            }
+
+                            if (ngaySinh === '') {
+                                alert('Ngày sinh không được để trống');
+                                return;
+                            } else {
+                                const birthYear = new Date(ngaySinh).getFullYear();
+                                const currentYear = new Date().getFullYear();
+                                const age = currentYear - birthYear;
+
+                                if (age < 18) {
+                                    alert('Nhân viên phải đủ 18 tuổi');
+                                    return;
+                                }
+                            }
+
+                            if (!ngayLamViec) {
+                                alert('Ngày làm việc không được để trống');
+                                return;
+                            }
+
+                            if (matKhau.length < 6) {
+                                alert('Mật khẩu phải có ít nhất 6 ký tự');
+                                return;
+                            }
+
+                            let regPhone = /^[0-9]{10,}$/;
+                            if (!regPhone.test(sdt)) {
+                                alert('Số điện thoại không hợp lệ');
+                                return;
+                            }
+
+                            let regEmail = /^[\w-\.]+@[\w-\.]+\.[a-z]{2,4}$/;
+                            if (!regEmail.test(email)) {
+                                alert('Email không hợp lệ');
+                                return;
+                            }
+
+                            if (diaChi === '') {
+                                alert('Địa chỉ không được để trống');
+                                return;
+                            }
+                            if(confirm(`Bạn có muốn thêm nhân viên mới với mã ${maNV} không ?`)){
+                                form.submit();
+                            }
+                        }
+                    })
+            }
+        });
+    });
     // ket noi den websocket
     const socket = new WebSocket('ws://localhost:8080/ws');
 
@@ -345,6 +412,8 @@
     socket.onclose = function() {
         console.log("Kết nối WebSocket đã đóng.");
     };
+
+
 </script>
 </body>
 

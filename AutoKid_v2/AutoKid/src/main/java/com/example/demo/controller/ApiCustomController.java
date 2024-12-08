@@ -2,6 +2,7 @@ package com.example.demo.controller;
 
 import com.example.demo.model.KhachHang;
 import com.example.demo.repository.KhachHangRepo;
+import com.example.demo.repository.NhanVienRepo;
 import com.example.demo.response.KhachHangResponse;
 import com.example.demo.service.QuanLyDatHangService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,6 +19,9 @@ public class ApiCustomController {
     QuanLyDatHangService serviceQLDH;
     @Autowired
     KhachHangRepo khachHangRepo;
+
+    @Autowired
+    NhanVienRepo nhanVienRepo;
 
     @PostMapping("/update-status")
     @ResponseBody
@@ -36,5 +40,10 @@ public class ApiCustomController {
     @PostMapping("/create-user")
     public ResponseEntity<?> createUser(@RequestBody KhachHangResponse response){
         return ResponseEntity.ok().body(serviceQLDH.createUser(response));
+    }
+
+    @GetMapping("/staff/{maNV}")
+    public ResponseEntity<?> checkExistStaff(@PathVariable String maNV){
+        return ResponseEntity.ok().body(nhanVienRepo.existsByMaNV(maNV));
     }
 }
