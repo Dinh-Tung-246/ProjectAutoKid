@@ -18,6 +18,10 @@ public class QuanLyVoucherService {
         return voucherRepo.findAll();
     }
 
+    public void saveVoucher(Voucher voucher){
+        voucherRepo.save(voucher);
+    }
+
     public Voucher findCode(String ma) {
         return voucherRepo.findByMa(ma);
     }

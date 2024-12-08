@@ -43,108 +43,81 @@
             background-color: rgba(255, 255, 255, 0.44);
         }
         /*Bảng*/
-
-        /*Tìm kiếm*/
-        .search-container {
-            display: flex;
-            justify-content: flex-start; /* Thay đổi từ flex-end thành flex-start */
+        /* CSS cho bảng và nút */
+        table {
+            border-collapse: collapse;
+            width: 100%;
             margin-bottom: 20px;
         }
 
-        .search-input {
-            width: 300px;
-            padding: 10px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-            font-size: 16px;
-            margin-right: 10px;
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
         }
 
-        .search-button {
-            padding: 10px 15px;
-            background-color: #007bff;
-            color: white;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            transition: background-color 0.3s;
+        th {
+            background-color: #f2f2f2;
         }
 
-        .search-button:hover {
-            background-color: #0056b3;
-        }
 
-        .button-container {
-            display: flex;
+        /* CSS cho form overlay */
+        .overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            justify-content: center;
             align-items: center;
-            margin-bottom: 20px;
         }
 
-        .add-button-container {
-            margin-right: 925px;
-        }
-
-        .search-container {
+        .overlay.active {
             display: flex;
         }
-        /*Tìm kiếm*/
-        /*Form ẩn*/
+
         .form-container {
-            width: 100%;
-            max-width: 700px;
-            margin: 40px auto;
-            padding: 30px;
-            background-color: #fff;
-            border-radius: 15px;
-            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+            background-color: white;
+            padding: 20px;
+            border-radius: 10px;
+            width: 500px;
+            box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.2);
         }
 
-        .form-container h5 {
-            text-align: center;
-            margin-bottom: 30px;
-            color: #2c3e50;
-            font-size: 24px;
+        .form-container label {
+            display: block;
+            margin-bottom: 5px;
             font-weight: bold;
         }
 
-        .form-row {
-            display: flex;
-            justify-content: space-between;
-            gap: 20px;
-            margin-bottom: 20px;
-        }
-
-        .form-row input,
-        .form-row select {
+        .form-container input {
             width: 100%;
-            padding: 12px;
+            padding: 10px;
+            margin-bottom: 15px;
             border: 1px solid #ccc;
-            border-radius: 8px;
-            font-size: 16px;
+            border-radius: 5px;
         }
 
-        .form-row input:focus,
-        .form-row select:focus {
-            outline: none;
-            border-color: #3498db;
-            box-shadow: 0 0 8px rgba(52, 152, 219, 0.3);
-        }
-
-        .submit-btn {
+        .form-container button {
             width: 100%;
-            padding: 15px;
-            background-color: #3498db;
+            padding: 10px;
+            background-color: #4CAF50;
             color: white;
             border: none;
-            border-radius: 8px;
-            font-size: 18px;
-            font-weight: bold;
+            border-radius: 5px;
             cursor: pointer;
-            transition: background-color 0.3s;
         }
 
-        .submit-btn:hover {
-            background-color: #2980b9;
+        .form-container button:hover {
+            background-color: #45a049;
+        }
+
+        .close-btn {
+            background-color: red;
+            margin-top: 10px;
         }
 
         /* CSS mới để ghi đè */
@@ -172,9 +145,7 @@
                 <h2 class="main-title">Voucher</h2>
                 <div class="button-container">
                     <div class="add-button-container">
-<!--                        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#add">-->
-<!--                            Thêm-->
-<!--                        </button>-->
+                        <button class="btn btn-success" onclick="openForm()">Thêm Voucher</button>
                     </div>
 <!--                    <form th:action="@{/admin/promotion/search}" method="GET" class="search-form search-container">-->
 <!--                        <input type="text" class="search-input" name="keyword" placeholder="Tìm kiếm khuyến mãi...">-->
@@ -208,7 +179,10 @@
                                     <td th:text="${voucher.ngayBatDau}"></td>
                                     <td th:text="${voucher.ngayKetThuc}"></td>
                                     <td th:text="${voucher.trangThai == 1 ? 'Hoạt động' : 'Không hoạt động'}" ></td>
-                                    <td th:text="${voucher.dieuKien}"></td>
+                                    <td>
+                                        <a class="btn btn-warning" href="">Sửa</a>
+                                        <a class="btn btn-danger" href="">Xóa</a>
+                                    </td>
 <!--                                    <td class="text-center">-->
 <!--                                        <a class="update btn btn-primary" data-bs-toggle="modal" data-bs-target="#hihi"-->
 <!--                                           th:data-ma="${promotion.maKM}"-->
@@ -234,145 +208,63 @@
                 </div>
             </div>
         </main>
-        <form th:action="@{/admin/voucher/aplly}" method="POST">
-            <label for="ma">Mã Voucher:</label>
-            <input type="text" id="ma" name="ma" placeholder="Nhập mã voucher">
+<!--        <form th:action="@{/admin/voucher/aplly}" method="POST">-->
+<!--            <label for="maa">Mã Voucher:</label>-->
+<!--            <input type="text" id="maa" name="maa" placeholder="Nhập mã voucher">-->
 
-            <label for="tongHoaDon">Tổng hóa đơn:</label>
-            <input type="number" id="tongHoaDon" name="tongHoaDon" placeholder="Nhập tổng hóa đơn" step="0.01" min="0">
+<!--            <label for="tongHoaDon">Tổng hóa đơn:</label>-->
+<!--            <input type="number" id="tongHoaDon" name="tongHoaDon" placeholder="Nhập tổng hóa đơn" step="0.01" min="0">-->
 
-            <button type="submit">Áp dụng</button>
-        </form>
+<!--            <button type="submit">Áp dụng</button>-->
+<!--        </form>-->
 
-        <!-- Hiển thị kết quả -->
-        <div th:if="${error}">
-            <p style="color: red;" th:text="${error}"></p>
-        </div>
-        <div th:if="${discount}">
-            <p>Giảm giá: <span th:text="${discount}"></span> VND</p>
-            <p>Tổng tiền sau giảm giá: <span th:text="${finalTotal}"></span> VND</p>
-        </div>
+<!--        &lt;!&ndash; Hiển thị kết quả &ndash;&gt;-->
+<!--        <div th:if="${error}">-->
+<!--            <p style="color: red;" th:text="${error}"></p>-->
+<!--        </div>-->
+<!--        <div th:if="${discount}">-->
+<!--            <p>Giảm giá: <span th:text="${discount}"></span> VND</p>-->
+<!--            <p>Tổng tiền sau giảm giá: <span th:text="${finalTotal}"></span> VND</p>-->
+<!--        </div>-->
         <div>
-            <!-- Modal -->
-            <!-- add -->
-<!--            <div class="modal fade" id="add" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">-->
-<!--                <div class="modal-dialog modal-lg">-->
-<!--                    <div class="modal-content">-->
-<!--                        <div class="modal-header">-->
-<!--                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>-->
-<!--                        </div>-->
-<!--                        <div class="modal-body">-->
-<!--                            <div class="form-container">-->
-<!--                                <h5>Nhập Thông Tin Khuyến Mãi</h5>-->
-<!--                                <form th:action="@{/admin/promotion/save}" th:object="${addPromotion}" method="POST">-->
-<!--                                    <div class="form-row">-->
-<!--                                        <div class="form-group">-->
-<!--                                            <label for="maKM">Mã khuyến mãi</label>-->
-<!--                                            <input type="text" th:field="*{maKM}" id="maKM" placeholder="Mã khuyến mãi" required>-->
-<!--                                        </div>-->
-<!--                                        <div class="form-group">-->
-<!--                                            <label for="tenKM">Tên khuyến mãi</label>-->
-<!--                                            <input type="text" th:field="*{tenKM}" id="tenKM" placeholder="Tên khuyến mãi" required>-->
-<!--                                        </div>-->
-<!--                                    </div>-->
+            <div class="overlay" id="formOverlay">
+                <div class="form-container">
+                    <h2>Thêm Voucher</h2>
+                    Hello world
+                    <form th:action="@{/admin/voucher/save}" th:object="${voucherAdd}" method="post">
+                        <label for="ma">Mã Voucher:</label>
+                        <input type="text" id="ma" th:field="*{ma}">
+                        <span th:if="${#fields.hasErrors('ma')}"
+                              th:errors="*{ma}" style="color: red;"></span>
 
-<!--                                    <div class="form-row">-->
-<!--                                        <div class="form-group">-->
-<!--                                            <label for="ngayBatDau">Ngày bắt đầu</label>-->
-<!--                                            <input type="date" th:field="*{ngayBatDau}" class="date" id="ngayBatDau">-->
-<!--                                        </div>-->
-<!--                                        <div class="form-group">-->
-<!--                                            <label for="ngayKetThuc">Ngày kết thúc</label>-->
-<!--                                            <input type="date" th:field="*{ngayKetThuc}" class="date" id="ngayKetThuc">-->
-<!--                                        </div>-->
-<!--                                    </div>-->
-<!--                                    <div class="form-row">-->
-<!--                                        <div class="form-group">-->
-<!--                                            <label for="giatri">Giá trị</label>-->
-<!--                                            <input type="text" th:field="*{giaTri}" id="giatri" placeholder="Giá trị" required>-->
-<!--                                        </div>-->
-<!--                                    </div>-->
-<!--                                    <div class="form-row">-->
-<!--                                        <div class="form-group">-->
-<!--                                            <label for="trangThaiKM">Trạng thái</label>-->
-<!--                                            <select th:field="*{trangThaiKM}" id="trangThaiKM" required>-->
-<!--                                                <option value="" disabled selected>Chọn trạng thái</option>-->
-<!--                                                <option value="1">Hoạt động</option>-->
-<!--                                                <option value="0">Không hoạt động</option>-->
-<!--                                            </select>-->
-<!--                                        </div>-->
-<!--                                    </div>-->
+                        <label for="ten">Tên Voucher:</label>
+                        <input type="text" id="ten" th:field="*{ten}">
+                        <span th:if="${#fields.hasErrors('ten')}"
+                              th:errors="*{ten}" style="color: red;"></span>
 
-<!--                                    <button type="submit" class="submit-btn">Thêm Khuyến Mãi</button>-->
-<!--                                </form>-->
-<!--                            </div>-->
-<!--                        </div>-->
-<!--                    </div>-->
-<!--                </div>-->
-<!--            </div>-->
-<!--            &lt;!&ndash; Update &ndash;&gt;-->
-<!--            <div class="modal fade" id="hihi" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">-->
-<!--                <div class="modal-dialog modal-lg">-->
-<!--                    <div class="modal-content">-->
-<!--                        <div class="modal-header">-->
-<!--                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>-->
-<!--                        </div>-->
-<!--                        <div class="modal-body">-->
-<!--                            <div class="form-container">-->
-<!--                                <div id="detailModal"  class="form-modal" >-->
-<!--                                    <h2>Thông tin khuyến mãi</h2>-->
-<!--                                    <br>-->
-<!--                                    <div>-->
-<!--                                        <form th:action="@{/admin/promotion/update}" th:object="${updatePromotion}" method="POST" class="promotion-form">-->
-<!--                                            <div class="form-row">-->
-<!--                                                <input type="hidden" id="modalIdKM" th:field="*{id}" required>-->
-<!--                                                <div class="form-group">-->
-<!--                                                    <label for="modalMaKM">Mã khuyến mãi</label>-->
-<!--                                                    <input type="text" id="modalMaKM" th:field="*{maKM}" placeholder="Mã khuyến mãi" required>-->
-<!--                                                </div>-->
-<!--                                                <div class="form-group">-->
-<!--                                                    <label for="modalTenKM">Tên khuyến mãi</label>-->
-<!--                                                    <input type="text" id="modalTenKM" th:field="*{tenKM}" placeholder="Tên khuyến mãi" required>-->
-<!--                                                </div>-->
-<!--                                            </div>-->
+<!--                        <label for="loaiVoucher">Loại Voucher:</label>-->
+<!--                        <input type="number" id="loaiVoucher" th:field="*{loaiVoucher}">-->
+<!--                        <span th:if="${#fields.hasErrors('loaiVoucher')}"-->
+<!--                              th:errors="*{loaiVoucher}" style="color: red;"></span>-->
 
-<!--                                            <div class="form-row">-->
-<!--                                                <div class="form-group">-->
-<!--                                                    <label for="modalBD">Ngày bắt đầu</label>-->
-<!--                                                    <input type="date" id="modalBD" th:field="*{ngayBatDau}" class="date" required>-->
-<!--                                                </div>-->
-<!--                                                <div class="form-group">-->
-<!--                                                    <label for="modalKT">Ngày kết thúc</label>-->
-<!--                                                    <input type="date" id="modalKT" th:field="*{ngayKetThuc}" class="date" required>-->
-<!--                                                </div>-->
-<!--                                            </div>-->
-<!--                                            <div class="form-row">-->
-<!--                                                <div class="form-group">-->
-<!--                                                    <label for="modalGiaTri">Giá trị</label>-->
-<!--                                                    <input type="text" id="modalGiaTri" th:field="*{giaTri}" required>-->
-<!--                                                </div>-->
-<!--                                            </div>-->
-<!--                                            <div class="form-row">-->
-<!--                                                <div class="form-group">-->
-<!--                                                    <label for="modalTT">Trạng thái</label>-->
-<!--                                                    <select id="modalTT" th:field="*{trangThaiKM}">-->
-<!--                                                        <option value="1">Hoạt động</option>-->
-<!--                                                        <option value="0">Không hoạt động</option>-->
-<!--                                                    </select>-->
-<!--                                                </div>-->
-<!--                                            </div>-->
-<!--                                            <div class="form-action">-->
-<!--                                                <button class="btn btn-primary" type="submit">Lưu khuyến mãi</button>-->
-<!--                                            </div>-->
-<!--                                        </form>-->
-<!--                                    </div>-->
-<!--                                </div>-->
-<!--                            </div>-->
-<!--                        </div>-->
-<!--                    </div>-->
-<!--                </div>-->
-<!--            </div>-->
-            <!-- modal-->
+<!--                        <label for="loaiVoucher">Điều kiện:</label>-->
+<!--                        <input type="number" id="loaiVoucher" th:field="*{loaiVoucher}">-->
+<!--                        <span th:if="${#fields.hasErrors('loaiVoucher')}"-->
+<!--                              th:errors="*{loaiVoucher}" style="color: red;"></span>-->
+
+<!--                        <label for="loaiVoucher">Giá trị:</label>-->
+<!--                        <input type="number" id="loaiVoucher" th:field="*{loaiVoucher}">-->
+<!--                        <span th:if="${#fields.hasErrors('loaiVoucher')}"-->
+<!--                              th:errors="*{loaiVoucher}" style="color: red;"></span>-->
+<!--                        <label for="loaiVoucher">Giá trị tối đa:</label>-->
+<!--                        <input type="number" id="loaiVoucher" th:field="*{loaiVoucher}">-->
+<!--                        <span th:if="${#fields.hasErrors('loaiVoucher')}"-->
+<!--                              th:errors="*{loaiVoucher}" style="color: red;"></span>-->
+                        <button type="submit">Lưu</button>
+                        <button type="button" class="close-btn" onclick="closeForm()">Đóng</button>
+                    </form>
+                </div>
+            </div>
             <script>
                 const myModal = document.getElementById('myModal')
                 const myInput = document.getElementById('myInput')
@@ -404,6 +296,14 @@
 
                 window.addEventListener('load', updateStatusText);
 
+
+                function openForm() {
+                    document.getElementById('formOverlay').classList.add('active');
+                }
+
+                function closeForm() {
+                    document.getElementById('formOverlay').classList.remove('active');
+                }
             </script>
         </div>
         <!-- ! Footer -->
