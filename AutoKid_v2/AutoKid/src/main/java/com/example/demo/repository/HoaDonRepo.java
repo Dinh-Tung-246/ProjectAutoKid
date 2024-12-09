@@ -12,7 +12,7 @@ import java.util.Optional;
 
 @Repository
 public interface HoaDonRepo extends JpaRepository<HoaDon,Integer> {
-    List<HoaDon> findAllByOrderByIdDesc();
+    List<HoaDon> findByTrangThaiHD(String trangThaiHD);
 
     @Query(value = "SELECT TOP 1 * " +
             "FROM hoa_don h" +
@@ -26,6 +26,7 @@ public interface HoaDonRepo extends JpaRepository<HoaDon,Integer> {
 
     Optional findHoaDonByMaHD(String maHD);
     Optional<HoaDon> findByMaHD(String maHD);
+
 
 
 }

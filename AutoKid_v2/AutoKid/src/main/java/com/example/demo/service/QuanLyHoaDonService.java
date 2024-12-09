@@ -1,12 +1,7 @@
 package com.example.demo.service;
 
-import com.example.demo.model.HoaDon;
-import com.example.demo.model.HoaDonChiTiet;
-import com.example.demo.model.HoaDonHistory;
-import com.example.demo.repository.HoaDonChiTietRepo;
-import com.example.demo.repository.HoaDonHistoryRepo;
-import com.example.demo.repository.HoaDonRepo;
-import com.example.demo.repository.SanPhamChiTietRepo;
+import com.example.demo.model.*;
+import com.example.demo.repository.*;
 import com.example.demo.response.HoaDonResponse;
 import com.example.demo.response.HoadonhistoryRespone;
 import com.example.demo.response.hoadonchitietRespone;
@@ -31,9 +26,28 @@ public class QuanLyHoaDonService {
     @Autowired
     private SanPhamChiTietRepo sanPhamChiTietRepo;
 
+    @Autowired
+    KhachHangRepo khachHangRepo;
+
+    public List<KhachHang> searchBySDT(String sdt) {
+        return khachHangRepo.findBySDT(sdt);
+    }
+
 
     public List<HoaDon> getHoaDon(){
-        return hoaDonRepo.findAllByOrderByIdDesc();
+        return hoaDonRepo.findAll();
+    }
+
+    public void deleteInvoiceDetails(Integer id){
+        hoaDonChiTietRepo.deleteById(id);
+    }
+
+    public void deleteInvoice(Integer id){
+        hoaDonRepo.deleteById(id);
+    }
+    public List<HoaDon> getUnpaidHoaDons() {
+        // Truy vấn cơ sở dữ liệu để lấy các hóa đơn có trạng thái "Chưa thanh toán"
+        return hoaDonRepo.findByTrangThaiHD("Chưa thanh toán");
     }
 
     public HoaDon createInvoice(HoaDon hoaDon) {
@@ -51,9 +65,9 @@ public class QuanLyHoaDonService {
 
         return createdInvoice; // Trả về hóa đơn vừa tạo
     }
-    public List<HoaDonChiTiet> getInvoiceDetails(Integer hoaDonId) {
-        return hoaDonChiTietRepo.findByHoaDonId(hoaDonId); // Giả sử bạn có phương thức này trong repo
-    }
+
+
+
     public List<HoaDonResponse> fillAllHoaDon(){
         List<HoaDonResponse> list= new ArrayList<>();
         for(HoaDon h: hoaDonRepo.findAll()){

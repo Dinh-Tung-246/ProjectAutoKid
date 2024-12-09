@@ -5,318 +5,327 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Auto_Kid | Quản Lý Sản Phẩm</title>
-    <!-- Favicon -->
     <link rel="shortcut icon" href="./img/svg/logo.svg" type="image/x-icon">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
-    <!-- Custom styles -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
     <link rel="stylesheet" href="./css/style.min.css" type="text/css">
     <style>
         .table-wrapper {
-            max-height: 400px; /* Chiều cao cố định cho vùng cuộn */
-            overflow-y: auto;  /* Kích hoạt thanh cuộn dọc */
+            max-height: 400px;
+            overflow-y: auto;
+        }
+        .table th, .table td {
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .users-table.table-wrapper {
+            max-height: 450px; /* Đặt chiều cao tối đa cho khung chứa bảng */
+            overflow-y: auto;  /* Bật cuộn dọc */
+        }
+        .posts-table {
+            width: 100%; /* Đảm bảo bảng chiếm toàn bộ chiều rộng */
+            border-collapse: collapse;
+        }
+
+        /* Thêm viền để dễ nhìn */
+        .posts-table th, .posts-table td {
+            border: 1px solid #ddd;
+        }
+
+        .cart-empty p {
+            font-weight: bold;
+            color: #888;
+        }
+        .modal-dialog {
+            max-width: 80%; /* Đặt chiều rộng tối đa của modal là 80% của màn hình */
+            width: auto; /* Đảm bảo modal có chiều rộng tự động theo nội dung */
+        }
+
+        .modal-content {
+            overflow-x: auto; /* Cho phép cuộn ngang nếu cần */
         }
 
         .table {
-            width: 100%; /* Đảm bảo bảng chiếm hết chiều rộng */
-            table-layout: fixed; /* Giới hạn chiều rộng của các cột */
+            width: 100%; /* Đảm bảo bảng chiếm toàn bộ chiều rộng trong modal */
+            table-layout: auto; /* Cho phép bảng tự động thay đổi kích thước */
         }
 
         .table th, .table td {
-            white-space: nowrap; /* Ngăn ngừa văn bản bị cắt ngắn trong bảng */
-            overflow: hidden;
-            text-overflow: ellipsis; /* Hiển thị dấu ba chấm khi văn bản quá dài */
+            white-space: normal; /* Cho phép nội dung tự động xuống dòng */
+            word-wrap: break-word;
+            word-break: break-word;
+        }
+        tr.selected {
+            background-color: #f0f8ff; /* Màu nền sáng khi chọn */
+            cursor: pointer;
         }
 
-        .invoice-container {
-            background-color: #f0f0f0;
-            padding: 15px;
-            border-radius: 8px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-        }
-
-        .table {
-            width: 100%;
-            margin-bottom: 15px;
-        }
-        .table-active {
-            background-color: #e3f2fd !important;
-            font-weight: bold;
+        /* Hiệu ứng hover khi di chuột qua dòng sản phẩm */
+        tr:hover {
+            background-color: #e0e0e0; /* Màu nền khi hover */
         }
 
     </style>
 </head>
 <body>
-<!-- ! Body -->
-<a class="skip-link sr-only" href="#skip-target">Bỏ qua nội dung</a>
 <div class="page-flex">
     <div th:insert="fragments/sidebar_admin :: sidebar"></div>
     <div class="main-wrapper">
         <div th:insert="fragments/header_admin :: header"></div>
-        <main class="main users chart-page" id="skip-target">
-            <div class="" style="padding: 7px">
-                <h2 class="main-title">Bán Hàng</h2>
-                <div class="filter-section mb-4">
-                    <form class="row g-3" id="productFilterForm">
-                        <div class="col-1">
-                            <input type="text" class="form-control" placeholder="Tên sản phẩm" name="productName">
+        <main class="main users chart-page scrollable-content">
+            <div style="padding: 7px">
+                <h2 class="main-title" style="margin-bottom: -15px;">Bán Hàng</h2>
+                <hr>
+                <button class="btn btn-warning mb-3" onclick="createInvoice()">Tạo hóa đơn</button>
+                <div class="invoice-list d-flex flex-wrap mb-3">
+                    <div th:each="hoaDon : ${lhd}"
+                         class="tab-item btn btn-outline-primary"
+                         th:id="'invoice-' + ${hoaDon.id}"
+                         th:text="${hoaDon.maHD}">
+                        <button class="btn btn-danger btn-sm ms-2" onclick="deleteInvoice(${hoaDon.id})">
+                            <i class="bi bi-x-lg"></i>
+                        </button>
+                    </div>
+                </div>
+                <hr style="margin: 5px;">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h5>Đơn hàng: <span id="selected-invoice"></span></h5>
+                </div>
+                <div class="row">
+                    <div class="col-7">
+                        <h5>Danh sách sản phẩm</h5>
+                        <table id="sanPhamTable" class="posts-table">
+                            <thead>
+                            <tr class="users-table-info" style="color: black; font-size: 15px;">
+                                <th>STT</th>
+                                <th>Tên sản phẩm</th>
+                                <th>Số lượng</th>
+                                <th>Giá bán</th>
+                                <th>Thương hiệu</th>
+                                <th>Chất liệu</th>
+                                <th>Kích cỡ</th>
+                                <th>Màu sắc</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr th:each="sp,stat : ${spcts}" th:if="${sp.trangThaiSPCT} == 'Còn hàng'"
+                                th:attr="data-id=${sp.id},data-tenSP=${sp.sanPham.tenSP}, data-donGia=${sp.sanPham.donGia}, data-soLuong=${sp.soLuong}"
+                                onclick="selectProduct(this)">
+                                <td th:text="${stat.index + 1}"></td>
+                                <td th:text="${sp.sanPham.tenSP}"></td>
+                                <td th:text="${sp.soLuong}"></td>
+                                <td th:text="${sp.sanPham.donGia}"></td>
+                                <td th:text="${sp.sanPham.thuongHieu.tenTH}"></td>
+                                <td th:text="${sp.sanPham.chatLieu.tenCl}"></td>
+                                <td th:text="${sp.sanPham.kichCo.tenKC}"></td>
+                                <td th:text="${sp.mauSac.tenMS}"></td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="col-5">
+                        <div class="container">
+                            <h5>Giỏ hàng</h5>
+                            <div id="cartEmptyMessage" class="cart-empty" style="display: none;">
+                                <p>Chưa có sản phẩm trong giỏ hàng</p>
+                            </div>
+                            <div >
+                                <table class="posts-table" id="cartTable">
+                                    <thead>
+                                    <tr class="users-table-info" style="color: black; font-size: 15px;">
+                                        <th>STT</th>
+                                        <th>Tên Sản Phẩm</th>
+                                        <th>Số lượng</th>
+                                        <th>Giá</th>
+                                        <th >Tổng Tiền</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody id="productTable"></tbody>
+                                </table>
+                            </div>
+                            <!-- Tổng tiền hóa đơn -->
+                            <div class="d-flex justify-content-between">
+                                <h5>Tổng tiền:</h5>
+                                <h5 id="modalTotal">0 VND</h5>
+                            </div>
                         </div>
-                        <div class="col-1">
-                            <select class="form-control" id="loaiSanPham" name="loaiSanPham" required>
-                                <option value="" disabled selected>Loại sản phẩm</option>
-                                <option th:each="loaiSanPham : ${dsLoaiSanPham}" th:value="${loaiSanPham.idLoaiSP}" th:text="${loaiSanPham.tenLoai}"></option>
-                            </select>
-                        </div>
-                        <div class="col-1">
-                            <select class="form-control" id="thuongHieu" name="thuongHieu" required>
-                                <option value="" disabled selected>Thương hiệu</option>
-                                <option th:each="thuongHieu : ${dsThuongHieu}" th:value="${thuongHieu.id}" th:text="${thuongHieu.tenTH}"></option>
-                            </select>
-                        </div>
-                        <div class="col-1">
-                            <select class="form-control" id="kichCo" name="kichCo" required>
-                                <option value="" disabled selected>Kích cỡ</option>
-                                <option th:each="kichCo : ${dsKichCo}" th:value="${kichCo.id}" th:text="${kichCo.tenKC}"></option>
-                            </select>
-                        </div>
-                        <div class="col-1">
-                            <select class="form-control" id="chatLieu" name="chatLieu" required>
-                                <option value="" disabled selected>Chất liệu</option>
-                                <option th:each="chatLieu : ${dsChatLieu}" th:value="${chatLieu.id}" th:text="${chatLieu.tenCl}"></option>
-                            </select>
-                        </div>
-                        <div class="col-1">
-                            <select class="form-control" id="mauSac" name="mauSac" required>
-                                <option value="" disabled selected>Màu sắc</option>
-                                <option th:each="mauSac : ${dsMauSac}" th:value="${mauSac.id}" th:text="${mauSac.tenMS}"></option>
-                            </select>
-                        </div>
-                        <div class="col-md-2 d-flex align-items-end">
-                            <button type="submit" class="btn btn-primary w-100">Tìm kiếm</button>
-                        </div>
-                    </form>
+                    </div>
                 </div>
                 <hr>
-                <div class="row">
-                    <div class="col-8">
-                        <div>
-                            <button type="button" class="btn btn-primary" onclick="createInvoice()">Tạo Hóa Đơn</button>
-                            <table class="table table-bordered">
-                                <thead>
-                                <tr class="users-table-info ">
-                                    <th>Mã hóa đơn</th>
-                                    <th>Ngày tạo</th>
-                                    <th>Trạng thái</th>
-                                </tr>
-                                </thead>
-                                <tbody class="invoice-table">
-                                <tr th:each="hd : ${lhd}" th:data-id="${hd.id}">
-                                    <td th:text="${hd.maHD}"></td>
-                                    <td th:text="${hd.ngayTao}"></td>
-                                    <td th:text="${hd.trangThaiHD}"></td>
-                                </tr>
-                                </tbody>
-                            </table>
+                <div class="customer-info mt-4 container">
+                    <div class="row">
+                        <div class="col-7">
+                            <h5>Thông tin khách hàng</h5>
+                            <div class="row">
+                                <div class="col-7 position-relative">
+                                    <input type="text" class="form-control me-2" placeholder="Tìm kiếm khách hàng" id="searchInput">
+<!--                                    &lt;!&ndash; Danh sách khách hàng &ndash;&gt;-->
+<!--                                    <div id="customerList" class="dropdown-menu show w-100"></div>-->
+                                    <div>
+                                        <label for="customerName">Tên khách hàng:</label>
+                                        <span id="customerName">Khách hàng lẻ</span>
+                                    </div>
+                                    <div>
+                                        <label for="customerSDT">Số điện thoai:</label>
+                                        <span id="customerSDT"></span>
+                                    </div>
+                                </div>
+                                <div class="col-5">
+                                    <button class="btn btn-warning">Thêm mới KH</button>
+                                </div>
+                            </div>
+
                         </div>
-                        <div>
-                            <div class="table-wrapper">
-                                <table class="table table-bordered">
-                                    <thead>
-                                    <tr class="users-table-info ">
-                                        <th>Mã sản phẩm</th>
-                                        <th>Tên sản phẩm</th>
-                                        <th>Số lượng</th>
-                                        <th>Giá bán</th>
-                                        <th>Thương hiệu</th>
-                                        <th>Chất liệu</th>
-                                        <th>Kích cỡ</th>
-                                        <th>Màu sắc</th>
-                                    </tr>
-                                    </thead>
-                                    <tbody>
-                                    <tr th:each="sp : ${spcts}"
-                                        th:attr="data-id=${sp.id},data-tenSP=${sp.sanPham.tenSP}, data-donGia=${sp.sanPham.donGia}, data-soLuong=${sp.soLuong}"
-                                        onclick="selectProduct(this)">
-                                        <td th:text="${sp.maSPCT}"></td>
-                                        <td th:text="${sp.sanPham.tenSP}"></td>
-                                        <td th:text="${sp.soLuong}"></td>
-                                        <td th:text="${sp.sanPham.donGia}"></td>
-                                        <td th:text="${sp.sanPham.thuongHieu.tenTH}"></td>
-                                        <td th:text="${sp.sanPham.chatLieu.tenCl}"></td>
-                                        <td th:text="${sp.sanPham.kichCo.tenKC}"></td>
-                                        <td th:text="${sp.mauSac.tenMS}"></td>
-                                    </tr>
-                                    </tbody>
-                                </table>
+                        <div class="col-5">
+                            <div>
+                                <h5>Thông tin thanh toán</h5>
                             </div>
                         </div>
                     </div>
-                    <div class="col-4">
-                        <!-- Nội dung hóa đơn -->
-                        <div class="tab-content" id="invoiceTabContent">
-                            <div class="tab-pane fade show active" id="invoice1" role="tabpanel" aria-labelledby="tab1">
-                                <h3>Giỏ hàng</h3>
-                                <table class="table">
-                                    <thead>
-                                    <tr>
-                                        <th>Tên sản phẩm</th>
-                                        <th>Số lượng</th>
-                                        <th>Đơn giá</th>
-                                        <th>Thành tiền</th>
-                                    </tr>
-                                    </thead>
-                                    <tbody class="invoice-items">
-                                    <!-- Các sản phẩm sẽ được thêm vào đây -->
-                                    </tbody>
-                                    <tfoot>
-                                    <tr>
-                                        <td colspan="3" class="text-end">Tổng tiền:</td>
-                                        <td class="total">0 VND</td>
-                                    </tr>
-                                    </tfoot>
-                                </table>
-                                <button class="btn btn-success mt-3 w-100" data-bs-toggle="modal" data-bs-target="#paymentModal">Thanh toán</button>
-
-                            </div>
-                        </div>
-
-                    </div>
-                </div>
-            </div>
+                </div></div>
         </main>
         <div th:insert="fragments/footer_admin :: footer"></div>
     </div>
-
-    <!-- Modal Thanh Toán -->
-    <div class="modal fade" id="paymentModal" tabindex="-1" aria-labelledby="paymentModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="paymentModalLabel"></h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <h4 class="text-center">Thông Tin Hóa Đơn</h4>
-                    <!-- Thông tin cơ bản của hóa đơn -->
-                    <div class="mb-3">
-                        <strong>Mã hóa đơn:</strong> <span id="invoiceCode">#123456</span><br>
-                        <strong>Tên khách hàng:</strong> <span id="customerName">Nguyễn Văn A</span><br>
-                        <strong>Tên nhân viên:</strong> <span id="staffName">Trần Thị B</span><br>
-                        <strong>Ngày tạo:</strong> <span id="creationDate">21/11/2024</span>
-                    </div>
-
-                    <!-- Bảng danh sách sản phẩm -->
-                    <table class="table table-bordered">
-                        <thead>
-                        <tr>
-                            <th scope="col">STT</th>
-                            <th scope="col">Tên Sản Phẩm</th>
-                            <th scope="col">Giá Bán</th>
-                            <th scope="col">Tổng Tiền</th>
-                        </tr>
-                        </thead>
-                        <tbody id="productTable">
-                        <!-- Các dòng sản phẩm sẽ được thêm động ở đây -->
-                        </tbody>
-                    </table>
-
-                    <!-- Tổng tiền hóa đơn -->
-                    <div class="d-flex justify-content-between">
-                        <h5>Tổng tiền:</h5>
-                        <h5 id="modalTotal">0 VND</h5>
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-primary">Thanh Toán</button>
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
-<script>
-    let selectedInvoiceId = null; // Lưu mã hóa đơn đang chọn
-    let carts = {}; // Lưu trữ giỏ hàng theo từng mã hóa đơn
-    window.addEventListener('load', function () {
-        if (selectedInvoiceId) {
-            fetchInvoiceDetails(selectedInvoiceId);
-        }
-    });
+<script >
+    let selectedInvoiceId = null;
+    let carts = {};
+
+    // Hàm khi click chọn hóa đơn
+    function selectInvoice(invoiceId, maHD) {
+        // Cập nhật mã hóa đơn chọn và in đậm
+        document.querySelectorAll('.tab-item').forEach(item => {
+            item.classList.remove('table-active'); // Xóa lớp "table-active" khỏi tất cả các hóa đơn
+            item.classList.remove('btn-primary'); // Loại bỏ màu sắc trước đó
+            item.classList.add('btn-outline-primary'); // Đặt lại màu sắc ban đầu
+        });
+
+        // Thêm lớp "table-active" và "btn-primary" cho hóa đơn được chọn
+        const selectedInvoice = document.querySelector(`#invoice-${invoiceId}`);
+        selectedInvoice.classList.add('table-active'); // Thêm lớp "table-active" cho hóa đơn được chọn
+        selectedInvoice.classList.remove('btn-outline-primary'); // Loại bỏ màu nền outline
+        selectedInvoice.classList.add('btn-primary'); // Thêm màu nền khi chọn
+
+        document.getElementById('selected-invoice').textContent = maHD || 'Chưa có hóa đơn'; // Cập nhật mã hóa đơn hiển thị
+
+        selectedInvoiceId = invoiceId; // Lưu lại ID hóa đơn đang chọn
+
+        // Hiển thị giỏ hàng
+        fetchInvoiceDetails(invoiceId); // Lấy chi tiết hóa đơn
+    }
+
+    // Hàm lấy chi tiết hóa đơn từ server
     function fetchInvoiceDetails(invoiceId) {
         fetch(`/admin/ban-hang/invoice-details?hoaDonId=${invoiceId}`)
             .then(response => {
-                console.log("Phản hồi từ server:", response);  // Kiểm tra phản hồi
-                return response.text();  // Lấy dưới dạng văn bản thay vì JSON
+                const contentType = response.headers.get("Content-Type");
+                if (contentType && contentType.includes("application/json")) {
+                    return response.json();  // Nếu phản hồi là JSON, trả về dạng JSON
+                } else {
+                    return response.text();  // Nếu không phải JSON, trả về dưới dạng văn bản
+                }
             })
             .then(data => {
-                console.log("Nội dung phản hồi từ server:", data);  // Kiểm tra nội dung phản hồi
-                try {
-                    const parsedData = JSON.parse(data);  // Cố gắng chuyển đổi sang JSON
-                    console.log("Dữ liệu chi tiết hóa đơn:", parsedData);
-
-                    carts[invoiceId] = parsedData.map(product => ({
-                        tenSP: product.tenSP,
-                        donGia: product.donGia,
-                        soLuong: product.soLuong,
-                        id: product.sanPhamChiTiet?.id
-                    }));
-
-                    displayCart();
-                } catch (e) {
-                    console.error("Lỗi khi phân tích cú pháp JSON:", e);
-                    console.error("Nội dung không hợp lệ:", data);
+                if (typeof data === 'string') {
+                    // Nếu là văn bản (thông báo lỗi), hiển thị thông báo lỗi
+                    console.error("Lỗi khi lấy chi tiết hóa đơn:", data);
+                } else {
+                    // Nếu là JSON (dữ liệu hợp lệ), xử lý dữ liệu bình thường
+                    console.log(data); // In dữ liệu để kiểm tra
+                    carts[invoiceId] = data; // Lưu dữ liệu giỏ hàng vào carts
+                    displayInvoiceDetails(invoiceId); // Hiển thị chi tiết giỏ hàng
                 }
             })
             .catch(error => {
-                console.error("Lỗi khi lấy chi tiết hóa đơn:", error);
-            });
+                console.error("Lỗi khi lấy chi tiết hóa đơn:", error); // In lỗi chi tiết
+            }); // Xử lý lỗi
     }
-
-
-    // Khi click vào dòng hóa đơn
-    document.querySelectorAll('tbody.invoice-table tr').forEach(row => {
-        row.addEventListener('click', function () {
-            // Xóa highlight cho các dòng khác
-            document.querySelectorAll('tbody.invoice-table tr').forEach(r => r.classList.remove('table-active'));
-            // Highlight dòng được chọn
-            this.classList.add('table-active');
-            // Lưu mã hóa đơn
-            selectedInvoiceId = this.getAttribute('data-id');
-            // Lấy và hiển thị giỏ hàng của hóa đơn đã chọn
-            fetchInvoiceDetails(selectedInvoiceId);
-        });
-    });
-
-    // Hiển thị giỏ hàng của hóa đơn đang chọn
-    function displayCart() {
-        const cartBody = document.querySelector('.invoice-items');
-        const totalElement = document.querySelector('.total');
-        cartBody.innerHTML = ''; // Xóa giỏ hàng hiện tại
+    // Hiển thị chi tiết giỏ hàng và tổng tiền
+    function displayInvoiceDetails(invoiceId) {
+        const productTable = document.getElementById('productTable');
+        const totalElement = document.getElementById('modalTotal');
+        productTable.innerHTML = ''; // Xóa giỏ hàng hiện tại
         let total = 0;
 
-        // Kiểm tra xem có giỏ hàng cho hóa đơn đã chọn không
-        if (carts[selectedInvoiceId]) {
-            carts[selectedInvoiceId].forEach(product => {
-                const row = document.createElement('tr');
-                row.innerHTML = `
-            <td>${product.tenSP}</td>
-            <td>${product.soLuong}</td>
-            <td>${product.donGia.toLocaleString()} VND</td>
-            <td>${(product.soLuong * product.donGia).toLocaleString()} VND</td>
-        `;
-                cartBody.appendChild(row);
-                total += product.soLuong * product.donGia;
+        // Kiểm tra xem giỏ hàng có tồn tại và có sản phẩm không
+        if (carts[invoiceId] && Array.isArray(carts[invoiceId]) && carts[invoiceId].length > 0) {
+            // Nhóm các sản phẩm có cùng id lại với nhau
+            const groupedProducts = carts[invoiceId].reduce((acc, product) => {
+                // Nếu sản phẩm đã có trong nhóm, cộng dồn số lượng
+                if (acc[product.sanPhamChiTiet]) {
+                    acc[product.sanPhamChiTiet].soLuong += product.soLuong;
+                } else {
+                    // Nếu chưa có, thêm mới vào nhóm
+                    acc[product.sanPhamChiTiet] = { ...product };
+                }
+                return acc;
+            }, {});
+
+            // Hiển thị các sản phẩm đã nhóm và cộng dồn số lượng
+            Object.values(groupedProducts).forEach((product, index) => {
+                if (product.sanPhamChiTiet) {
+                    const donGia = product.donGia && !isNaN(product.donGia) ? product.donGia : 0;
+                    const soLuong = product.soLuong && !isNaN(product.soLuong) ? product.soLuong : 0;
+                    const mauSac = product.tenMS || 'Chưa có';
+                    const thuongHieu = product.tenTH || 'Chưa có';
+                    const chatLieu = product.tenCL || 'Chưa có';
+                    const kichCo = product.tenKC || 'Chưa có';
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                    <td>${index + 1}</td>
+                    <td>${product.tenSP}, ${mauSac}, ${thuongHieu}, ${chatLieu}, ${kichCo}</td>
+                    <td>${product.soLuong}</td>
+                    <td>${donGia.toLocaleString()} VND</td>
+                    <td>${(soLuong * donGia).toLocaleString()} VND</td>
+                    <td>
+                        <button class="btn btn-danger btn-sm" onclick="deleteProductFromInvoice(${product.sanPhamChiTiet})">Xóa tất cả</button>
+                    </td>
+                `;
+                    productTable.appendChild(row); // Thêm sản phẩm vào bảng
+                    total += soLuong * donGia; // Cộng tổng tiền
+                } else {
+                    console.error("Dữ liệu sản phẩm không đầy đủ:", product);
+                }
             });
+
+        } else {
+            productTable.innerHTML = ''; // Đảm bảo bảng sản phẩm không có gì
         }
 
         // Cập nhật tổng tiền
-        totalElement.innerText = `${total.toLocaleString()} VND`;
+        totalElement.textContent = `${total.toLocaleString()} VND`;
     }
 
-    // Khi chọn sản phẩm từ bảng sản phẩm
+    // Hàm xóa sản phẩm khỏi giỏ hàng
+    function deleteProductFromInvoice(sanPhamChiTietId) {
+        // Gửi yêu cầu xóa sản phẩm khỏi chi tiết hóa đơn trong DB
+        fetch(`/admin/ban-hang/delete-product-from-invoice?sanPhamChiTietId=${sanPhamChiTietId}`, {
+            method: 'DELETE',
+        })
+            .then(response => {
+                if (response.ok) {
+                    return response.text(); // Nhận dữ liệu phản hồi từ server
+                } else {
+                    throw new Error('Không thể xóa sản phẩm khỏi hóa đơn!');
+                }
+            })
+            .then(data => {
+                // Cập nhật lại giỏ hàng
+                displayInvoiceDetails(selectedInvoiceId);
+                alert('Sản phẩm đã được xóa khỏi hóa đơn!');
+            })
+            .catch(error => {
+                console.error('Lỗi khi xóa sản phẩm:', error);
+                alert('Có lỗi xảy ra khi xóa sản phẩm!');
+            });
+    }
+
+
+
+
     function selectProduct(row) {
         if (!selectedInvoiceId) {
             alert('Vui lòng chọn hóa đơn trước!');
@@ -325,34 +334,67 @@
 
         const tenSP = row.getAttribute('data-tenSP');
         const donGia = parseFloat(row.getAttribute('data-donGia'));
+        const productId = row.getAttribute('data-id');  // Lấy ID sản phẩm chi tiết
+        let availableQuantity = parseInt(row.getAttribute('data-soLuong'));  // Lấy số lượng có sẵn
 
         // Hiển thị prompt để nhập số lượng
-        const quantity = prompt(`Nhập số lượng cho sản phẩm "${tenSP}":`);
-        if (quantity && !isNaN(quantity) && parseInt(quantity) > 0) {
-            const product = {
-                tenSP: tenSP,
-                donGia: donGia,
-                soLuong: parseInt(quantity),
-                id: row.getAttribute('data-id')  // Lấy ID sản phẩm chi tiết
-            };
+        const quantity = prompt(`Nhập số lượng cho sản phẩm "${tenSP}": (Số lượng có sẵn: ${availableQuantity})`);
+        if (quantity && !isNaN(quantity) && parseInt(quantity) > 0 && parseInt(quantity) <= availableQuantity) {
+            const newQuantity = parseInt(quantity);
 
-            // Lưu sản phẩm vào giỏ hàng của hóa đơn
-            if (!carts[selectedInvoiceId]) {
-                carts[selectedInvoiceId] = [];
+            // Lưu hoặc cập nhật sản phẩm vào giỏ hàng của hóa đơn
+            const existingProduct = carts[selectedInvoiceId]?.find(product => product.id === productId);
+            if (existingProduct) {
+                // Cập nhật số lượng sản phẩm nếu đã tồn tại trong giỏ hàng
+                existingProduct.soLuong += newQuantity;  // Cộng thêm số lượng vào giỏ
+            } else {
+                // Nếu sản phẩm chưa có trong giỏ, thêm vào giỏ hàng
+                const product = {
+                    tenSP: tenSP,
+                    donGia: donGia,
+                    soLuong: newQuantity,
+                    id: productId
+                };
+                if (!carts[selectedInvoiceId]) {
+                    carts[selectedInvoiceId] = [];
+                }
+                carts[selectedInvoiceId].push(product);
             }
-            carts[selectedInvoiceId].push(product);
 
-            // Hiển thị giỏ hàng sau khi thêm sản phẩm
-            displayCart();
+            // Cập nhật lại số lượng sản phẩm trong bảng (trừ đi số lượng đã chọn)
+            availableQuantity -= newQuantity; // Trừ số lượng đã chọn
+            row.setAttribute('data-soLuong', availableQuantity);  // Cập nhật lại thuộc tính data-soLuong
+
+            // Cập nhật lại số lượng hiển thị trong bảng
+            updateProductQuantityInTable(productId, availableQuantity);
 
             // Tạo chi tiết hóa đơn ngay lập tức
-            addProductToInvoice(product);
+            addProductToInvoice({
+                tenSP: tenSP,
+                donGia: donGia,
+                soLuong: newQuantity,
+                id: productId
+            });
         } else {
-            alert('Vui lòng nhập số lượng hợp lệ!');
+            alert('Vui lòng nhập số lượng hợp lệ hoặc số lượng quá nhiều!');
         }
     }
 
-    // Tạo chi tiết hóa đơn và thêm sản phẩm vào hóa đơn
+    function updateProductQuantityInTable(productId, newQuantity) {
+        const rows = document.querySelectorAll('#sanPhamTable tbody tr');
+
+        // Tìm dòng sản phẩm tương ứng và cập nhật số lượng
+        rows.forEach(row => {
+            const id = row.getAttribute('data-id');
+            if (id === productId) {
+                const quantityCell = row.querySelector('td:nth-child(3)'); // Giả sử cột số lượng là cột thứ 3
+                if (quantityCell) {
+                    quantityCell.textContent = newQuantity; // Cập nhật số lượng
+                }
+            }
+        });
+    }
+
     function addProductToInvoice(product) {
         const hoaDonId = selectedInvoiceId;
         const sanPhamChiTietId = product.id;
@@ -368,36 +410,144 @@
                 }
                 throw new Error("Không thể thêm sản phẩm vào hóa đơn!");
             })
-            .then(data => alert(data))
+            .then(data => {
+                alert('Sản phẩm đã được thêm vào hóa đơn!');
+                fetchInvoiceDetails(selectedInvoiceId); // Cập nhật lại chi tiết hóa đơn sau khi thêm sản phẩm
+            })
             .catch(error => console.error("Lỗi:", error));
     }
+
+
+
+
     // Tạo hóa đơn mới
     function createInvoice() {
         const invoiceData = {
-            maHD: "HD" + new Date().getTime(),
-            trangThaiHD: "Chưa thanh toán",
+            maHD: "HD" + new Date().getTime(), // Tạo mã hóa đơn mới từ thời gian
+            trangThaiHD: "Chưa thanh toán" // Đặt trạng thái hóa đơn mặc định
         };
 
         fetch('/admin/ban-hang/create', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(invoiceData),
+            body: JSON.stringify(invoiceData), // Gửi dữ liệu hóa đơn đến server
         })
             .then(response => {
-                if (!response.ok) {
-                    throw new Error('Không thể tạo hóa đơn!');
-                }
+                if (!response.ok) throw new Error('Không thể tạo hóa đơn!'); // Kiểm tra phản hồi từ server
                 return response.json();
             })
             .then(data => {
-                alert('Hóa đơn đã được tạo thành công!');
-                location.reload(); // Reload lại trang để cập nhật danh sách hóa đơn
+                alert('Hóa đơn đã được tạo thành công!'); // Thông báo thành công
+                location.reload(); // Reload lại trang
+            })
+            .catch(error => alert('Có lỗi xảy ra khi tạo hóa đơn!')); // Xử lý lỗi
+    }
+    // Hàm xóa chi tiết hóa đơn
+    function deleteInvoiceDetails(invoiceId) {
+        fetch(`/admin/ban-hang/delete-details?hoaDonId=${invoiceId}`, {
+            method: 'DELETE',
+        })
+            .then(response => {
+                if (response.ok) {
+                    return response.json();
+                } else {
+                    throw new Error('Không thể xóa chi tiết hóa đơn!');
+                }
+            })
+            .then(data => {
+                // Sau khi xóa chi tiết hóa đơn thành công, xóa hóa đơn
+                deleteInvoiceRecord(invoiceId);
             })
             .catch(error => {
-                console.error('Lỗi:', error);
-                alert('Có lỗi xảy ra khi tạo hóa đơn!');
+                alert('Có lỗi xảy ra khi xóa chi tiết hóa đơn!');
             });
     }
+
+    // Hàm xóa hóa đơn
+    function deleteInvoiceRecord(invoiceId) {
+        fetch(`/admin/ban-hang/delete?hoaDonId=${invoiceId}`, {
+            method: 'DELETE',
+        })
+            .then(response => {
+                if (response.ok) {
+                    alert('Hóa đơn đã được xóa thành công!');
+                    location.reload(); // Reload lại trang để cập nhật danh sách hóa đơn
+                } else {
+                    throw new Error('Không thể xóa hóa đơn!');
+                }
+            })
+            .catch(error => {
+                alert('Có lỗi xảy ra khi xóa hóa đơn!');
+            });
+    }
+
+    // Hàm xóa hóa đơn khi nhấn nút xóa
+    function deleteInvoice(invoiceId) {
+        // Xóa chi tiết hóa đơn trước
+        deleteInvoiceDetails(invoiceId);
+    }
+
+    // Hàm cập nhật số lượng sản phẩm khi thay đổi
+    document.addEventListener('input', function(event) {
+        if (event.target && event.target.classList.contains('quantity-input')) {
+            const newQuantity = parseInt(event.target.value);
+            const productId = event.target.getAttribute('data-id');
+
+            // Cập nhật số lượng trong giỏ hàng
+            const product = carts[selectedInvoiceId].find(p => p.id === productId);
+            if (product) {
+                product.soLuong = newQuantity;
+            }
+
+            // Cập nhật lại tổng tiền
+            displayInvoiceDetails(selectedInvoiceId);
+        }
+    });
+
+    // Thêm sự kiện lắng nghe cho các hóa đơn
+    document.addEventListener('DOMContentLoaded', function () {
+        const invoiceElements = document.querySelectorAll('.tab-item');
+
+        // Lắng nghe sự kiện click cho các phần tử có id bắt đầu bằng "invoice-"
+        invoiceElements.forEach(element => {
+            element.addEventListener('click', function() {
+                const invoiceId = this.id.split('-')[1]; // Lấy ID hóa đơn từ id của phần tử
+                const maHD = this.textContent.trim(); // Lấy mã hóa đơn từ nội dung phần tử
+
+                selectInvoice(invoiceId, maHD); // Chọn hóa đơn và hiển thị giỏ hàng
+            });
+        });
+    });
+
+    const searchInput = document.getElementById('searchInput');
+    const customerList = document.getElementById('customerList');
+
+    searchInput.addEventListener('input', function () {
+        const query = searchInput.value.trim();
+        if (query.length === 0) {
+            customerList.innerHTML = '';
+            return;
+        }
+
+        fetch(`/admin/ban-hang/khachhang/search?sdt=${query}`)
+            .then(response => response.json())
+            .then(data => {
+                customerList.innerHTML = ''; // Xóa danh sách cũ
+                data.forEach(customer => {
+                    const customerItem = document.createElement('div');
+                    customerItem.className = 'dropdown-item';
+                    customerItem.innerHTML = `
+                        <strong>${customer.tenKH}</strong> <br>
+                        <small>${customer.sdt}</small>
+                    `;
+                    customerItem.addEventListener('click', () => {
+                        document.getElementById('customerName').innerText = customer.tenKH;
+                        customerList.innerHTML = '';
+                    });
+                    customerList.appendChild(customerItem);
+                });
+            });
+    });
 
 
 </script>
