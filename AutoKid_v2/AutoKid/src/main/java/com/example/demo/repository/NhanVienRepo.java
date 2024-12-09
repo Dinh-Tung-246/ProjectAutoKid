@@ -14,4 +14,6 @@ public interface NhanVienRepo extends JpaRepository<NhanVien,Integer> {
     List<NhanVien> findByTenNVContainingOrMaNVContaining(String tenNV, String maNV);
 
     NhanVien findByMaNV(String maNv);
+
+    boolean existsByMaNV(String maNV);
 }

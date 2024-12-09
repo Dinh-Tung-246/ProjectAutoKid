@@ -1,11 +1,10 @@
 package com.example.demo.service;
 
-import com.example.demo.model.HoaDon;
-import com.example.demo.model.HoaDonChiTiet;
-import com.example.demo.model.HoaDonHistory;
+import com.example.demo.model.*;
 import com.example.demo.repository.HoaDonChiTietRepo;
 import com.example.demo.repository.HoaDonHistoryRepo;
 import com.example.demo.repository.HoaDonRepo;
+import com.example.demo.repository.SanPhamChiTietRepo;
 import com.example.demo.response.HoaDonResponse;
 import com.example.demo.response.HoadonhistoryRespone;
 import com.example.demo.response.hoadonchitietRespone;
@@ -26,6 +25,9 @@ public class QuanLyHoaDonService {
 
     @Autowired
     private HoaDonChiTietRepo hoaDonChiTietRepo;
+
+    @Autowired
+    private SanPhamChiTietRepo sanPhamChiTietRepo;
 
     public List<HoaDonResponse> fillAllHoaDon(){
         List<HoaDonResponse> list= new ArrayList<>();
@@ -78,15 +80,49 @@ public class QuanLyHoaDonService {
 
     public boolean updateHoaDonStatus(Integer maHD, String newStatus) {
         Optional<HoaDon> hoaDonOptional = hoaDonRepo.findById(maHD);
+
         if (hoaDonOptional.isPresent()) {
             HoaDon hoaDon = hoaDonOptional.get();
-            if (!hoaDon.getTrangThaiHD().equals(newStatus)) {
+            String currentStatus = hoaDon.getTrangThaiHD();
+
+            if (!isValidStatusTransition(currentStatus, newStatus)) {
+                return false; // Không cho phép chuyển trạng thái
+            }
+
+            if (newStatus.equals("Huỷ đơn hàng")) {
+                for (HoaDonChiTiet hoaDonChiTiet : hoaDon.getHoaDonChiTiets()) {
+                    SanPhamChiTiet sanPhamChiTiet = hoaDonChiTiet.getSanPhamChiTiet();
+                    sanPhamChiTiet.setSoLuong(sanPhamChiTiet.getSoLuong() + hoaDonChiTiet.getSoLuong());
+                    sanPhamChiTietRepo.save(sanPhamChiTiet);
+                }
+            }
+
+            if (!currentStatus.equals(newStatus)) {
                 hoaDon.setTrangThaiHD(newStatus);
                 hoaDonRepo.save(hoaDon);
                 return true;
             }
         }
         return false;
+    }
+    private boolean isValidStatusTransition(String currentStatus, String newStatus) {
+        return switch (currentStatus) {
+            case "Đã thanh toán, chờ giao hàng" -> // Trạng thái 1
+                    newStatus.equals("Hoàn thành") ||
+                            newStatus.equals("Đã thanh toán, đang giao hàng") ||
+                            newStatus.equals("Huỷ đơn hàng");
+            case "Chưa thanh toán, chờ giao hàng" -> // Trạng thái 2
+                    newStatus.equals("Hoàn thành") ||
+                            newStatus.equals("Chưa thanh toán, đang giao hàng") ||
+                            newStatus.equals("Huỷ đơn hàng"); // Trạng thái 3
+            case "Hoàn thành", "Huỷ đơn hàng" -> // Trạng thái 6
+                    false; // Không cho phép cập nhật
+            // Trạng thái 4
+            case "Đã thanh toán, đang giao hàng", "Chưa thanh toán, đang giao hàng" -> // Trạng thái 5
+                    newStatus.equals("Hoàn thành") ||
+                            newStatus.equals("Huỷ đơn hàng");
+            default -> false; // Trạng thái không hợp lệ
+        };
     }
 
     public List<HoaDonResponse> findAllByPending(){

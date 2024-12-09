@@ -57,4 +57,7 @@ public class HoaDon {
 
     @OneToMany(mappedBy = "hoaDon")
     private List<HoaDonChiTiet> hoaDonChiTiets;
+
+    @Column(name = "is_online")
+    private boolean isOnline;
 }
