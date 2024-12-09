@@ -26,8 +26,8 @@ public interface KhachHangRepo extends JpaRepository<KhachHang,Integer> {
                        @Param("email") String email,
                        @Param("matKhau") String matKhau);
 
-    @Query("SELECT k  FROM KhachHang k " +
-            "WHERE k.tenKH LIKE %:sdt% ")
+    @Query(value = "SELECT k  FROM KhachHang k " +
+            "WHERE k.sdt LIKE %:sdt% ")
     List<KhachHang> findBySDT(@Param("sdt") String sdt);
 
     KhachHang findBySdt(String sdt);

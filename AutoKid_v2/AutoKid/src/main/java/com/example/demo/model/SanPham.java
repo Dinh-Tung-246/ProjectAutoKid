@@ -1,5 +1,6 @@
 package com.example.demo.model;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.Data;
 
@@ -60,6 +61,8 @@ public class SanPham {
     @JoinColumn(name = "id_km")
     private KhuyenMai khuyenMai;
 
+
+    @JsonManagedReference
     @OneToMany(mappedBy = "sanPham")
     private List<SanPhamChiTiet> sanPhamChiTiets;
 

@@ -33,22 +33,25 @@ public class QuanLyHoaDonService {
         return khachHangRepo.findBySDT(sdt);
     }
 
-
-    public List<HoaDon> getHoaDon(){
-        return hoaDonRepo.findAll();
+    public boolean updateProductQuantity(String maSPCT, Integer soLuong) {
+        // Tìm sản phẩm chi tiết theo maSPCT
+        SanPhamChiTiet sanPhamChiTiet = sanPhamChiTietRepo.findByMaSPCT(maSPCT);
+        if (sanPhamChiTiet != null) {
+            if (soLuong > sanPhamChiTiet.getSoLuong()) {
+                return false;
+            }
+            if (sanPhamChiTiet.getSoLuong() - soLuong < 0) {
+                return false;
+            }
+            sanPhamChiTiet.setSoLuong(sanPhamChiTiet.getSoLuong() - soLuong);
+            sanPhamChiTietRepo.save(sanPhamChiTiet);
+            return true;
+        } else {
+            return false;
+        }
     }
 
-    public void deleteInvoiceDetails(Integer id){
-        hoaDonChiTietRepo.deleteById(id);
-    }
 
-    public void deleteInvoice(Integer id){
-        hoaDonRepo.deleteById(id);
-    }
-    public List<HoaDon> getUnpaidHoaDons() {
-        // Truy vấn cơ sở dữ liệu để lấy các hóa đơn có trạng thái "Chưa thanh toán"
-        return hoaDonRepo.findByTrangThaiHD("Chưa thanh toán");
-    }
 
     public HoaDon createInvoice(HoaDon hoaDon) {
         HoaDon createdInvoice = hoaDonRepo.save(hoaDon); // Lưu hóa đơn
