@@ -1,6 +1,7 @@
 package com.example.demo.controller;
 
 import com.example.demo.repository.LoaiSanPhamRepo;
+import com.example.demo.service.QuanLyGioHangService;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -19,19 +20,14 @@ public class AutokidShoppingCartController {
     @Autowired
     LoaiSanPhamRepo loaiSanPhamRepo;
 
-    @GetMapping("")
-    public String showShoppingCart(HttpSession session, Model model){
-        session.setAttribute("isLoggedIn", false);
-        Boolean isLoggedIn = (Boolean) session.getAttribute("isLoggedIn");
+    @Autowired
+    QuanLyGioHangService qlghService;
 
-        if(isLoggedIn){
-            // Nếu đã đăng nhập, lấy giỏ hàng từ server-side (ví dụ: từ DB)
-            List<Map<String, Object>> cartItems = List.of(
-                    Map.of("idSPCT", "100", "tenSPCT", "Xe điện", "donGia", 820000, "soLuong", 2)
-            );
-            model.addAttribute("cartItems", cartItems);
+    @GetMapping("")
+    public String showShoppingCart(@RequestParam(required = false) Integer idKH, Model model){
+        if (idKH != null) {
+            model.addAttribute("cartItems", qlghService.getGioHang(idKH));
         }
-        model.addAttribute("isLoggedIn", isLoggedIn);
         model.addAttribute("loaisp", loaiSanPhamRepo.findAll());
         model.addAttribute("currentPage","shoping-cart");
         return "/autokid/shoping-cart";
