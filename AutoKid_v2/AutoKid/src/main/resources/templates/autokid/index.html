@@ -111,7 +111,7 @@
                       th:data-mausac="${sp.mauSacSPCT}"
                       th:data-soluong="${sp.soLuongSPCT}"
                       th:data-anh="${sp.anhSPMau}"
-                      onclick="addToCart(this)"
+                      onclick="addToCart(this); event.stopPropagation();"
                     >
                       <i class="fa fa-shopping-cart"></i>
                     </a>

@@ -9,6 +9,7 @@ import java.text.DecimalFormatSymbols;
 
 @Data
 public class GioHangChiTietResponse {
+    private Integer idSP;
     private Integer idGioHang;
     private Integer idGHCT;
     private Integer soLuong;
@@ -16,6 +17,7 @@ public class GioHangChiTietResponse {
     private Integer idSPCT;
     private String tenSPCT;
     private String anhSPCT;
+    private String mauSac;
 
     private static String formatPrice(Double price){
         DecimalFormatSymbols symbols = new DecimalFormatSymbols();
@@ -27,12 +29,12 @@ public class GioHangChiTietResponse {
     }
 
     public GioHangChiTietResponse(GioHangChiTiet ghct) {
+        this.idSP = ghct.getSanPhamChiTiet().getSanPham().getId();
         this.idGioHang = ghct.getGioHang().getIdGioHang();
         this.soLuong = ghct.getSoLuong();
         this.idGHCT = ghct.getIdGioHangChiTiet();
         this.idSPCT = ghct.getSanPhamChiTiet().getId();
-        this.tenSPCT = ghct.getSanPhamChiTiet().getSanPham().getTenSP()
-                + "(" + ghct.getSanPhamChiTiet().getMauSac().getTenMS();
+        this.tenSPCT = ghct.getSanPhamChiTiet().getSanPham().getTenSP();
         if (ghct.getSanPhamChiTiet().getSanPham().getKhuyenMai() != null) {
             KhuyenMai km = ghct.getSanPhamChiTiet().getSanPham().getKhuyenMai();
             this.donGia = formatPrice(ghct.getSanPhamChiTiet().getSanPham().getDonGia() * km.getGiaTri() / 100);
@@ -40,5 +42,6 @@ public class GioHangChiTietResponse {
             this.donGia = formatPrice(ghct.getSanPhamChiTiet().getSanPham().getDonGia());
         }
         this.anhSPCT = ghct.getSanPhamChiTiet().getAnh();
+        this.mauSac = ghct.getSanPhamChiTiet().getMauSac().getTenMS();
     }
 }
