@@ -34,7 +34,6 @@ public class QuanLyHoaDonService {
     }
 
     public boolean updateProductQuantity(String maSPCT, Integer soLuong) {
-        // Tìm sản phẩm chi tiết theo maSPCT
         SanPhamChiTiet sanPhamChiTiet = sanPhamChiTietRepo.findByMaSPCT(maSPCT);
         if (sanPhamChiTiet != null) {
             if (soLuong > sanPhamChiTiet.getSoLuong()) {
@@ -51,23 +50,12 @@ public class QuanLyHoaDonService {
         }
     }
 
-
-
-    public HoaDon createInvoice(HoaDon hoaDon) {
-        HoaDon createdInvoice = hoaDonRepo.save(hoaDon); // Lưu hóa đơn
-
-        // Tạo hóa đơn chi tiết trống
-        HoaDonChiTiet hoaDonChiTiet = new HoaDonChiTiet();
-        hoaDonChiTiet.setHoaDon(createdInvoice); // Liên kết hóa đơn chi tiết với hóa đơn mới tạo
-        hoaDonChiTiet.setSanPhamChiTiet(null); // Không có sản phẩm chi tiết
-        hoaDonChiTiet.setSoLuong(0); // Không có số lượng
-        hoaDonChiTiet.setDonGia(0.0); // Không có đơn giá
-        hoaDonChiTiet.setDonGiaSauGiam(0.0); // Không có giá sau giảm
-
-        hoaDonChiTietRepo.save(hoaDonChiTiet); // Lưu hóa đơn chi tiết vào cơ sở dữ liệu
-
-        return createdInvoice; // Trả về hóa đơn vừa tạo
+    public Optional<SanPhamChiTiet> findOptionalByMaSPCT(String maSPCT) {
+        SanPhamChiTiet sanPhamChiTiet = sanPhamChiTietRepo.findByMaSPCT(maSPCT);
+        return Optional.ofNullable(sanPhamChiTiet); // Bọc kết quả trong Optional
     }
+
+
 
 
 

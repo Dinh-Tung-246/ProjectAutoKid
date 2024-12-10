@@ -252,13 +252,13 @@ document.addEventListener("DOMContentLoaded", function () {
         console.log("Chưa có đơn hàng được chọn.");
     }
 
-    // Sự kiện tìm kiếm sản phẩm
     searchInput.addEventListener("input", function () {
         const tenSP = searchInput.value.trim(); // Lấy tên sản phẩm người dùng nhập
+        const maSPCT = searchInput.value.trim(); // Bạn có thể lấy mã SPCT từ một input khác nếu cần
 
-        if (tenSP.length > 0) {
-            // Gọi API để tìm sản phẩm
-            fetch(`/admin/ban-hang/san-pham-chi-tiet/search?tenSP=${tenSP}`)
+        if (tenSP.length > 0 || maSPCT.length > 0) {
+            // Gọi API để tìm sản phẩm theo tên sản phẩm hoặc mã sản phẩm chi tiết
+            fetch(`/admin/ban-hang/san-pham-chi-tiet/search?tenSP=${tenSP}&maSPCT=${maSPCT}`)
                 .then(response => response.json())
                 .then(data => {
                     productList.innerHTML = ""; // Xóa danh sách cũ
@@ -284,6 +284,7 @@ document.addEventListener("DOMContentLoaded", function () {
                                 document.getElementById("productQuantity").value = 1; // Đặt số lượng mặc định là 1
                                 quantityModal.show(); // Hiển thị modal nhập số lượng
                                 productResults.style.display = "none"; // Ẩn kết quả tìm kiếm khi chọn sản phẩm
+                                searchInput.value = "";
                             });
 
                             // Thêm dòng vào bảng
@@ -523,7 +524,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     document.getElementById("addToCartButton").addEventListener("click", async function () {
         const quantity = parseInt(document.getElementById("productQuantity").value);
-        const maxQuantity = selectedProduct.soLuong; // Số lượng có sẵn trong cơ sở dữ liệu
+        const productId = selectedProduct.maSPCT; // Mã sản phẩm chi tiết
 
         console.log("Số lượng sản phẩm:", quantity);
         console.log("Sản phẩm đã chọn:", selectedProduct);
@@ -534,44 +535,48 @@ document.addEventListener("DOMContentLoaded", function () {
             return;
         }
 
-        // Kiểm tra nếu số lượng vượt quá số lượng có sẵn trong cơ sở dữ liệu
-        if (quantity <= 0 || quantity > maxQuantity) {
-            // Hiển thị thông báo lỗi nếu số lượng không hợp lệ
-            const modalElement = document.querySelector('#quantityModal');
-            const modalInstance = bootstrap.Modal.getInstance(modalElement);
-            modalInstance.hide();
-            showToast('quantityErrorToast');
-            return;
-        }
+        // Kiểm tra số lượng từ cơ sở dữ liệu
+        try {
+            const response = await fetch(`/admin/ban-hang/san-pham-chi-tiet/${productId}/get-quantity`, {
+                method: 'GET',
+                headers: { 'Content-Type': 'application/json' }
+            });
 
-        // Nếu số lượng hợp lệ, tiếp tục cập nhật giỏ hàng
-        if (quantity > 0 && selectedProduct) {
-            // Cập nhật giỏ hàng trong sessionStorage
-            addProductToCart(selectedProduct, quantity);
+            const result = await response.json();
+            const availableQuantity = result.soLuong; // Số lượng thực tế trong cơ sở dữ liệu
 
+            if (quantity <= 0 || quantity > availableQuantity) {
+                // Hiển thị thông báo lỗi nếu số lượng không hợp lệ
+                alert(`Số lượng sản phẩm không hợp lệ! Hiện tại chỉ còn ${availableQuantity} sản phẩm.`);
+                return;
+            }
+
+            // Gửi yêu cầu cập nhật số lượng sản phẩm lên server
             try {
-                // Gửi yêu cầu cập nhật số lượng sản phẩm lên server
-                const response = await fetch(`/admin/ban-hang/san-pham-chi-tiet/${selectedProduct.maSPCT}/update-quantity`, {
+                const updateResponse = await fetch(`/admin/ban-hang/san-pham-chi-tiet/${productId}/update-quantity`, {
                     method: 'PUT',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ soLuong: quantity })
                 });
 
-                const result = await response.json();
-                if (result.success) {
+                const updateResult = await updateResponse.json();
+                if (updateResult.success) {
+                    // Chỉ thêm sản phẩm vào giỏ hàng khi cập nhật thành công
+                    addProductToCart(selectedProduct, quantity);
                     alert("Sản phẩm đã được cập nhật vào giỏ hàng và cơ sở dữ liệu!");
                 } else {
                     alert("Có lỗi xảy ra khi cập nhật sản phẩm!");
                 }
             } catch (error) {
                 console.error("Error updating product quantity:", error);
+                alert("Có lỗi xảy ra khi cập nhật sản phẩm!");
             }
-
-            quantityModal.hide(); // Đóng modal
-        } else {
-            alert("Số lượng không hợp lệ!");
+        } catch (error) {
+            console.error("Error fetching product quantity:", error);
+            alert("Có lỗi xảy ra khi kiểm tra số lượng sản phẩm!");
         }
     });
+
 
 // Hàm hiển thị Toast thông báo
     function showToast(toastId) {

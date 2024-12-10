@@ -1,6 +1,4 @@
 package com.example.demo.repository;
-
-import com.example.demo.model.KhachHang;
 import com.example.demo.model.SanPhamChiTiet;
 import com.example.demo.response.SanPhamChiTietDTO;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -25,7 +23,7 @@ public interface SanPhamChiTietRepo extends JpaRepository<SanPhamChiTiet,Integer
             "LEFT JOIN sp.thuongHieu th " +
             "LEFT JOIN spct.mauSac ms " +
             "LEFT JOIN sp.kichCo kc " +
-            "WHERE sp.tenSP LIKE %:tenSP%")
-    List<SanPhamChiTietDTO> findSanPhamChiTietBySanPham_TenSP(@Param("tenSP") String tenSP);
+            "WHERE sp.tenSP LIKE %:tenSP% OR spct.maSPCT LIKE %:maSPCT%")
+    List<SanPhamChiTietDTO> findSanPhamChiTietBySanPham_TenSPOrMaSPCT(@Param("tenSP") String tenSP, @Param("maSPCT") String maSPCT);
 
 }
