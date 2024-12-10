@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.Data;
 
 import java.util.Date;
+import java.util.List;
 
 @Entity
 @Data
@@ -21,7 +22,10 @@ public class GioHang {
 //    @Column(name = "ngay_tao")
 //    private Date ngayTao;
 
-    @ManyToOne
+    @OneToOne
     @JoinColumn(name = "id_kh")
     private KhachHang khachHang;
+
+    @OneToMany(mappedBy = "gioHang")
+    private List<GioHangChiTiet> gioHangChiTiets;
 }

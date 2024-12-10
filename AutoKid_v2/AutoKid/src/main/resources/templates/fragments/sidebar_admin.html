@@ -24,7 +24,33 @@
             <div class="sidebar-body">
                 <ul class="sidebar-body-menu">
                     <li ><a th:classappend="${namePage == 'ban-hang'} ? 'active'" href="/admin/ban-hang/home"><span class="icon home" aria-hidden="true"></span>Bán Hàng</a></li>
-                    <li><a th:classappend="${namePage == 'hoadon'} ? 'active'" href="/admin/hoadon"><span class="icon home" aria-hidden="true"></span>Hóa Đơn</a></li>
+                    <li>
+                      <a class="show-cat-btn" href="/admin/hoadon">
+                        <span class="icon home" aria-hidden="true"></span>Hóa đơn
+                        <span class="category__btn transparent-btn" title="Open list">
+                            <span class="sr-only">Open list</span>
+                            <span class="icon arrow-down" aria-hidden="true"></span>
+                        </span>
+                      </a>
+                      <ul class="cat-sub-menu">
+                        <li >
+                          <a th:classappend="${namePage == 'hoadon'} ? 'active'" href="/admin/hoadon">Tất cả</a>
+                        </li>
+                        <li >
+                          <a th:classappend="${namePage == 'pending'} ? 'active'" href="/admin/hoadon/pending">Chờ xử lý</a>
+                        </li>
+                        <li >
+                          <a th:classappend="${namePage == 'in-progress'} ? 'active'" href="/admin/hoadon/in-progress">Đang giao</a>
+                        </li>
+                        <li >
+                          <a th:classappend="${namePage == 'completed'} ? 'active'" href="/admin/hoadon/completed">Hoàn thành</a>
+                        </li>
+                        <li >
+                          <a th:classappend="${namePage == 'canceled'} ? 'active'" href="/admin/hoadon/canceled">Đã hủy</a>
+                        </li>
+                      </ul>
+                    </li>
+
                     <li>
                         <a class="show-cat-btn" href="/admin/products">
                             <span class="icon folder" aria-hidden="true"></span>Sản Phẩm
@@ -59,7 +85,7 @@
                     </li>
                     <li>
                         <a class="show-cat-btn" th:classappend="${namePage == 'promotion'} ? 'active'" href="/admin/promotion">
-                            <span class="icon folder" aria-hidden="true"></span>Khuyến mãi
+                            <span class="icon folder" aria-hidden="true"></span> Đợt giảm giá
                             <span class="category__btn transparent-btn" title="Open list">
                             <span class="sr-only">Open list</span>
                             <span class="icon arrow-down" aria-hidden="true"></span>
@@ -67,16 +93,35 @@
                         </a>
                         <ul class="cat-sub-menu">
                             <li >
-                                <a th:classappend="${namePage == 'promotion'} ? 'active'" href="/admin/promotion/index">Quản lý khuyến mãi</a>
+                                <a th:classappend="${namePage == 'promotion'} ? 'active'" href="/admin/promotion/index">Tạo đợt giảm giá</a>
                             </li>
                             <li >
-                                <a th:classappend="${namePage == 'QuanLy'} ? 'active'" href="/admin/promotion/product-sale">Sản phẩm khuyến mãi</a>
+                                <a th:classappend="${namePage == 'QuanLy'} ? 'active'" href="/admin/promotion/product-sale">Áp dụng khuyến mãi</a>
                             </li>
                         </ul>
                     </li>
                     <li><a th:classappend="${namePage == 'customer-mng'} ? 'active'" href="/admin/customer-management/"><span class="icon paper" aria-hidden="true"></span>Khách Hàng</a></li>
                     <li><a th:classappend="${namePage == 'staff'} ? 'active'" href="/admin/staff/home"><span class="icon message" aria-hidden="true"></span>Nhân Viên</a></li>
-                    <li><a href="/admin/statistical"><span class="icon edit" aria-hidden="true"></span>Thống kê</a></li>
+                    <li>
+                      <a class="show-cat-btn" href="/admin/statistical-year">
+                        <span class="icon home" aria-hidden="true"></span>Thống kê
+                        <span class="category__btn transparent-btn" title="Open list">
+                            <span class="sr-only">Open list</span>
+                            <span class="icon arrow-down" aria-hidden="true"></span>
+                        </span>
+                      </a>
+                      <ul class="cat-sub-menu">
+                        <li >
+                          <a th:classappend="${namePage == 'statistical-year'} ? 'active'" href="/admin/statistical-year">Doanh thu theo năm</a>
+                        </li>
+                        <li >
+                          <a th:classappend="${namePage == 'statistical-month'} ? 'active'" href="/admin/statistical-month">Doanh thu theo tháng</a>
+                        </li>
+                        <li >
+                          <a th:classappend="${namePage == 'statistical-product'} ? 'active'" href="/admin/statistical-product">Sản phẩm bán chạy</a>
+                        </li>
+                      </ul>
+                    </li>
                     <li><a href="#"><span class="icon setting" aria-hidden="true"></span>Settings</a></li>
                 </ul>
             </div>
@@ -84,10 +129,10 @@
         <div class="sidebar-footer">
             <a href="#" class="sidebar-user">
         <span class="sidebar-user-img">
-          <picture><source  th:srcset="@{/img/avatar/avt-supportmanager.webp}" type="image/webp"><img src="./img/avatar/avatar-illustrated-01.png" alt="User"></picture>
+          <picture><source  th:srcset="@{/img/avatar/avt-user1.webp}" type="image/webp"><img src="./img/avatar/avatar-illustrated-01.png" alt="User"></picture>
         </span>
                 <div class="sidebar-user-info">
-                    <span class="sidebar-user__title">Mrs. Hoa</span>
+                    <span class="sidebar-user__title">Mr. Tùng</span>
                     <span class="sidebar-user__subtitle">Support manager</span>
                 </div>
             </a>

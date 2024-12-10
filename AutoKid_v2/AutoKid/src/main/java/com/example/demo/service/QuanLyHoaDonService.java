@@ -2,6 +2,10 @@ package com.example.demo.service;
 
 import com.example.demo.model.*;
 import com.example.demo.repository.*;
+import com.example.demo.repository.HoaDonChiTietRepo;
+import com.example.demo.repository.HoaDonHistoryRepo;
+import com.example.demo.repository.HoaDonRepo;
+import com.example.demo.repository.SanPhamChiTietRepo;
 import com.example.demo.response.HoaDonResponse;
 import com.example.demo.response.HoadonhistoryRespone;
 import com.example.demo.response.hoadonchitietRespone;
@@ -26,6 +30,7 @@ public class QuanLyHoaDonService {
     @Autowired
     private SanPhamChiTietRepo sanPhamChiTietRepo;
 
+
     @Autowired
     KhachHangRepo khachHangRepo;
 
@@ -34,7 +39,6 @@ public class QuanLyHoaDonService {
     }
 
     public boolean updateProductQuantity(String maSPCT, Integer soLuong) {
-        // Tìm sản phẩm chi tiết theo maSPCT
         SanPhamChiTiet sanPhamChiTiet = sanPhamChiTietRepo.findByMaSPCT(maSPCT);
         if (sanPhamChiTiet != null) {
             if (soLuong > sanPhamChiTiet.getSoLuong()) {
@@ -52,31 +56,38 @@ public class QuanLyHoaDonService {
     }
 
 
-
-    public HoaDon createInvoice(HoaDon hoaDon) {
-        HoaDon createdInvoice = hoaDonRepo.save(hoaDon); // Lưu hóa đơn
-
-        // Tạo hóa đơn chi tiết trống
-        HoaDonChiTiet hoaDonChiTiet = new HoaDonChiTiet();
-        hoaDonChiTiet.setHoaDon(createdInvoice); // Liên kết hóa đơn chi tiết với hóa đơn mới tạo
-        hoaDonChiTiet.setSanPhamChiTiet(null); // Không có sản phẩm chi tiết
-        hoaDonChiTiet.setSoLuong(0); // Không có số lượng
-        hoaDonChiTiet.setDonGia(0.0); // Không có đơn giá
-        hoaDonChiTiet.setDonGiaSauGiam(0.0); // Không có giá sau giảm
-
-        hoaDonChiTietRepo.save(hoaDonChiTiet); // Lưu hóa đơn chi tiết vào cơ sở dữ liệu
-
-        return createdInvoice; // Trả về hóa đơn vừa tạo
-    }
-
-
-
     public List<HoaDonResponse> fillAllHoaDon(){
         List<HoaDonResponse> list= new ArrayList<>();
         for(HoaDon h: hoaDonRepo.findAll()){
             list.add(new HoaDonResponse(h));
         }
         return list;
+    }
+
+    // Tạo hóa đơn
+    public HoaDon createHoaDon(HoaDon hoaDon) {
+        return hoaDonRepo.save(hoaDon);
+    }
+
+    // Tạo chi tiết hóa đơn
+    public void createHoaDonChiTiet(HoaDonChiTiet hoaDonChiTiet) {
+        hoaDonChiTietRepo.save(hoaDonChiTiet);
+    }
+
+    public List<HoaDonResponse> searchInvoices(String maHd) {
+        List<HoaDonResponse> list= new ArrayList<>();
+        for(HoaDon h: hoaDonRepo.searchInvoices(maHd)){
+            list.add(new HoaDonResponse(h));
+        }
+        return list;
+    }
+
+    public HoaDon findHoaDonByMaHD(Integer maHD) {
+        return hoaDonRepo.findById(maHD).orElse(null);
+    }
+
+    public List<HoaDonChiTiet> findHoaDonChiTietByMaHD(Integer maHD) {
+        return hoaDonChiTietRepo.findAllByHoaDonId(maHD);
     }
 
     public List<HoadonhistoryRespone> fillAllHoaDonHistory(){
@@ -94,11 +105,26 @@ public class QuanLyHoaDonService {
         return listhdct;
     }
 
-    public boolean updateHoaDonStatus(String maHD, String newStatus) {
-        Optional<HoaDon> hoaDonOptional = hoaDonRepo.findHoaDonByMaHD(maHD);
+    public boolean updateHoaDonStatus(Integer maHD, String newStatus) {
+        Optional<HoaDon> hoaDonOptional = hoaDonRepo.findById(maHD);
+
         if (hoaDonOptional.isPresent()) {
             HoaDon hoaDon = hoaDonOptional.get();
-            if (!hoaDon.getTrangThaiHD().equals(newStatus)) {
+            String currentStatus = hoaDon.getTrangThaiHD();
+
+            if (!isValidStatusTransition(currentStatus, newStatus)) {
+                return false; // Không cho phép chuyển trạng thái
+            }
+
+            if (newStatus.equals("Huỷ đơn hàng")) {
+                for (HoaDonChiTiet hoaDonChiTiet : hoaDon.getHoaDonChiTiets()) {
+                    SanPhamChiTiet sanPhamChiTiet = hoaDonChiTiet.getSanPhamChiTiet();
+                    sanPhamChiTiet.setSoLuong(sanPhamChiTiet.getSoLuong() + hoaDonChiTiet.getSoLuong());
+                    sanPhamChiTietRepo.save(sanPhamChiTiet);
+                }
+            }
+
+            if (!currentStatus.equals(newStatus)) {
                 hoaDon.setTrangThaiHD(newStatus);
                 hoaDonRepo.save(hoaDon);
                 return true;
@@ -106,10 +132,88 @@ public class QuanLyHoaDonService {
         }
         return false;
     }
-//    public Page<HoaDon> getAll(int pageNo, int pageSize){
-//        Pageable pageable = PageRequest.of(pageNo,pageSize);
-//        return hoaDonRepo.findAll(pageable);
-//    }
+    private boolean isValidStatusTransition(String currentStatus, String newStatus) {
+        return switch (currentStatus) {
+            case "Đã thanh toán, chờ giao hàng" -> // Trạng thái 1
+                    newStatus.equals("Hoàn thành") ||
+                            newStatus.equals("Đã thanh toán, đang giao hàng") ||
+                            newStatus.equals("Huỷ đơn hàng");
+            case "Chưa thanh toán, chờ giao hàng" -> // Trạng thái 2
+                    newStatus.equals("Hoàn thành") ||
+                            newStatus.equals("Chưa thanh toán, đang giao hàng") ||
+                            newStatus.equals("Huỷ đơn hàng"); // Trạng thái 3
+            case "Hoàn thành", "Huỷ đơn hàng" -> // Trạng thái 6
+                    false; // Không cho phép cập nhật
+            // Trạng thái 4
+            case "Đã thanh toán, đang giao hàng", "Chưa thanh toán, đang giao hàng" -> // Trạng thái 5
+                    newStatus.equals("Hoàn thành") ||
+                            newStatus.equals("Huỷ đơn hàng");
+            default -> false; // Trạng thái không hợp lệ
+        };
+    }
+
+    public List<HoaDonResponse> findAllByPending(){
+        List<HoaDonResponse> list= new ArrayList<>();
+        for(HoaDon h: hoaDonRepo.findAllByPending()){
+            list.add(new HoaDonResponse(h));
+        }
+        return list;
+    }
+
+    public List<HoaDonResponse> findAllByInProgress(){
+        List<HoaDonResponse> list= new ArrayList<>();
+        for(HoaDon h: hoaDonRepo.findAllByInProgress()){
+            list.add(new HoaDonResponse(h));
+        }
+        return list;
+    }
+    public List<HoaDonResponse> findAllByCompleted(){
+        List<HoaDonResponse> list= new ArrayList<>();
+        for(HoaDon h: hoaDonRepo.findAllByCompleted()){
+            list.add(new HoaDonResponse(h));
+        }
+        return list;
+    }
+    public List<HoaDonResponse> findAllByCanceled(){
+        List<HoaDonResponse> list= new ArrayList<>();
+        for(HoaDon h: hoaDonRepo.findAllByCanceled()){
+            list.add(new HoaDonResponse(h));
+        }
+        return list;
+    }
+
+    public List<HoaDonResponse> searchHoaDonPending(String maHd) {
+        List<HoaDonResponse> list= new ArrayList<>();
+        for(HoaDon h: hoaDonRepo.searchHoaDonPending(maHd)){
+            list.add(new HoaDonResponse(h));
+        }
+        return list;
+    }
+
+    public List<HoaDonResponse> searchHoaDonInProgress(String maHd) {
+        List<HoaDonResponse> list= new ArrayList<>();
+        for(HoaDon h: hoaDonRepo.searchHoaDonInProgress(maHd)){
+            list.add(new HoaDonResponse(h));
+        }
+        return list;
+    }
+
+    public List<HoaDonResponse> searchHoaDonCompleted(String maHd) {
+        List<HoaDonResponse> list= new ArrayList<>();
+        for(HoaDon h: hoaDonRepo.searchHoaDonCompleted(maHd)){
+            list.add(new HoaDonResponse(h));
+        }
+        return list;
+    }
+
+    public List<HoaDonResponse> searchHoaDonCanceled(String maHd) {
+        List<HoaDonResponse> list= new ArrayList<>();
+        for(HoaDon h: hoaDonRepo.searchHoaDonCanceled(maHd)){
+            list.add(new HoaDonResponse(h));
+        }
+        return list;
+    }
+
 
 
 }

@@ -3,7 +3,6 @@ package com.example.demo.controller;
 import com.example.demo.model.*;
 import com.example.demo.repository.*;
 import com.example.demo.response.ApiResponse;
-import com.example.demo.response.HoaDonChiTietRequest;
 import com.example.demo.response.SanPhamChiTietDTO;
 import com.example.demo.service.QuanLyHoaDonService;
 import com.example.demo.service.QuanLySanPhamService;
@@ -63,12 +62,12 @@ public class AdminBanHangController {
         KhachHang savedKhachHang = khachHangRepo.save(khachHang);
         return ResponseEntity.ok(savedKhachHang);
     }
-
     @GetMapping("/san-pham-chi-tiet/search")
-    public ResponseEntity<List<SanPhamChiTietDTO>> searchSPCTByTenSP(@RequestParam("tenSP") String tenSP) {
-        List<SanPhamChiTietDTO> result = sanPhamChiTietRepo.findSanPhamChiTietBySanPham_TenSP(tenSP);
+    public ResponseEntity<List<SanPhamChiTietDTO>> searchSPCTByTenSPOrMaSPCT(@RequestParam("tenSP") String tenSP, @RequestParam("maSPCT") String maSPCT) {
+        List<SanPhamChiTietDTO> result = sanPhamChiTietRepo.findSanPhamChiTietBySanPham_TenSPOrMaSPCT(tenSP, maSPCT);
         return ResponseEntity.ok(result);
     }
+
 
     @PutMapping("/san-pham-chi-tiet/{maSPCT}/update-quantity")
     public ResponseEntity<?> updateProductQuantity(@PathVariable("maSPCT") String maSPCT, @RequestBody SanPhamChiTietDTO request) {

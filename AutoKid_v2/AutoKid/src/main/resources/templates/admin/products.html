@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+<!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
@@ -127,14 +128,14 @@
                         </div>
                         <div class="mb-3">
                             <label for="sanPham" class="form-label">Tên sản phẩm:</label>
-                            <select class="form-control" id="sanPham" name="sanPham" required>
+                            <select class="form-control" id="sanPham" name="sanPham" >
                                 <option value="" disabled selected>Chọn sản phẩm</option>
                                 <option th:each="sanPham : ${dsSanPham}" th:value="${sanPham.id}" th:text="${sanPham.tenSP}"></option>
                             </select>
                         </div>
                         <div class="mb-3">
                             <label for="mauSac" class="form-label">Tên màu sắc:</label>
-                            <select class="form-control" id="mauSac" name="mauSac" required>
+                            <select class="form-control" id="mauSac" name="mauSac" >
                                 <option value="" disabled selected>Chọn màu sắc</option>
                                 <option th:each="mauSac : ${dsMauSac}" th:value="${mauSac.id}" th:text="${mauSac.tenMS}"></option>
                             </select>
@@ -146,7 +147,7 @@
                         </div>
                         <div class="mb-3">
                             <label for="anh" class="form-label mt-2">Ảnh</label>
-                            <input type="file" class="form-control border border-secondary" id="anh" name="anh" accept="image/*" required>
+                            <input type="file" class="form-control border border-secondary" id="anh" name="anh" accept="image/*" >
                         </div>
                         <div class="mb-3">
                             <label for="trangThaiSPCT">Trạng thái</label>
@@ -177,11 +178,11 @@
                     <form method="post" onsubmit="handleAddMS(event, this)">
                         <div class="mb-3">
                             <label for="maMS" class="form-label">Mã màu sắc:</label>
-                            <input type="text" class="form-control border border-secondary" id="maMS" name="maMS" required>
+                            <input type="text" class="form-control border border-secondary" id="maMS" name="maMS" >
                         </div>
                         <div class="mb-3">
                             <label for="tenMS" class="form-label">Tên màu sắc:</label>
-                            <input type="text" class="form-control border border-secondary" id="tenMS" name="tenMS" required>
+                            <input type="text" class="form-control border border-secondary" id="tenMS" name="tenMS" >
                         </div>
                         <div class="mb-3">
                             <label for="trangThaiMS">Trạng thái</label>
@@ -293,7 +294,7 @@
 
                         <div class="mb-3">
                             <label for="productColor" class="form-label">Tên màu sắc:</label>
-                            <select class="form-control border border-secondary" id="productColor" th:field="*{mauSac.id}" required>
+                            <select class="form-control border border-secondary" id="productColor" th:field="*{mauSac.id}" >
                                 <option value="" disabled selected>Chọn màu sắc</option>
                                 <option th:each="mauSac : ${dsMauSac}" th:value="${mauSac.id}" th:text="${mauSac.tenMS}"></option>
                             </select>

@@ -4,9 +4,7 @@
 }
 
 .custom-radio-group .custom-radio-div {
-    width: 100px;
-    height: 40px;
-    /*padding: 10px 20px;*/
+    padding: 5px 20px;
     border: 1px solid #ccc;
     border-radius: 5px;
     cursor: pointer;

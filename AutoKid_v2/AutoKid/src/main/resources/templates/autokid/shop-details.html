@@ -67,8 +67,9 @@
               <div class="product__details__pic__item">
                 <img
                   class="product__details__pic__item--large"
-                  th:src="@{'/img/categories/'+ ${sp.anhSPMau}}"
-                  alt=""
+                  id="image__product_detail"
+                  th:src="@{'/img/product/'+ ${sp.anhSPMau}}"
+                  style="width: 555px; height: 575.55px; background-size: cover;"
                 />
               </div>
               <div
@@ -80,8 +81,8 @@
                     th:href="@{http://localhost:8080/autokid/shop-detail(idSP=${sanpham.idSP})}"
                   >
                     <img
-                      th:src="@{'/img/categories/' + ${sanpham.anhSPMau}}"
-                      alt=""
+                      th:src="@{'/img/product/' + ${sanpham.anhSPMau}}"
+                      style="width: 120px; height: 120px; background-size: cover;"
                     />
                   </a>
                 </div>
@@ -91,6 +92,7 @@
           <div class="col-lg-6 col-md-6">
             <div class="product__details__text">
               <h3 th:text="${sp.tenSP}"></h3>
+              <h5 th:if="${sp.soLuongSPCT == null}">(Sản phẩm này hiện đang hết hàng)</h5>
               <div class="product__details__rating">
                 <i class="fa fa-star"></i>
                 <i class="fa fa-star"></i>
@@ -127,7 +129,7 @@
                 id="add-to-cart"
                 th:data-id="${sp.idSP}"
                 th:data-name="${sp.tenSP}"
-                th:data-price="${sp.donGia}"
+                th:data-price="${sp.giaSauGiam}"
                 >ADD TO CARD</a
               >
               <ul>
@@ -137,7 +139,8 @@
                     <div th:each="ms: ${mauSac}" class="custom-radio-div"
                          th:data-tenms="${ms.tenMS}"
                          th:data-idspct="${ms.idSPCT}"
-                         th:data-soluong="${ms.soLuong}" th>[[${ms.tenMS}]]</div>
+                         th:data-soluong="${ms.soLuong}"
+                         th:data-anhspct="${ms.anhSPCT}">[[${ms.tenMS}]]</div>
                   </div>
                   <input type="hidden" id="selectedValue" name="selectedValue">
                   <input type="hidden" id="selectedValueMS" name="selectedValueMS">
@@ -148,7 +151,7 @@
                 </li>
                 <li>
                   <b>Phí ship</b>
-                  <span>01 day shipping. <samp>Free pickup today</samp></span>
+                  <span> <samp></samp></span>
                 </li>
                 <li>
                   <b>Kích Thước </b>
@@ -158,7 +161,9 @@
                   <b>Chất liệu </b>
                   <span th:text="${sp.chatLieu}"></span>
                 </li>
-                <li><b>Số lượng trong kho </b> <span id="so-luong" th:text="${sp.soLuongSPCT}"></span></li>
+                <li><b>Số lượng trong kho </b>
+                  <span id="so-luong" th:text="${sp.soLuongSPCT}"></span>
+                </li>
               </ul>
             </div>
           </div>
@@ -305,7 +310,9 @@
             <div class="product__item">
               <div
                 class="product__item__pic set-bg"
-                th:attr="data-setbg=${'/img/categories/' + sptt.anhSPMau}"
+                th:attr="data-setbg=${'/img/product/' + sptt.anhSPMau}"
+                style="width: 262.5px; height: 270px; background-size: cover;"
+                th:onclick="'window.location.href=\'/autokid/shop-detail?idSP=' + ${sptt.idSP} + '\''"
               >
                 <ul class="product__item__pic__hover">
                   <li>
@@ -325,7 +332,9 @@
                       th:data-gia="${sptt.donGia}"
                       th:data-idspct = "${sptt.idSPCT}"
                       th:data-mausac="${sptt.mauSacSPCT}"
-                      onclick="addToCart(this)"
+                      th:data-soluong="${sptt.soLuongSPCT}"
+                      th:data-anh="${sptt.anhSPMau}"
+                      onclick="addToCart(this); event.stopPropagation();"
                       ><i class="fa fa-shopping-cart"></i
                     ></a>
                   </li>

@@ -4,6 +4,7 @@ import com.example.demo.model.KhachHang;
 import com.example.demo.model.SanPhamChiTiet;
 import com.example.demo.response.SanPhamChiTietDTO;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
@@ -16,6 +17,7 @@ public interface SanPhamChiTietRepo extends JpaRepository<SanPhamChiTiet,Integer
     SanPhamChiTiet findByMaSPCT(String maSPCT);
     boolean existsByMaSPCT(String maSPCT);
 
+
     @Query("SELECT new com.example.demo.response.SanPhamChiTietDTO(" +
             "spct.maSPCT, sp.tenSP, sp.donGia, spct.soLuong, " +
             "ms.tenMS, th.tenTH, cl.tenCl, kc.tenKC) " +
@@ -27,5 +29,12 @@ public interface SanPhamChiTietRepo extends JpaRepository<SanPhamChiTiet,Integer
             "LEFT JOIN sp.kichCo kc " +
             "WHERE sp.tenSP LIKE %:tenSP%")
     List<SanPhamChiTietDTO> findSanPhamChiTietBySanPham_TenSP(@Param("tenSP") String tenSP);
+
+
+    @Modifying
+    @Query("UPDATE SanPhamChiTiet spct " +
+            " SET spct.soLuong = spct.soLuong - :soLuong" +
+            " WHERE spct.id = :idSPCT")
+    void updateSoLuongSPCT(@Param("soLuong") Integer soLuong, @Param("idSPCT") Integer idSPCT);
 
 }

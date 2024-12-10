@@ -169,8 +169,7 @@
         <!-- ! Main -->
         <main class="main users chart-page" id="skip-target">
             <div class="container">
-                <h2 class="main-title">Khuyến mại</h2>
-                <button class="btn btn-success">Xem sản phẩm được khuyến mãi</button>
+                <h2 class="main-title">Khuyến mãi</h2>
                 <div class="button-container">
                     <div class="add-button-container">
                         <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#add">
@@ -189,7 +188,7 @@
                                 <thead>
                                 <tr class="users-table-info">
                                     <th>Mã KM</th>
-                                    <th>Tên khuyến mại</th>
+                                    <th>Tên khuyến mãi</th>
                                     <th>Giá trị</th>
                                     <th>Ngày bắt đầu</th>
                                     <th>Ngày kết thúc</th>
@@ -201,12 +200,12 @@
                                 <tr th:each="promotion : ${promotions}">
                                     <td th:text="${promotion.maKM}"></td>
                                     <td th:text="${promotion.tenKM}"></td>
-                                    <td th:text="${promotion.giaTri}"></td>
+                                    <td th:text="${promotion.formattedgiaTri}"></td>
                                     <td th:text="${promotion.ngayBatDau}"></td>
                                     <td th:text="${promotion.ngayKetThuc}"></td>
-                                    <td th:text="${promotion.trangThaiKM == '1' ? 'Hoạt động' : 'Không hoạt động'}" ></td>
+                                    <td th:text="${promotion.trangThaiKM == 1 ? 'Hoạt động' : 'Không hoạt động'}" ></td>
                                     <td class="text-center">
-                                        <a class="update btn btn-warning" data-bs-toggle="modal" data-bs-target="#hihi"
+                                        <a class="update btn btn-primary" data-bs-toggle="modal" data-bs-target="#hihi"
                                            th:data-ma="${promotion.maKM}"
                                            th:data-ten="${promotion.tenKM}"
                                            th:data-giaTri="${promotion.giaTri}"
@@ -214,7 +213,7 @@
                                            th:data-ketThuc="${promotion.ngayKetThuc}"
                                            th:data-tt="${promotion.trangThaiKM}"
                                            th:data-id="${promotion.id}"
-                                           onclick="showDetail(this)">Edit</a>
+                                           onclick="showDetail(this)"> Chi tiết</a>
                                         <a th:href="@{/admin/promotion/delete/{id}(id=${promotion.id})}"
                                            onclick="return confirm('Bạn có chắc muốn xóa không?');"
                                            class="btn btn-danger">Destroy
@@ -241,15 +240,15 @@
                         </div>
                         <div class="modal-body">
                             <div class="form-container">
-                                <h5>Nhập Thông Tin Khuyến Mại</h5>
+                                <h5>Nhập Thông Tin Khuyến Mãi</h5>
                                 <form th:action="@{/admin/promotion/save}" th:object="${addPromotion}" method="POST">
                                     <div class="form-row">
                                         <div class="form-group">
-                                            <label for="maKM">Mã khuyến mại</label>
+                                            <label for="maKM">Mã khuyến mãi</label>
                                             <input type="text" th:field="*{maKM}" id="maKM" placeholder="Mã khuyến mãi" required>
                                         </div>
                                         <div class="form-group">
-                                            <label for="tenKM">Tên khuyến mại</label>
+                                            <label for="tenKM">Tên khuyến mãi</label>
                                             <input type="text" th:field="*{tenKM}" id="tenKM" placeholder="Tên khuyến mãi" required>
                                         </div>
                                     </div>
@@ -264,12 +263,12 @@
                                             <input type="date" th:field="*{ngayKetThuc}" class="date" id="ngayKetThuc">
                                         </div>
                                     </div>
-
-                                    <div class="form-group">
-                                        <label for="giatri">Giá trị</label>
-                                        <input type="text" th:field="*{giaTri}" id="giatri" placeholder="Giá trị" required>
+                                    <div class="form-row">
+                                        <div class="form-group">
+                                            <label for="giatri">Giá trị</label>
+                                            <input type="text" th:field="*{giaTri}" id="giatri" placeholder="Giá trị" required>
+                                        </div>
                                     </div>
-
                                     <div class="form-row">
                                         <div class="form-group">
                                             <label for="trangThaiKM">Trạng thái</label>
@@ -281,7 +280,7 @@
                                         </div>
                                     </div>
 
-                                    <button type="submit" class="submit-btn">Thêm Khuyến Mại</button>
+                                    <button type="submit" class="submit-btn">Thêm Khuyến Mãi</button>
                                 </form>
                             </div>
                         </div>
@@ -298,7 +297,7 @@
                         <div class="modal-body">
                             <div class="form-container">
                                 <div id="detailModal"  class="form-modal" >
-                                    <h2>Thông tin khuyến mại</h2>
+                                    <h2>Thông tin khuyến mãi</h2>
                                     <br>
                                     <div>
                                         <form th:action="@{/admin/promotion/update}" th:object="${updatePromotion}" method="POST" class="promotion-form">
@@ -324,12 +323,12 @@
                                                     <input type="date" id="modalKT" th:field="*{ngayKetThuc}" class="date" required>
                                                 </div>
                                             </div>
-
-                                            <div class="form-group">
-                                                <label for="modalGiaTri">Giá trị</label>
-                                                <input type="text" id="modalGiaTri" th:field="*{giaTri}" required>
+                                            <div class="form-row">
+                                                <div class="form-group">
+                                                    <label for="modalGiaTri">Giá trị</label>
+                                                    <input type="text" id="modalGiaTri" th:field="*{giaTri}" required>
+                                                </div>
                                             </div>
-
                                             <div class="form-row">
                                                 <div class="form-group">
                                                     <label for="modalTT">Trạng thái</label>
@@ -340,7 +339,7 @@
                                                 </div>
                                             </div>
                                             <div class="form-action">
-                                                <button class="btn btn-warning" type="submit">Lưu khuyến mại</button>
+                                                <button class="btn btn-primary" type="submit">Lưu khuyến mãi</button>
                                             </div>
                                         </form>
                                     </div>

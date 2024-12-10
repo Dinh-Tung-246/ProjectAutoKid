@@ -72,29 +72,7 @@
                     <th></th>
                   </tr>
                 </thead>
-                <tbody id="cart-body">
-                  <tr th:if="${isLoggedIn}" th:each="item: ${cartItems}">
-                    <td class="shoping__cart__item">
-                      <input type="checkbox" class="check" style="margin: 30px">
-                      <img src="img/imgs/demo1.jpg" alt="" />
-                      <h5 th:text="${item.tenSPCT}"></h5>
-                    </td>
-                    <td class="shoping__cart__price" th:text="${item.donGia}"><span> </span></td>
-                    <td class="shoping__cart__quantity">
-                      <div class="quantity">
-                        <div class="pro-qty">
-                          <span class="dec qtybtn">-</span>
-                          <input type="text" th:text="${item.soLuong}" th:data-id="${item.idSP}"/>
-                          <span class="inc qtybtn">+</span>
-                        </div>
-                      </div>
-                    </td>
-                    <td class="shoping__cart__total" ><span th:text="${item.donGia * item.soLuong}"> </span></td>
-                    <td class="shoping__cart__item__close">
-                      <span class="icon_close" th:data-id="${item.idSP}" onclick="deleteFromCart(event)" style="margin: 30px"></span>
-                    </td>
-                  </tr>
-                </tbody>
+                <tbody id="cart-body"></tbody>
               </table>
             </div>
           </div>

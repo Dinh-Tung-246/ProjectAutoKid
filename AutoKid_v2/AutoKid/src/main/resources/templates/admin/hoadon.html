@@ -56,6 +56,27 @@
     background-color: #000;
     color: #9fcdff;
   }
+  .posts-table tbody {
+      display: block;
+      max-height: 300px;
+      overflow-y: auto;
+      overflow-x: hidden;
+  }
+
+  .posts-table thead, .posts-table tbody tr {
+      display: table;
+      width: 100%;
+      table-layout: fixed;
+  }
+
+  .posts-table th, .posts-table td {
+      padding: 10px;
+      text-align: left;
+  }
+  .posts-table td {
+      word-wrap: break-word;
+      white-space: normal;
+  }
 </style>
 <body>
 <div class="layer"></div>
@@ -72,13 +93,18 @@
       <div class="container">
         <h2 class="mt-5">Quản lý hóa đơn</h2>
         <br>
-<!--        <div class="search-container">-->
-<!--          <form action="/admin/hoadon/seachhd" method="GET">-->
-<!--            <input type="text" name="maHD" placeholder="Mã hóa đơn" />-->
-<!--            <button type="submit">Tìm kiếm</button>-->
-<!--          </form>-->
-<!--        </div>-->
-        <!-- Bảng Hóa Đơn -->
+        <div class="search-container">
+          <form action="/admin/hoadon/search" method="GET">
+            <div class="row">
+              <div class="col">
+                <input type="text" name="maHd" placeholder="Mã hoá đơn" class="form-control" />
+              </div>
+              <div class="col">
+                <button type="submit" class="btn btn-primary">Tìm kiếm</button>
+              </div>
+            </div>
+          </form>
+        </div>
         <div class="users-table table-wrapper">
           <table class="posts-table">
             <thead>
@@ -87,7 +113,7 @@
               <th>Mã Hóa Đơn</th>
               <th>Tên Khách Hàng</th>
               <th>Tên Nhân Viên</th>
-              <th>Ngày tạo</th>
+              <th>Hình thức</th>
               <th>Phương thức thanh toán</th>
               <th>Tổng tiền</th>
               <th>Trạng thái</th>
@@ -95,146 +121,73 @@
             </tr>
             </thead>
             <tbody>
-            <tr th:each="hdct, iterStat : ${listhdct}">
+            <tr th:each="hdct, iterStat : ${listhd}">
               <td th:text="${iterStat.count}"></td>
-              <td th:text="${hdct.maHD}"></td>
+              <td th:text="${hdct.maHD}"></td> <!-- Display HD + id instead of maHD -->
               <td th:text="${hdct.tenKhachHang}"></td>
               <td th:text="${hdct.tenNhanVien}"></td>
-              <td th:text="${hdct.ngayTao}"></td>
+              <td th:text="${hdct.online == true ? 'Trực tuyến' : 'Tại quầy'}"></td>
               <td th:text="${hdct.tenPhuongThucThanhToan}"></td>
               <td th:text="${hdct.tongTien}"></td>
               <td th:text="${hdct.trangThaiHD}"></td>
               <td>
-                <!-- Nút Chi tiết -->
-                <div
-                        style="
-                          display: flex;
-                          align-items: center;
-                          justify-content: space-around;
-                        "
-                >
-                  <button
-                          class="update"
-                          th:data-maHD="${hdct.maHD}"
-                          th:data-tenKhachHang="${hdct.tenKhachHang}"
-                          th:data-tenNhanVien="${hdct.tenNhanVien}"
-                          th:data-tenSP="${hdct.tenSP}"
-                          th:data-tenPhuongThuc="${hdct.tenPhuongThucThanhToan}"
-                          th:data-ngayTao="${#dates.format(hdct.ngayTao, 'yyyy-MM-dd')}"
-                          th:data-tongTien="${hdct.tongTien}"
-                          th:data-soLuong="${hdct.soLuong}"
-                          th:data-donGiaSauGiam="${hdct.donGiaSauGiam}"
-                          th:data-trangThaiHD="${hdct.trangThaiHD}"
-                          onclick="showDetail(this)"
-                  >
-                    Chi tiết
-                  </button>
+                <div style="display: flex; align-items: center; justify-content: space-around;">
+                  <button th:data-id="${hdct.id}" onclick="handleClick(this.getAttribute('data-id'))" data-bs-toggle="modal" data-bs-target="#chiTietHoaDon" class="btn btn-info">Chi tiết</button> <!-- Use id here -->
                 </div>
-                <!-- Overlay -->
-                <div
-                        id="overlay"
-                        style="
-                          display: none;
-                          position: fixed;
-                          top: 0;
-                          left: 0;
-                          width: 100%;
-                          height: 100%;
-                          background: rgba(0, 0, 0, 0.5);
-                          z-index: 500;
-                        "
-                ></div>
-            </tr>
-            </td>
+              </td>
             </tr>
             </tbody>
+
+
           </table>
         </div>
 
-        <!-- Bảng Lịch Sử Hóa Đơn -->
-        <!--            <h3 class="mt-5">Lịch sử Hóa Đơn</h3>-->
-        <!--            <div class="users-table table-wrapper">-->
-        <!--              <table class="posts-table">-->
-        <!--                <thead>-->
-        <!--                  <tr class="users-table-info">-->
-        <!--                    <th>Mã Hóa Đơn</th>-->
-        <!--                    <th>Ngày Tạo</th>-->
-        <!--                    <th>Ngày Thay Đổi</th>-->
-        <!--                    <th>Trạng Thái</th>-->
-        <!--                  </tr>-->
-        <!--                </thead>-->
-        <!--                <tbody>-->
-        <!--                  <tr th:each="hoadonhistory : ${listhds}">-->
-        <!--                    <td th:text="${hoadonhistory.maHD}"></td>-->
-        <!--                    <td th:text="${hoadonhistory.ngayTao}"></td>-->
-        <!--                    <td th:text="${hoadonhistory.ngayThayDoi}"></td>-->
-        <!--                    <td th:text="${hoadonhistory.trangThai}"></td>-->
-        <!--                  </tr>-->
-        <!--                </tbody>-->
-        <!--              </table>-->
-        <!--            </div>-->
-      </div>
-      <!-- Modal -->
-      <div id="detailModal" class="form-modal" onclick="closeDetail(event)">
-        <div class="modal-content" onclick="event.stopPropagation()">
-          <h2>Chi tiết hóa đơn</h2>
-          <form id="updateStatusForm" action="/admin/hoadon/updateStatus" method="POST">
-            <div>
-              <label>Mã hóa đơn: </label>
-              <input type="text" id="modalMaHD" name="maHD" readonly />
-            </div>
-            <div>
-              <label>Tên khách hàng: </label>
-              <input type="text" id="modalTenKH" name="tenKH" readonly />
-            </div>
-            <div>
-              <label>Tên nhân viên: </label>
-              <input type="text" id="modalTenNV" name="tenNV" readonly />
-            </div>
-            <div>
-              <label>Tên sản phẩm: </label>
-              <input type="text" id="modalTenSP" name="tenSP" readonly />
-            </div>
-            <div>
-              <label>Phương thức thanh toán: </label>
-              <input type="text" id="modalPhuongThuc" name="phuongThuc" readonly />
-            </div>
-            <div>
-              <label>Ngày tạo: </label>
-              <input type="text" id="modalNgayTao" name="ngayTao" readonly />
-            </div>
-            <div>
-              <label>Tổng tiền: </label>
-              <input type="text" id="modalTongTien" name="tongTien" readonly />
-            </div>
-            <div>
-              <label>Số lượng: </label>
-              <input type="text" id="modalSoLuong" name="soLuong" readonly />
-            </div>
-            <div>
-              <label>Đơn giá sau giảm: </label>
-              <input type="text" id="modalDonGiaSauGiam" name="donGiaSauGiam" readonly />
-            </div>
-            <div>
-              <label>Trạng thái hóa đơn: </label>
-              <select id="modalTrangThai" name="trangThai" onchange="showUpdateButton()">
-                <option value="Đang chờ xử lý">Đang chờ xử lý</option>
-                <option value="Đã Xác Nhận">Đã xác nhận</option>
-                <option value="Đang Giao Hàng">Đang giao hàng</option>
-                <option value="Đã Giao Hàng">Đã giao hàng</option>
-                <option value="Đã Hủy">Đã hủy</option>
-                <option value="Hoàn Tiền">Hoàn tiền</option>
-              </select>
-            </div>
-            <button id="btnUpdateStatus" class="btn-closeDetail" style="display:none;" onclick="updateStatus()">Cập nhật trạng thái</button>
-          </form>
-
-          <button class="btn-closeDetail" onclick="closeDetail()">
-            Đóng
-          </button>
-        </div>
       </div>
     </main>
+
+    <div class="modal fade" id="chiTietHoaDon" tabindex="-1" aria-labelledby="paymentModalLabel" aria-hidden="true">
+      <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="paymentModalLabel">Chi tiết hóa đơn</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <div class="mb-3">
+              <p class="mb-4"><strong>Mã Hóa Đơn:</strong> <span id="invoiceCode"></span></p>
+              <p class="mb-4"><strong>Tên Khách Hàng:</strong> <span id="customerName"></span></p>
+              <p class="mb-4"><strong>Tên Nhân Viên:</strong> <span id="employeeName"></span></p>
+              <p class="mb-4"><strong>Ngày Tạo:</strong> <span id="creationDate"></span></p>
+              <p class="mb-4"><strong>Phương thức thanh toán:</strong> <span id="paymentMethod"></span></p>
+              <p class="mb-4"><strong>Tổng tiền:</strong> <span id="totalAmount"></span></p>
+              <div class="mb-4" style="display: flex; align-items: center">
+                <strong>Trạng thái:</strong>
+                <input id="maHD" type="hidden" name="maHD" value="12345">
+                <select name="trangThai" class="form-select" id="statusSelect" onchange="updateStatus(this)">
+                </select>
+              </div>
+            </div>
+            <h4 style="margin-bottom: 10px">Chi tiết sản phẩm</h4>
+            <table class="table table-bordered">
+              <thead>
+              <tr>
+                <th scope="col">Tên sản phẩm</th>
+                <th scope="col">Số lượng</th>
+                <th scope="col">Đơn giá</th>
+                <th scope="col">Thành tiền</th>
+              </tr>
+              </thead>
+              <tbody id="productTable">
+              <!-- Các dòng sản phẩm sẽ được thêm động ở đây -->
+              </tbody>
+            </table>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+          </div>
+        </div>
+      </div>
+    </div>
 
     <!-- ! Footer -->
     <div th:insert="fragments/footer_admin :: footer"></div>
@@ -249,49 +202,121 @@
 <!-- Custom scripts -->
 <script src="js/script.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
-  function showDetail(button) {
-    document.getElementById("modalMaHD").value = button.getAttribute("data-maHD");
-    document.getElementById("modalTenKH").value = button.getAttribute("data-tenKhachHang");
-    document.getElementById("modalTenNV").value = button.getAttribute("data-tenNhanVien");
-    document.getElementById("modalTenSP").value = button.getAttribute("data-tenSP");
-    document.getElementById("modalPhuongThuc").value = button.getAttribute("data-tenPhuongThuc");
-    document.getElementById("modalNgayTao").value = button.getAttribute("data-ngayTao");
-    document.getElementById("modalTongTien").value = button.getAttribute("data-tongTien");
-    document.getElementById("modalSoLuong").value = button.getAttribute("data-soLuong");
-    document.getElementById("modalDonGiaSauGiam").value = button.getAttribute("data-donGiaSauGiam");
+  function updateStatus(selectElement) {
+    // Retrieve the ID (maHD) from the hidden input field in the same row
+      var maHD = $(selectElement).siblings('input[name="maHD"]').val();
+      var trangThai = $(selectElement).val();
 
-    const trangThai = button.getAttribute("data-trangThaiHD");
-    const selectTrangThai = document.getElementById("modalTrangThai");
-    selectTrangThai.value = trangThai;
-    selectTrangThai.setAttribute("data-original-value", trangThai);
+      if(confirm('Bạn có muốn cập nhật trạng thái đơn hàng ?')){
+          $.ajax({
+              url: '/admin/hoadon/updateStatus',
+              method: 'POST',
+              data: {
+                  maHD: maHD,  // Send the ID (maHD)
+                  trangThai: trangThai  // Send the selected status
+              },
+              success: function(response) {
+                  alert('Cập nhật trạng thái thành công');
+                  window.location.href = 'http://localhost:8080/admin/hoadon';
+              },
+              error: function(xhr, status, error) {
+                  alert('Có lỗi!');
+              }
+          });
+      }
 
-    document.getElementById("detailModal").style.display = "block";
+  }
+  function getStatusOptions(currentStatus) {
+      const statusMapping = {
+          "Đã thanh toán, chờ giao hàng": [
+              { value: "Đã thanh toán, chờ giao hàng", text: "Đã thanh toán, chờ giao hàng", selected: true },
+              { value: "Đã thanh toán, đang giao hàng", text: "Đã thanh toán, đang giao hàng" },
+              { value: "Hoàn thành", text: "Hoàn thành" },
+              { value: "Huỷ đơn hàng", text: "Huỷ đơn hàng" },
+          ],
+          "Chưa thanh toán, chờ giao hàng": [
+              { value: "Chưa thanh toán, chờ giao hàng", text: "Chưa thanh toán, chờ giao hàng", selected: true },
+              { value: "Chưa thanh toán, đang giao hàng", text: "Chưa thanh toán, đang giao hàng" },
+              { value: "Hoàn thành", text: "Hoàn thành" },
+              { value: "Huỷ đơn hàng", text: "Huỷ đơn hàng" },
+          ],
+          "Hoàn thành": [
+              { value: "Hoàn thành", text: "Hoàn thành", selected: true },
+          ],
+          "Huỷ đơn hàng": [
+              { value: "Huỷ đơn hàng", text: "Huỷ đơn hàng", selected: true },
+          ],
+          "Đã thanh toán, đang giao hàng": [
+              { value: "Đã thanh toán, đang giao hàng", text: "Đã thanh toán, đang giao hàng", selected: true },
+              { value: "Hoàn thành", text: "Hoàn thành" },
+              { value: "Huỷ đơn hàng", text: "Huỷ đơn hàng" },
+          ],
+          "Chưa thanh toán, đang giao hàng": [
+              { value: "Chưa thanh toán, đang giao hàng", text: "Chưa thanh toán, đang giao hàng", selected: true },
+              { value: "Hoàn thành", text: "Hoàn thành" },
+              { value: "Huỷ đơn hàng", text: "Huỷ đơn hàng" },
+          ],
+      };
+
+      return statusMapping[currentStatus] || [];
+  }
+  function handleClick(id) {
+      document.getElementById("maHD").value = id;
+      fetch(`/admin/hoadon/ctht/${id}`)
+          .then(res => res.json())
+          .then(data => {
+              // Populate invoice details
+              document.querySelector("span#invoiceCode").textContent = data.maHD;
+              document.querySelector("span#customerName").textContent = data.tenKhachHang;
+              document.querySelector("span#employeeName").textContent = data.tenNhanVien;
+              document.querySelector("span#creationDate").textContent = new Date(data.ngayTao).toLocaleDateString();
+              document.querySelector("span#paymentMethod").textContent = data.tenPhuongThucThanhToan;
+              document.querySelector("span#totalAmount").textContent = data.tongTien.toLocaleString("vi-VN", {
+                  style: "currency",
+                  currency: "VND",
+              });
+              // document.querySelector("span#status").textContent = data.trangThaiHD;
+
+              const currentStatus = data.trangThaiHD; // Assuming this is the current status
+              const statusOptions = getStatusOptions(currentStatus);
+              const statusSelect = document.getElementById("statusSelect");
+              statusSelect.innerHTML = ""; // Clear existing options
+
+              statusOptions.forEach(option => {
+                  const opt = document.createElement("option");
+                  opt.value = option.value;
+                  opt.textContent = option.text;
+                  if (option.selected) {
+                      opt.selected = true;
+                  }
+                  statusSelect.appendChild(opt);
+              });
+
+              // Populate product table
+              const productTable = document.querySelector("tbody#productTable");
+              productTable.innerHTML = ""; // Clear existing rows
+              data.hoaDonChiTietRPS.forEach(product => {
+                  const row = document.createElement("tr");
+                  row.innerHTML = `
+                    <td>${product.name}</td>
+                    <td>${product.soLuong}</td>
+                    <td>${product.donGia.toLocaleString("vi-VN", {
+                      style: "currency",
+                      currency: "VND",
+                  })}</td>
+                    <td>${product.thanhTien.toLocaleString("vi-VN", {
+                      style: "currency",
+                      currency: "VND",
+                  })}</td>
+                `;
+                  productTable.appendChild(row);
+              });
+          })
+          .catch(err => console.error("Error fetching invoice details:", err));
   }
 
-
-  function showUpdateButton() {
-    const selectTrangThai = document.getElementById("modalTrangThai");
-    const originalValue = selectTrangThai.getAttribute("data-original-value");
-
-    // Kiểm tra nếu giá trị đã thay đổi so với ban đầu
-    if (selectTrangThai.value !== originalValue) {
-      document.getElementById("btnUpdateStatus").style.display = "block";
-    } else {
-      document.getElementById("btnUpdateStatus").style.display = "none";
-    }
-  }
-
-  function updateStatus() {
-    const maHD = document.getElementById("modalMaHD").value;
-    const newStatus = document.getElementById("modalTrangThai").value;
-
-    // Thêm logic cập nhật trạng thái hóa đơn tại đây
-    console.log(`Updating status for invoice ${maHD} to ${newStatus}`);
-
-    // Ẩn modal sau khi cập nhật thành công
-    closeDetail();
-  }
 </script>
 
 </body>

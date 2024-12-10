@@ -30,4 +30,5 @@ public class HoaDonChiTiet {
     @Column(name = "don_gia_sau_giam")
     private Double donGiaSauGiam;
 
+
 }

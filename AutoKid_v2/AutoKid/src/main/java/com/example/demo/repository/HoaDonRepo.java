@@ -24,9 +24,83 @@ public interface HoaDonRepo extends JpaRepository<HoaDon,Integer> {
             " WHERE id_hd = :idHD ", nativeQuery = true)
     void updateHoaDon(@Param("trangThai") String trangThai,@Param("idHD") Integer idHD);
 
+
     Optional findHoaDonByMaHD(String maHD);
     Optional<HoaDon> findByMaHD(String maHD);
 
+    @Query("SELECT h FROM HoaDon h WHERE h.khachHang.id = :idKH ORDER BY h.ngayTao ASC ")
+    List<HoaDon> getHDByIdKH(@Param("idKH") Integer idKH);
 
+    Optional<HoaDon> findByMaHD(String maHD);
+
+    @Query("SELECT h FROM HoaDon h WHERE " +
+            "(COALESCE(:maHd, '') = '' OR h.maHD LIKE %:maHd%)")
+    List<HoaDon> searchInvoices(String maHd);
+
+
+    // Đơn hàng đã thanh toán, chờ giao hàng hoặc chưa thanh toán, chờ giao hàng
+    @Query(value = "SELECT * FROM hoa_don WHERE trang_thai_hd = N'Đã thanh toán, chờ giao hàng' OR trang_thai_hd = N'Chưa thanh toán, chờ giao hàng'", nativeQuery = true)
+    List<HoaDon> findAllByPending();
+
+    // Đơn hàng đã thanh toán, đang giao hàng hoặc chưa thanh toán, đang giao hàng
+    @Query(value = "SELECT * FROM hoa_don WHERE trang_thai_hd = N'Đã thanh toán, đang giao hàng' OR trang_thai_hd = N'Chưa thanh toán, đang giao hàng'", nativeQuery = true)
+    List<HoaDon> findAllByInProgress();
+
+    // Đơn hàng đã hoàn thành
+    @Query(value = "SELECT * FROM hoa_don WHERE trang_thai_hd = N'Hoàn thành'", nativeQuery = true)
+    List<HoaDon> findAllByCompleted();
+
+    // Đơn hàng đã bị hủy
+    @Query(value = "SELECT * FROM hoa_don WHERE trang_thai_hd = N'Huỷ đơn hàng'", nativeQuery = true)
+    List<HoaDon> findAllByCanceled();
+
+    @Query(value = "SELECT * FROM hoa_don h WHERE " +
+            "(COALESCE(:maHd, '') = '' OR h.ma_hd LIKE %:maHd%) AND " +
+            "(h.trang_thai_hd IN (N'Đã thanh toán, chờ giao hàng', N'Chưa thanh toán, chờ giao hàng'))",
+            nativeQuery = true)
+    List<HoaDon> searchHoaDonPending(@Param("maHd") String maHd);
+
+    @Query(value = "SELECT * FROM hoa_don h WHERE " +
+            "(COALESCE(:maHd, '') = '' OR h.ma_hd LIKE %:maHd%) AND " +
+            "(h.trang_thai_hd IN (N'Đã thanh toán, đang giao hàng', N'Chưa thanh toán, đang giao hàng'))",
+            nativeQuery = true)
+    List<HoaDon> searchHoaDonInProgress(@Param("maHd") String maHd);
+
+    @Query(value = "SELECT * FROM hoa_don h WHERE " +
+            "(COALESCE(:maHd, '') = '' OR h.ma_hd LIKE %:maHd%) AND " +
+            "h.trang_thai_hd IN (N'Hoàn thành')",
+            nativeQuery = true)
+    List<HoaDon> searchHoaDonCompleted(@Param("maHd") String maHd);
+
+    @Query(value = "SELECT * FROM hoa_don h WHERE " +
+            "(COALESCE(:maHd, '') = '' OR h.ma_hd LIKE %:maHd%) AND " +
+            "h.trang_thai_hd IN (N'Huỷ đơn hàng')",
+            nativeQuery = true)
+    List<HoaDon> searchHoaDonCanceled(@Param("maHd") String maHd);
+
+    @Query("select month(o.ngayTao), sum(o.tongTien) " +
+            "from HoaDon o " +
+            "where year(o.ngayTao) = ?1 " +
+            "group by month(o.ngayTao) " +
+            "order by month(o.ngayTao)")
+    List<Object[]> getOrderByMonthInYear(int year);
+
+    @Query("select day(o.ngayTao), sum(o.tongTien) " +
+            "from HoaDon o " +
+            "where month(o.ngayTao) = ?1 and year(o.ngayTao) = ?2 " +
+            "group by day(o.ngayTao) " +
+            "order by day(o.ngayTao)")
+    List<Object[]> getOrderByDayInMonth(int month, int year);
+
+    @Query("SELECT sp.maSP AS idSanPham, " +
+            "sp.tenSP AS tenSanPham, " +
+            "SUM(hdct.soLuong) AS tongSoLuong, " +
+            "SUM(hdct.soLuong * hdct.donGiaSauGiam) AS tongDoanhThu " +
+            "FROM HoaDonChiTiet hdct " +
+            "JOIN hdct.sanPhamChiTiet spct " +
+            "JOIN spct.sanPham sp " +
+            "GROUP BY sp.maSP, sp.tenSP " +
+            "ORDER BY tongDoanhThu DESC")
+    List<Object[]> findTop5BestSellingProducts();
 
 }
