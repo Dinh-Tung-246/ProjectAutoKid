@@ -4,7 +4,9 @@ import com.example.demo.model.HoaDon;
 import lombok.Data;
 
 import java.sql.Date;
+import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 @Data
 public class HoaDonResponse {
@@ -17,6 +19,9 @@ public class HoaDonResponse {
     private Date ngayThayDoi;
     private Float tongTien;
     private String trangThaiHD;
+    private boolean isOnline;
+    private List<HoaDonChiTietRP> hoaDonChiTietRPS;
+
 
     public HoaDonResponse(HoaDon h) {
         this.id = h.getId();
@@ -27,5 +32,9 @@ public class HoaDonResponse {
         this.ngayTao = h.getNgayTao();
         this.tongTien = h.getTongTien();
         this.trangThaiHD = h.getTrangThaiHD();
+        this.isOnline = h.isOnline();
+        this.hoaDonChiTietRPS = h.getHoaDonChiTiets()
+                .stream()
+                .map(HoaDonChiTietRP::new).collect(Collectors.toList());
     }
 }

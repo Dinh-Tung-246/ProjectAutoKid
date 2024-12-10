@@ -5,6 +5,7 @@ import com.example.demo.repository.KhachHangRepo;
 import com.example.demo.repository.SanPhamChiTietRepo;
 import com.example.demo.model.KhachHang;
 import com.example.demo.repository.KhachHangRepo;
+import com.example.demo.repository.NhanVienRepo;
 import com.example.demo.response.KhachHangResponse;
 import com.example.demo.service.QuanLyDatHangService;
 import com.example.demo.service.QuanLyGioHangService;
@@ -30,6 +31,9 @@ public class ApiCustomController {
 
     @Autowired
     KhachHangRepo khachHangRepo;
+
+    @Autowired
+    NhanVienRepo nhanVienRepo;
 
     @Autowired
     QuanLyGioHangService qlghService;
@@ -71,6 +75,11 @@ public class ApiCustomController {
         return ResponseEntity.ok().body(serviceQLDH.createUser(response));
     }
 
+    @GetMapping("/staff/{maNV}")
+    public ResponseEntity<?> checkExistStaff(@PathVariable String maNV){
+        return ResponseEntity.ok().body(nhanVienRepo.existsByMaNV(maNV));
+    }
+  
     @PostMapping("/check-checkout")
     @ResponseBody
     public ResponseEntity<?> checkCheckout(@RequestBody List<Map<String, Object>> hdct) {
