@@ -1,5 +1,6 @@
 package com.example.demo.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.Data;
 
@@ -13,8 +14,10 @@ public class SanPhamChiTiet {
     @Column(name = "id_san_pham_chi_tiet")
     private Integer id;
 
+
     @ManyToOne
     @JoinColumn(name = "id_san_pham")
+    @JsonBackReference
     private SanPham sanPham;
 
     @ManyToOne

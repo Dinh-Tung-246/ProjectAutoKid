@@ -55,9 +55,11 @@ public class HoaDon {
     @Column(name = "sdt_nguoi_nhan")
     private String sdtNguoiNhan;
 
+
     @OneToMany(mappedBy = "hoaDon")
     private List<HoaDonChiTiet> hoaDonChiTiets;
 
     @Column(name = "is_online")
     private boolean isOnline;
+
 }
