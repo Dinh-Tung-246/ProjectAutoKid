@@ -35,4 +35,11 @@ public interface SanPhamChiTietRepo extends JpaRepository<SanPhamChiTiet,Integer
             " WHERE spct.id = :idSPCT")
     void updateSoLuongSPCT(@Param("soLuong") Integer soLuong, @Param("idSPCT") Integer idSPCT);
 
+
+    @Modifying
+    @Query("UPDATE SanPhamChiTiet spct " +
+            "SET spct.soLuong = spct.soLuong - :soLuong " +
+            "WHERE spct.maSPCT = :maSPCT")
+    void updateSoLuongSPCTTQ(@Param("soLuong") Integer soLuong, @Param("maSPCT") String maSPCT);
+
 }

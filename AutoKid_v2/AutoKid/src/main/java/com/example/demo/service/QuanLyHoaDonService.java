@@ -9,6 +9,7 @@ import com.example.demo.repository.SanPhamChiTietRepo;
 import com.example.demo.response.HoaDonResponse;
 import com.example.demo.response.HoadonhistoryRespone;
 import com.example.demo.response.hoadonchitietRespone;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -49,22 +50,23 @@ public class QuanLyHoaDonService {
         return khachHangRepo.findBySDT(sdt);
     }
 
+    @Transactional
     public boolean updateProductQuantity(String maSPCT, Integer soLuong) {
         SanPhamChiTiet sanPhamChiTiet = sanPhamChiTietRepo.findByMaSPCT(maSPCT);
         if (sanPhamChiTiet != null) {
-            if (soLuong > sanPhamChiTiet.getSoLuong()) {
+            int currentQuantity = sanPhamChiTiet.getSoLuong();
+            if (soLuong <= 0 || soLuong > currentQuantity) {
                 return false;
             }
-            if (sanPhamChiTiet.getSoLuong() - soLuong < 0) {
-                return false;
-            }
-            sanPhamChiTiet.setSoLuong(sanPhamChiTiet.getSoLuong() - soLuong);
+            sanPhamChiTiet.setSoLuong(currentQuantity - soLuong);
             sanPhamChiTietRepo.save(sanPhamChiTiet);
+
             return true;
         } else {
-            return false;
+            return false; // Không tìm thấy sản phẩm chi tiết
         }
     }
+
 
 
     public Optional<SanPhamChiTiet> findOptionalByMaSPCT(String maSPCT) {

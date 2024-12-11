@@ -155,30 +155,47 @@ document.addEventListener("DOMContentLoaded", function () {
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify({
-                sdt: sdt
-            })
+            body: JSON.stringify({ sdt: sdt })
         })
-            .then(response => response.json())  // Giả sử API trả về dữ liệu JSON
-            .then(data => {
-                console.log("API response:", data);  // In ra dữ liệu trả về từ API
+            .then(response => {
+                console.log("Response received:", response);
+                if (!response.ok) {
+                    return response.text().then(errorMessage => {
+                        throw new Error(errorMessage);
+                    });
+                }
+                return response.text(); // Đọc phản hồi dưới dạng văn bản
+            })
+            .then(responseText => {
+                console.log("Raw API response:", responseText);
 
-                // Lưu dữ liệu khách hàng vào localStorage
-                localStorage.setItem("customerData", JSON.stringify(data));
-                console.log("Customer saved to session:", localStorage.getItem("customerData"));
-                const customer = JSON.parse(localStorage.getItem("customerData"));
-                if (customer) {
-                    console.log("Customer from localStorage:", customer);
-                    customerName.textContent = customer.tenKH;
-                    customerPhone.textContent = customer.sdt;
-                } else {
-                    console.log("No customer data found in localStorage.");
+                // Làm sạch chuỗi JSON nếu cần
+                try {
+                    // Bạn có thể thay thế các chuỗi không hợp lệ ở đây nếu cần
+                    const cleanedResponse = responseText.replace(/}}]}}]}}]/g, '}');
+                    const customer = JSON.parse(cleanedResponse); // Chuyển đổi phản hồi thành JSON hợp lệ
+                    console.log("API response:", customer);
+
+                    // Lưu thông tin khách hàng vào localStorage
+                    localStorage.setItem("customerData", JSON.stringify(customer));
+                    console.log("Customer saved to localStorage:", localStorage.getItem("customerData"));
+
+                    // Cập nhật giao diện
+                    const customerName = document.getElementById("customerName");
+                    const customerPhone = document.getElementById("customerPhone");
+                    if (customerName && customerPhone) {
+                        customerName.textContent = customer.tenKH;
+                        customerPhone.textContent = customer.sdt;
+                    }
+                } catch (error) {
+                    throw new Error("Invalid JSON response: " + error.message);
                 }
             })
-            .catch(error => console.error("Error setting customer to session:", error));
+            .catch(error => {
+                console.error("Error setting customer to session:", error.message);
+                alert(error.message); // Hiển thị lỗi cho người dùng
+            });
     }
-
-
 
 });
 
@@ -600,9 +617,15 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
 
+    let isUpdating = false; // Trạng thái để kiểm tra liệu đã có yêu cầu đang xử lý hay chưa
+
     document.getElementById("addToCartButton").addEventListener("click", async function () {
+        if (isUpdating) return; // Nếu đang cập nhật, không thực hiện thêm lần nữa
+
+        isUpdating = true; // Đánh dấu trạng thái đang cập nhật
+
         const quantity = parseInt(document.getElementById("productQuantity").value);
-        const productId = selectedProduct.maSPCT; // Mã sản phẩm chi tiết
+        const productId = selectedProduct.maSPCT;
 
         console.log("Số lượng sản phẩm:", quantity);
         console.log("Sản phẩm đã chọn:", selectedProduct);
@@ -610,6 +633,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
         if (!selectedOrder) {
             alert("Vui lòng chọn đơn hàng trước!");
+            isUpdating = false; // Khôi phục trạng thái nếu không chọn đơn hàng
             return;
         }
 
@@ -621,11 +645,11 @@ document.addEventListener("DOMContentLoaded", function () {
             });
 
             const result = await response.json();
-            const availableQuantity = result.soLuong; // Số lượng thực tế trong cơ sở dữ liệu
+            const availableQuantity = result.soLuong;
 
             if (quantity <= 0 || quantity > availableQuantity) {
-                // Hiển thị thông báo lỗi nếu số lượng không hợp lệ
                 alert(`Số lượng sản phẩm không hợp lệ! Hiện tại chỉ còn ${availableQuantity} sản phẩm.`);
+                isUpdating = false; // Khôi phục trạng thái nếu có lỗi
                 return;
             }
 
@@ -634,12 +658,11 @@ document.addEventListener("DOMContentLoaded", function () {
                 const updateResponse = await fetch(`/admin/ban-hang/san-pham-chi-tiet/${productId}/update-quantity`, {
                     method: 'PUT',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ soLuong: quantity })
+                    body: JSON.stringify({ soLuong: quantity }) // Truyền số lượng muốn trừ đi
                 });
 
                 const updateResult = await updateResponse.json();
                 if (updateResult.success) {
-                    // Chỉ thêm sản phẩm vào giỏ hàng khi cập nhật thành công
                     addProductToCart(selectedProduct, quantity);
                     alert("Sản phẩm đã được cập nhật vào giỏ hàng và cơ sở dữ liệu!");
                 } else {
@@ -652,6 +675,8 @@ document.addEventListener("DOMContentLoaded", function () {
         } catch (error) {
             console.error("Error fetching product quantity:", error);
             alert("Có lỗi xảy ra khi kiểm tra số lượng sản phẩm!");
+        } finally {
+            isUpdating = false; // Khôi phục trạng thái
         }
     });
 
@@ -703,15 +728,15 @@ document.getElementById("paymentButton").addEventListener("click", async functio
 
             totalAmount += totalPrice;
             totalQuantity += productQuantity;
-            console.log(cartItems)
+
         });
 
-
-        // Kiểm tra giỏ hàng có sản phẩm hay không
-        if (cartItems.length === 0) {
-            alert("Giỏ hàng không có sản phẩm!");
-            return;
-        }
+        console.log(cartItems)
+        // // Kiểm tra giỏ hàng có sản phẩm hay không
+        // if (cartItems.length === 0) {
+        //     alert("Giỏ hàng không có sản phẩm!");
+        //     return;
+        // }
 
         // Lấy thông tin khách hàng từ localStorage
         const customerData = JSON.parse(localStorage.getItem("customerData"));
@@ -735,6 +760,7 @@ document.getElementById("paymentButton").addEventListener("click", async functio
 
         // Lấy thông tin nhân viên từ localStorage
         const employeeData = JSON.parse(localStorage.getItem("infoNV"));
+        console.log(employeeData)
         if (!employeeData || !employeeData.id) {
             alert("Thông tin nhân viên không hợp lệ hoặc không có trong hệ thống!");
             return;
@@ -743,26 +769,23 @@ document.getElementById("paymentButton").addEventListener("click", async functio
         const employeeId = employeeData.id;
 
         // Tạo đối tượng hóa đơn
-        const testInvoice = {
-            id_kh: 5,
-            khachHang: { id: 5 },
-            id_nv: 5,
-            nhanVien: { id: 5 },
-            totalAmount: 1000000,
-            totalQuantity: 1,
-            paymentType: "cash",
-            voucher: "",
-            cartItems: [{
-                productId: "SPCT006",
-                productName: "Youth MAX BIKE Bambi",
-                productPrice: 1000000,
-                productQuantity: 1,
-                totalPrice: 1000000
-            }]
+        const invoice = {
+            id_kh: customerId,
+            khachHang: {
+                id: customerId
+            },
+            id_nv: employeeId,
+            nhanVien: {
+                id: employeeId
+            },
+            totalAmount,
+            totalQuantity,
+            paymentType,
+            voucher,
+            cartItems
         };
 
-
-        console.log("Sending invoice:", JSON.stringify(testInvoice));
+        console.log("Sending invoice:", JSON.stringify(invoice));
 
         try {
             const response = await fetch('/admin/ban-hang/create-invoice', {
@@ -770,7 +793,7 @@ document.getElementById("paymentButton").addEventListener("click", async functio
                 headers: {
                     'Content-Type': 'application/json'
                 },
-                body: JSON.stringify(testInvoice)
+                body: JSON.stringify(invoice)
             });
 
             if (response.ok) {
