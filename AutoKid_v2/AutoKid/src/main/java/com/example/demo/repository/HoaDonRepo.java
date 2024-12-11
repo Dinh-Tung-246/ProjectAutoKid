@@ -12,6 +12,8 @@ import java.util.Optional;
 
 @Repository
 public interface HoaDonRepo extends JpaRepository<HoaDon,Integer> {
+    List<HoaDon> findByTrangThaiHD(String trangThaiHD);
+
     @Query(value = "SELECT TOP 1 * " +
             "FROM hoa_don h" +
             " ORDER BY h.id_hd DESC", nativeQuery = true)
@@ -21,6 +23,10 @@ public interface HoaDonRepo extends JpaRepository<HoaDon,Integer> {
     @Query(value = "UPDATE hoa_don SET trang_thai_hd = :trangThai" +
             " WHERE id_hd = :idHD ", nativeQuery = true)
     void updateHoaDon(@Param("trangThai") String trangThai,@Param("idHD") Integer idHD);
+
+
+    Optional findHoaDonByMaHD(String maHD);
+    Optional<HoaDon> findByMaHD(String maHD);
 
     @Query("SELECT h FROM HoaDon h WHERE h.khachHang.id = :idKH ORDER BY h.ngayTao ASC ")
     List<HoaDon> getHDByIdKH(@Param("idKH") Integer idKH);

@@ -11,6 +11,7 @@ import java.util.Optional;
 public interface NhanVienRepo extends JpaRepository<NhanVien,Integer> {
     Optional<NhanVien> findByEmail(String email);
 
+    NhanVien findByMaNV(String maNv);
     List<NhanVien> findByTenNVContainingOrMaNVContaining(String tenNV, String maNV);
 
     NhanVien findByMaNV(String maNv);
