@@ -102,7 +102,8 @@
                     </li>
                     <li><a th:classappend="${namePage == 'customer-mng'} ? 'active'" href="/admin/customer-management/"><span class="icon paper" aria-hidden="true"></span>Khách Hàng</a></li>
                     <li><a th:classappend="${namePage == 'staff'} ? 'active'" href="/admin/staff/home"><span class="icon message" aria-hidden="true"></span>Nhân Viên</a></li>
-                    <li>
+                    <li><a th:classappend="${namePage == 'voucher'} ? 'active'" href="/admin/voucher/index"><span class="icon message" aria-hidden="true"></span>Quản lý voucher</a></li>
+                     <li>
                       <a class="show-cat-btn" href="/admin/statistical-year">
                         <span class="icon home" aria-hidden="true"></span>Thống kê
                         <span class="category__btn transparent-btn" title="Open list">

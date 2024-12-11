@@ -158,9 +158,9 @@ CREATE TABLE san_pham_chi_tiet (
 CREATE TABLE voucher (
     id_voucher INT PRIMARY KEY IDENTITY,
     ma_voucher VARCHAR(50) NOT NULL UNIQUE,      
-    ten_voucher VARCHAR(100) NOT NULL,        
+    ten_voucher NVARCHAR(100) NOT NULL,        
     loai_voucher int NOT NULL, 
-    dieu_kien FLOAT NOT NULL,                   
+    dieu_kien FLOAT NULL,                   
     gia_tri FLOAT NOT NULL,                     
     gia_tri_toi_da FLOAT NULL,             
     ngay_bat_dau DATE NOT NULL,                  
