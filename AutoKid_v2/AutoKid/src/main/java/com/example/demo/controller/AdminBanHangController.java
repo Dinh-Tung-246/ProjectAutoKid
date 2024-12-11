@@ -6,6 +6,7 @@ import com.example.demo.response.ApiResponse;
 import com.example.demo.response.SanPhamChiTietDTO;
 import com.example.demo.service.QuanLyHoaDonService;
 import com.example.demo.service.QuanLySanPhamService;
+import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -40,6 +41,9 @@ public class AdminBanHangController {
     @Autowired
     NhanVienRepo nhanVienRepo;
 
+    @Autowired
+    PhuongThucThanhToanRepo phuongThucThanhToanRepo;
+
 
     @GetMapping("/home")
     public String products(Model model) {
@@ -47,6 +51,7 @@ public class AdminBanHangController {
         model.addAttribute("currentPage", "products");
         model.addAttribute("namePage", "ban-hang");
         model.addAttribute("spcts", sanPhamChiTiets);
+        model.addAttribute("pttps", phuongThucThanhToanRepo.findAll());
         return "admin/ban-hang";
     }
 
@@ -62,6 +67,20 @@ public class AdminBanHangController {
         KhachHang savedKhachHang = khachHangRepo.save(khachHang);
         return ResponseEntity.ok(savedKhachHang);
     }
+
+    @PostMapping("/set-session")
+    public ResponseEntity<?> setCustomerSession(@RequestBody Map<String, String> customerData, HttpSession session) {
+        String sdt = customerData.get("sdt");
+        KhachHang khachHang = khachHangRepo.findBySdt(sdt);
+        if (khachHang != null) {
+            session.setAttribute("currentCustomer", khachHang);
+            System.out.println("Thông tin khách hàng đã được lưu vào session: " + khachHang); // In ra thông tin khách hàng đã lưu
+            return ResponseEntity.ok("Khách hàng được lưu vào session.");
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Không tìm thấy khách hàng.");
+        }
+    }
+
     @GetMapping("/san-pham-chi-tiet/search")
     public ResponseEntity<List<SanPhamChiTietDTO>> searchSPCTByTenSPOrMaSPCT(@RequestParam("tenSP") String tenSP, @RequestParam("maSPCT") String maSPCT) {
         List<SanPhamChiTietDTO> result = sanPhamChiTietRepo.findSanPhamChiTietBySanPham_TenSPOrMaSPCT(tenSP, maSPCT);

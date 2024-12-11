@@ -1,3 +1,5 @@
+
+
 document.addEventListener("DOMContentLoaded", function () {
     const searchInput = document.getElementById("searchCustomerInput");
     const customerResults = document.getElementById("customerResults");
@@ -8,6 +10,7 @@ document.addEventListener("DOMContentLoaded", function () {
     const newCustomerName = document.getElementById("newCustomerName");
     const newCustomerPhone = document.getElementById("newCustomerPhone");
     const saveCustomerBtn = document.getElementById("saveCustomerBtn");
+
 
     // Sự kiện tìm kiếm khách hàng
     searchInput.addEventListener("input", function () {
@@ -32,6 +35,9 @@ document.addEventListener("DOMContentLoaded", function () {
                                 customerName.textContent = khachHang.tenKH;
                                 customerPhone.textContent = khachHang.sdt;
                                 customerResults.style.display = "none"; // Ẩn kết quả tìm kiếm khi chọn khách hàng
+                                // Lưu khách hàng vào session thông qua API
+                                saveCustomerToSession(khachHang.sdt);
+                                event.stopPropagation();
                             });
 
                             customerList.appendChild(listItem);
@@ -95,6 +101,8 @@ document.addEventListener("DOMContentLoaded", function () {
                     const toast = new bootstrap.Toast(document.getElementById('successToast'));
                     toast.show();
 
+                    // Lưu khách hàng vào session
+                    saveCustomerToSession(sdt);
 
                     searchInput.value = ''; // Xóa ô nhập tìm kiếm
                     customerResults.style.display = "none"; // Ẩn kết quả tìm kiếm
@@ -103,12 +111,25 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     });
 
-    // Đóng bảng khách hàng khi người dùng click ra ngoài ô input hoặc bảng kết quả
-    document.addEventListener("click", function (event) {
-        if (!searchInput.contains(event.target) && !customerResults.contains(event.target)) {
-            customerResults.style.display = "none"; // Ẩn bảng kết quả
-        }
-    });
+    // Lưu khách hàng vào session
+    function saveCustomerToSession(sdt) {
+        fetch('/admin/ban-hang/set-session', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                sdt: sdt
+            })
+        })
+            .then(response => response.text())
+            .then(data => {
+                console.log(data); // In ra thông báo khi khách hàng được lưu vào session
+            })
+            .catch(error => console.error("Error setting customer to session:", error));
+    }
+
+
 });
 
 
@@ -285,6 +306,7 @@ document.addEventListener("DOMContentLoaded", function () {
                                 quantityModal.show(); // Hiển thị modal nhập số lượng
                                 productResults.style.display = "none"; // Ẩn kết quả tìm kiếm khi chọn sản phẩm
                                 searchInput.value = "";
+                                event.stopPropagation();
                             });
 
                             // Thêm dòng vào bảng
@@ -303,12 +325,19 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     });
 
-    // Đóng bảng sản phẩm khi người dùng click ra ngoài ô input hoặc bảng kết quả
     document.addEventListener("click", function (event) {
-        if (!searchInput.contains(event.target) && !productResults.contains(event.target)) {
-            productResults.style.display = "none"; // Ẩn bảng kết quả
+        const isClickInsideSearch = searchInput.contains(event.target) || productResults.contains(event.target) || customerResults.contains(event.target);
+        const isClickInsideProduct = productResults.contains(event.target);
+        const isClickInsideCustomer = customerResults.contains(event.target);
+
+        // Nếu click ra ngoài searchInput và các bảng kết quả, thì đóng bảng
+        if (!isClickInsideSearch && !isClickInsideProduct && !isClickInsideCustomer) {
+            customerResults.style.display = "none";
+            productResults.style.display = "none"; // Đóng bảng sản phẩm
         }
     });
+
+
     function addProductToCart(product, quantity) {
         if (!selectedOrder) {
             alert("Vui lòng chọn đơn hàng trước!");
@@ -596,6 +625,63 @@ document.addEventListener("DOMContentLoaded", function () {
         console.log("Chưa có đơn hàng được chọn.");
     }
 });
+
+document.getElementById("paymentButton").addEventListener("click", function () {
+    // Hiển thị hộp thoại xác nhận
+    const confirmPayment = confirm("Bạn có chắc chắn muốn thanh toán đơn hàng này không?");
+
+    if (confirmPayment) {
+        // Dữ liệu hóa đơn và chi tiết hóa đơn
+        const invoiceData = {
+            customerName: document.getElementById("customerName").textContent,
+            customerPhone: document.getElementById("customerPhone").textContent,
+            items: [],
+            totalAmount: document.querySelector("#summaryTable .text-danger").textContent,
+            paymentType: document.getElementById("paymentTypeSelect").value
+        };
+
+        // Lấy thông tin sản phẩm trong giỏ hàng
+        const cartRows = document.querySelectorAll("#cartTableBody tr");
+        cartRows.forEach(row => {
+            const item = {
+                productId: row.querySelector(".product-id").textContent,
+                name: row.querySelector(".product-name").textContent,
+                price: row.querySelector(".product-price").textContent,
+                quantity: row.querySelector(".product-quantity input").value,
+                total: row.querySelector(".product-total").textContent
+            };
+            invoiceData.items.push(item);
+        });
+
+        // Gửi dữ liệu đến server (giả sử bạn dùng API)
+        fetch("/api/create-invoice", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(invoiceData)
+        })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    // Hiển thị thông báo thành công
+                    const toast = new bootstrap.Toast(document.getElementById("invoiceToast"));
+                    toast.show();
+
+                    // Xóa giỏ hàng và cập nhật giao diện
+                    document.getElementById("cartTableBody").innerHTML = "";
+                    document.querySelector("#summaryTable .text-danger").textContent = "";
+                } else {
+                    alert("Đã xảy ra lỗi khi tạo hóa đơn. Vui lòng thử lại.");
+                }
+            })
+            .catch(error => {
+                console.error("Lỗi:", error);
+                alert("Đã xảy ra lỗi khi tạo hóa đơn. Vui lòng thử lại.");
+            });
+    }
+});
+
 
 
 
