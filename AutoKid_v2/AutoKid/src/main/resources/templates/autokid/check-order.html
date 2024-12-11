@@ -6,7 +6,7 @@
     <meta name="keywords" content="Ogani, unica, creative, html"/>
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <meta http-equiv="X-UA-Compatible" content="ie=edge"/>
-    <title>AutoKid | Order tracking</title>
+    <title>AutoKid | Check order</title>
     <link rel="icon" type="image/x-icon" href="img/logo.png" style="height: 10px; width: 10px">
 
     <!-- Google Font -->
@@ -24,7 +24,7 @@
     <link rel="stylesheet" href="css/owl.carousel.min.css" type="text/css"/>
     <link rel="stylesheet" href="css/slicknav.min.css" type="text/css"/>
     <link rel="stylesheet" href="css/style.css" type="text/css"/>
-    <link rel="stylesheet" href="css/order-tracking.css" type="text/css" />
+    <link rel="stylesheet" href="css/check-order.css" type="text/css" />
     <link
             rel="stylesheet"
             href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css"
@@ -45,10 +45,10 @@
         <div class="row">
             <div class="col-lg-12 text-center">
                 <div class="breadcrumb__text">
-                    <h2>Thông tin đơn hàng</h2>
+                    <h2>Tra cứu đơn hàng</h2>
                     <div class="breadcrumb__option">
                         <a th:href="@{http://localhost:8080/autokid/home}">Trang chủ</a>
-                        <span>Thông tin đơn hàng</span>
+                        <span>Tra cứu đơn hàng</span>
                     </div>
                 </div>
             </div>
@@ -60,20 +60,11 @@
 <!-- Checkout Section Begin -->
 <section class="checkout spad">
     <div class="container">
-        <div class="checkout__form">
-            <h3 style="margin-bottom: 20px">DANH SÁCH CÁC ĐƠN HÀNG</h3>
-            <form action="#" id="update-info">
-                <div class="row">
-                    <div class="col-lg-8 col-md-6">
-                        <div th:if="${isDHExist == 0}">
-                            <span>Không có đơn hàng nào. Bạn chưa từng đặt mua sản phẩm nào của shop.</span>
-                        </div>
-                        <div th:if="${isDHExist == 1}">
-                            <div id="table-donhang"></div>
-                        </div>
-                    </div>
-                </div>
-            </form>
+        <div class="check__order">
+            <div class="search-order">
+                <input type="text" class="input__search__order" id="search__order" autocomplete="off" placeholder="Mã đơn hàng muốn tra cứu?">
+                <button class="btn__search__order" onclick="searchOrderByMaHD(event)">Tra cứu</button>
+            </div>
         </div>
     </div>
 </section>
@@ -92,7 +83,7 @@
 <script src="js/mixitup.min.js"></script>
 <script src="js/owl.carousel.min.js"></script>
 <script src="js/main.js"></script>
-<script src="js/orderTracking.js"></script>
+<script src="js/orderCheck.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 </body>

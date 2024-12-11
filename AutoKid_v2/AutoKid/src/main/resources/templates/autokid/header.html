@@ -18,7 +18,7 @@
                     <div class="header__top__left">
                         <ul>
                             <li><i class="fa fa-envelope"></i> autokid@colorlib.com</li>
-<!--                            <li>Miễn phí vận chuyển với các đơn trên 2 triệu đồng</li>-->
+                            <li>Autokid uy tín, chất lượng hàng đầu Việt Nam</li>
                         </ul>
                     </div>
                 </div>
@@ -62,10 +62,10 @@
                                 <li th:classappend="${currentPage == 'shop-detail'} ? 'active'"><a th:href="@{/autokid/shop-detail(idSP=1)}">Cửa hàng chi tiết</a></li>
                                 <li th:classappend="${currentPage == 'shoping-cart'} ? 'active'"><a th:href="@{http://localhost:8080/autokid/shoping-cart}">Giỏ hàng</a></li>
                                 <li th:classappend="${currentPage == 'checkout'} ? 'active'"><a th:href="@{http://localhost:8080/autokid/checkout}">Đặt hàng</a></li>
-                                <li th:classappend="${currentPage == 'contact'} ? 'active'"><a th:href="@{http://localhost:8080/autokid/contact}">Liên hệ</a></li>
+                                <li ><a th:href="@{http://localhost:8080/autokid/contact}">Liên hệ</a></li>
                             </ul>
                         </li>
-                        <li th:classappend="${currentPage == 'contact'} ? 'active'"><a th:href="@{http://localhost:8080/autokid/contact}">Tra cứu đơn</a></li>
+                        <li th:classappend="${currentPage == 'contact'} ? 'active'"><a th:href="@{http://localhost:8080/autokid/account/check-order}">Tra cứu đơn</a></li>
                     </ul>
                 </nav>
             </div>

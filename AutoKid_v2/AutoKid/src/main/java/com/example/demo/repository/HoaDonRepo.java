@@ -96,4 +96,8 @@ public interface HoaDonRepo extends JpaRepository<HoaDon,Integer> {
             "GROUP BY sp.maSP, sp.tenSP " +
             "ORDER BY tongDoanhThu DESC")
     List<Object[]> findTop5BestSellingProducts();
+
+    @Query("SELECT h.id FROM HoaDon h" +
+            " WHERE h.maHD = :maHD")
+    Integer getIdHDByMaHD(@Param("maHD") String maHD);
 }
