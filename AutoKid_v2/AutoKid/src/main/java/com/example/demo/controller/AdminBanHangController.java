@@ -1,28 +1,24 @@
 package com.example.demo.controller;
 
 import com.example.demo.model.*;
-import com.example.demo.repository.KhachHangRepo;
-import com.example.demo.repository.NhanVienRepo;
-import com.example.demo.repository.SanPhamChiTietRepo;
+import com.example.demo.repository.*;
+import com.example.demo.response.ApiResponse;
+import com.example.demo.response.SanPhamChiTietDTO;
 import com.example.demo.service.QuanLyHoaDonService;
 import com.example.demo.service.QuanLySanPhamService;
+import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-
 import org.springframework.web.bind.annotation.*;
 
-import java.sql.Date;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Controller
 @RequestMapping("/admin/ban-hang")
 public class AdminBanHangController {
-
-
 
     @Autowired
     SanPhamChiTietRepo sanPhamChiTietRepo;
@@ -34,9 +30,20 @@ public class AdminBanHangController {
     QuanLyHoaDonService hoaDonService;
 
     @Autowired
+    HoaDonRepo hoaDonRepo;
+
+    @Autowired
+    HoaDonChiTietRepo hoaDonChiTietRepo;
+
+    @Autowired
     KhachHangRepo khachHangRepo;
+
     @Autowired
     NhanVienRepo nhanVienRepo;
+
+    @Autowired
+    PhuongThucThanhToanRepo phuongThucThanhToanRepo;
+
 
     @GetMapping("/home")
     public String products(Model model) {
@@ -44,65 +51,67 @@ public class AdminBanHangController {
         model.addAttribute("currentPage", "products");
         model.addAttribute("namePage", "ban-hang");
         model.addAttribute("spcts", sanPhamChiTiets);
+        model.addAttribute("pttps", phuongThucThanhToanRepo.findAll());
         return "admin/ban-hang";
     }
 
-    @PostMapping("/create")
-    @ResponseBody
-    public boolean createInvoice(@RequestBody Map<String, Object> request) {
-        System.out.println(request);
 
-        // Lấy dữ liệu hóa đơn từ request
-        Map<String, Object> hoaDonData = (Map<String, Object>) request.get("hoaDon");
+    @GetMapping("/khachhang/search")
+    public ResponseEntity<List<KhachHang>> searchKhachHangBySDT(@RequestParam("sdt") String sdt) {
+        List<KhachHang> result = hoaDonService.searchBySDT(sdt);
+        return ResponseEntity.ok(result);
+    }
 
-        KhachHang khachHang = khachHangRepo.findBySdt((String)hoaDonData.get("customerPhone"));
-        NhanVien nhanVien = nhanVienRepo.findByMaNV((String)hoaDonData.get("staffId"));
-        // Tạo đối tượng HoaDon
-        HoaDon hoaDon = new HoaDon();
-        hoaDon.setMaHD((String) hoaDonData.get("invoiceCode"));
-        hoaDon.setKhachHang(khachHang);
-        hoaDon.setNhanVien(nhanVien);
-        hoaDon.setPhuongThucThanhToan(null);
-        hoaDon.setNgayTao(new Date(System.currentTimeMillis()));
-        hoaDon.setPhiShip(50000F);  // Phí vận chuyển cố định
-        hoaDon.setHinhThucThanhToan(null);
-        hoaDon.setTongTien(((Number) hoaDonData.get("totalAmount")).floatValue());
-        hoaDon.setTrangThaiHD("Chưa thanh toán, chờ giao hàng");  // Nếu có
+    @PostMapping("/khach-hang/add")
+    public ResponseEntity<KhachHang> themKhachHang(@RequestBody KhachHang khachHang) {
+        KhachHang savedKhachHang = khachHangRepo.save(khachHang);
+        return ResponseEntity.ok(savedKhachHang);
+    }
 
-
-//         Lưu thông tin hóa đơn vào cơ sở dữ liệu
-        hoaDon = hoaDonService.createHoaDon(hoaDon);
-        // Lấy dữ liệu chi tiết hóa đơn từ request
-        List<Map<String, Object>> hoaDonChiTietList = (List<Map<String, Object>>) hoaDonData.get("products");
-
-        // Xử lý từng chi tiết hóa đơn (hdct)
-        for (Map<String, Object> hdctData : hoaDonChiTietList) {
-            HoaDonChiTiet hoaDonChiTiet = new HoaDonChiTiet();
-
-            Integer soLuong = Integer.parseInt(hdctData.get("quantity").toString());
-            String idSPCT = hdctData.get("productId").toString();
-            double donGia = Double.parseDouble(hdctData.get("price").toString());
-            Double donGiaSauGiam = Double.parseDouble(hdctData.get("totalPrice").toString());
-
-            SanPhamChiTiet sanPhamChiTiet = sanPhamChiTietRepo.findByMaSPCT(idSPCT);
-            sanPhamChiTiet.setSoLuong(sanPhamChiTiet.getSoLuong() - soLuong);
-            sanPhamChiTietRepo.save(sanPhamChiTiet);
-
-            hoaDonChiTiet.setSanPhamChiTiet(sanPhamChiTiet);
-
-
-            // Lấy giá sau khi giảm giá
-            hoaDonChiTiet.setSoLuong(soLuong);
-            hoaDonChiTiet.setHoaDon(hoaDon);
-            hoaDonChiTiet.setDonGia(donGia);
-            hoaDonChiTiet.setDonGiaSauGiam(donGiaSauGiam);
-
-            // Lưu thông tin chi tiết hóa đơn vào cơ sở dữ liệu
-            hoaDonService.createHoaDonChiTiet(hoaDonChiTiet);
+    @PostMapping("/set-session")
+    public ResponseEntity<?> setCustomerSession(@RequestBody Map<String, String> customerData, HttpSession session) {
+        String sdt = customerData.get("sdt");
+        KhachHang khachHang = khachHangRepo.findBySdt(sdt);
+        if (khachHang != null) {
+            session.setAttribute("currentCustomer", khachHang);
+            System.out.println("Thông tin khách hàng đã được lưu vào session: " + khachHang); // In ra thông tin khách hàng đã lưu
+            return ResponseEntity.ok("Khách hàng được lưu vào session.");
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Không tìm thấy khách hàng.");
         }
+    }
 
-        // Trả về thông báo thành công
-        return true;
+
+    @GetMapping("/san-pham-chi-tiet/search")
+    public ResponseEntity<List<SanPhamChiTietDTO>> searchSPCTByTenSPOrMaSPCT(@RequestParam("tenSP") String tenSP, @RequestParam("maSPCT") String maSPCT) {
+        List<SanPhamChiTietDTO> result = sanPhamChiTietRepo.findSanPhamChiTietBySanPham_TenSPOrMaSPCT(tenSP, maSPCT);
+        return ResponseEntity.ok(result);
+    }
+
+    @GetMapping("/san-pham-chi-tiet/{maSPCT}/get-quantity")
+    @ResponseBody
+    public ResponseEntity<Map<String, Object>> getProductQuantity(@PathVariable String maSPCT) {
+        Optional<SanPhamChiTiet> sanPham = hoaDonService.findOptionalByMaSPCT(maSPCT);
+        if (sanPham.isPresent()) {
+            Map<String, Object> response = new HashMap<>();
+            response.put("soLuong", sanPham.get().getSoLuong());
+            return ResponseEntity.ok(response);
+        } else {
+            Map<String, Object> errorResponse = new HashMap<>();
+            errorResponse.put("message", "Sản phẩm không tồn tại!");
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorResponse);
+        }
+    }
+
+
+    @PutMapping("/san-pham-chi-tiet/{maSPCT}/update-quantity")
+    public ResponseEntity<?> updateProductQuantity(@PathVariable("maSPCT") String maSPCT, @RequestBody SanPhamChiTietDTO request) {
+        boolean success = hoaDonService.updateProductQuantity(maSPCT, request.getSoLuong());
+        if (success) {
+            return ResponseEntity.ok(new ApiResponse(true, "Cập nhật số lượng thành công"));
+        } else {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ApiResponse(false, "Cập nhật số lượng thất bại"));
+        }
     }
 
 }

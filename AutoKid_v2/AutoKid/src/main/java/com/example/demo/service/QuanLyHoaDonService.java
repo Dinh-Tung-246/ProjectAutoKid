@@ -1,6 +1,7 @@
 package com.example.demo.service;
 
 import com.example.demo.model.*;
+import com.example.demo.repository.*;
 import com.example.demo.repository.HoaDonChiTietRepo;
 import com.example.demo.repository.HoaDonHistoryRepo;
 import com.example.demo.repository.HoaDonRepo;
@@ -28,6 +29,37 @@ public class QuanLyHoaDonService {
 
     @Autowired
     private SanPhamChiTietRepo sanPhamChiTietRepo;
+
+
+    @Autowired
+    KhachHangRepo khachHangRepo;
+
+    public List<KhachHang> searchBySDT(String sdt) {
+        return khachHangRepo.findBySDT(sdt);
+    }
+
+    public boolean updateProductQuantity(String maSPCT, Integer soLuong) {
+        SanPhamChiTiet sanPhamChiTiet = sanPhamChiTietRepo.findByMaSPCT(maSPCT);
+        if (sanPhamChiTiet != null) {
+            if (soLuong > sanPhamChiTiet.getSoLuong()) {
+                return false;
+            }
+            if (sanPhamChiTiet.getSoLuong() - soLuong < 0) {
+                return false;
+            }
+            sanPhamChiTiet.setSoLuong(sanPhamChiTiet.getSoLuong() - soLuong);
+            sanPhamChiTietRepo.save(sanPhamChiTiet);
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    public Optional<SanPhamChiTiet> findOptionalByMaSPCT(String maSPCT) {
+        SanPhamChiTiet sanPhamChiTiet = sanPhamChiTietRepo.findByMaSPCT(maSPCT);
+        return Optional.ofNullable(sanPhamChiTiet); // Bọc kết quả trong Optional
+    }
+
 
     public List<HoaDonResponse> fillAllHoaDon(){
         List<HoaDonResponse> list= new ArrayList<>();
@@ -186,6 +218,7 @@ public class QuanLyHoaDonService {
         }
         return list;
     }
+
 
 
 }
