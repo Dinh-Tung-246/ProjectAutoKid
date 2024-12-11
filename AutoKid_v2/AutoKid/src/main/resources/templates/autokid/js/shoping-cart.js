@@ -1,12 +1,6 @@
 // Gọi hàm render sau khi trang load nếu chưa đăng nhập
 document.addEventListener("DOMContentLoaded", () => {
-    const KH = JSON.parse(sessionStorage.getItem("KH")) || [];
-    if (KH.length === 0) {
-        renderCartForm();
-        console.log("Ban chua dang nhap");
-    } else {
-        console.log("Bạn đã đang nhập");
-    }
+    renderCartForm();
 });
 
 
@@ -14,8 +8,33 @@ function formatPrice(price) {
     return price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
 }
 
-function renderCartForm() {
-    const cartData = JSON.parse(sessionStorage.getItem("cart")) || [];
+async function renderCartForm() {
+    const KH = JSON.parse(sessionStorage.getItem("KH")) || [];
+    console.log("KH", KH);
+    let cartData ;
+    if (KH.length === 0) {
+        cartData = JSON.parse(sessionStorage.getItem("cart")) || [];
+    } else {
+        const idKH = KH.idKH;
+     const response = await fetch('/autokid/shoping-cart/get-cart-from-db', {
+         method: 'POST',
+         headers: {
+             'Content-Type': 'application/json',
+         },
+         body: JSON.stringify({idKH}),
+     });
+     const result = await response.json();
+     cartData = result.map(item => ({
+         idSP: item.idSP,
+         name: item.tenSPCT,
+         price: parseInt(item.donGia.replaceAll('.','')),
+         idSPCT: item.idSPCT,
+         color: item.mauSac,
+         anhSP: item.anhSPCT,
+         quantity: item.soLuong,
+     }));
+    }
+    console.log("data cart: ", cartData)
     const tbody = document.getElementById("cart-body");
     tbody.innerHTML = ""; // Xóa nội dung cũ
 

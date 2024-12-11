@@ -58,13 +58,13 @@ public class AutokidShopController {
 
     @GetMapping("/price")
     @ResponseBody
-    public List<SanPhamKhuyenMaiResponse> filterByPrice(@RequestParam Integer value, Model model) {
+    public List<SanPhamKhuyenMaiResponse> filterByPrice(@RequestParam Integer value) {
         return qlspService.filterByPrice(value);
     }
 
     @GetMapping("/filter")
     @ResponseBody
-    public List<SanPhamKhuyenMaiResponse> filterByPrice2(@RequestParam String filter, Model model) {
+    public List<SanPhamKhuyenMaiResponse> filterByPrice2(@RequestParam String filter) {
         return qlspService.filterAllSP(filter);
     }
 

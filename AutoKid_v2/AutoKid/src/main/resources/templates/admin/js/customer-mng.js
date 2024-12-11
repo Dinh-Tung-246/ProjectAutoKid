@@ -87,6 +87,9 @@ document.getElementById('submitBtn').addEventListener('click', function (event) 
     console.log(formData);
     fetch('/admin/customer-management/create-customer', {
         method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
         body: formData
     }) . then(response => response.text())
         .then(result => {

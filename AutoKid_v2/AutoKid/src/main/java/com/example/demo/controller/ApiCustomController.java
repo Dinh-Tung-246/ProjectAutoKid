@@ -1,10 +1,12 @@
 package com.example.demo.controller;
 
 import com.example.demo.model.SanPhamChiTiet;
+import com.example.demo.model.Voucher;
 import com.example.demo.repository.KhachHangRepo;
 import com.example.demo.repository.SanPhamChiTietRepo;
 import com.example.demo.model.KhachHang;
 import com.example.demo.repository.KhachHangRepo;
+import com.example.demo.repository.NhanVienRepo;
 import com.example.demo.response.KhachHangResponse;
 import com.example.demo.service.QuanLyDatHangService;
 import com.example.demo.service.QuanLyGioHangService;
@@ -16,6 +18,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -30,6 +33,9 @@ public class ApiCustomController {
 
     @Autowired
     KhachHangRepo khachHangRepo;
+
+    @Autowired
+    NhanVienRepo nhanVienRepo;
 
     @Autowired
     QuanLyGioHangService qlghService;
@@ -59,23 +65,28 @@ public class ApiCustomController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of("error", e.getMessage()));
         }
     }
-      
+
     @GetMapping("/user/{sdt}")
     @ResponseBody
-    public ResponseEntity<?> checkExists(@PathVariable String sdt){
+    public ResponseEntity<?> checkExists(@PathVariable String sdt) {
         return ResponseEntity.ok().body(khachHangRepo.existsBySdt(sdt));
     }
 
     @PostMapping("/create-user")
-    public ResponseEntity<?> createUser(@RequestBody KhachHangResponse response){
+    public ResponseEntity<?> createUser(@RequestBody KhachHangResponse response) {
         return ResponseEntity.ok().body(serviceQLDH.createUser(response));
     }
 
+    @GetMapping("/staff/{maNV}")
+    public ResponseEntity<?> checkExistStaff(@PathVariable String maNV){
+        return ResponseEntity.ok().body(nhanVienRepo.existsByMaNV(maNV));
+    }
+  
     @PostMapping("/check-checkout")
     @ResponseBody
     public ResponseEntity<?> checkCheckout(@RequestBody List<Map<String, Object>> hdct) {
         int i = 1;
-        for (Map<String, Object> item : hdct){
+        for (Map<String, Object> item : hdct) {
             Integer idSPCT = Integer.parseInt(item.get("idSPCT").toString());
             Integer soLuongMua = Integer.parseInt(item.get("soLuong").toString());
             SanPhamChiTiet spct = spctRepo.findById(idSPCT).orElseThrow();
@@ -101,5 +112,11 @@ public class ApiCustomController {
             map1.put("totalPrice", qlghService.getTotalPrice(idKH));
         }
         return map1;
+    }
+
+    @GetMapping("/get-voucher")
+    @ResponseBody
+    public List<Voucher> getVocher(){
+        return serviceQLDH.getAllVoucher();
     }
 }

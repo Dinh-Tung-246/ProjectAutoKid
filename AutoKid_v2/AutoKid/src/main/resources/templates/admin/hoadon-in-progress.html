@@ -1,166 +1,205 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="https://www.thymeleaf.org">
 <head>
-  <meta charset="UTF-8" />
-  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Elegant Dashboard | Dashboard</title>
-  <!-- Bootstrap CSS -->
-  <link
-          href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
-          rel="stylesheet"
-          integrity="sha384-5kQxCQw79BfxtN4LEJw6cMmKXw7CF3YOqCwFVjFHeEU+oD5VOpHjq1PoXa5sjfH7"
-          crossorigin="anonymous"
-  />
-  <!-- Favicon -->
-  <link rel="shortcut icon" href="./img/svg/logo.svg" type="image/x-icon" />
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
-  <!-- Custom styles -->
-  <link rel="stylesheet" href="./css/style.min.css" />
+    <meta charset="UTF-8"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Elegant Dashboard | Dashboard</title>
+    <!-- Bootstrap CSS -->
+    <link
+            href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+            rel="stylesheet"
+            integrity="sha384-5kQxCQw79BfxtN4LEJw6cMmKXw7CF3YOqCwFVjFHeEU+oD5VOpHjq1PoXa5sjfH7"
+            crossorigin="anonymous"
+    />
+    <!-- Favicon -->
+    <link rel="shortcut icon" href="./img/svg/logo.svg" type="image/x-icon"/>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <!-- Custom styles -->
+    <link rel="stylesheet" href="./css/style.min.css"/>
 </head>
 <style>
-  .main .form-modal {
-    display: none;
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    z-index: 1000;
-    background: white;
-    border: 1px solid #ccc;
-    padding: 20px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
-    width: 80%;
-    max-width: 700px;
-    border-radius: 10px;
-  }
+    .main .form-modal {
+        display: none;
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        z-index: 1000;
+        background: white;
+        border: 1px solid #ccc;
+        padding: 20px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+        width: 80%;
+        max-width: 700px;
+        border-radius: 10px;
+    }
 
-  .main .form-modal h2 {
-    text-align: center;
-    margin-bottom: 10px;
-  }
+    .main .form-modal h2 {
+        text-align: center;
+        margin-bottom: 10px;
+    }
 
-  .main .form-modal form .label-after {
-    margin-left: 20px;
-  }
+    .main .form-modal form .label-after {
+        margin-left: 20px;
+    }
 
-  .main .form-modal form input {
-    margin-top: 10px;
-  }
+    .main .form-modal form input {
+        margin-top: 10px;
+    }
 
-  .main .form-modal .btn-closeDetail {
-    background-color: #9fcdff;
-  }
+    .main .form-modal .btn-closeDetail {
+        background-color: #9fcdff;
+    }
 
-  .main .form-modal .btn-closeDetail:hover {
-    background-color: #000;
-    color: #9fcdff;
-  }
-  .posts-table tbody {
-      display: block;
-      max-height: 300px;
-      overflow-y: auto;
-      overflow-x: hidden;
-  }
+    .main .form-modal .btn-closeDetail:hover {
+        background-color: #000;
+        color: #9fcdff;
+    }
 
-  .posts-table thead, .posts-table tbody tr {
-      display: table;
-      width: 100%;
-      table-layout: fixed;
-  }
+    .posts-table tbody {
+        display: block;
+        max-height: 300px;
+        overflow-y: auto;
+        overflow-x: hidden;
+    }
 
-  .posts-table th, .posts-table td {
-      padding: 10px;
-      text-align: left;
-  }
-  .posts-table td {
-      word-wrap: break-word;
-      white-space: normal;
-  }
+    .posts-table thead, .posts-table tbody tr {
+        display: table;
+        width: 100%;
+        table-layout: fixed;
+    }
+
+    .posts-table th, .posts-table td {
+        padding: 10px;
+        text-align: left;
+    }
+
+    .posts-table td {
+        word-wrap: break-word;
+        white-space: normal;
+    }
 </style>
 <body>
 <div class="layer"></div>
 <!-- ! Body -->
 <a class="skip-link sr-only" href="#skip-target">Skip to content</a>
 <div class="page-flex">
-  <!-- ! Sidebar -->
-  <div th:insert="fragments/sidebar_admin :: sidebar"></div>
-  <div class="main-wrapper">
-    <!-- ! Main nav -->
-    <div th:insert="fragments/header_admin :: header"></div>
-    <!-- ! Main -->
-    <main class="main users chart-page" id="skip-target">
-      <div class="container">
-        <h2 class="mt-5">Quản lý hóa đơn</h2>
-        <br>
-        <div class="search-container">
-          <form action="/admin/hoadon/search-in-progress" method="GET">
-            <div class="row">
-              <div class="col">
-                <input type="text" name="maHd" placeholder="Mã hoá đơn" class="form-control" />
-              </div>
-              <div class="col">
-                <button type="submit" class="btn btn-primary">Tìm kiếm</button>
-              </div>
-            </div>
-          </form>
-        </div>
-        <div class="users-table table-wrapper">
-          <table class="posts-table">
-            <thead>
-            <tr class="users-table-info">
-              <th>STT</th>
-              <th>Mã Hóa Đơn</th>
-              <th>Tên Khách Hàng</th>
-              <th>Tên Nhân Viên</th>
-              <th>Ngày tạo</th>
-              <th>Phương thức thanh toán</th>
-              <th>Tổng tiền</th>
-              <th>Trạng thái</th>
-              <th></th>
-            </tr>
-            </thead>
-            <tbody>
-            <tr th:each="hdct, iterStat : ${listhd}">
-              <td th:text="${iterStat.count}"></td>
-              <td th:text="${hdct.maHD}"></td> <!-- Display HD + id instead of maHD -->
-              <td th:text="${hdct.tenKhachHang}"></td>
-              <td th:text="${hdct.tenNhanVien}"></td>
-              <td th:text="${hdct.ngayTao}"></td>
-              <td th:text="${hdct.tenPhuongThucThanhToan}"></td>
-              <td th:text="${hdct.tongTien}"></td>
-              <td>
-                <!-- Dropdown to update the status with AJAX -->
-                <form id="statusForm" style="display: inline-block;">
-                  <input type="hidden" name="maHD" th:value="${hdct.id}" />
-                  <select name="trangThai" class="form-select" onchange="updateStatus(this)">
-                    <option value="Đã thanh toán, chờ giao hàng" th:selected="${hdct.trangThaiHD == 'Đã thanh toán, chờ giao hàng'}">Đã thanh toán, chờ giao hàng</option>
-                    <option value="Chưa thanh toán, chờ giao hàng" th:selected="${hdct.trangThaiHD == 'Chưa thanh toán, chờ giao hàng'}">Chưa thanh toán, chờ giao hàng</option>
-                    <option value="Hoàn thành" th:selected="${hdct.trangThaiHD == 'Hoàn thành'}">Hoàn thành</option>
-                    <option value="Đã thanh toán, đang giao hàng" th:selected="${hdct.trangThaiHD == 'Đã thanh toán, đang giao hàng'}">Đã thanh toán, đang giao hàng</option>
-                    <option value="Chưa thanh toán, đang giao hàng" th:selected="${hdct.trangThaiHD == 'Chưa thanh toán, đang giao hàng'}">Chưa thanh toán, đang giao hàng</option>
-                    <option value="Huỷ đơn hàng" th:selected="${hdct.trangThaiHD == 'Huỷ đơn hàng'}">Huỷ đơn hàng</option>
-                  </select>
-                </form>
-              </td>
-              <td>
-                <div style="display: flex; align-items: center; justify-content: space-around;">
-                  <a th:href="@{/admin/hoadon/chitiethoadon/{id}(id=${hdct.id})}" class="btn btn-info">Chi tiết</a> <!-- Use id here -->
+    <!-- ! Sidebar -->
+    <div th:insert="fragments/sidebar_admin :: sidebar"></div>
+    <div class="main-wrapper">
+        <!-- ! Main nav -->
+        <div th:insert="fragments/header_admin :: header"></div>
+        <!-- ! Main -->
+        <main class="main users chart-page" id="skip-target">
+            <div class="container">
+                <h2 class="mt-5">Quản lý hóa đơn</h2>
+                <br>
+                <div class="search-container">
+                    <form action="/admin/hoadon/search" method="GET">
+                        <div class="row">
+                            <div class="col">
+                                <input type="text" name="maHd" placeholder="Mã hoá đơn" class="form-control"/>
+                            </div>
+                            <div class="col">
+                                <button type="submit" class="btn btn-primary">Tìm kiếm</button>
+                            </div>
+                        </div>
+                    </form>
                 </div>
-              </td>
-            </tr>
-            </tbody>
+                <div class="users-table table-wrapper">
+                    <table class="posts-table">
+                        <thead>
+                        <tr class="users-table-info">
+                            <th>STT</th>
+                            <th>Mã Hóa Đơn</th>
+                            <th>Tên Khách Hàng</th>
+                            <th>Tên Nhân Viên</th>
+                            <th>Hình thức</th>
+                            <th>Phương thức thanh toán</th>
+                            <th>Tổng tiền</th>
+                            <th>Trạng thái</th>
+                            <th></th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr th:each="hdct, iterStat : ${listhd}">
+                            <td th:text="${iterStat.count}"></td>
+                            <td th:text="${hdct.maHD}"></td> <!-- Display HD + id instead of maHD -->
+                            <td th:text="${hdct.tenKhachHang}"></td>
+                            <td th:text="${hdct.tenNhanVien}"></td>
+                            <td th:text="${hdct.online == true ? 'Trực tuyến' : 'Tại quầy'}"></td>
+                            <td th:text="${hdct.tenPhuongThucThanhToan}"></td>
+                            <td th:text="${hdct.tongTien}"></td>
+                            <td th:text="${hdct.trangThaiHD}"></td>
+                            <td>
+                                <div style="display: flex; align-items: center; justify-content: space-around;">
+                                    <button th:data-id="${hdct.id}" onclick="handleClick(this.getAttribute('data-id'))"
+                                            data-bs-toggle="modal" data-bs-target="#chiTietHoaDon" class="btn btn-info">
+                                        Chi tiết
+                                    </button> <!-- Use id here -->
+                                </div>
+                            </td>
+                        </tr>
+                        </tbody>
 
 
-          </table>
+                    </table>
+                </div>
+
+            </div>
+        </main>
+
+        <div class="modal fade" id="chiTietHoaDon" tabindex="-1" aria-labelledby="paymentModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="paymentModalLabel">Chi tiết hóa đơn</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="mb-3">
+                            <p class="mb-4"><strong>Mã Hóa Đơn:</strong> <span id="invoiceCode"></span></p>
+                            <p class="mb-4"><strong>Tên Khách Hàng:</strong> <span id="customerName"></span></p>
+                            <p class="mb-4"><strong>Tên Nhân Viên:</strong> <span id="employeeName"></span></p>
+                            <p class="mb-4"><strong>Ngày Tạo:</strong> <span id="creationDate"></span></p>
+                            <p class="mb-4"><strong>Phương thức thanh toán:</strong> <span id="paymentMethod"></span>
+                            </p>
+                            <p class="mb-4"><strong>Tổng tiền:</strong> <span id="totalAmount"></span></p>
+                            <div class="mb-4" style="display: flex; align-items: center">
+                                <strong>Trạng thái:</strong>
+                                <input id="maHD" type="hidden" name="maHD" value="12345">
+                                <select name="trangThai" class="form-select" id="statusSelect"
+                                        onchange="updateStatus(this)">
+                                </select>
+                            </div>
+                        </div>
+                        <h4 style="margin-bottom: 10px">Chi tiết sản phẩm</h4>
+                        <table class="table table-bordered">
+                            <thead>
+                            <tr>
+                                <th scope="col">Tên sản phẩm</th>
+                                <th scope="col">Số lượng</th>
+                                <th scope="col">Đơn giá</th>
+                                <th scope="col">Thành tiền</th>
+                            </tr>
+                            </thead>
+                            <tbody id="productTable">
+                            <!-- Các dòng sản phẩm sẽ được thêm động ở đây -->
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+                    </div>
+                </div>
+            </div>
         </div>
 
-      </div>
-    </main>
-
-    <!-- ! Footer -->
-    <div th:insert="fragments/footer_admin :: footer"></div>
-  </div>
+        <!-- ! Footer -->
+        <div th:insert="fragments/footer_admin :: footer"></div>
+    </div>
 </div>
 
 <!-- Chart library -->
@@ -170,30 +209,125 @@
 <!-- Bootstrap JS (requires Popper.js) -->
 <!-- Custom scripts -->
 <script src="js/script.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
+        crossorigin="anonymous"></script>
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
-  function updateStatus(selectElement) {
-    // Retrieve the ID (maHD) from the hidden input field in the same row
-    var maHD = $(selectElement).closest('tr').find('input[name="maHD"]').val();  // Get value from hidden input
-    var trangThai = $(selectElement).val();  // Get the selected status
+    function updateStatus(selectElement) {
+        // Retrieve the ID (maHD) from the hidden input field in the same row
+        var maHD = $(selectElement).siblings('input[name="maHD"]').val();
+        var trangThai = $(selectElement).val();
 
-    // Perform AJAX request to update the status
-    $.ajax({
-      url: '/admin/hoadon/updateStatus',
-      method: 'POST',
-      data: {
-        maHD: maHD,  // Send the ID (maHD)
-        trangThai: trangThai  // Send the selected status
-      },
-      success: function(response) {
-        alert('Cập nhật trạng thái thành công');
-      },
-      error: function(xhr, status, error) {
-        alert('Có lỗi!');
-      }
-    });
-  }
+        if (confirm('Bạn có muốn cập nhật trạng thái đơn hàng ?')) {
+            $.ajax({
+                url: '/admin/hoadon/updateStatus',
+                method: 'POST',
+                data: {
+                    maHD: maHD,  // Send the ID (maHD)
+                    trangThai: trangThai  // Send the selected status
+                },
+                success: function (response) {
+                    alert('Cập nhật trạng thái thành công');
+                    window.location.href = 'http://localhost:8080/admin/hoadon';
+                },
+                error: function (xhr, status, error) {
+                    alert('Có lỗi!');
+                }
+            });
+        }
+
+    }
+
+    function getStatusOptions(currentStatus) {
+        const statusMapping = {
+            "Đã thanh toán, chờ giao hàng": [
+                {value: "Đã thanh toán, chờ giao hàng", text: "Đã thanh toán, chờ giao hàng", selected: true},
+                {value: "Đã thanh toán, đang giao hàng", text: "Đã thanh toán, đang giao hàng"},
+                {value: "Hoàn thành", text: "Hoàn thành"},
+                {value: "Huỷ đơn hàng", text: "Huỷ đơn hàng"},
+            ],
+            "Chưa thanh toán, chờ giao hàng": [
+                {value: "Chưa thanh toán, chờ giao hàng", text: "Chưa thanh toán, chờ giao hàng", selected: true},
+                {value: "Chưa thanh toán, đang giao hàng", text: "Chưa thanh toán, đang giao hàng"},
+                {value: "Hoàn thành", text: "Hoàn thành"},
+                {value: "Huỷ đơn hàng", text: "Huỷ đơn hàng"},
+            ],
+            "Hoàn thành": [
+                {value: "Hoàn thành", text: "Hoàn thành", selected: true},
+            ],
+            "Huỷ đơn hàng": [
+                {value: "Huỷ đơn hàng", text: "Huỷ đơn hàng", selected: true},
+            ],
+            "Đã thanh toán, đang giao hàng": [
+                {value: "Đã thanh toán, đang giao hàng", text: "Đã thanh toán, đang giao hàng", selected: true},
+                {value: "Hoàn thành", text: "Hoàn thành"},
+                {value: "Huỷ đơn hàng", text: "Huỷ đơn hàng"},
+            ],
+            "Chưa thanh toán, đang giao hàng": [
+                {value: "Chưa thanh toán, đang giao hàng", text: "Chưa thanh toán, đang giao hàng", selected: true},
+                {value: "Hoàn thành", text: "Hoàn thành"},
+                {value: "Huỷ đơn hàng", text: "Huỷ đơn hàng"},
+            ],
+        };
+
+        return statusMapping[currentStatus] || [];
+    }
+
+    function handleClick(id) {
+        document.getElementById("maHD").value = id;
+        fetch(`/admin/hoadon/ctht/${id}`)
+            .then(res => res.json())
+            .then(data => {
+                // Populate invoice details
+                document.querySelector("span#invoiceCode").textContent = data.maHD;
+                document.querySelector("span#customerName").textContent = data.tenKhachHang;
+                document.querySelector("span#employeeName").textContent = data.tenNhanVien;
+                document.querySelector("span#creationDate").textContent = new Date(data.ngayTao).toLocaleDateString();
+                document.querySelector("span#paymentMethod").textContent = data.tenPhuongThucThanhToan;
+                document.querySelector("span#totalAmount").textContent = data.tongTien.toLocaleString("vi-VN", {
+                    style: "currency",
+                    currency: "VND",
+                });
+                // document.querySelector("span#status").textContent = data.trangThaiHD;
+
+                const currentStatus = data.trangThaiHD; // Assuming this is the current status
+                const statusOptions = getStatusOptions(currentStatus);
+                const statusSelect = document.getElementById("statusSelect");
+                statusSelect.innerHTML = ""; // Clear existing options
+
+                statusOptions.forEach(option => {
+                    const opt = document.createElement("option");
+                    opt.value = option.value;
+                    opt.textContent = option.text;
+                    if (option.selected) {
+                        opt.selected = true;
+                    }
+                    statusSelect.appendChild(opt);
+                });
+
+                // Populate product table
+                const productTable = document.querySelector("tbody#productTable");
+                productTable.innerHTML = ""; // Clear existing rows
+                data.hoaDonChiTietRPS.forEach(product => {
+                    const row = document.createElement("tr");
+                    row.innerHTML = `
+                    <td>${product.name}</td>
+                    <td>${product.soLuong}</td>
+                    <td>${product.donGia.toLocaleString("vi-VN", {
+                        style: "currency",
+                        currency: "VND",
+                    })}</td>
+                    <td>${product.thanhTien.toLocaleString("vi-VN", {
+                        style: "currency",
+                        currency: "VND",
+                    })}</td>
+                `;
+                    productTable.appendChild(row);
+                });
+            })
+            .catch(err => console.error("Error fetching invoice details:", err));
+    }
 
 </script>
 
