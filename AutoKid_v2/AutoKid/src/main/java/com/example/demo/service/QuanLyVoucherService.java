@@ -22,6 +22,14 @@ public class QuanLyVoucherService {
         voucherRepo.save(voucher);
     }
 
+    public void updateVoucher(Voucher voucher) {
+        voucherRepo.save(voucher);
+    }
+
+    public void deleteVoucher(Integer id){
+        voucherRepo.deleteById(id);
+    }
+
     public Voucher findCode(String ma) {
         return voucherRepo.findByMa(ma);
     }
@@ -30,7 +38,7 @@ public class QuanLyVoucherService {
         LocalDate now = LocalDate.now();
 
         if (voucher.getTrangThai() != 1) {
-            throw new IllegalArgumentException("Trạng thái không hợp lệ !");
+            throw new IllegalArgumentException("Đang không hoạt động nha !");
         }
 
         if(now.isBefore(voucher.getNgayBatDau()) || now.isAfter(voucher.getNgayKetThuc())) {

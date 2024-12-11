@@ -11,6 +11,7 @@
     <link rel="shortcut icon" href="./img/svg/logo.svg" type="image/x-icon">
     <!-- Custom styles -->
     <link rel="stylesheet" href="./css/style.min.css">
+    <link href="https://cdn.jsdelivr.net/npm/@sweetalert2/theme-dark@4/dark.css" rel="stylesheet">
     <style>
         /*Thêm*/
         .add-button-container {
@@ -43,82 +44,71 @@
             background-color: rgba(255, 255, 255, 0.44);
         }
         /*Bảng*/
-        /* CSS cho bảng và nút */
-        table {
-            border-collapse: collapse;
-            width: 100%;
-            margin-bottom: 20px;
-        }
-
-        th, td {
-            border: 1px solid #ddd;
-            padding: 8px;
-            text-align: left;
-        }
-
-        th {
-            background-color: #f2f2f2;
-        }
-
-
-        /* CSS cho form overlay */
-        .overlay {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.5);
-            z-index: 1000;
-            justify-content: center;
-            align-items: center;
-        }
-
-        .overlay.active {
-            display: flex;
-        }
-
+        /*Form ẩn*/
         .form-container {
-            background-color: white;
-            padding: 20px;
-            border-radius: 10px;
-            width: 500px;
-            box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.2);
+            width: 100%;
+            max-width: 700px;
+            margin: 40px auto;
+            padding: 30px;
+            background-color: #fff;
+            border-radius: 15px;
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
         }
 
-        .form-container label {
-            display: block;
-            margin-bottom: 5px;
+        .form-container h5 {
+            text-align: center;
+            margin-bottom: 30px;
+            color: #2c3e50;
+            font-size: 24px;
             font-weight: bold;
         }
 
-        .form-container input {
-            width: 100%;
-            padding: 10px;
-            margin-bottom: 15px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
+        .form-row {
+            display: flex;
+            justify-content: space-between;
+            gap: 20px;
+            margin-bottom: 20px;
         }
 
-        .form-container button {
+        .form-row input,
+        .form-row select {
             width: 100%;
-            padding: 10px;
-            background-color: #4CAF50;
+            padding: 12px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            font-size: 16px;
+        }
+
+        .form-row input:focus,
+        .form-row select:focus {
+            outline: none;
+            border-color: #3498db;
+            box-shadow: 0 0 8px rgba(52, 152, 219, 0.3);
+        }
+
+        .submit-btn {
+            width: 100%;
+            padding: 15px;
+            background-color: #3498db;
             color: white;
             border: none;
-            border-radius: 5px;
+            border-radius: 8px;
+            font-size: 18px;
+            font-weight: bold;
             cursor: pointer;
+            transition: background-color 0.3s;
         }
 
-        .form-container button:hover {
-            background-color: #45a049;
+        .submit-btn:hover {
+            background-color: #2980b9;
         }
 
-        .close-btn {
-            background-color: red;
-            margin-top: 10px;
+        .my-custom-title {
+            color: black;
+            font-size: 24px;
+            font-weight: bold;
         }
+        /*From an*/
 
         /* CSS mới để ghi đè */
         .date:enabled:read-write:focus::-webkit-calendar-picker-indicator,
@@ -145,7 +135,7 @@
                 <h2 class="main-title">Voucher</h2>
                 <div class="button-container">
                     <div class="add-button-container">
-                        <button class="btn btn-success" onclick="openForm()">Thêm Voucher</button>
+                        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#add">Thêm Voucher</button>
                     </div>
 <!--                    <form th:action="@{/admin/promotion/search}" method="GET" class="search-form search-container">-->
 <!--                        <input type="text" class="search-input" name="keyword" placeholder="Tìm kiếm khuyến mãi...">-->
@@ -170,34 +160,30 @@
                                 </tr>
                                 </thead>
                                 <tbody>
-                                <tr th:each="voucher : ${voucher}">
+                                <tr th:each="voucher : ${vouchers}">
                                     <td th:text="${voucher.ma}"></td>
                                     <td th:text="${voucher.ten}"></td>
                                     <td th:text="${voucher.loaiVoucher == 1 ? 'Phần trăm' : 'Tiền'}"></td>
-                                    <td th:text="${voucher.loaiVoucher == 1 ? voucher.formattedgiaTri + '%' : voucher.formattedgiaTri + ' VND'}"></td>
-                                    <td th:text="${voucher.giaTriToiDa}"></td>
+                                    <td th:text="${voucher.loaiVoucher == 1 ? voucher.giaTri + '%' : voucher.giaTri + ' VND'}"></td>
+                                    <td th:text="${voucher.giaTriToiDa == 'Trống' ? voucher.giaTriToiDa + '' : voucher.giaTriToiDa + ' VND'}"></td>
                                     <td th:text="${voucher.ngayBatDau}"></td>
                                     <td th:text="${voucher.ngayKetThuc}"></td>
                                     <td th:text="${voucher.trangThai == 1 ? 'Hoạt động' : 'Không hoạt động'}" ></td>
                                     <td>
-                                        <a class="btn btn-warning" href="">Sửa</a>
-                                        <a class="btn btn-danger" href="">Xóa</a>
+                                        <a class="update btn btn-primary" data-bs-toggle="modal" data-bs-target="#update"
+                                           th:data-ma="${voucher.ma}"
+                                           th:data-ten="${voucher.ten}"
+                                           th:data-DK="${voucher.dieuKien}"
+                                           th:data-giaTri="${voucher.giaTri}"
+                                           th:data-giaTriToiDa="${voucher.giaTriToiDa}"
+                                           th:data-NBD="${voucher.ngayBatDau}"
+                                           th:data-NKT="${voucher.ngayKetThuc}"
+                                           th:data-TT="${voucher.trangThai}"
+                                           th:data-LVC="${voucher.loaiVoucher}"
+                                           th:data-id="${voucher.id}"
+                                           onclick="showDetail(this)"> Chi tiết</a>
+                                        <a onclick="deleteConfirm(event, this)" th:href="@{/admin/voucher/delete/{id}(id=${voucher.id})}" class="btn btn-danger"  href="">Xóa</a>
                                     </td>
-<!--                                    <td class="text-center">-->
-<!--                                        <a class="update btn btn-primary" data-bs-toggle="modal" data-bs-target="#hihi"-->
-<!--                                           th:data-ma="${promotion.maKM}"-->
-<!--                                           th:data-ten="${promotion.tenKM}"-->
-<!--                                           th:data-giaTri="${promotion.giaTri}"-->
-<!--                                           th:data-batDau="${promotion.ngayBatDau}"-->
-<!--                                           th:data-ketThuc="${promotion.ngayKetThuc}"-->
-<!--                                           th:data-tt="${promotion.trangThaiKM}"-->
-<!--                                           th:data-id="${promotion.id}"-->
-<!--                                           onclick="showDetail(this)"> Chi tiết</a>-->
-<!--                                        <a th:href="@{/admin/promotion/delete/{id}(id=${promotion.id})}"-->
-<!--                                           onclick="return confirm('Bạn có chắc muốn xóa không?');"-->
-<!--                                           class="btn btn-danger">Destroy-->
-<!--                                        </a>-->
-<!--                                    </td>-->
                                 </tr>
                                 </tbody>
                             </table>
@@ -208,6 +194,7 @@
                 </div>
             </div>
         </main>
+
 <!--        <form th:action="@{/admin/voucher/aplly}" method="POST">-->
 <!--            <label for="maa">Mã Voucher:</label>-->
 <!--            <input type="text" id="maa" name="maa" placeholder="Nhập mã voucher">-->
@@ -226,92 +213,167 @@
 <!--            <p>Giảm giá: <span th:text="${discount}"></span> VND</p>-->
 <!--            <p>Tổng tiền sau giảm giá: <span th:text="${finalTotal}"></span> VND</p>-->
 <!--        </div>-->
-        <div>
-            <div class="overlay" id="formOverlay">
-                <div class="form-container">
-                    <h2>Thêm Voucher</h2>
-                    Hello world
-                    <form th:action="@{/admin/voucher/save}" th:object="${voucherAdd}" method="post">
-                        <label for="ma">Mã Voucher:</label>
-                        <input type="text" id="ma" th:field="*{ma}">
-                        <span th:if="${#fields.hasErrors('ma')}"
-                              th:errors="*{ma}" style="color: red;"></span>
 
-                        <label for="ten">Tên Voucher:</label>
-                        <input type="text" id="ten" th:field="*{ten}">
-                        <span th:if="${#fields.hasErrors('ten')}"
-                              th:errors="*{ten}" style="color: red;"></span>
+<!--ADD-->
+        <div class="modal fade" id="add" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="form-container">
+                            <h5>Nhập Thông Tin voucher</h5>
+                            <form th:action="@{/admin/voucher/save}" th:object="${voucherAdd}" method="POST">
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label for="ma">Mã voucher</label>
+                                        <input type="text" th:field="*{ma}" id="ma" placeholder="Mã voucher">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="ten">Tên voucher</label>
+                                        <input type="text" th:field="*{ten}" id="ten" placeholder="Tên voucher">
+                                    </div>
+                                </div>
 
-<!--                        <label for="loaiVoucher">Loại Voucher:</label>-->
-<!--                        <input type="number" id="loaiVoucher" th:field="*{loaiVoucher}">-->
-<!--                        <span th:if="${#fields.hasErrors('loaiVoucher')}"-->
-<!--                              th:errors="*{loaiVoucher}" style="color: red;"></span>-->
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label for="loaiVoucher">Loại voucher</label>
+                                        <select th:field="*{loaiVoucher}" id="loaiVoucher" onchange="percentOrCash()">
+                                            <option value="1">Phần trăm</option>
+                                            <option value="2">Tiền mặt</option>
+                                        </select>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="dieuKien">Điều kiện</label>
+                                        <input type="text" th:field="*{dieuKien}" id="dieuKien" placeholder="Điều kiện">
+                                    </div>
+                                </div>
 
-<!--                        <label for="loaiVoucher">Điều kiện:</label>-->
-<!--                        <input type="number" id="loaiVoucher" th:field="*{loaiVoucher}">-->
-<!--                        <span th:if="${#fields.hasErrors('loaiVoucher')}"-->
-<!--                              th:errors="*{loaiVoucher}" style="color: red;"></span>-->
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label for="giaTri">Giá trị</label>
+                                        <input type="text" th:field="*{giaTri}" id="giaTri" oninput="validateInput()">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="giaTriToiDa">Giá trị tối đa</label>
+                                        <input type="text" th:field="*{giaTriToiDa}" id="giaTriToiDa" placeholder="Giá trị tối đa">
+                                    </div>
+                                </div>
 
-<!--                        <label for="loaiVoucher">Giá trị:</label>-->
-<!--                        <input type="number" id="loaiVoucher" th:field="*{loaiVoucher}">-->
-<!--                        <span th:if="${#fields.hasErrors('loaiVoucher')}"-->
-<!--                              th:errors="*{loaiVoucher}" style="color: red;"></span>-->
-<!--                        <label for="loaiVoucher">Giá trị tối đa:</label>-->
-<!--                        <input type="number" id="loaiVoucher" th:field="*{loaiVoucher}">-->
-<!--                        <span th:if="${#fields.hasErrors('loaiVoucher')}"-->
-<!--                              th:errors="*{loaiVoucher}" style="color: red;"></span>-->
-                        <button type="submit">Lưu</button>
-                        <button type="button" class="close-btn" onclick="closeForm()">Đóng</button>
-                    </form>
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label for="ngayBatDau">Ngày bắt đầu</label>
+                                        <input type="date" th:field="*{ngayBatDau}" class="date" id="ngayBatDau">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="ngayKetThuc">Ngày kết thúc</label>
+                                        <input type="date" th:field="*{ngayKetThuc}" class="date" id="ngayKetThuc">
+                                    </div>
+                                </div>
+
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label for="trangThai">Trạng thái</label>
+                                        <select th:field="*{trangThai}" id="trangThai">
+                                            <option value="" disabled selected>Chọn trạng thái</option>
+                                            <option value="1">Hoạt động</option>
+                                            <option value="0">Không hoạt động</option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <button type="submit" onclick="checkValidate(event)" class="submit-btn">Thêm voucher</button>
+                            </form>
+                        </div>
+                    </div>
                 </div>
             </div>
-            <script>
-                const myModal = document.getElementById('myModal')
-                const myInput = document.getElementById('myInput')
-
-                myModal.addEventListener('shown.bs.modal', () => {
-                    myInput.focus()
-                })
-
-                function showDetail(button) {
-                    document.getElementById('modalIdKM').value = button.getAttribute("data-id");
-                    document.getElementById('modalMaKM').value = button.getAttribute("data-ma");
-                    document.getElementById('modalTenKM').value = button.getAttribute("data-ten");
-                    document.getElementById('modalBD').value = button.getAttribute("data-batDau");
-                    document.getElementById('modalKT').value = button.getAttribute("data-ketThuc");
-                    document.getElementById('modalGiaTri').value = button.getAttribute("data-giaTri");
-                    document.getElementById('modalTT').value = button.getAttribute("data-tt");
-                    document.getElementById('detailModal').style.display = 'block';
-                }
-
-                const selectElement = document.getElementById('modalTT');
-                const statusText = document.getElementById('statusText');
-
-                function updateStatusText() {
-                    const value = selectElement.value;
-                    statusText.textContent = value === "1" ? "Trạng thái: Hoạt động" : "Trạng thái: Không hoạt động";
-                }
-
-                selectElement.addEventListener('change', updateStatusText);
-
-                window.addEventListener('load', updateStatusText);
-
-
-                function openForm() {
-                    document.getElementById('formOverlay').classList.add('active');
-                }
-
-                function closeForm() {
-                    document.getElementById('formOverlay').classList.remove('active');
-                }
-            </script>
         </div>
+<!--Update-->
+        <div class="modal fade" id="update" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="form-container">
+                            <h5>Thông tin voucher</h5>
+                            <form th:action="@{/admin/voucher/update}" th:object="${updateVoucher}" method="POST">
+                                <div class="form-row">
+                                    <input type="hidden" th:field="*{id}" id="modalIdVC">
+                                    <div class="form-group">
+                                        <label for="modalMa">Mã voucher</label>
+                                        <input type="text" th:field="*{ma}" id="modalMa" placeholder="Mã voucher">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="modalTen">Tên voucher</label>
+                                        <input type="text" th:field="*{ten}" id="modalTen" placeholder="Tên voucher">
+                                    </div>
+                                </div>
+
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label for="modalLVC">Loại voucher</label>
+                                        <select th:field="*{loaiVoucher}" id="modalLVC" onchange="percentOrCash()">
+                                            <option value="1">Phần trăm</option>
+                                            <option value="2">Tiền mặt</option>
+                                        </select>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="modalDK">Điều kiện</label>
+                                        <input type="text" th:field="*{dieuKien}" id="modalDK" placeholder="Điều kiện">
+                                    </div>
+                                </div>
+
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label for="modalGT">Giá trị</label>
+                                        <input type="text" th:field="*{giaTri}" id="modalGT" oninput="validateInput()">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="modalGTTD">Giá trị tối đa</label>
+                                        <input type="text" th:field="*{giaTriToiDa}" id="modalGTTD" placeholder="Giá trị tối đa">
+                                    </div>
+                                </div>
+
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label for="modalNBD">Ngày bắt đầu</label>
+                                        <input type="date" th:field="*{ngayBatDau}" class="date" id="modalNBD">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="modalNKT">Ngày kết thúc</label>
+                                        <input type="date" th:field="*{ngayKetThuc}" class="date" id="modalNKT">
+                                    </div>
+                                </div>
+
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label for="modalTT">Trạng thái</label>
+                                        <select th:field="*{trangThai}" id="modalTT">
+                                            <option value="" disabled selected>Chọn trạng thái</option>
+                                            <option value="1">Hoạt động</option>
+                                            <option value="0">Không hoạt động</option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <button type="submit" class="btn btn-warning">Lưu</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+            <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.js"></script>
+    </div>
         <!-- ! Footer -->
         <footer class="footer">
             <div th:insert="fragments/footer_admin :: footer"></div>
         </footer>
     </div>
-</div>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
 <!-- Chart library -->
 <script src="./plugins/chart.min.js"></script>
@@ -319,6 +381,8 @@
 <script src="plugins/feather.min.js"></script>
 <!-- Custom scripts -->
 <script src="js/script.js"></script>
+
+<script src="js/voucher.js"></script>
 </body>
 
 </html>
