@@ -44,12 +44,12 @@ public class Voucher {
     @Column(name = "trang_thai")
     private int trangThai;
 
-    public String getFormattedgiaTri() {
-        NumberFormat formatter = NumberFormat.getCurrencyInstance(new Locale("vi", "VN"));
-        return formatter.format(giaTri).replace("₫", "");
-    }
-    public String getFormattedgiaTriToiDa() {
-        NumberFormat formatter = NumberFormat.getCurrencyInstance(new Locale("vi", "VN"));
-        return formatter.format(giaTriToiDa).replace("₫", "VND");
-    }
+//    public String getFormattedgiaTri() {
+//        NumberFormat formatter = NumberFormat.getCurrencyInstance(new Locale("vi", "VN"));
+//        return formatter.format(giaTri).replace("₫", "");
+//    }
+//    public String getFormattedgiaTriToiDa() {
+//        NumberFormat formatter = NumberFormat.getCurrencyInstance(new Locale("vi", "VN"));
+//        return formatter.format(giaTriToiDa).replace("₫", "VND");
+//    }
 }

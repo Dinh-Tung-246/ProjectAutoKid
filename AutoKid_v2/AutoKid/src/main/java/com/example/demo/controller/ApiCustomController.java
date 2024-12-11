@@ -1,6 +1,7 @@
 package com.example.demo.controller;
 
 import com.example.demo.model.SanPhamChiTiet;
+import com.example.demo.model.Voucher;
 import com.example.demo.repository.KhachHangRepo;
 import com.example.demo.repository.SanPhamChiTietRepo;
 import com.example.demo.model.KhachHang;
@@ -17,6 +18,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -110,5 +112,11 @@ public class ApiCustomController {
             map1.put("totalPrice", qlghService.getTotalPrice(idKH));
         }
         return map1;
+    }
+
+    @GetMapping("/get-voucher")
+    @ResponseBody
+    public List<Voucher> getVocher(){
+        return serviceQLDH.getAllVoucher();
     }
 }

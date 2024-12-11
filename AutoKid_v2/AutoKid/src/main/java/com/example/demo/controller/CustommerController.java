@@ -24,8 +24,7 @@ public class CustommerController {
     LoaiSanPhamRepo loaiSanPhamRepo;
 
     @GetMapping("/contact")
-    public String showContact(Model model){
-        model.addAttribute("currentPage","contact");
+    public String showContact(){
         return "/autokid/contact";
     }
 }
