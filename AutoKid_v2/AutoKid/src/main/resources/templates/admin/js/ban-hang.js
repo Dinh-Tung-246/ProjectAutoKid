@@ -11,45 +11,72 @@ document.addEventListener("DOMContentLoaded", function () {
     const newCustomerPhone = document.getElementById("newCustomerPhone");
     const saveCustomerBtn = document.getElementById("saveCustomerBtn");
 
+    function removeDuplicates(data) {
+        const uniqueData = [];
+        const seen = new Set();
 
-    // Sự kiện tìm kiếm khách hàng
+        data.forEach(item => {
+            if (!seen.has(item.sdt)) {  // Giả sử `sdt` là giá trị duy nhất để xác định khách hàng
+                seen.add(item.sdt);
+                uniqueData.push(item);
+            }
+        });
+
+        return uniqueData;
+    }
+
     searchInput.addEventListener("input", function () {
         const sdt = searchInput.value.trim(); // Lấy số điện thoại người dùng nhập
-
         if (sdt.length > 0) {
             // Gọi API để tìm khách hàng dựa trên số điện thoại
             fetch(`/admin/ban-hang/khachhang/search?sdt=${sdt}`)
-                .then(response => response.json())
-                .then(data => {
-                    customerList.innerHTML = "";
-                    customerResults.style.display = "block"; // Hiển thị danh sách khách hàng
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Error fetching customer data');
+                    }
+                    return response.text(); // Nhận dữ liệu dưới dạng văn bản
+                })
+                .then(text => {
+                    try {
+                        if (isValidJson(text)) {
+                            let data = JSON.parse(text);  // Chuyển dữ liệu sang JSON hợp lệ
+                            // Loại bỏ các đối tượng lặp lại
+                            data = removeDuplicates(data);
+                            customerList.innerHTML = "";
+                            customerResults.style.display = "block"; // Hiển thị danh sách khách hàng
 
-                    if (data.length > 0) {
-                        data.forEach(khachHang => {
-                            const listItem = document.createElement("li");
-                            listItem.className = "list-group-item d-flex justify-content-between align-items-center";
-                            listItem.textContent = `${khachHang.tenKH} - ${khachHang.sdt}`;
+                            if (data.length > 0) {
+                                data.forEach(khachHang => {
+                                    const listItem = document.createElement("li");
+                                    listItem.className = "list-group-item d-flex justify-content-between align-items-center";
+                                    listItem.textContent = `${khachHang.tenKH} - ${khachHang.sdt}`;
 
-                            // Thêm sự kiện click vào dòng khách hàng
-                            listItem.addEventListener("click", function () {
-                                customerName.textContent = khachHang.tenKH;
-                                customerPhone.textContent = khachHang.sdt;
-                                customerResults.style.display = "none"; // Ẩn kết quả tìm kiếm khi chọn khách hàng
-                                // Lưu khách hàng vào session thông qua API
-                                saveCustomerToSession(khachHang.sdt);
-                                event.stopPropagation();
-                            });
+                                    // Thêm sự kiện click vào dòng khách hàng
+                                    listItem.addEventListener("click", function () {
+                                        customerName.textContent = khachHang.tenKH;
+                                        customerPhone.textContent = khachHang.sdt;
+                                        customerResults.style.display = "none"; // Ẩn kết quả tìm kiếm khi chọn khách hàng
+                                        // Lưu khách hàng vào session thông qua API
+                                        saveCustomerToSession(khachHang.sdt);
+                                        event.stopPropagation();
+                                    });
 
-                            customerList.appendChild(listItem);
-                        });
-                    } else {
-                        const noResultItem = document.createElement("li");
-                        noResultItem.className = "list-group-item";
-                        noResultItem.textContent = "Không tìm thấy khách hàng.";
-                        customerList.appendChild(noResultItem);
+                                    customerList.appendChild(listItem);
+                                });
+                            } else {
+                                const noResultItem = document.createElement("li");
+                                noResultItem.className = "list-group-item";
+                                noResultItem.textContent = "Không tìm thấy khách hàng.";
+                                customerList.appendChild(noResultItem);
 
-                        // Hiển thị nút thêm khách hàng
-                        addCustomerBtn.style.display = "inline-block";
+                                // Hiển thị nút thêm khách hàng
+                                addCustomerBtn.style.display = "inline-block";
+                            }
+                        } else {
+                            console.error("Dữ liệu trả về không hợp lệ:", text);
+                        }
+                    } catch (error) {
+                        console.error("Lỗi khi chuyển đổi dữ liệu JSON:", error);
                     }
                 })
                 .catch(error => console.error("Error fetching customer data:", error));
@@ -58,7 +85,17 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     });
 
-    // Mở modal thêm khách hàng khi ấn nút "+"
+
+// Hàm kiểm tra tính hợp lệ của chuỗi JSON
+    function isValidJson(jsonString) {
+        try {
+            JSON.parse(jsonString);  // Thử phân tích chuỗi JSON
+            return true;  // Nếu không có lỗi, chuỗi là JSON hợp lệ
+        } catch (e) {
+            return false;  // Nếu có lỗi, chuỗi không hợp lệ
+        }
+    }
+
     if (addCustomerBtn) {
         addCustomerBtn.addEventListener("click", function () {
             // Điền số điện thoại vào form thêm khách hàng trong modal
@@ -122,12 +159,25 @@ document.addEventListener("DOMContentLoaded", function () {
                 sdt: sdt
             })
         })
-            .then(response => response.text())
+            .then(response => response.json())  // Giả sử API trả về dữ liệu JSON
             .then(data => {
-                console.log(data); // In ra thông báo khi khách hàng được lưu vào session
+                console.log("API response:", data);  // In ra dữ liệu trả về từ API
+
+                // Lưu dữ liệu khách hàng vào localStorage
+                localStorage.setItem("customerData", JSON.stringify(data));
+                console.log("Customer saved to session:", localStorage.getItem("customerData"));
+                const customer = JSON.parse(localStorage.getItem("customerData"));
+                if (customer) {
+                    console.log("Customer from localStorage:", customer);
+                    customerName.textContent = customer.tenKH;
+                    customerPhone.textContent = customer.sdt;
+                } else {
+                    console.log("No customer data found in localStorage.");
+                }
             })
             .catch(error => console.error("Error setting customer to session:", error));
     }
+
 
 
 });
@@ -419,18 +469,17 @@ document.addEventListener("DOMContentLoaded", function () {
                 const row = document.createElement("tr");
 
                 row.innerHTML = `
-                <td>${product.maSPCT}</td>
-                <td>
-                    ${product.tenSP}<br>
+                     <td class="productId">${product.maSPCT}</td>
+                    <td class="productName">${product.tenSP}<br>
                     <small>Chất liệu: ${product.chatLieu || "Không có"}</small>, 
                     <small>Màu sắc: ${product.mauSac || "Không có"}</small>, 
                     <small>Kích cỡ: ${product.kichCo || "Không có"}</small>
-                </td>
-                <td>${product.donGia}</td>
-                <td>
-                    <input type="number" value="${product.soLuong}" min="1" class="quantity-input custom-width" data-index="${index}">
-                </td>
-                <td class="thanhTien">${product.thanhTien}</td>
+                    </td>
+                    <td class="productPrice">${product.donGia}</td>
+                    <td class="productQuantity">
+                        <input type="number" value="${product.soLuong}" min="1" class="quantity-input custom-width" data-index="${index}">
+                    </td>
+                    <td class="thanhTien">${product.thanhTien}</td>
             `;
                 cartTableBody.appendChild(row);
                 totalAmount += product.thanhTien;
@@ -626,61 +675,165 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 });
 
-document.getElementById("paymentButton").addEventListener("click", function () {
-    // Hiển thị hộp thoại xác nhận
-    const confirmPayment = confirm("Bạn có chắc chắn muốn thanh toán đơn hàng này không?");
+document.getElementById("paymentButton").addEventListener("click", async function () {
+    // Hiển thị thông báo xác nhận thanh toán
+    const confirmPayment = confirm("Bạn có chắc chắn muốn thanh toán?");
 
     if (confirmPayment) {
-        // Dữ liệu hóa đơn và chi tiết hóa đơn
-        const invoiceData = {
-            customerName: document.getElementById("customerName").textContent,
-            customerPhone: document.getElementById("customerPhone").textContent,
-            items: [],
-            totalAmount: document.querySelector("#summaryTable .text-danger").textContent,
-            paymentType: document.getElementById("paymentTypeSelect").value
-        };
+        // Lấy thông tin giỏ hàng
+        const cartItems = [];
+        let totalAmount = 0;
+        let totalQuantity = 0;
 
-        // Lấy thông tin sản phẩm trong giỏ hàng
-        const cartRows = document.querySelectorAll("#cartTableBody tr");
-        cartRows.forEach(row => {
-            const item = {
-                productId: row.querySelector(".product-id").textContent,
-                name: row.querySelector(".product-name").textContent,
-                price: row.querySelector(".product-price").textContent,
-                quantity: row.querySelector(".product-quantity input").value,
-                total: row.querySelector(".product-total").textContent
-            };
-            invoiceData.items.push(item);
+        const productRows = document.querySelectorAll("#cartTableBody tr");
+        productRows.forEach(row => {
+            const productId = row.querySelector(".productId").textContent.trim();
+            const productName = row.querySelector(".productName").textContent.trim();
+            const productPrice = parseFloat(row.querySelector(".productPrice").textContent);
+            const productQuantity = parseInt(row.querySelector(".productQuantity input").value);
+            const totalPrice = productPrice * productQuantity;
+
+            cartItems.push({
+                productId,
+                productName,
+                productPrice,
+                productQuantity,
+                totalPrice
+            });
+
+            totalAmount += totalPrice;
+            totalQuantity += productQuantity;
+            console.log(cartItems)
         });
 
-        // Gửi dữ liệu đến server (giả sử bạn dùng API)
-        fetch("/api/create-invoice", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify(invoiceData)
-        })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
+
+        // Kiểm tra giỏ hàng có sản phẩm hay không
+        if (cartItems.length === 0) {
+            alert("Giỏ hàng không có sản phẩm!");
+            return;
+        }
+
+        // Lấy thông tin khách hàng từ localStorage
+        const customerData = JSON.parse(localStorage.getItem("customerData"));
+        if (!customerData || !customerData.id) {
+            alert("Thông tin khách hàng không hợp lệ hoặc không có trong hệ thống!");
+            return;
+        }
+
+        const customerId = customerData.id;
+
+        // Lấy thông tin thanh toán từ giao diện
+        const paymentType = document.getElementById("paymentTypeSelect").value;
+        const voucher = document.getElementById("voucherSelect").value;
+        const customerPaid = parseFloat(document.querySelector("#summaryTable input[type='text']").value);
+
+        // Kiểm tra số tiền thanh toán
+        if (isNaN(customerPaid) || customerPaid < totalAmount) {
+            alert("Số tiền khách hàng thanh toán không hợp lệ hoặc chưa đủ!");
+            return;
+        }
+
+        // Lấy thông tin nhân viên từ localStorage
+        const employeeData = JSON.parse(localStorage.getItem("infoNV"));
+        if (!employeeData || !employeeData.id) {
+            alert("Thông tin nhân viên không hợp lệ hoặc không có trong hệ thống!");
+            return;
+        }
+
+        const employeeId = employeeData.id;
+
+        // Tạo đối tượng hóa đơn
+        const testInvoice = {
+            id_kh: 5,
+            khachHang: { id: 5 },
+            id_nv: 5,
+            nhanVien: { id: 5 },
+            totalAmount: 1000000,
+            totalQuantity: 1,
+            paymentType: "cash",
+            voucher: "",
+            cartItems: [{
+                productId: "SPCT006",
+                productName: "Youth MAX BIKE Bambi",
+                productPrice: 1000000,
+                productQuantity: 1,
+                totalPrice: 1000000
+            }]
+        };
+
+
+        console.log("Sending invoice:", JSON.stringify(testInvoice));
+
+        try {
+            const response = await fetch('/admin/ban-hang/create-invoice', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(testInvoice)
+            });
+
+            if (response.ok) {
+                const result = await response.json();
+                if (result.success) {
                     // Hiển thị thông báo thành công
                     const toast = new bootstrap.Toast(document.getElementById("invoiceToast"));
                     toast.show();
 
-                    // Xóa giỏ hàng và cập nhật giao diện
-                    document.getElementById("cartTableBody").innerHTML = "";
-                    document.querySelector("#summaryTable .text-danger").textContent = "";
+                    // Reset giỏ hàng và cập nhật bảng tổng kết
+                    resetCart();
+                    updateSummary();
                 } else {
-                    alert("Đã xảy ra lỗi khi tạo hóa đơn. Vui lòng thử lại.");
+                    alert("Đã có lỗi khi tạo hóa đơn: " + result.error);
+                    console.error("Lỗi từ server:", result.error);
                 }
-            })
-            .catch(error => {
-                console.error("Lỗi:", error);
-                alert("Đã xảy ra lỗi khi tạo hóa đơn. Vui lòng thử lại.");
-            });
+            } else {
+                const errorData = await response.text();
+                alert("Đã có lỗi khi gửi yêu cầu! Mã lỗi: " + response.status);
+                console.error("Chi tiết lỗi:", errorData);
+            }
+        } catch (error) {
+            console.error("Lỗi khi tạo hóa đơn:", error);
+            alert("Đã có lỗi khi tạo hóa đơn! Vui lòng thử lại.");
+        }
     }
 });
+
+// Hàm reset giỏ hàng
+function resetCart() {
+    document.getElementById("cartTableBody").innerHTML = "";
+}
+
+// Cập nhật bảng tóm tắt thông tin hóa đơn
+function updateSummary() {
+    const productRows = document.querySelectorAll("#cartTableBody tr");
+    let totalAmount = 0;
+    let totalQuantity = 0;
+
+    productRows.forEach(row => {
+        const productPrice = parseFloat(row.querySelector(".productPrice").textContent);
+        const productQuantity = parseInt(row.querySelector(".productQuantity").textContent);
+        const totalPrice = productPrice * productQuantity;
+
+        totalAmount += totalPrice;
+        totalQuantity += productQuantity;
+    });
+
+    // Cập nhật thông tin vào bảng tổng kết
+    document.querySelector("#summaryTable tbody tr:nth-child(1) td").textContent = totalQuantity;  // Cập nhật số lượng
+    document.querySelector("#summaryTable tbody tr:nth-child(2) td").textContent = totalAmount.toFixed(2);  // Cập nhật tổng tiền
+    document.querySelector("#summaryTable tbody tr:nth-child(4) td").textContent = totalAmount.toFixed(2);  // Cập nhật vào dòng 4
+    document.querySelector("#summaryTable tbody tr:nth-child(6) td").textContent = totalAmount.toFixed(2);  // Cập nhật vào dòng 6
+
+    // Tính số tiền trả lại
+    const customerPaid = parseFloat(document.querySelector("#summaryTable input[type='text']").value);
+    const changeAmount = customerPaid - totalAmount;
+
+    // Cập nhật số tiền thay đổi (nếu có)
+    document.querySelector("#summaryTable tbody tr:nth-child(7) td").textContent = changeAmount.toFixed(2);
+}
+
+
 
 
 

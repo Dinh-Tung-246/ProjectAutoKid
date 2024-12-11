@@ -21,7 +21,7 @@ public class HoaDonResponse {
     private String trangThaiHD;
     private boolean isOnline;
     private List<HoaDonChiTietRP> hoaDonChiTietRPS;
-
+    private boolean confirmPayment; // Xác nhận thanh toán
 
     public HoaDonResponse(HoaDon h) {
         this.id = h.getId();

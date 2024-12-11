@@ -12,7 +12,9 @@ import com.example.demo.response.hoadonchitietRespone;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -34,6 +36,15 @@ public class QuanLyHoaDonService {
     @Autowired
     KhachHangRepo khachHangRepo;
 
+    public HoaDon save(HoaDon hoaDon){
+        return hoaDonRepo.save(hoaDon);
+    }
+
+    public HoaDonChiTiet save(HoaDonChiTiet hoaDonChiTiet){
+        return hoaDonChiTietRepo.save(hoaDonChiTiet);
+    }
+
+
     public List<KhachHang> searchBySDT(String sdt) {
         return khachHangRepo.findBySDT(sdt);
     }
@@ -54,6 +65,7 @@ public class QuanLyHoaDonService {
             return false;
         }
     }
+
 
     public Optional<SanPhamChiTiet> findOptionalByMaSPCT(String maSPCT) {
         SanPhamChiTiet sanPhamChiTiet = sanPhamChiTietRepo.findByMaSPCT(maSPCT);
