@@ -4,10 +4,8 @@ import com.example.demo.config.WebSocketHandler;
 import com.example.demo.model.HoaDon;
 import com.example.demo.model.HoaDonChiTiet;
 import com.example.demo.model.KhachHang;
-import com.example.demo.repository.HoaDonChiTietRepo;
-import com.example.demo.repository.HoaDonRepo;
-import com.example.demo.repository.KhachHangRepo;
-import com.example.demo.repository.SanPhamChiTietRepo;
+import com.example.demo.model.Voucher;
+import com.example.demo.repository.*;
 import com.example.demo.response.DonHangResponse;
 import com.example.demo.response.KhachHangResponse;
 import org.slf4j.Logger;
@@ -16,7 +14,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 @Service
@@ -38,6 +39,9 @@ public class QuanLyDatHangService {
 
     @Autowired
     KhachHangRepo khachHangRepo;
+
+    @Autowired
+    VoucherRepo voucherRepo;
 
     // Tạo đơn hàng
     public void createHoaDon(HoaDon hoaDon) {
@@ -109,5 +113,13 @@ public class QuanLyDatHangService {
 
         khachHangRepo.save(khachHang);
         return true;
+    }
+
+    // Lay danh sach cac ma dang hoat dong trong ngay
+    public List<Voucher> getAllVoucher() {
+        Date date = new Date();
+        LocalDate today = date.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+        logger.info("Date: {}", today);
+        return voucherRepo.getAllVoucherisAction(today);
     }
 }
