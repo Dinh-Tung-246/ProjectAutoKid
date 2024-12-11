@@ -18,7 +18,7 @@
                     <div class="header__top__left">
                         <ul>
                             <li><i class="fa fa-envelope"></i> autokid@colorlib.com</li>
-                            <li>Miễn phí vận chuyển với các đơn trên 2 triệu đồng</li>
+<!--                            <li>Miễn phí vận chuyển với các đơn trên 2 triệu đồng</li>-->
                         </ul>
                     </div>
                 </div>
@@ -54,7 +54,7 @@
             <div class="col-lg-6">
                 <nav class="header__menu">
                     <ul>
-                        <li th:classappend="${currentPage == 'home'} ? 'active'"><a th:href="@{http://localhost:8080/autokid/home}">Trang chủ hihihi</a></li>
+                        <li th:classappend="${currentPage == 'home'} ? 'active'"><a th:href="@{http://localhost:8080/autokid/home}">Trang chủ</a></li>
                         <li th:classappend="${currentPage == 'shop'} ? 'active'"><a th:href="@{http://localhost:8080/autokid/shop}">Cửa hàng</a></li>
                         <li>
                             <a href="#">Trang</a>
@@ -71,9 +71,9 @@
             <div class="col-lg-3">
                 <div class="header__cart">
                     <ul>
-                        <li th:classappend="${currentPage == 'shoping-cart'} ? 'active'"><a th:href="@{http://localhost:8080/autokid/shoping-cart}"><i class="fa fa-shopping-bag"></i> <span id="cart-count">0</span></a></li>
+                        <li th:classappend="${currentPage == 'shoping-cart'} ? 'active'"><a th:href="@{http://localhost:8080/autokid/shoping-cart}"><i class="fa fa-shopping-bag"></i> <span id="cart-count"></span></a></li>
                     </ul>
-                    <div class="header__cart__price">item: <span id="cart-total">0</span><span> VNĐ</span></div>
+                    <div class="header__cart__price">item: <span id="cart-total"></span><span> VNĐ</span></div>
                 </div>
             </div>
         </div>

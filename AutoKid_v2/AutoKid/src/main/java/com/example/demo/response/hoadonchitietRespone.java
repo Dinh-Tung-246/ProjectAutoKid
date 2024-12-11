@@ -22,10 +22,10 @@ public class hoadonchitietRespone {
     public hoadonchitietRespone(HoaDonChiTiet hdct){
         this.id = hdct.getId();
         this.maHD = hdct.getHoaDon().getMaHD();
-        this.tenKhachHang = hdct.getHoaDon().getKhachHang().getTenKH();
-        this.tenNhanVien = hdct.getHoaDon().getNhanVien().getTenNV();
-        this.tenSP = hdct.getSanPhamChiTiet().getSanPham().getTenSP();
-        this.tenPhuongThucThanhToan = hdct.getHoaDon().getPhuongThucThanhToan().getTenPTTT();
+        this.tenKhachHang = (hdct.getHoaDon() != null && hdct.getHoaDon().getKhachHang() != null) ? hdct.getHoaDon().getKhachHang().getTenKH() : "";
+        this.tenNhanVien = (hdct.getHoaDon() != null && hdct.getHoaDon().getNhanVien() != null) ? hdct.getHoaDon().getNhanVien().getTenNV() : "";
+        this.tenSP = (hdct.getSanPhamChiTiet() != null && hdct.getSanPhamChiTiet().getSanPham() != null) ? hdct.getSanPhamChiTiet().getSanPham().getTenSP() : "";
+        this.tenPhuongThucThanhToan = (hdct.getHoaDon() != null && hdct.getHoaDon().getPhuongThucThanhToan() != null) ? hdct.getHoaDon().getPhuongThucThanhToan().getTenPTTT() : "";
         this.ngayTao = hdct.getHoaDon().getNgayTao();
         this.tongTien = hdct.getHoaDon().getTongTien();
         this.soLuong = hdct.getSoLuong();

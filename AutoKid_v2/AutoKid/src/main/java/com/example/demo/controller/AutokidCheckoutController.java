@@ -7,6 +7,8 @@ import com.example.demo.repository.PhuongThucThanhToanRepo;
 import com.example.demo.repository.SanPhamChiTietRepo;
 import com.example.demo.service.QuanLyDatHangService;
 import com.example.demo.service.QuanLySanPhamService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -21,6 +23,7 @@ import java.util.Map;
 @Controller
 @RequestMapping("/autokid/checkout")
 public class AutokidCheckoutController {
+    private Logger logger = LoggerFactory.getLogger(AutokidCheckoutController.class);
 
     @Autowired
     QuanLySanPhamService qlspService;
@@ -41,8 +44,8 @@ public class AutokidCheckoutController {
     QuanLyDatHangService qldhService;
 
     @GetMapping("")
-    public String showCheckout(Model model){
-        model.addAttribute("currentPage","checkout");
+    public String showCheckout(Model model) {
+        model.addAttribute("currentPage", "checkout");
         model.addAttribute("loaisp", loaiSanPhamRepo.findAll());
         model.addAttribute("pttt", ptttRepo.findAll());
         return "/autokid/checkout";
@@ -50,6 +53,9 @@ public class AutokidCheckoutController {
 
     @PostMapping("/create")
     public ResponseEntity<?> create(@RequestBody Map<String, Object> request) {
+
+        // Lấy danh sách HoaDonChiTiet
+        List<Map<String, Object>> hoaDonChiTietList = (List<Map<String, Object>>) request.get("hdct");
         // Lấy thông tin HoaDon
         Map<String, Object> hoaDonData = (Map<String, Object>) request.get("hoaDon");
         HoaDon hoaDon = new HoaDon();
@@ -57,16 +63,18 @@ public class AutokidCheckoutController {
         hoaDon.setTenNguoiNhan((String) hoaDonData.get("tenNguoiNhan"));
         hoaDon.setSdtNguoiNhan((String) hoaDonData.get("sdtNguoiNhan"));
         hoaDon.setDiaChiNguoiNhan((String) hoaDonData.get("diaChiNguoiNhan"));
-//        hoaDon.setNgayTao(Date.valueOf((String) hoaDonData.get("ngayTao")));
+//            hoaDon.setNgayTao(Date.valueOf((String) hoaDonData.get("ngayTao")));
         hoaDon.setTongTien(((Number) hoaDonData.get("tongTien")).floatValue());
         hoaDon.setPhiShip(((Number) hoaDonData.get("phiShip")).floatValue());
         hoaDon.setTrangThaiHD((String) hoaDonData.get("trangThaiHD"));
+        hoaDon.setPhiShip(50000F);
 
         PhuongThucThanhToan pttt = ptttRepo.findById(Integer.parseInt(hoaDonData.get("idPttt").toString())).orElseThrow();
         hoaDon.setPhuongThucThanhToan(pttt);
 
+        // khách hàng Object
         Object idKHO = hoaDonData.get("idKH");
-        if(idKHO != null) {
+        if (idKHO != null) {
             Integer idKH = Integer.parseInt(idKHO.toString());
             KhachHang kh = khachHangRepo.findById(idKH).orElseThrow();
             hoaDon.setKhachHang(kh);
@@ -75,12 +83,11 @@ public class AutokidCheckoutController {
         // Lưu HoaDon
         qldhService.createHoaDon(hoaDon);
 
-        // Lấy danh sách HoaDonChiTiet
-        List<Map<String, Object>> hoaDonChiTietList = (List<Map<String, Object>>) request.get("hdct");
+        logger.info("Data: {}", hoaDonChiTietList);
         for (Map<String, Object> hdctData : hoaDonChiTietList) {
             HoaDonChiTiet hoaDonChiTiet = new HoaDonChiTiet();
-
-            Object idSPCT = hdctData.get("id");
+            Integer soLuong = Integer.parseInt(hdctData.get("soLuong").toString());
+            Object idSPCT = hdctData.get("idSPCT");
             if (idSPCT != null) {
                 // Ánh xạ sản phẩm chi tiết dựa trên tên (hoặc ID nếu có)
                 Integer idSP = Integer.parseInt(idSPCT.toString());
@@ -93,9 +100,10 @@ public class AutokidCheckoutController {
             hoaDonChiTiet.setDonGiaSauGiam(Double.parseDouble(String.valueOf((Integer) hdctData.get("donGiaSauGiam"))));
 
             // Lưu HoaDonChiTiet
-            qldhService.createHDCT(hoaDonChiTiet);
+            qldhService.createHDCT(hoaDonChiTiet, soLuong, Integer.parseInt(idSPCT.toString()));
         }
 
         return ResponseEntity.ok("Đặt hàng thành công");
+
     }
 }

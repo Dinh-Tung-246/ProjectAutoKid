@@ -3,8 +3,10 @@ package com.example.demo.model;
 import jakarta.persistence.*;
 import lombok.Data;
 
+import java.text.NumberFormat;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Locale;
 
 @Entity
 @Data
@@ -23,7 +25,7 @@ public class KhuyenMai {
     private String tenKM;
 
     @Column(name = "gia_tri")
-    private Double giaTri;
+    private Integer giaTri;
 
     @Column(name = "ngay_bat_dau")
     private LocalDate ngayBatDau;
@@ -32,7 +34,12 @@ public class KhuyenMai {
     private LocalDate ngayKetThuc;
 
     @Column(name = "trang_thai")
-    private String trangThaiKM;
+    private Integer trangThaiKM;
+
+    public String getFormattedgiaTri() {
+        NumberFormat formatter = NumberFormat.getCurrencyInstance(new Locale("vi", "VN"));
+        return formatter.format(giaTri).replace("₫", "%");
+    }
 
 //    @OneToMany(mappedBy = "khuyenMai", cascade = CascadeType.ALL)
 //    private List<KhuyenMaiSanPham> khuyenMaiSanPham;

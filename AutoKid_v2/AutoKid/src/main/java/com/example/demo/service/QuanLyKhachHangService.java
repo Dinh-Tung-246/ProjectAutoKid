@@ -1,7 +1,9 @@
 package com.example.demo.service;
 
+import com.example.demo.model.GioHang;
 import com.example.demo.model.KhachHang;
 import com.example.demo.model.ThongTinVanChuyen;
+import com.example.demo.repository.GioHangRepo;
 import com.example.demo.repository.KhachHangRepo;
 import com.example.demo.repository.ThongTinVanChuyenRepo;
 import com.example.demo.response.KhachHangResponse;
@@ -22,6 +24,9 @@ public class QuanLyKhachHangService {
 
     @Autowired
     ThongTinVanChuyenRepo ttvcRepo;
+
+    @Autowired
+    GioHangRepo gioHangRepo;
 
     private static final Logger logger = LoggerFactory.getLogger(QuanLyKhachHangService.class);
 
@@ -109,6 +114,10 @@ public class QuanLyKhachHangService {
             result = "Mật khẩu xác nhận không trùng khớp với mật khẩu đã tạo";
         } else {
             khachHangRepo.createAccount(hoTen, email, encryptPassword(matKhau));
+            GioHang gioHang = new GioHang();
+            gioHang.setKhachHang(khachHangRepo.getKHByIdDESC());
+            gioHang.setTrangThai("Đang hoạt động");
+            gioHangRepo.save(gioHang);
             result = "sc";
         }
         return result;
@@ -149,10 +158,11 @@ public class QuanLyKhachHangService {
                     map.put("pass", kh.getMatKhau());
                     map.put("sdtKH", kh.getSdt());
                     map.put("diaChiKH", kh.getDiaChi());
-
+                    break;
                 }
             }
         }
+
 
         return map;
     }

@@ -3,7 +3,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const userCookie = cookies.find(cookie => cookie.startsWith("infoNV="));
     if (userCookie) {
         const jsonNhanVien = decodeURIComponent(userCookie.split("=")[1]);
-        localStorage.setItem("infoNV", jsonNhanVien);
+        sessionStorage.setItem("infoNV", jsonNhanVien);
         const  nv = JSON.parse(jsonNhanVien);
         console.log(nv);
     }
@@ -87,6 +87,9 @@ document.getElementById('submitBtn').addEventListener('click', function (event) 
     console.log(formData);
     fetch('/admin/customer-management/create-customer', {
         method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
         body: formData
     }) . then(response => response.text())
         .then(result => {

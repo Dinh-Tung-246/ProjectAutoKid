@@ -11,6 +11,8 @@ import com.example.demo.service.VNPAYService;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.HttpServletRequest;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -25,6 +27,8 @@ import java.util.Map;
 public class VNPAYController {
     private static Map<String, Object> KHACH_HANG;
     private static List<Map<String, Object>> HDCT_LIST;
+
+    private Logger logger = LoggerFactory.getLogger(VNPAYController.class);
 
     @Autowired
     private VNPAYService vnPayService;
@@ -106,24 +110,29 @@ public class VNPAYController {
         hoaDon.setPhuongThucThanhToan(phuongThucThanhToanRepo.findById(2).orElseThrow());
         hoaDon.setPhiShip(0.0F);
         hoaDon.setTongTien(Float.parseFloat(totalPrice)/100F);
-        hoaDon.setTrangThaiHD("Đã thanh toán");
+        hoaDon.setTrangThaiHD("Đã thanh toán, chờ giao hàng");
         hoaDon.setTenNguoiNhan(tenNN);
         hoaDon.setDiaChiNguoiNhan(diaChiNN);
         hoaDon.setSdtNguoiNhan(sdtNN);
+        hoaDon.setPhiShip(50000F);
         quanLyDatHangService.createHoaDon(hoaDon);
+
+        logger.info("Data : {}", HDCT_LIST);
 
         for (Map<String, Object> map : HDCT_LIST) {
             HoaDonChiTiet hdct = new HoaDonChiTiet();
-            if (map.get("id") != null) {
-                String idSPCT = map.get("id").toString();
+            if (map.get("idSPCT") != null) {
+                String idSPCT = map.get("idSPCT").toString();
                 hdct.setSanPhamChiTiet(spctRepo.findById(Integer.parseInt(idSPCT)).orElseThrow());
             }
             hdct.setSoLuong(Integer.parseInt(map.get("quantity").toString()));
             String donGiaSauGiam = map.get("totalPrice").toString();
             donGiaSauGiam = donGiaSauGiam.replace(".", "");
             hdct.setDonGiaSauGiam(Double.parseDouble(donGiaSauGiam));
+            Integer soLuong = Integer.parseInt(map.get("quantity").toString());
+            Integer idSPCT = Integer.parseInt(map.get("idSPCT").toString());
 
-            quanLyDatHangService.createHDCT(hdct);
+            quanLyDatHangService.createHDCT(hdct, soLuong, idSPCT);
         }
 
         model.addAttribute("orderId", orderInfo);

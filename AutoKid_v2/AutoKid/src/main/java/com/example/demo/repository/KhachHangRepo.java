@@ -10,6 +10,7 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface KhachHangRepo extends JpaRepository<KhachHang,Integer> {
@@ -29,6 +30,11 @@ public interface KhachHangRepo extends JpaRepository<KhachHang,Integer> {
     @Query(value = "SELECT k  FROM KhachHang k " +
             "WHERE k.sdt LIKE %:sdt% ")
     List<KhachHang> findBySDT(@Param("sdt") String sdt);
+
+    @Query(value = "SELECT TOP 1 * FROM khach_hang ORDER BY id_kh DESC", nativeQuery = true)
+    KhachHang getKHByIdDESC();
+
+    boolean existsBySdt(String sdt);
 
     KhachHang findBySdt(String sdt);
 }

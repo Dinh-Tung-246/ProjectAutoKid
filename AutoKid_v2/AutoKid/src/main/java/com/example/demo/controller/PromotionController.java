@@ -1,15 +1,19 @@
 package com.example.demo.controller;
 
 import com.example.demo.model.KhuyenMai;
-import com.example.demo.response.KhuyenMaiSanPhamRespone;
+import com.example.demo.model.SanPham;
+import com.example.demo.repository.SanPhamRepo;
+import com.example.demo.response.SanPhamKhuyenMaiResponse;
 import com.example.demo.service.QuanLyKhuyenMaiService;
-import com.example.demo.service.QuanLySPKhuyenMaiService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 @Controller
 @RequestMapping("/admin/promotion")
@@ -19,7 +23,7 @@ public class PromotionController {
     private QuanLyKhuyenMaiService service;
 
     @Autowired
-    private QuanLySPKhuyenMaiService SPKhuyenMaiService;
+    private SanPhamRepo sanPhamRepo;
 
     @GetMapping("/index")
     public String homeController(Model model){
@@ -64,11 +68,41 @@ public class PromotionController {
     }
 
     @GetMapping("/product-sale")
-    public String showActivePromotions(Model model) {
-        List<KhuyenMaiSanPhamRespone> promotions = SPKhuyenMaiService.getActivePromotionsWithDiscountedPrice();
-        model.addAttribute("namePage", "promotion");
-        model.addAttribute("promotionProducts", promotions);
+    public String getProductPromotion(Model model) {
+        List<SanPhamKhuyenMaiResponse> listProductPromotion = service.getSanPhamKhuyenMaiList();
+        model.addAttribute("ProductList", listProductPromotion);
+        List<SanPham> listProductNoPromotion = service.getProductNoPromotion();
+        model.addAttribute("NoPromotionList", listProductNoPromotion);
+        model.addAttribute("promotion", service.getPromotionNoApply());
         return "/admin/promotionProduct";
+    }
+
+    @PostMapping("/addPromotionInProduct")
+    public ResponseEntity<?> addPromotionInProduct(
+            @RequestParam("promotionId") Integer promotionId,
+            @RequestParam("productIds") List<Integer> productIds){
+        for (Integer productId : productIds) {
+            service.applyPromotionToProduct(promotionId, productId);
+        }
+        return ResponseEntity.ok("Khuyến mãi đã được áp dụng thành công!");
+    }
+
+    @PostMapping("/cancelPromotion")
+    public ResponseEntity<?> cancelPromotion(@RequestBody List<Integer> productIds) {
+        if (productIds.isEmpty()) {
+            return ResponseEntity.badRequest().body("Không có sản phẩm nào được chọn.");
+        }
+
+        for (Integer productId : productIds) {
+            Optional<SanPham> sanPhamOpt = sanPhamRepo.findById(productId);
+            if (sanPhamOpt.isPresent()) {
+                SanPham sanPham = sanPhamOpt.get();
+                sanPham.setKhuyenMai(null);
+                sanPhamRepo.save(sanPham);
+            }
+        }
+
+        return ResponseEntity.ok("Khuyến mãi đã được hủy thành công.");
     }
 
 }

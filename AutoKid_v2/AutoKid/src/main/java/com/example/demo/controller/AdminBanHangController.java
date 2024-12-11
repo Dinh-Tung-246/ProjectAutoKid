@@ -81,6 +81,7 @@ public class AdminBanHangController {
         }
     }
 
+
     @GetMapping("/san-pham-chi-tiet/search")
     public ResponseEntity<List<SanPhamChiTietDTO>> searchSPCTByTenSPOrMaSPCT(@RequestParam("tenSP") String tenSP, @RequestParam("maSPCT") String maSPCT) {
         List<SanPhamChiTietDTO> result = sanPhamChiTietRepo.findSanPhamChiTietBySanPham_TenSPOrMaSPCT(tenSP, maSPCT);
