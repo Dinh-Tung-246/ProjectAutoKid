@@ -116,9 +116,6 @@ public class AdminBanHangController {
 
     @PutMapping("/san-pham-chi-tiet/{maSPCT}/update-quantity")
     public ResponseEntity<?> updateProductQuantity(@PathVariable("maSPCT") String maSPCT, @RequestBody SanPhamChiTietDTO request) {
-        // Kiểm tra giá trị nhận được
-        System.out.println("Received maSPCT: " + maSPCT); // Log để kiểm tra
-
         boolean success = hoaDonService.updateProductQuantity(maSPCT, request.getSoLuong());
         if (success) {
             return ResponseEntity.ok(new ApiResponse(true, "Cập nhật số lượng thành công"));
@@ -134,32 +131,22 @@ public class AdminBanHangController {
     @ResponseBody
     public ResponseEntity<Map<String, Object>> createInvoice(@RequestBody Map<String, Object> hoaDonRequest) {
         System.out.println("Received Invoice Request: " + hoaDonRequest);
-
         try {
-            // Kiểm tra dữ liệu "nhanVien" và "khachHang" có phải là Map hay không
             if (!(hoaDonRequest.get("nhanVien") instanceof Map)) {
                 return ResponseEntity.badRequest().body(Map.of("error", "Dữ liệu nhân viên không hợp lệ"));
             }
             if (!(hoaDonRequest.get("khachHang") instanceof Map)) {
                 return ResponseEntity.badRequest().body(Map.of("error", "Dữ liệu khách hàng không hợp lệ"));
             }
-
-            // Lấy thông tin ID nhân viên và khách hàng từ request
             Integer idNhanVien = (Integer) ((Map<String, Object>) hoaDonRequest.get("nhanVien")).get("id");
             Integer idKhachHang = (Integer) ((Map<String, Object>) hoaDonRequest.get("khachHang")).get("id");
-
-            // Kiểm tra thông tin ID nhân viên và khách hàng
             if (idNhanVien == null || idKhachHang == null) {
                 return ResponseEntity.badRequest().body(Map.of("error", "Thiếu thông tin ID nhân viên hoặc khách hàng"));
             }
-
-            // Kiểm tra thông tin giỏ hàng
             List<Map<String, Object>> cartItems = (List<Map<String, Object>>) hoaDonRequest.get("cartItems");
             if (cartItems == null || cartItems.isEmpty()) {
                 return ResponseEntity.badRequest().body(Map.of("error", "Giỏ hàng không có sản phẩm"));
             }
-
-            // Tìm nhân viên và khách hàng trong cơ sở dữ liệu
             Optional<NhanVien> nhanVienOpt = nhanVienRepo.findById(idNhanVien);
             Optional<KhachHang> khachHangOpt = khachHangRepo.findById(idKhachHang);
 
@@ -179,36 +166,25 @@ public class AdminBanHangController {
             if (totalAmount == null || totalAmount <= 0 || totalQuantity == null || totalQuantity <= 0) {
                 return ResponseEntity.badRequest().body(Map.of("error", "Tổng tiền hoặc số lượng không hợp lệ"));
             }
-
-            // Tạo mã hóa đơn duy nhất
             String maHD = "HD" + UUID.randomUUID().toString();
-
-            // Tạo đối tượng hóa đơn
             HoaDon hoaDon = new HoaDon();
             hoaDon.setMaHD(maHD);
             hoaDon.setKhachHang(khachHang);
             hoaDon.setNhanVien(nhanVien);
             hoaDon.setTongTien(Float.valueOf(totalAmount));
             hoaDon.setTrangThaiHD("Đã thanh toán");
-
-            // Lưu hóa đơn vào cơ sở dữ liệu
             HoaDon savedInvoice = hoaDonService.save(hoaDon);
-
-            // Lưu chi tiết hóa đơn
             for (Map<String, Object> item : cartItems) {
-                String productId = (String) item.get("productId");
+                String productId = item.get("productId").toString();
                 Integer productQuantity = (Integer) item.get("productQuantity");
                 Integer productPrice = (Integer) item.get("productPrice");
-
                 if (productId == null || productQuantity == null || productQuantity <= 0 || productPrice == null || productPrice <= 0) {
                     return ResponseEntity.badRequest().body(Map.of("error", "Chi tiết sản phẩm không hợp lệ"));
                 }
-
-                Optional<SanPhamChiTiet> productOpt = sanPhamChiTietRepo.findById(Integer.valueOf(productId));
+                Optional<SanPhamChiTiet> productOpt = Optional.ofNullable(sanPhamChiTietRepo.findByMaSPCT(productId));
                 if (productOpt.isEmpty()) {
                     return ResponseEntity.badRequest().body(Map.of("error", "Không tìm thấy sản phẩm với ID: " + productId));
                 }
-
                 SanPhamChiTiet product = productOpt.get();
                 HoaDonChiTiet hoaDonChiTiet = new HoaDonChiTiet();
                 hoaDonChiTiet.setHoaDon(savedInvoice);
@@ -218,8 +194,6 @@ public class AdminBanHangController {
 
                 hoaDonService.save(hoaDonChiTiet);
             }
-
-            // Trả về kết quả thành công
             Map<String, Object> response = new HashMap<>();
             response.put("success", true);
             response.put("invoiceId", savedInvoice.getId());

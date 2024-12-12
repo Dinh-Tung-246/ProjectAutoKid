@@ -52,26 +52,19 @@ public class QuanLyHoaDonService {
 
     @Transactional
     public boolean updateProductQuantity(String maSPCT, Integer soLuong) {
-        SanPhamChiTiet sanPhamChiTiet = sanPhamChiTietRepo.findByMaSPCT(maSPCT);
-        if (sanPhamChiTiet != null) {
-            int currentQuantity = sanPhamChiTiet.getSoLuong();
-            if (soLuong <= 0 || soLuong > currentQuantity) {
-                return false;
-            }
-            sanPhamChiTiet.setSoLuong(currentQuantity - soLuong);
-            sanPhamChiTietRepo.save(sanPhamChiTiet);
-
-            return true;
-        } else {
-            return false; // Không tìm thấy sản phẩm chi tiết
+        if (soLuong <= 0) {
+            return false;
         }
+        int updatedRows = sanPhamChiTietRepo.updateSoLuongSPCT(soLuong, maSPCT);
+        return updatedRows > 0;
     }
+
 
 
 
     public Optional<SanPhamChiTiet> findOptionalByMaSPCT(String maSPCT) {
         SanPhamChiTiet sanPhamChiTiet = sanPhamChiTietRepo.findByMaSPCT(maSPCT);
-        return Optional.ofNullable(sanPhamChiTiet); // Bọc kết quả trong Optional
+        return Optional.ofNullable(sanPhamChiTiet);
     }
 
 

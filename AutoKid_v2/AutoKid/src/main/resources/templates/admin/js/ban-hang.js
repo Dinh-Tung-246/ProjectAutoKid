@@ -16,7 +16,7 @@ document.addEventListener("DOMContentLoaded", function () {
         const seen = new Set();
 
         data.forEach(item => {
-            if (!seen.has(item.sdt)) {  // Giả sử `sdt` là giá trị duy nhất để xác định khách hàng
+            if (!seen.has(item.sdt)) {
                 seen.add(item.sdt);
                 uniqueData.push(item);
             }
@@ -26,37 +26,32 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     searchInput.addEventListener("input", function () {
-        const sdt = searchInput.value.trim(); // Lấy số điện thoại người dùng nhập
+        const sdt = searchInput.value.trim();
         if (sdt.length > 0) {
-            // Gọi API để tìm khách hàng dựa trên số điện thoại
             fetch(`/admin/ban-hang/khachhang/search?sdt=${sdt}`)
                 .then(response => {
                     if (!response.ok) {
                         throw new Error('Error fetching customer data');
                     }
-                    return response.text(); // Nhận dữ liệu dưới dạng văn bản
+                    return response.text();
                 })
                 .then(text => {
                     try {
                         if (isValidJson(text)) {
-                            let data = JSON.parse(text);  // Chuyển dữ liệu sang JSON hợp lệ
-                            // Loại bỏ các đối tượng lặp lại
+                            let data = JSON.parse(text);
                             data = removeDuplicates(data);
                             customerList.innerHTML = "";
-                            customerResults.style.display = "block"; // Hiển thị danh sách khách hàng
-
+                            customerResults.style.display = "block";
                             if (data.length > 0) {
                                 data.forEach(khachHang => {
                                     const listItem = document.createElement("li");
                                     listItem.className = "list-group-item d-flex justify-content-between align-items-center";
                                     listItem.textContent = `${khachHang.tenKH} - ${khachHang.sdt}`;
-
-                                    // Thêm sự kiện click vào dòng khách hàng
                                     listItem.addEventListener("click", function () {
                                         customerName.textContent = khachHang.tenKH;
                                         customerPhone.textContent = khachHang.sdt;
-                                        customerResults.style.display = "none"; // Ẩn kết quả tìm kiếm khi chọn khách hàng
-                                        // Lưu khách hàng vào session thông qua API
+                                        customerResults.style.display = "none";
+                                        searchInput.value = '';
                                         saveCustomerToSession(khachHang.sdt);
                                         event.stopPropagation();
                                     });
@@ -68,8 +63,6 @@ document.addEventListener("DOMContentLoaded", function () {
                                 noResultItem.className = "list-group-item";
                                 noResultItem.textContent = "Không tìm thấy khách hàng.";
                                 customerList.appendChild(noResultItem);
-
-                                // Hiển thị nút thêm khách hàng
                                 addCustomerBtn.style.display = "inline-block";
                             }
                         } else {
@@ -81,39 +74,34 @@ document.addEventListener("DOMContentLoaded", function () {
                 })
                 .catch(error => console.error("Error fetching customer data:", error));
         } else {
-            customerResults.style.display = "none"; // Ẩn kết quả khi không có nhập
+            customerResults.style.display = "none";
         }
     });
-
-
-// Hàm kiểm tra tính hợp lệ của chuỗi JSON
     function isValidJson(jsonString) {
         try {
-            JSON.parse(jsonString);  // Thử phân tích chuỗi JSON
-            return true;  // Nếu không có lỗi, chuỗi là JSON hợp lệ
+            JSON.parse(jsonString);
+            return true;
         } catch (e) {
-            return false;  // Nếu có lỗi, chuỗi không hợp lệ
+            return false;
         }
     }
 
     if (addCustomerBtn) {
         addCustomerBtn.addEventListener("click", function () {
-            // Điền số điện thoại vào form thêm khách hàng trong modal
             newCustomerPhone.value = searchInput.value.trim();
             const myModal = new bootstrap.Modal(document.getElementById('addCustomerModal'));
             myModal.show(); // Mở modal
         });
     } else {
-        console.error("Nút thêm khách hàng không tồn tại.");
+
     }
 
-    // Lưu khách hàng mới
     saveCustomerBtn.addEventListener("click", function () {
         const tenKH = newCustomerName.value.trim();
         const sdt = newCustomerPhone.value.trim();
-
         if (tenKH && sdt) {
-            // Gọi API để thêm khách hàng mới
+            saveCustomerBtn.disabled = true;
+
             fetch('/admin/ban-hang/khach-hang/add', {
                 method: 'POST',
                 headers: {
@@ -124,27 +112,34 @@ document.addEventListener("DOMContentLoaded", function () {
                     sdt: sdt
                 })
             })
-                .then(response => response.json())
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Lỗi trong quá trình thêm khách hàng!');
+                    }
+                    return response.json();
+                })
                 .then(data => {
-                    // Cập nhật tên và số điện thoại khi thêm khách hàng thành công
                     customerName.textContent = tenKH;
                     customerPhone.textContent = sdt;
-                    // Đóng modal và ẩn nút thêm khách hàng
                     const modalElement = document.querySelector('#addCustomerModal');
                     const modalInstance = bootstrap.Modal.getInstance(modalElement);
                     modalInstance.hide();
 
-                    // Hiển thị thông báo thành công
                     const toast = new bootstrap.Toast(document.getElementById('successToast'));
                     toast.show();
 
-                    // Lưu khách hàng vào session
                     saveCustomerToSession(sdt);
-
-                    searchInput.value = ''; // Xóa ô nhập tìm kiếm
-                    customerResults.style.display = "none"; // Ẩn kết quả tìm kiếm
+                    searchInput.value = '';
+                    customerResults.style.display = "none";
                 })
-                .catch(error => console.error('Error saving customer:', error));
+                .catch(error => {
+                    console.error('Error saving customer:', error);
+                    alert('Đã xảy ra lỗi, vui lòng thử lại!');
+                })
+                .finally(() => {
+                    // Bật lại nút sau khi xử lý xong
+                    saveCustomerBtn.disabled = false;
+                });
         }
     });
 
@@ -158,42 +153,25 @@ document.addEventListener("DOMContentLoaded", function () {
             body: JSON.stringify({ sdt: sdt })
         })
             .then(response => {
-                console.log("Response received:", response);
                 if (!response.ok) {
                     return response.text().then(errorMessage => {
                         throw new Error(errorMessage);
                     });
                 }
-                return response.text(); // Đọc phản hồi dưới dạng văn bản
+                return response.text();
             })
             .then(responseText => {
-                console.log("Raw API response:", responseText);
-
-                // Làm sạch chuỗi JSON nếu cần
                 try {
-                    // Bạn có thể thay thế các chuỗi không hợp lệ ở đây nếu cần
                     const cleanedResponse = responseText.replace(/}}]}}]}}]/g, '}');
-                    const customer = JSON.parse(cleanedResponse); // Chuyển đổi phản hồi thành JSON hợp lệ
-                    console.log("API response:", customer);
-
-                    // Lưu thông tin khách hàng vào localStorage
+                    const customer = JSON.parse(cleanedResponse);
                     localStorage.setItem("customerData", JSON.stringify(customer));
-                    console.log("Customer saved to localStorage:", localStorage.getItem("customerData"));
-
-                    // Cập nhật giao diện
-                    const customerName = document.getElementById("customerName");
-                    const customerPhone = document.getElementById("customerPhone");
-                    if (customerName && customerPhone) {
-                        customerName.textContent = customer.tenKH;
-                        customerPhone.textContent = customer.sdt;
-                    }
                 } catch (error) {
                     throw new Error("Invalid JSON response: " + error.message);
                 }
             })
             .catch(error => {
                 console.error("Error setting customer to session:", error.message);
-                alert(error.message); // Hiển thị lỗi cho người dùng
+                alert(error.message);
             });
     }
 
@@ -269,31 +247,20 @@ document.addEventListener("DOMContentLoaded", function () {
         if (Array.isArray(storedCart) && storedCart.length > index) {
             storedCart.splice(index, 1);
         }
-
-        // Cập nhật Session Storage
         sessionStorage.setItem("cart", JSON.stringify(storedCart));
         sessionStorage.setItem("invoices", JSON.stringify(invoices));
-
-        // Cập nhật giao diện
         renderInvoices();
         showToast('deleteInvoiceToast');
     }
 
     document.getElementById("addInvoiceButton").addEventListener("click", () => {
-        // Kiểm tra số lượng hóa đơn đã có, nếu vượt quá 10 thì không cho tạo thêm
         if (invoices.length >= 10) {
             showToast('maxInvoiceToast');
-            return; // Dừng lại không tạo hóa đơn mới
+            return;
         }
-
-        // Tạo một hóa đơn mới
         const newInvoice = `Hóa đơn ${invoices.length + 1}`;
-        invoices.push(newInvoice); // Thêm vào danh sách hóa đơn
-
-        // Lấy giỏ hàng hiện tại từ sessionStorage
+        invoices.push(newInvoice);
         let storedCart = JSON.parse(sessionStorage.getItem("cart"));
-
-        // Nếu storedCart không phải là mảng (null hoặc không hợp lệ), tạo một mảng mới
         if (!Array.isArray(storedCart)) {
             storedCart = [];
         }
@@ -369,14 +336,12 @@ document.addEventListener("DOMContentLoaded", function () {
                         `;
                             row.addEventListener("click", function () {
                                 selectedProduct = sanPham; // Lưu sản phẩm đã chọn
-                                document.getElementById("productQuantity").value = 1; // Đặt số lượng mặc định là 1
-                                quantityModal.show(); // Hiển thị modal nhập số lượng
-                                productResults.style.display = "none"; // Ẩn kết quả tìm kiếm khi chọn sản phẩm
+                                document.getElementById("productQuantity").value = 1;
+                                quantityModal.show();
+                                productResults.style.display = "none";
                                 searchInput.value = "";
                                 event.stopPropagation();
                             });
-
-                            // Thêm dòng vào bảng
                             productList.appendChild(row);
                         });
                     } else {
@@ -388,7 +353,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 })
                 .catch(error => console.error("Error fetching product data:", error));
         } else {
-            productResults.style.display = "none"; // Ẩn kết quả khi không có nhập
+            productResults.style.display = "none";
         }
     });
 
@@ -396,11 +361,9 @@ document.addEventListener("DOMContentLoaded", function () {
         const isClickInsideSearch = searchInput.contains(event.target) || productResults.contains(event.target) || customerResults.contains(event.target);
         const isClickInsideProduct = productResults.contains(event.target);
         const isClickInsideCustomer = customerResults.contains(event.target);
-
-        // Nếu click ra ngoài searchInput và các bảng kết quả, thì đóng bảng
         if (!isClickInsideSearch && !isClickInsideProduct && !isClickInsideCustomer) {
             customerResults.style.display = "none";
-            productResults.style.display = "none"; // Đóng bảng sản phẩm
+            productResults.style.display = "none";
         }
     });
 
@@ -412,35 +375,25 @@ document.addEventListener("DOMContentLoaded", function () {
         }
 
         console.log("Đơn hàng đã chọn:", selectedOrder);
-
-        // Lấy giỏ hàng từ sessionStorage, nếu không có thì tạo mảng mới
         let storedCart = JSON.parse(sessionStorage.getItem("cart")) || [];
-
-        // Tạo giỏ hàng cho đơn hàng nếu chưa có
         const orderIndex = invoices.indexOf(selectedOrder); // Tìm vị trí của đơn hàng trong mảng invoices
         if (orderIndex === -1) {
             console.log("Không tìm thấy đơn hàng");
             return;
         }
-
-        // Nếu giỏ hàng của đơn hàng chưa có, tạo một mảng trống
         if (!storedCart[orderIndex]) {
             storedCart[orderIndex] = [];
             console.log(`Tạo giỏ hàng mới cho đơn hàng: ${selectedOrder}`);
         }
 
-        const currentCart = storedCart[orderIndex]; // Giỏ hàng của đơn hàng đã chọn
+        const currentCart = storedCart[orderIndex];
         console.log("Giỏ hàng trước khi thay đổi:", currentCart);
-
-        // Kiểm tra nếu sản phẩm đã có trong giỏ hàng
         const existingItem = currentCart.find(item => item.maSPCT === product.maSPCT);
         if (existingItem) {
-            // Cập nhật số lượng và thành tiền
             existingItem.soLuong += quantity;
             existingItem.thanhTien = existingItem.soLuong * existingItem.donGia;
             console.log(`Cập nhật sản phẩm ${existingItem.maSPCT}: Số lượng mới = ${existingItem.soLuong}`);
         } else {
-            // Thêm sản phẩm mới vào giỏ hàng
             currentCart.push({
                 maSPCT: product.maSPCT,
                 tenSP: product.tenSP,
@@ -451,17 +404,10 @@ document.addEventListener("DOMContentLoaded", function () {
                 soLuong: quantity,
                 thanhTien: product.donGia * quantity
             });
-            console.log(`Thêm sản phẩm mới ${product.maSPCT}: Số lượng = ${quantity}`);
         }
-
-        // Lưu lại giỏ hàng vào sessionStorage
         storedCart[orderIndex] = currentCart;
         console.log("Giỏ hàng sau khi thay đổi:", currentCart);
-
-        // Lưu lại toàn bộ cart vào sessionStorage
         sessionStorage.setItem("cart", JSON.stringify(storedCart));
-
-        // Render lại giỏ hàng
         renderCart(selectedOrder);
     }
 // Hàm render giỏ hàng
@@ -740,12 +686,13 @@ document.getElementById("paymentButton").addEventListener("click", async functio
 
         // Lấy thông tin khách hàng từ localStorage
         const customerData = JSON.parse(localStorage.getItem("customerData"));
-        if (!customerData || !customerData.id) {
+        console.log(customerData)
+        if (!customerData || !customerData.idKH) {
             alert("Thông tin khách hàng không hợp lệ hoặc không có trong hệ thống!");
             return;
         }
 
-        const customerId = customerData.id;
+        const customerId = customerData.idKH;
 
         // Lấy thông tin thanh toán từ giao diện
         const paymentType = document.getElementById("paymentTypeSelect").value;
@@ -758,8 +705,10 @@ document.getElementById("paymentButton").addEventListener("click", async functio
             return;
         }
 
+        console.log(sessionStorage.getItem("infoNV"));
+
         // Lấy thông tin nhân viên từ localStorage
-        const employeeData = JSON.parse(localStorage.getItem("infoNV"));
+        const employeeData = JSON.parse(sessionStorage.getItem("infoNV"));
         console.log(employeeData)
         if (!employeeData || !employeeData.id) {
             alert("Thông tin nhân viên không hợp lệ hoặc không có trong hệ thống!");
