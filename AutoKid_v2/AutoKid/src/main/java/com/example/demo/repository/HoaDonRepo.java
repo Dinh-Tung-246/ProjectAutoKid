@@ -30,7 +30,6 @@ public interface HoaDonRepo extends JpaRepository<HoaDon,Integer> {
     @Query("SELECT h FROM HoaDon h WHERE h.khachHang.id = :idKH ORDER BY h.ngayTao ASC ")
     List<HoaDon> getHDByIdKH(@Param("idKH") Integer idKH);
 
-
     @Query("SELECT h FROM HoaDon h WHERE " +
             "(COALESCE(:maHd, '') = '' OR h.maHD LIKE %:maHd%)")
     List<HoaDon> searchInvoices(String maHd);
@@ -101,4 +100,7 @@ public interface HoaDonRepo extends JpaRepository<HoaDon,Integer> {
             "ORDER BY tongDoanhThu DESC")
     List<Object[]> findTop5BestSellingProducts();
 
+    @Query("SELECT h.id FROM HoaDon h" +
+            " WHERE h.maHD = :maHD")
+    Integer getIdHDByMaHD(@Param("maHD") String maHD);
 }
