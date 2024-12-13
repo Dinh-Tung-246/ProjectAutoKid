@@ -5,6 +5,7 @@ import com.example.demo.repository.KhachHangRepo;
 import com.example.demo.repository.LoaiSanPhamRepo;
 import com.example.demo.repository.PhuongThucThanhToanRepo;
 import com.example.demo.repository.SanPhamChiTietRepo;
+import com.example.demo.service.EmailSenderService;
 import com.example.demo.service.QuanLyDatHangService;
 import com.example.demo.service.QuanLySanPhamService;
 import org.slf4j.Logger;
@@ -43,6 +44,9 @@ public class AutokidCheckoutController {
     @Autowired
     QuanLyDatHangService qldhService;
 
+    @Autowired
+    EmailSenderService emailSenderService;
+
     @GetMapping("")
     public String showCheckout(Model model) {
         model.addAttribute("currentPage", "checkout");
@@ -62,6 +66,7 @@ public class AutokidCheckoutController {
         hoaDon.setMaHD((String) hoaDonData.get("maHD"));
         hoaDon.setTenNguoiNhan((String) hoaDonData.get("tenNguoiNhan"));
         hoaDon.setSdtNguoiNhan((String) hoaDonData.get("sdtNguoiNhan"));
+        hoaDon.setEmailNguoiNhan(hoaDonData.get("emailNguoiNhan").toString());
         hoaDon.setDiaChiNguoiNhan((String) hoaDonData.get("diaChiNguoiNhan"));
 //            hoaDon.setNgayTao(Date.valueOf((String) hoaDonData.get("ngayTao")));
         hoaDon.setTongTien(((Number) hoaDonData.get("tongTien")).floatValue());
@@ -83,6 +88,14 @@ public class AutokidCheckoutController {
 
         // Lưu HoaDon
         qldhService.createHoaDon(hoaDon);
+        // Gui mail cho khach hang
+        try {
+            emailSenderService.sendMailToKH(hoaDonData.get("emailNguoiNhan").toString()
+                    , hoaDonData.get("maHD").toString()
+                    , hoaDonData.get("tenNguoiNhan").toString());
+        } catch (Exception e) {
+            logger.info("Error when send mail for customer: {}", e.getMessage());
+        }
 
         logger.info("Data: {}", hoaDonChiTietList);
         for (Map<String, Object> hdctData : hoaDonChiTietList) {
