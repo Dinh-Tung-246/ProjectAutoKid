@@ -6,6 +6,7 @@ import com.example.demo.model.HoaDonChiTiet;
 import com.example.demo.repository.KhachHangRepo;
 import com.example.demo.repository.PhuongThucThanhToanRepo;
 import com.example.demo.repository.SanPhamChiTietRepo;
+import com.example.demo.service.EmailSenderService;
 import com.example.demo.service.QuanLyDatHangService;
 import com.example.demo.service.VNPAYService;
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -27,6 +28,7 @@ import java.util.Map;
 public class VNPAYController {
     private static Map<String, Object> KHACH_HANG;
     private static List<Map<String, Object>> HDCT_LIST;
+    private static String EMAILKH;
 
     private Logger logger = LoggerFactory.getLogger(VNPAYController.class);
 
@@ -45,6 +47,9 @@ public class VNPAYController {
     @Autowired
     PhuongThucThanhToanRepo phuongThucThanhToanRepo;
 
+    @Autowired
+    EmailSenderService emailSenderService;
+
     @GetMapping("/")
     public String home() {
         return "/vnpay/createOrder";
@@ -56,6 +61,7 @@ public class VNPAYController {
                               @RequestParam("orderInfo") String orderInfo,
                               @RequestParam("vnpTxnRef") String vnpTxnRef,
                               @RequestParam("idKH") String idKH,
+                              @RequestParam("emailKH") String emailKH,
                               @RequestParam("hdct") String hdct, // chuỗi JSON
                               HttpServletRequest request) {
         String baseUrl = request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort();
@@ -76,6 +82,8 @@ public class VNPAYController {
         }
         KHACH_HANG = infoKH;
         HDCT_LIST = hdctlist;
+        EMAILKH = emailKH;
+        logger.info("EMAIL KHACH HANG: {}", emailKH);
         System.out.println(HDCT_LIST);
         return "redirect:" + vnpayUrl;
     }
@@ -114,9 +122,16 @@ public class VNPAYController {
         hoaDon.setTenNguoiNhan(tenNN);
         hoaDon.setDiaChiNguoiNhan(diaChiNN);
         hoaDon.setSdtNguoiNhan(sdtNN);
+        hoaDon.setEmailNguoiNhan(EMAILKH);
         hoaDon.setPhiShip(50000F);
         hoaDon.setOnline(true);
         quanLyDatHangService.createHoaDon(hoaDon);
+        // Gui mail cho khach hang
+        try {
+            emailSenderService.sendMailToKH(EMAILKH, maHD.toString(), tenNN);
+        } catch (Exception e) {
+            logger.info("Error when send mail for customer: {}", e.getMessage());
+        }
 
         logger.info("Data : {}", HDCT_LIST);
 

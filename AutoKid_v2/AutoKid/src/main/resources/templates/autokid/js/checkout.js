@@ -38,6 +38,7 @@ function renderInfo() {
         document.getElementById("name-kh").value = data.tenKH;
         document.getElementById("sdt-kh").value = data.sdtKH;
         document.getElementById("diaChi-kh").value = data.diaChiKH;
+        document.getElementById("email-kh").value = data.emailKH;
         console.log(data.tenKH, " - ", data.sdtKH, " - ", data.diaChiKH);
     }
 }
@@ -68,12 +69,20 @@ function validateFullName(name) {
     return "sc";
 }
 
+function validateEmail(email) {
+    // Biểu thức chính quy kiểm tra email
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email);
+}
+
+
 document.querySelector('#checkout-form').addEventListener('submit', async function (event) {
     event.preventDefault();
 
     const hoTen = document.querySelector('input[class="name-kh"]').value.trim();
     const sdt = document.querySelector('input[class="phone-number"]').value.trim();
     const diaChi = document.querySelector('input[class="address-kh"]').value.trim();
+    const emailKH = document.querySelector('input[class="email-kh"]').value.trim();
     const paymentTypeElement = document.querySelector('input[name="payment_type"]:checked');
     // Lấy dữ liệu từ sessionStorage
     const checkoutData = JSON.parse(sessionStorage.getItem('checkout')) || [];
@@ -98,6 +107,13 @@ document.querySelector('#checkout-form').addEventListener('submit', async functi
     if (validateFullName(hoTen) != 'sc') {
         Swal.fire({
             title: validateFullName(hoTen),
+            icon: "warning",
+        });
+        return;
+    }
+    if (!validateEmail(emailKH)) {
+        Swal.fire({
+            title: "Email bạn nhập không hợp lệ",
             icon: "warning",
         });
         return;
@@ -130,6 +146,7 @@ document.querySelector('#checkout-form').addEventListener('submit', async functi
         tenNguoiNhan: hoTen,
         sdtNguoiNhan: sdt,
         diaChiNguoiNhan: diaChi,
+        emailNguoiNhan: emailKH,
         ngayTao: getCurrentTimestamp(),
         idPttt: parseInt(paymentType),
         tongTien: TongTien,
@@ -172,8 +189,16 @@ document.querySelector('#checkout-form').addEventListener('submit', async functi
                     confirmButtonText: "OK",
                 })
             } else {
-
                 if (paymentTypeElement.id === 'PTTT001') {
+                    Swal.fire({
+                        title: "Đang xử lý...",
+                        text: "Vui lòng chờ trong giây lát",
+                        allowOutsideClick: false, // Không cho phép đóng khi click ra ngoài
+                        allowEscapeKey: false, // Không cho phép đóng bằng phím ESC
+                        didOpen: () => {
+                            Swal.showLoading(); // Hiển thị spinner
+                        },
+                    });
                     await handleCashPayment(hoaDon, hdct);
                 } else if (paymentTypeElement.id === 'PTTT002') {
                     let cartData = JSON.parse(sessionStorage.getItem("cart")) || [];
@@ -191,6 +216,7 @@ document.querySelector('#checkout-form').addEventListener('submit', async functi
                         tenNN: tenNN,
                         diaChiNN: diaChiNN,
                         sdt: sdtNN,
+                        emailNN: emailKH,
                     }
 
                     sessionStorage.setItem("info", JSON.stringify(InfoNN));
@@ -218,11 +244,12 @@ async function handleCashPayment(hoaDon, hdct) {
         });
 
         if (response.ok) {
+            Swal.close();
             sessionStorage.removeItem("checkout");
             sessionStorage.setItem("cart", JSON.stringify(cartData));
             Swal.fire({
                 title: "Đặt hàng thành công!",
-                text: "Shop đang xác nhận đơn hàng",
+                text: "Hãy kiểm tra email để nhận thông tin về đơn hàng",
                 icon: "success",
                 confirmButtonText: "OK",
             }).then(() => {

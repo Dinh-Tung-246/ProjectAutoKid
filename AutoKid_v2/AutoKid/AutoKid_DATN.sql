@@ -184,6 +184,7 @@ CREATE TABLE hoa_don (
 	ten_nguoi_nhan NVARCHAR(50),
 	dia_chi_nguoi_nhan NVARCHAR(200),
 	sdt_nguoi_nhan VARCHAR(10),
+	email_nguoi_nhan NVARCHAR(50),
 	is_online bit,
     FOREIGN KEY (id_kh) REFERENCES khach_hang(id_kh),
     FOREIGN KEY (id_nv) REFERENCES nhan_vien(id_nv),
