@@ -115,6 +115,7 @@ public class VNPAYController {
         hoaDon.setDiaChiNguoiNhan(diaChiNN);
         hoaDon.setSdtNguoiNhan(sdtNN);
         hoaDon.setPhiShip(50000F);
+        hoaDon.setOnline(true);
         quanLyDatHangService.createHoaDon(hoaDon);
 
         logger.info("Data : {}", HDCT_LIST);
