@@ -116,13 +116,15 @@ public class AdminBanHangController {
 
     @PutMapping("/san-pham-chi-tiet/{maSPCT}/update-quantity")
     public ResponseEntity<?> updateProductQuantity(@PathVariable("maSPCT") String maSPCT, @RequestBody SanPhamChiTietDTO request) {
-        boolean success = hoaDonService.updateProductQuantity(maSPCT, request.getSoLuong());
+        int soLuong = request.getSoLuong();
+        boolean success = hoaDonService.updateProductQuantity(maSPCT, soLuong);
         if (success) {
             return ResponseEntity.ok(new ApiResponse(true, "Cập nhật số lượng thành công"));
         } else {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ApiResponse(false, "Cập nhật số lượng thất bại"));
         }
     }
+
 
 
 

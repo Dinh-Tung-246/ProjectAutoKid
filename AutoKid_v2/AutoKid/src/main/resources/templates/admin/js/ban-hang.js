@@ -308,11 +308,9 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     searchInput.addEventListener("input", function () {
-        const tenSP = searchInput.value.trim(); // Lấy tên sản phẩm người dùng nhập
-        const maSPCT = searchInput.value.trim(); // Bạn có thể lấy mã SPCT từ một input khác nếu cần
-
+        const tenSP = searchInput.value.trim();
+        const maSPCT = searchInput.value.trim();
         if (tenSP.length > 0 || maSPCT.length > 0) {
-            // Gọi API để tìm sản phẩm theo tên sản phẩm hoặc mã sản phẩm chi tiết
             fetch(`/admin/ban-hang/san-pham-chi-tiet/search?tenSP=${tenSP}&maSPCT=${maSPCT}`)
                 .then(response => response.json())
                 .then(data => {
@@ -410,17 +408,13 @@ document.addEventListener("DOMContentLoaded", function () {
         sessionStorage.setItem("cart", JSON.stringify(storedCart));
         renderCart(selectedOrder);
     }
-// Hàm render giỏ hàng
+
     function renderCart(selectedOrder) {
-        console.log("Đang render giỏ hàng cho đơn hàng:", selectedOrder);
 
         // Lấy giỏ hàng từ sessionStorage
         const storedCart = JSON.parse(sessionStorage.getItem("cart")) || [];
         const orderIndex = invoices.indexOf(selectedOrder);
         let currentCart = storedCart[orderIndex] || []; // Giỏ hàng của đơn hàng đã chọn
-
-        console.log("Giỏ hàng hiện tại: ", currentCart);
-
         const cartTableBody = document.getElementById("cartTableBody");
         cartTableBody.innerHTML = ""; // Xóa các sản phẩm cũ
         let totalAmount = 0;
@@ -432,17 +426,19 @@ document.addEventListener("DOMContentLoaded", function () {
                 const row = document.createElement("tr");
 
                 row.innerHTML = `
-                     <td class="productId">${product.maSPCT}</td>
-                    <td class="productName">${product.tenSP}<br>
-                    <small>Chất liệu: ${product.chatLieu || "Không có"}</small>, 
-                    <small>Màu sắc: ${product.mauSac || "Không có"}</small>, 
-                    <small>Kích cỡ: ${product.kichCo || "Không có"}</small>
-                    </td>
-                    <td class="productPrice">${product.donGia}</td>
-                    <td class="productQuantity">
-                        <input type="number" value="${product.soLuong}" min="1" class="quantity-input custom-width" data-index="${index}">
-                    </td>
-                    <td class="thanhTien">${product.thanhTien}</td>
+                <td class="productId">${product.maSPCT}</td>
+                <td class="productName">${product.tenSP}<br>
+                <small>Chất liệu: ${product.chatLieu || "Không có"}</small>, 
+                <small>Màu sắc: ${product.mauSac || "Không có"}</small>, 
+                <small>Kích cỡ: ${product.kichCo || "Không có"}</small>
+                </td>
+                <td class="productPrice">${product.donGia}</td>
+                <td class="productQuantity">
+                    <button class="decrease-btn" data-index="${index}">-</button>
+                    <input type="number" value="${product.soLuong}" min="1" class="quantity-input custom-width" data-index="${index}">
+                    <button class="increase-btn" data-index="${index}">+</button>
+                </td>
+                <td class="thanhTien">${product.thanhTien}</td>
             `;
                 cartTableBody.appendChild(row);
                 totalAmount += product.thanhTien;
@@ -458,19 +454,18 @@ document.addEventListener("DOMContentLoaded", function () {
         // Cập nhật thông tin tổng cộng và tổng số lượng
         updateSummaryTable(totalAmount, totalQuantity);
 
-        // Lắng nghe sự kiện thay đổi số lượng
-        document.querySelectorAll('.quantity-input').forEach(input => {
-            input.addEventListener('change', (event) => {
+        // Lắng nghe sự kiện nhấn nút tăng và giảm
+        document.querySelectorAll('.increase-btn').forEach(button => {
+            button.addEventListener('click', (event) => {
                 const index = event.target.getAttribute('data-index');
-                const newQuantity = parseInt(event.target.value);
+                const currentQuantity = currentCart[index].soLuong;
 
-                // Cập nhật số lượng trong currentCart
-                if (newQuantity > 0) {
-                    currentCart[index].soLuong = newQuantity;
-                    currentCart[index].thanhTien = currentCart[index].donGia * newQuantity; // Cập nhật lại thành tiền
-                }
+                // Cập nhật số lượng trong giỏ hàng (tăng lên 1)
+                const newQuantity = currentQuantity + 1;
+                currentCart[index].soLuong = newQuantity;
+                currentCart[index].thanhTien = currentCart[index].donGia * newQuantity; // Cập nhật lại thành tiền
 
-                // Cập nhật cột thành tiền của sản phẩm tương ứng
+                // Cập nhật lại cột thành tiền của sản phẩm tương ứng
                 const row = event.target.closest("tr");
                 const thanhTienCell = row.querySelector(".thanhTien");
                 if (thanhTienCell) {
@@ -481,14 +476,86 @@ document.addEventListener("DOMContentLoaded", function () {
                 storedCart[orderIndex] = currentCart;
                 sessionStorage.setItem("cart", JSON.stringify(storedCart));
 
-                // Cập nhật lại tổng tiền và tổng số lượng
-                totalAmount = currentCart.reduce((total, product) => total + product.thanhTien, 0);
-                totalQuantity = currentCart.reduce((total, product) => total + product.soLuong, 0);
+                // Cập nhật lại giá trị của input
+                const input = row.querySelector(".quantity-input");
+                if (input) {
+                    input.value = newQuantity; // Cập nhật giá trị của input
+                }
 
-                // Cập nhật thông tin bảng tổng quát
-                updateSummaryTable(totalAmount, totalQuantity);
+                // Gửi yêu cầu giảm số lượng vào backend (Giảm -1 để tăng số lượng trong DB)
+                updateProductQuantity(currentCart[index].maSPCT, 1);  // Gửi yêu cầu tăng 1 sản phẩm
             });
         });
+
+        document.querySelectorAll('.decrease-btn').forEach(button => {
+            button.addEventListener('click', (event) => {
+                const index = event.target.getAttribute('data-index');
+                const currentQuantity = currentCart[index].soLuong;
+
+                // Chỉ giảm số lượng nếu hiện tại số lượng >= 2
+                if (currentQuantity > 1) { // Kiểm tra nếu số lượng lớn hơn 1 mới cho phép giảm
+                    const newQuantity = currentQuantity - 1;
+                    currentCart[index].soLuong = newQuantity;
+                    currentCart[index].thanhTien = currentCart[index].donGia * newQuantity; // Cập nhật lại thành tiền
+
+                    // Cập nhật lại cột thành tiền của sản phẩm tương ứng
+                    const row = event.target.closest("tr");
+                    const thanhTienCell = row.querySelector(".thanhTien");
+                    if (thanhTienCell) {
+                        thanhTienCell.textContent = currentCart[index].thanhTien; // Cập nhật cột Thành tiền
+                    }
+
+                    // Cập nhật lại giỏ hàng trong sessionStorage
+                    storedCart[orderIndex] = currentCart;
+                    sessionStorage.setItem("cart", JSON.stringify(storedCart));
+
+                    // Cập nhật lại giá trị của input
+                    const input = row.querySelector(".quantity-input");
+                    if (input) {
+                        input.value = newQuantity; // Cập nhật giá trị của input
+                    }
+
+                    // Gửi yêu cầu giảm số lượng vào backend (Tăng +1 để giảm số lượng trong DB)
+                    updateProductQuantity(currentCart[index].maSPCT, -1);  // Gửi yêu cầu giảm 1 sản phẩm
+                } else {
+                    console.log("Không thể giảm số lượng sản phẩm xuống dưới 1.");
+                }
+            });
+        });
+
+    }
+
+// Hàm gửi yêu cầu cập nhật số lượng sản phẩm
+    function updateProductQuantity(maSPCT, quantityChange) {
+        const request = {
+            maSPCT: maSPCT,
+            soLuong: quantityChange
+        };
+        console.log('Request:', request); // In dữ liệu để kiểm tra
+        fetch(`/admin/ban-hang/san-pham-chi-tiet/${maSPCT}/update-quantity`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(request)
+        })
+            .then(response => {
+                if (!response.ok) {
+                    console.error('Lỗi:', response.statusText);
+                    return Promise.reject('Cập nhật không thành công');
+                }
+                return response.json();
+            })
+            .then(data => {
+                if (data.success) {
+                    console.log("Cập nhật số lượng thành công");
+                } else {
+                    console.log("Cập nhật số lượng thất bại");
+                }
+            })
+            .catch(error => {
+                console.error("Có lỗi xảy ra khi cập nhật số lượng:", error);
+            });
     }
 
 // Hàm cập nhật thông tin bảng tổng quát
@@ -523,12 +590,10 @@ document.addEventListener("DOMContentLoaded", function () {
             }
         }
 
-        // Cập nhật thành tiền
         if (finalAmountField) {
             finalAmountField.textContent = `${finalAmount} VNĐ`;
         }
 
-        // Tự động cập nhật tiền thừa
         if (paymentField && changeField) {
             const customerPay = parseInt(paymentField.value) || 0;
             const change = customerPay - finalAmount;
@@ -537,53 +602,35 @@ document.addEventListener("DOMContentLoaded", function () {
             changeField.textContent = `${change} VNĐ`;
         }
 
-        // Lắng nghe sự kiện thay đổi voucher
         if (voucherField) {
             voucherField.addEventListener("change", () => {
                 updateSummaryTable(totalAmount, totalQuantity);
             });
         }
 
-        // Lắng nghe sự kiện thay đổi tiền khách trả
         if (paymentField) {
             paymentField.addEventListener("input", () => {
                 updateSummaryTable(totalAmount, totalQuantity);
             });
         }
     }
-
-// Hàm để thay đổi đơn hàng
     function selectOrder(order) {
         selectedOrder = order;
-        console.log("Đã chọn đơn hàng:", selectedOrder);
         renderCart(selectedOrder);
     }
 
-
-
-
-
-    let isUpdating = false; // Trạng thái để kiểm tra liệu đã có yêu cầu đang xử lý hay chưa
-
+    let isUpdating = false;
     document.getElementById("addToCartButton").addEventListener("click", async function () {
-        if (isUpdating) return; // Nếu đang cập nhật, không thực hiện thêm lần nữa
-
-        isUpdating = true; // Đánh dấu trạng thái đang cập nhật
-
+        if (isUpdating) return;
+        isUpdating = true;
         const quantity = parseInt(document.getElementById("productQuantity").value);
         const productId = selectedProduct.maSPCT;
 
-        console.log("Số lượng sản phẩm:", quantity);
-        console.log("Sản phẩm đã chọn:", selectedProduct);
-        console.log("Đơn hàng đã chọn:", selectedOrder);
-
         if (!selectedOrder) {
             alert("Vui lòng chọn đơn hàng trước!");
-            isUpdating = false; // Khôi phục trạng thái nếu không chọn đơn hàng
+            isUpdating = false;
             return;
         }
-
-        // Kiểm tra số lượng từ cơ sở dữ liệu
         try {
             const response = await fetch(`/admin/ban-hang/san-pham-chi-tiet/${productId}/get-quantity`, {
                 method: 'GET',
@@ -610,7 +657,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 const updateResult = await updateResponse.json();
                 if (updateResult.success) {
                     addProductToCart(selectedProduct, quantity);
-                    alert("Sản phẩm đã được cập nhật vào giỏ hàng và cơ sở dữ liệu!");
+                    alert("Sản phẩm đã được cập nhật vào giỏ hàng!");
                 } else {
                     alert("Có lỗi xảy ra khi cập nhật sản phẩm!");
                 }
@@ -676,15 +723,6 @@ document.getElementById("paymentButton").addEventListener("click", async functio
             totalQuantity += productQuantity;
 
         });
-
-        console.log(cartItems)
-        // // Kiểm tra giỏ hàng có sản phẩm hay không
-        // if (cartItems.length === 0) {
-        //     alert("Giỏ hàng không có sản phẩm!");
-        //     return;
-        // }
-
-        // Lấy thông tin khách hàng từ localStorage
         const customerData = JSON.parse(localStorage.getItem("customerData"));
         console.log(customerData)
         if (!customerData || !customerData.idKH) {
@@ -772,12 +810,11 @@ document.getElementById("paymentButton").addEventListener("click", async functio
     }
 });
 
-
 function generateInvoicePDF(invoice) {
-    const { jsPDF } = window.jspdf;
+    const { jsPDF } = window.jspdf;  // Lấy jsPDF từ window.jspdf khi dùng CDN
 
     const doc = new jsPDF();
-    doc.setFont('Helvetica', 'normal');  // Thay đổi font thành Times
+    doc.setFont('Arial', 'normal');  // Sử dụng font Arial
 
     // Tiêu đề hóa đơn
     doc.setFontSize(16);
@@ -785,20 +822,20 @@ function generateInvoicePDF(invoice) {
     doc.setFontSize(12);
 
     // Lấy thông tin từ sessionStorage
-    const customer = JSON.parse(localStorage.getItem("customerData"));
-    const employee = JSON.parse(sessionStorage.getItem("infoNV"));
+    const customer = JSON.parse(localStorage.getItem("customer")); // Thông tin khách hàng
+    const employee = JSON.parse(sessionStorage.getItem("employee")); // Thông tin nhân viên
 
     // Thêm ngày tạo hóa đơn
     const currentDate = new Date();
     const formattedDate = `${currentDate.getDate()}/${currentDate.getMonth() + 1}/${currentDate.getFullYear()} ${currentDate.getHours()}:${currentDate.getMinutes()}:${currentDate.getSeconds()}`;
-    doc.text(`Ngày tạo: ${formattedDate}`, 10, 40);
+    doc.text(`Ngày tạo: ${formattedDate}`, 10, 40);  // In ngày tạo hóa đơn
 
     // Thông tin khách hàng và nhân viên
-    doc.text(`Khách hàng: ${customer ? customer.tenKH : 'Chưa có thông tin'}`, 10, 50);
-    doc.text(`Nhân viên: ${employee ? employee.tenNV : 'Chưa có thông tin'}`, 10, 60);
+    doc.text(`Khách hàng: ${customer ? customer.tenKH : 'Chưa có thông tin'}`, 10, 50);  // Thông tin khách hàng
+    doc.text(`Nhân viên: ${employee ? employee.tenNV : 'Chưa có thông tin'}`, 10, 60);  // Thông tin nhân viên
 
     // Bắt đầu vẽ bảng
-    const startY = 70;
+    const startY = 70;  // Vị trí bắt đầu vẽ bảng
     let yPosition = startY;
 
     // Cài đặt tiêu đề cho bảng
@@ -809,21 +846,21 @@ function generateInvoicePDF(invoice) {
     doc.text("Số Lượng", 130, yPosition);
     doc.text("Thành Tiền", 160, yPosition);
 
-    yPosition += 10;
+    yPosition += 10; // Dịch xuống một chút để vẽ các sản phẩm
 
     // Vẽ các sản phẩm trong giỏ hàng
     invoice.cartItems.forEach((item, index) => {
-        doc.text((index + 1).toString(), 10, yPosition);
-        doc.text(item.productName, 30, yPosition);
-        doc.text(item.productPrice.toString(), 100, yPosition);
-        doc.text(item.productQuantity.toString(), 130, yPosition);
-        doc.text(item.totalPrice.toString(), 160, yPosition);
+        doc.text((index + 1).toString(), 10, yPosition);  // Số thứ tự
+        doc.text(item.productName, 30, yPosition);  // Tên sản phẩm
+        doc.text(item.productPrice.toString(), 100, yPosition);  // Đơn giá
+        doc.text(item.productQuantity.toString(), 130, yPosition);  // Số lượng
+        doc.text(item.totalPrice.toString(), 160, yPosition);  // Thành tiền
 
-        yPosition += 10;
+        yPosition += 10; // Dịch xuống một chút cho dòng tiếp theo
     });
 
     // Tổng tiền
-    yPosition += 10;
+    yPosition += 10; // Dịch xuống sau bảng
     doc.text(`Tổng Tiền: ${invoice.totalAmount} VND`, 10, yPosition);
 
     // Phương thức thanh toán
@@ -838,9 +875,9 @@ function generateInvoicePDF(invoice) {
 
     // Lưu và in hóa đơn PDF
     doc.save('invoice.pdf');
-    window.open(doc.output('bloburl'));
+    window.open(doc.output('bloburl'));  // Mở PDF để in
 }
-// Hàm reset giỏ hàng
+
 function resetCart() {
     document.getElementById("cartTableBody").innerHTML = "";
 }
