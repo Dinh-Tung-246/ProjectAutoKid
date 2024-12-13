@@ -2,6 +2,7 @@ package com.example.demo.repository;
 
 import com.example.demo.model.KhachHang;
 
+import com.example.demo.model.NhanVien;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -19,6 +20,7 @@ public interface KhachHangRepo extends JpaRepository<KhachHang,Integer> {
             "WHERE k.tenKH LIKE %:ten% ")
     List<KhachHang> findByName(@Param("ten") String ten);
 
+    KhachHang findByTenKH(String tenKH);
     // Create Account
     @Modifying
     @Transactional

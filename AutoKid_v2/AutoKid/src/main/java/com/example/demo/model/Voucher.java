@@ -1,5 +1,6 @@
 package com.example.demo.model;
 
+import jakarta.validation.constraints.*;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -17,39 +18,31 @@ public class Voucher {
     @Column(name = "id_voucher")
     private Integer id;
 
-    @Column(name = "ma_voucher")
+    @Column(name = "ma_voucher", nullable = false, unique = true)
     private String ma;
 
-    @Column(name = "ten_voucher")
+    @Column(name = "ten_voucher", nullable = false)
     private String ten;
 
-    @Column(name = "loai_voucher")
+    @Column(name = "loai_voucher", nullable = false)
     private int loaiVoucher;
 
-    @Column(name = "dieu_kien")
-    private double dieuKien;
+    @Column(name = "dieu_kien", nullable = false)
+    private Double dieuKien;
 
-    @Column(name = "gia_tri")
-    private double giaTri;
+    @Column(name = "gia_tri", nullable = false)
+    private Double giaTri;
 
     @Column(name = "gia_tri_toi_da")
     private Double giaTriToiDa;
 
-    @Column(name = "ngay_bat_dau")
+    @Column(name = "ngay_bat_dau", nullable = false)
     private LocalDate ngayBatDau;
 
-    @Column(name = "ngay_ket_thuc")
+    @Column(name = "ngay_ket_thuc", nullable = false)
     private LocalDate ngayKetThuc;
 
-    @Column(name = "trang_thai")
-    private int trangThai;
+    @Column(name = "trang_thai", nullable = false)
+    private Integer trangThai;
 
-//    public String getFormattedgiaTri() {
-//        NumberFormat formatter = NumberFormat.getCurrencyInstance(new Locale("vi", "VN"));
-//        return formatter.format(giaTri).replace("₫", "");
-//    }
-//    public String getFormattedgiaTriToiDa() {
-//        NumberFormat formatter = NumberFormat.getCurrencyInstance(new Locale("vi", "VN"));
-//        return formatter.format(giaTriToiDa).replace("₫", "VND");
-//    }
 }

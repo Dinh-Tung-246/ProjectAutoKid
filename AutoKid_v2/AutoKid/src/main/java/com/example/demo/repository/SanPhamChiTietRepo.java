@@ -1,6 +1,7 @@
 package com.example.demo.repository;
 import com.example.demo.model.SanPhamChiTiet;
 import com.example.demo.response.SanPhamChiTietDTO;
+import jakarta.transaction.Transactional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -34,5 +35,20 @@ public interface SanPhamChiTietRepo extends JpaRepository<SanPhamChiTiet,Integer
             " SET spct.soLuong = spct.soLuong - :soLuong" +
             " WHERE spct.id = :idSPCT")
     void updateSoLuongSPCT(@Param("soLuong") Integer soLuong, @Param("idSPCT") Integer idSPCT);
+
+
+    @Modifying
+    @Transactional
+    @Query("UPDATE SanPhamChiTiet spct SET spct.soLuong = spct.soLuong - :absSoLuong WHERE spct.maSPCT = :maSPCT AND spct.soLuong >= :absSoLuong")
+    int updateSoLuongSPCTA(@Param("absSoLuong") int absSoLuong, @Param("maSPCT") String maSPCT);
+
+
+    @Modifying
+    @Transactional
+    @Query("UPDATE SanPhamChiTiet spct " +
+            "SET spct.soLuong = spct.soLuong + :soLuong " +
+            "WHERE spct.maSPCT = :maSPCT")
+
+    int updateSoLuongSPCTIncrease(@Param("soLuong") Integer soLuong, @Param("maSPCT") String maSPCT);
 
 }

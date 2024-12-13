@@ -9,10 +9,13 @@ import com.example.demo.repository.SanPhamChiTietRepo;
 import com.example.demo.response.HoaDonResponse;
 import com.example.demo.response.HoadonhistoryRespone;
 import com.example.demo.response.hoadonchitietRespone;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -34,30 +37,43 @@ public class QuanLyHoaDonService {
     @Autowired
     KhachHangRepo khachHangRepo;
 
+    public HoaDon save(HoaDon hoaDon){
+        return hoaDonRepo.save(hoaDon);
+    }
+
+    public HoaDonChiTiet save(HoaDonChiTiet hoaDonChiTiet){
+        return hoaDonChiTietRepo.save(hoaDonChiTiet);
+    }
+
+
     public List<KhachHang> searchBySDT(String sdt) {
         return khachHangRepo.findBySDT(sdt);
     }
 
+    @Transactional
     public boolean updateProductQuantity(String maSPCT, Integer soLuong) {
-        SanPhamChiTiet sanPhamChiTiet = sanPhamChiTietRepo.findByMaSPCT(maSPCT);
-        if (sanPhamChiTiet != null) {
-            if (soLuong > sanPhamChiTiet.getSoLuong()) {
-                return false;
-            }
-            if (sanPhamChiTiet.getSoLuong() - soLuong < 0) {
-                return false;
-            }
-            sanPhamChiTiet.setSoLuong(sanPhamChiTiet.getSoLuong() - soLuong);
-            sanPhamChiTietRepo.save(sanPhamChiTiet);
-            return true;
+        if (soLuong == 0) {
+            return false; // Không làm gì nếu số lượng là 0
+        }
+        if (soLuong > 0) {
+            // Gọi phương thức tăng số lượng
+            int updatedRows = sanPhamChiTietRepo.updateSoLuongSPCTA(soLuong, maSPCT);
+            return updatedRows > 0;
         } else {
-            return false;
+            // Gọi phương thức giảm số lượng, truyền vào giá trị dương
+            int updatedRows = sanPhamChiTietRepo.updateSoLuongSPCTIncrease(Math.abs(soLuong), maSPCT);
+            return updatedRows > 0;
         }
     }
 
+
+
+
+
+
     public Optional<SanPhamChiTiet> findOptionalByMaSPCT(String maSPCT) {
         SanPhamChiTiet sanPhamChiTiet = sanPhamChiTietRepo.findByMaSPCT(maSPCT);
-        return Optional.ofNullable(sanPhamChiTiet); // Bọc kết quả trong Optional
+        return Optional.ofNullable(sanPhamChiTiet);
     }
 
 

@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.Data;
 
 import java.sql.Date;
+import java.util.ArrayList;
 import java.util.List;
 
 @Data
@@ -58,10 +59,30 @@ public class HoaDon {
     @Column(name = "email_nguoi_nhan")
     private String EmailNguoiNhan;
 
-    @OneToMany(mappedBy = "hoaDon")
-    private List<HoaDonChiTiet> hoaDonChiTiets;
+    @OneToMany(mappedBy = "hoaDon", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
+    private List<HoaDonChiTiet> hoaDonChiTiets = new ArrayList<>();
 
     @Column(name = "is_online")
     private boolean isOnline;
 
+    @Override
+    public String toString() {
+        return "HoaDon{" +
+                "id=" + id +
+                ", maHD='" + maHD + '\'' +
+                ", khachHang=" + khachHang +
+                ", nhanVien=" + nhanVien +
+                ", phuongThucThanhToan=" + phuongThucThanhToan +
+                ", ngayTao=" + ngayTao +
+                ", phiShip=" + phiShip +
+                ", hinhThucThanhToan='" + hinhThucThanhToan + '\'' +
+                ", tongTien=" + tongTien +
+                ", trangThaiHD='" + trangThaiHD + '\'' +
+                ", tenNguoiNhan='" + tenNguoiNhan + '\'' +
+                ", diaChiNguoiNhan='" + diaChiNguoiNhan + '\'' +
+                ", sdtNguoiNhan='" + sdtNguoiNhan + '\'' +
+                ", hoaDonChiTiets=" + hoaDonChiTiets +
+                ", isOnline=" + isOnline +
+                '}';
+    }
 }
