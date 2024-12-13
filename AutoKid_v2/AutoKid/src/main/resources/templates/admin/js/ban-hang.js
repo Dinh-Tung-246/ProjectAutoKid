@@ -755,6 +755,7 @@ document.getElementById("paymentButton").addEventListener("click", async functio
                     // Reset giỏ hàng và cập nhật bảng tổng kết
                     resetCart();
                     updateSummary();
+                    generateInvoicePDF(invoice);
                 } else {
                     alert("Đã có lỗi khi tạo hóa đơn: " + result.error);
                     console.error("Lỗi từ server:", result.error);
@@ -771,12 +772,80 @@ document.getElementById("paymentButton").addEventListener("click", async functio
     }
 });
 
+
+function generateInvoicePDF(invoice) {
+    const { jsPDF } = window.jspdf;
+
+    const doc = new jsPDF();
+    doc.setFont('Helvetica', 'normal');  // Thay đổi font thành Times
+
+    // Tiêu đề hóa đơn
+    doc.setFontSize(16);
+    doc.text("Hóa Đơn Mua Hàng", 105, 20, null, null, 'center');
+    doc.setFontSize(12);
+
+    // Lấy thông tin từ sessionStorage
+    const customer = JSON.parse(localStorage.getItem("customerData"));
+    const employee = JSON.parse(sessionStorage.getItem("infoNV"));
+
+    // Thêm ngày tạo hóa đơn
+    const currentDate = new Date();
+    const formattedDate = `${currentDate.getDate()}/${currentDate.getMonth() + 1}/${currentDate.getFullYear()} ${currentDate.getHours()}:${currentDate.getMinutes()}:${currentDate.getSeconds()}`;
+    doc.text(`Ngày tạo: ${formattedDate}`, 10, 40);
+
+    // Thông tin khách hàng và nhân viên
+    doc.text(`Khách hàng: ${customer ? customer.tenKH : 'Chưa có thông tin'}`, 10, 50);
+    doc.text(`Nhân viên: ${employee ? employee.tenNV : 'Chưa có thông tin'}`, 10, 60);
+
+    // Bắt đầu vẽ bảng
+    const startY = 70;
+    let yPosition = startY;
+
+    // Cài đặt tiêu đề cho bảng
+    doc.setFontSize(10);
+    doc.text("STT", 10, yPosition);
+    doc.text("Tên Sản Phẩm", 30, yPosition);
+    doc.text("Đơn Giá", 100, yPosition);
+    doc.text("Số Lượng", 130, yPosition);
+    doc.text("Thành Tiền", 160, yPosition);
+
+    yPosition += 10;
+
+    // Vẽ các sản phẩm trong giỏ hàng
+    invoice.cartItems.forEach((item, index) => {
+        doc.text((index + 1).toString(), 10, yPosition);
+        doc.text(item.productName, 30, yPosition);
+        doc.text(item.productPrice.toString(), 100, yPosition);
+        doc.text(item.productQuantity.toString(), 130, yPosition);
+        doc.text(item.totalPrice.toString(), 160, yPosition);
+
+        yPosition += 10;
+    });
+
+    // Tổng tiền
+    yPosition += 10;
+    doc.text(`Tổng Tiền: ${invoice.totalAmount} VND`, 10, yPosition);
+
+    // Phương thức thanh toán
+    yPosition += 10;
+    doc.text(`Phương thức thanh toán: ${invoice.paymentType}`, 10, yPosition);
+
+    // Voucher (nếu có)
+    if (invoice.voucher) {
+        yPosition += 10;
+        doc.text(`Voucher: ${invoice.voucher}`, 10, yPosition);
+    }
+
+    // Lưu và in hóa đơn PDF
+    doc.save('invoice.pdf');
+    window.open(doc.output('bloburl'));
+}
 // Hàm reset giỏ hàng
 function resetCart() {
     document.getElementById("cartTableBody").innerHTML = "";
 }
 
-// Cập nhật bảng tóm tắt thông tin hóa đơn
+
 function updateSummary() {
     const productRows = document.querySelectorAll("#cartTableBody tr");
     let totalAmount = 0;
