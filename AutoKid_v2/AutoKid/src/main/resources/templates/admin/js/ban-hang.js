@@ -433,10 +433,10 @@ document.addEventListener("DOMContentLoaded", function () {
                 <small>Kích cỡ: ${product.kichCo || "Không có"}</small>
                 </td>
                 <td class="productPrice">${product.donGia}</td>
-                <td class="productQuantity">
-                    <button class="decrease-btn" data-index="${index}">-</button>
+                <td class="productQuantity" style="position: absolute;">
+                    <button class="decrease-btn" style="    position: relative;left: 20px;}" data-index="${index}">-</button>
                     <input type="number" value="${product.soLuong}" min="1" class="quantity-input custom-width" data-index="${index}">
-                    <button class="increase-btn" data-index="${index}">+</button>
+                    <button class="increase-btn" style="position: relative;right: 30px;" data-index="${index}">+</button>
                 </td>
                 <td class="thanhTien">${product.thanhTien}</td>
             `;
@@ -520,6 +520,43 @@ document.addEventListener("DOMContentLoaded", function () {
                 } else {
                     console.log("Không thể giảm số lượng sản phẩm xuống dưới 1.");
                 }
+            });
+        });
+
+        document.querySelectorAll('.quantity-input').forEach(input => {
+            input.addEventListener('change', (event) => {
+                const index = event.target.getAttribute('data-index');
+                const newQuantity = parseInt(event.target.value); // Lấy giá trị người dùng nhập vào
+                const currentQuantity = currentCart[index].soLuong; // Lấy số lượng ban đầu
+
+                // Kiểm tra xem giá trị nhập có hợp lệ không
+                if (isNaN(newQuantity) || newQuantity < 1) {
+                    // Nếu người dùng nhập giá trị không hợp lệ hoặc nhỏ hơn 1, đặt lại thành 1
+                    event.target.value = currentQuantity; // Khôi phục lại số lượng ban đầu
+                    return;
+                }
+
+                const row = event.target.closest("tr");
+
+                // Tính toán sự thay đổi số lượng
+                const quantityChange = newQuantity - currentQuantity;
+
+                // Cập nhật giá trị trong giỏ hàng
+                currentCart[index].soLuong = newQuantity;
+                currentCart[index].thanhTien = currentCart[index].donGia * newQuantity; // Tính lại thành tiền
+
+                // Cập nhật hiển thị thành tiền
+                const thanhTienCell = row.querySelector(".thanhTien");
+                if (thanhTienCell) {
+                    thanhTienCell.textContent = currentCart[index].thanhTien;
+                }
+
+                // Cập nhật lại giỏ hàng trong sessionStorage
+                storedCart[orderIndex] = currentCart;
+                sessionStorage.setItem("cart", JSON.stringify(storedCart));
+
+                // Gửi yêu cầu cập nhật số lượng lên backend
+                updateProductQuantity(currentCart[index].maSPCT, quantityChange);
             });
         });
 
