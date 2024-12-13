@@ -6,6 +6,7 @@ import com.example.demo.model.HoaDonChiTiet;
 import com.example.demo.repository.KhachHangRepo;
 import com.example.demo.repository.PhuongThucThanhToanRepo;
 import com.example.demo.repository.SanPhamChiTietRepo;
+import com.example.demo.service.EmailSenderService;
 import com.example.demo.service.QuanLyDatHangService;
 import com.example.demo.service.VNPAYService;
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -45,6 +46,9 @@ public class VNPAYController {
 
     @Autowired
     PhuongThucThanhToanRepo phuongThucThanhToanRepo;
+
+    @Autowired
+    EmailSenderService emailSenderService;
 
     @GetMapping("/")
     public String home() {
@@ -122,6 +126,12 @@ public class VNPAYController {
         hoaDon.setPhiShip(50000F);
         hoaDon.setOnline(true);
         quanLyDatHangService.createHoaDon(hoaDon);
+        // Gui mail cho khach hang
+        try {
+            emailSenderService.sendMailToKH(EMAILKH, maHD.toString(), tenNN);
+        } catch (Exception e) {
+            logger.info("Error when send mail for customer: {}", e.getMessage());
+        }
 
         logger.info("Data : {}", HDCT_LIST);
 
