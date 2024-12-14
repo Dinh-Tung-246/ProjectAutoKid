@@ -119,6 +119,7 @@
                                     <span class="checkmark"></span>
                                 </label>
                             </div>
+                            <input type="hidden" id="id-voucher"/>
                             <button type="submit" class="site-btn">ĐẶT HÀNG</button>
                         </div>
                     </div>
@@ -126,13 +127,11 @@
             </form>
         </div>
         <div class="voucher">
-            <select class="select-voucher" name="" id="">
-                <option value=""  disabled selected hidden>Chọn mã khuyến mãi</option>
-                <option value="">1</option>
-                <option value="">2</option>
-                <option value="">3</option>
-            </select>
-            <button class="btn-voucher">Áp dụng</button>
+            <div style="display: block; width: 350px" id="select-voucher">
+            </div>
+            <div style="display: block; width: 150px">
+                <button class="btn-voucher" onclick="addVoucher(this)">Áp dụng</button>
+            </div>
         </div>
     </div>
 </section>
