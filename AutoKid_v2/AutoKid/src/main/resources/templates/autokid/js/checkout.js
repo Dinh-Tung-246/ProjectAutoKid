@@ -26,7 +26,8 @@ function renderPrice() {
                         <strong>Phí ship <span style="margin-left: 310px;">50.000</span></strong>
                     </div>
                    <div class="checkout__order__total" >
-                       Tổng cộng <span>${formatPrice(total)}</span>
+                       Tổng cộng <span id="totalPrice">${formatPrice(total)}</span>
+                       <input type="hidden" id="secret-price" value="${formatPrice(total)}">
                    </div>
         `;
 }
@@ -43,9 +44,54 @@ function renderInfo() {
     }
 }
 
-document.addEventListener("DOMContentLoaded", () => {
+document.addEventListener("DOMContentLoaded", async () => {
     renderPrice();
     renderInfo();
+    let totalPrice = document.getElementById("totalPrice").textContent;
+    console.log("totalPrice: ", totalPrice);
+    const payload = {
+        totalPrice: totalPrice.replaceAll('.', ''),
+    }
+    const content = document.getElementById("select-voucher");
+    console.log("content", content)
+    const response = await fetch('/api/get-voucher', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(payload),
+    });
+    const result = await response.json();
+    console.log("result voucher", result);
+
+    // Làm sạch container trước khi thêm mới
+    content.innerHTML = '';
+
+    // Tạo thẻ <select>
+    const selectElement = document.createElement('select');
+    selectElement.id = 'voucher-select'; // Gán id cho select
+    selectElement.style.width = '100%'; // Đặt chiều rộng cho select
+    selectElement.style.padding = '5px'; // Padding cho đẹp
+    selectElement.style.borderRadius = '5px';
+
+    // Thêm option mặc định
+    const defaultOption = document.createElement('option');
+    defaultOption.textContent = 'Chọn voucher';
+    defaultOption.value = '';
+    // defaultOption.disabled = true;
+    defaultOption.hidden = true;
+    selectElement.appendChild(defaultOption);
+
+    result.forEach(voucher => {
+        const option = document.createElement('option');
+        option.value = voucher.id; // Giá trị của option
+        option.textContent = voucher.ten; // Nội dung hiển thị
+        option.setAttribute('data-loai', voucher.loaiVoucher);
+        option.setAttribute('data-giatri', voucher.giaTri);
+        option.setAttribute('data-dieukien', voucher.dieuKien);
+        selectElement.appendChild(option);
+    });
+    content.appendChild(selectElement);
 });
 
 //validate số điện thoại
@@ -83,6 +129,7 @@ document.querySelector('#checkout-form').addEventListener('submit', async functi
     const sdt = document.querySelector('input[class="phone-number"]').value.trim();
     const diaChi = document.querySelector('input[class="address-kh"]').value.trim();
     const emailKH = document.querySelector('input[class="email-kh"]').value.trim();
+    const voucher = document.getElementById('id-voucher').value;
     const paymentTypeElement = document.querySelector('input[name="payment_type"]:checked');
     // Lấy dữ liệu từ sessionStorage
     const checkoutData = JSON.parse(sessionStorage.getItem('checkout')) || [];
@@ -124,15 +171,12 @@ document.querySelector('#checkout-form').addEventListener('submit', async functi
         idKH = KHData.idKH;
     }
 
-    let TongTien = checkoutData.reduce((sum, item) => {
-        const price = parseFloat(item.totalPrice.replace(/\./g, ''));
-        return sum + price;
-    }, 0);
+    let TongTien = document.getElementById('totalPrice').textContent;
 
     let vnpTxnRef = new Date().getTime().toString();
     let orderInfo = "Thanh toan don hang " + vnpTxnRef;
     const paymentData = {
-        amount: Math.round(TongTien),
+        amount: TongTien.replaceAll('.',''),
         orderInfo: orderInfo,
         vnpTxnRef: vnpTxnRef,
     }
@@ -149,8 +193,9 @@ document.querySelector('#checkout-form').addEventListener('submit', async functi
         emailNguoiNhan: emailKH,
         ngayTao: getCurrentTimestamp(),
         idPttt: parseInt(paymentType),
-        tongTien: TongTien,
+        tongTien: TongTien.replaceAll('.', ''),
         idKH: idKH,
+        voucher: voucher,
         phiShip: 0,
         hinhThucThanhToan: "",
         trangThaiHD: "Chưa thanh toán, chờ giao hàng",
@@ -217,6 +262,7 @@ document.querySelector('#checkout-form').addEventListener('submit', async functi
                         diaChiNN: diaChiNN,
                         sdt: sdtNN,
                         emailNN: emailKH,
+                        voucher: voucher,
                     }
 
                     sessionStorage.setItem("info", JSON.stringify(InfoNN));
@@ -268,4 +314,53 @@ function getCurrentTimestamp() {
     const pad = (num) => (num < 10 ? '0' : '') + num;
     return `${now.getFullYear()}-${pad(now.getMonth() + 1)}-${pad(now.getDate())} ` +
         `${pad(now.getHours())}:${pad(now.getMinutes())}:${pad(now.getSeconds())}.${now.getMilliseconds()}`;
+}
+
+async function addVoucher(button) {
+    const selectedElement = document.getElementById('voucher-select');
+    const idVoucher = document.getElementById('id-voucher').value || [];
+    const selectedOption = selectedElement.selectedOptions[0];
+
+    console.log('selected option', selectedOption);
+    if (selectedOption.value === '') {
+        Swal.fire({
+            title: 'Vui lòng chọn voucher',
+            icon: 'warning',
+            confirmButtonText: 'OK',
+        })
+        return;
+    }
+    const idVC = selectedOption.value;
+    if (idVoucher === idVC) {
+        Swal.fire({
+            title: 'Bạn đã áp mã này rồi!',
+            icon: 'warning',
+            confirmButtonText: 'OK',
+        })
+        return;
+    }
+    let loai = selectedOption.getAttribute('data-loai');
+    let dieuKien = selectedOption.getAttribute('data-dieukien');
+    let giaTri = selectedOption.getAttribute('data-giatri');
+    let secretPrice = document.getElementById('secret-price').value;
+    secretPrice = secretPrice.replaceAll('.','');
+    console.log('loai', loai);
+    console.log('tong tien', secretPrice);
+    console.log('gia tri', giaTri);
+    console.log('dieu kien', dieuKien);
+    let giaCuoi;
+    if (loai == 1) {
+        let tienGiam = secretPrice * giaTri / 100;
+        if (tienGiam < dieuKien) {
+            giaCuoi = secretPrice - tienGiam;
+        } else {
+            giaCuoi = secretPrice - giaTri;
+        }
+        console.log('tien giam', tienGiam);
+        console.log('gia cuoi', giaCuoi);
+    } else {
+        giaCuoi = secretPrice - giaTri;
+    }
+    document.getElementById('totalPrice').textContent = formatPrice(giaCuoi);
+    document.getElementById('id-voucher').value = idVC;
 }

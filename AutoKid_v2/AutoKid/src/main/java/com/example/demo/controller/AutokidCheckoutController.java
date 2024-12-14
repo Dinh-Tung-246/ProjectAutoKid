@@ -1,10 +1,7 @@
 package com.example.demo.controller;
 
 import com.example.demo.model.*;
-import com.example.demo.repository.KhachHangRepo;
-import com.example.demo.repository.LoaiSanPhamRepo;
-import com.example.demo.repository.PhuongThucThanhToanRepo;
-import com.example.demo.repository.SanPhamChiTietRepo;
+import com.example.demo.repository.*;
 import com.example.demo.service.EmailSenderService;
 import com.example.demo.service.QuanLyDatHangService;
 import com.example.demo.service.QuanLySanPhamService;
@@ -47,6 +44,9 @@ public class AutokidCheckoutController {
     @Autowired
     EmailSenderService emailSenderService;
 
+    @Autowired
+    VoucherRepo voucherRepo;
+
     @GetMapping("")
     public String showCheckout(Model model) {
         model.addAttribute("currentPage", "checkout");
@@ -69,7 +69,7 @@ public class AutokidCheckoutController {
         hoaDon.setEmailNguoiNhan(hoaDonData.get("emailNguoiNhan").toString());
         hoaDon.setDiaChiNguoiNhan((String) hoaDonData.get("diaChiNguoiNhan"));
 //            hoaDon.setNgayTao(Date.valueOf((String) hoaDonData.get("ngayTao")));
-        hoaDon.setTongTien(((Number) hoaDonData.get("tongTien")).floatValue());
+        hoaDon.setTongTien(Float.parseFloat(hoaDonData.get("tongTien").toString()));
         hoaDon.setPhiShip(((Number) hoaDonData.get("phiShip")).floatValue());
         hoaDon.setTrangThaiHD((String) hoaDonData.get("trangThaiHD"));
         hoaDon.setPhiShip(50000F);
@@ -84,6 +84,13 @@ public class AutokidCheckoutController {
             Integer idKH = Integer.parseInt(idKHO.toString());
             KhachHang kh = khachHangRepo.findById(idKH).orElseThrow();
             hoaDon.setKhachHang(kh);
+        }
+        Object voucher = hoaDonData.get("voucher");
+        logger.info("voucher: {}", voucher);
+        if (voucher != null && !voucher.toString().trim().isEmpty()) {
+            Integer idVoucher = Integer.parseInt(voucher.toString());
+            Voucher voucher1 = voucherRepo.findById(idVoucher).orElseThrow();
+            hoaDon.setVoucher(voucher1);
         }
 
         // Lưu HoaDon
@@ -109,6 +116,8 @@ public class AutokidCheckoutController {
                         .orElseThrow(() -> new RuntimeException("Không tìm thấy sản phẩm: " + idSP));
                 hoaDonChiTiet.setSanPhamChiTiet(sanPhamChiTiet);
             }
+            SanPhamChiTiet spct = sanPhamChiTietRepo.findById(Integer.parseInt(idSPCT.toString())).orElseThrow();
+            hoaDonChiTiet.setDonGia(spct.getSanPham().getDonGia());
             hoaDonChiTiet.setSoLuong(Integer.parseInt((String) hdctData.get("soLuong")));
 //            hoaDonChiTiet.setDonGia(((Number) hdctData.get("donGia")).doubleValue());
             hoaDonChiTiet.setDonGiaSauGiam(Double.parseDouble(String.valueOf((Integer) hdctData.get("donGiaSauGiam"))));

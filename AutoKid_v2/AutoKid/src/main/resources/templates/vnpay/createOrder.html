@@ -32,6 +32,7 @@
                         <input type="hidden" id="idKH" name="idKH" >
                         <input type="hidden" id="emailKH" name="emailKH" >
                         <input type="hidden" id="hdct" name="hdct" >
+                        <input type="hidden" id="voucher" name="voucher" >
                         <button type="submit" class="btn btn-primary">Thanh toán</button>
                     </form>
                 </div>
@@ -48,11 +49,12 @@
         const paymentData = JSON.parse(sessionStorage.getItem("payment")) || [];
         const infoData = JSON.parse(sessionStorage.getItem("info")) || [];
         const checkoutData = JSON.parse(sessionStorage.getItem("checkout")) || [];
-        document.querySelector('#amount').value = paymentData.amount + 50000;
+        document.querySelector('#amount').value = paymentData.amount;
         document.querySelector('#orderInfo').value = paymentData.orderInfo;
         document.querySelector('#vnpTxnRef').value = paymentData.vnpTxnRef;
         document.querySelector('#idKH').value = JSON.stringify(infoData);
         document.querySelector('#emailKH').value = infoData.emailNN;
+        document.querySelector('#voucher').value = infoData.voucher;
         document.querySelector('#hdct').value = JSON.stringify(checkoutData);
 
         console.log(infoData.emailNN);

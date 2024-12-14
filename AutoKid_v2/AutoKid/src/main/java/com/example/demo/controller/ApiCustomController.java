@@ -114,9 +114,10 @@ public class ApiCustomController {
         return map1;
     }
 
-    @GetMapping("/get-voucher")
+    @PostMapping("/get-voucher")
     @ResponseBody
-    public List<Voucher> getVocher(){
-        return serviceQLDH.getAllVoucher();
+    public List<Voucher> getVocher(@RequestBody Map<String, Object> payload){
+        Double tongTien = Double.parseDouble(payload.get("totalPrice").toString());
+        return serviceQLDH.getAllVoucher(tongTien);
     }
 }
