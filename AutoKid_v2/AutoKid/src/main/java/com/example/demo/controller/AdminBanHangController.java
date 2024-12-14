@@ -174,7 +174,7 @@ public class AdminBanHangController {
             hoaDon.setKhachHang(khachHang);
             hoaDon.setNhanVien(nhanVien);
             hoaDon.setTongTien(Float.valueOf(totalAmount));
-            hoaDon.setTrangThaiHD("Đã thanh toán");
+            hoaDon.setTrangThaiHD("Hoàn thành");
             HoaDon savedInvoice = hoaDonService.save(hoaDon);
             for (Map<String, Object> item : cartItems) {
                 String productId = item.get("productId").toString();
