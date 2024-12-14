@@ -235,10 +235,8 @@
                                         <th>Chọn voucher</th>
                                         <td>
                                             <select class="form-select" id="voucherSelect">
-                                                <option value="" selected>Chọn</option>
-                                                <option value="voucher1">Voucher 1</option>
-                                                <option value="voucher2">Voucher 2</option>
-                                                <option value="voucher3">Voucher 3</option>
+                                                <option value="" disabled selected>Chọn Voucher</option>
+                                                <option th:each="voucher : ${listvc}" th:value="${voucher.id}" th:text="${voucher.ten}"></option>
                                             </select>
                                         </td>
                                     </tr>

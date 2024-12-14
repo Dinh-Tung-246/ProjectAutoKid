@@ -7,6 +7,7 @@ import com.example.demo.response.KhachHangResponse;
 import com.example.demo.response.SanPhamChiTietDTO;
 import com.example.demo.service.QuanLyHoaDonService;
 import com.example.demo.service.QuanLySanPhamService;
+import com.example.demo.service.QuanLyVoucherService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.HttpSession;
@@ -47,6 +48,9 @@ public class AdminBanHangController {
     @Autowired
     PhuongThucThanhToanRepo phuongThucThanhToanRepo;
 
+    @Autowired
+    QuanLyVoucherService voucherService;
+
 
     @GetMapping("/home")
     public String products(Model model) {
@@ -54,6 +58,7 @@ public class AdminBanHangController {
         model.addAttribute("currentPage", "products");
         model.addAttribute("namePage", "ban-hang");
         model.addAttribute("spcts", sanPhamChiTiets);
+        model.addAttribute("listvc", voucherService.getAll());
         model.addAttribute("pttps", phuongThucThanhToanRepo.findAll());
         return "admin/ban-hang";
     }
@@ -82,15 +87,24 @@ public class AdminBanHangController {
         KhachHang khachHang = khachHangRepo.findBySdt(sdt);
 
         if (khachHang != null) {
-            // Chuyển đổi KhachHang thành KhachHangResponse trước khi trả về
             KhachHangResponse khachHangResponse = new KhachHangResponse(khachHang);
             session.setAttribute("customer", khachHangResponse);
-            return ResponseEntity.ok(khachHangResponse); // Spring sẽ tự động chuyển đổi sang JSON
+            return ResponseEntity.ok(khachHangResponse);
         } else {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Không tìm thấy khách hàng!");
         }
     }
 
+
+    @GetMapping("/voucher/{id}")
+    public ResponseEntity<Voucher> getVoucherById(@PathVariable("id") Integer id) {
+        Voucher voucher = hoaDonService.getVoucherById(id);
+        if (voucher != null) {
+            return ResponseEntity.ok(voucher);
+        } else {
+            return ResponseEntity.notFound().build();
+        }
+    }
 
     @GetMapping("/san-pham-chi-tiet/search")
     public ResponseEntity<List<SanPhamChiTietDTO>> searchSPCTByTenSPOrMaSPCT(@RequestParam("tenSP") String tenSP, @RequestParam("maSPCT") String maSPCT) {
@@ -126,9 +140,6 @@ public class AdminBanHangController {
     }
 
 
-
-
-
     @PostMapping("/create-invoice")
     @ResponseBody
     public ResponseEntity<Map<String, Object>> createInvoice(@RequestBody Map<String, Object> hoaDonRequest) {
@@ -162,10 +173,11 @@ public class AdminBanHangController {
             KhachHang khachHang = khachHangOpt.get();
 
             // Lấy và kiểm tra thông tin tổng tiền, số lượng
+            Integer discountPrice = (Integer) hoaDonRequest.get("finalAmount");
+            System.out.println("ddddd" + discountPrice);
             Integer totalAmount = (Integer) hoaDonRequest.get("totalAmount");
-            Integer totalQuantity = (Integer) hoaDonRequest.get("totalQuantity");
-
-            if (totalAmount == null || totalAmount <= 0 || totalQuantity == null || totalQuantity <= 0) {
+            System.out.println("aaaaa" + totalAmount);
+            if (discountPrice == null || discountPrice <= 0) {
                 return ResponseEntity.badRequest().body(Map.of("error", "Tổng tiền hoặc số lượng không hợp lệ"));
             }
             String maHD = "HD" + UUID.randomUUID().toString();
@@ -173,9 +185,10 @@ public class AdminBanHangController {
             hoaDon.setMaHD(maHD);
             hoaDon.setKhachHang(khachHang);
             hoaDon.setNhanVien(nhanVien);
-            hoaDon.setTongTien(Float.valueOf(totalAmount));
+            hoaDon.setTongTien(Float.valueOf(discountPrice));
             hoaDon.setTrangThaiHD("Hoàn thành");
             HoaDon savedInvoice = hoaDonService.save(hoaDon);
+
             for (Map<String, Object> item : cartItems) {
                 String productId = item.get("productId").toString();
                 Integer productQuantity = (Integer) item.get("productQuantity");
@@ -192,10 +205,11 @@ public class AdminBanHangController {
                 hoaDonChiTiet.setHoaDon(savedInvoice);
                 hoaDonChiTiet.setSanPhamChiTiet(product);
                 hoaDonChiTiet.setSoLuong(productQuantity);
-                hoaDonChiTiet.setDonGia(Double.valueOf(productPrice));
-
+                hoaDonChiTiet.setDonGia(Double.valueOf(totalAmount));
+                hoaDonChiTiet.setDonGiaSauGiam(Double.valueOf(discountPrice));
                 hoaDonService.save(hoaDonChiTiet);
             }
+
             Map<String, Object> response = new HashMap<>();
             response.put("success", true);
             response.put("invoiceId", savedInvoice.getId());
@@ -207,33 +221,4 @@ public class AdminBanHangController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Map.of("error", "Lỗi trong quá trình xử lý yêu cầu"));
         }
     }
-
-//    @GetMapping("/get-employee-and-customer-ids")
-//    public ResponseEntity<Map<String, Object>> getEmployeeAndCustomerIds(HttpSession session) {
-//        String tenNhanVien = (String) session.getAttribute("tenNV");
-//        String tenKhachHang = (String) session.getAttribute("tenKH");
-//
-//        if (tenNhanVien == null || tenKhachHang == null) {
-//            return ResponseEntity.badRequest().body(Map.of("error", "Tên nhân viên hoặc khách hàng không có trong session"));
-//        }
-//
-//        // Lấy ID của nhân viên và khách hàng từ CSDL
-//        NhanVien nhanVien = nhanVienRepo.findByTenNV(tenNhanVien);
-//        KhachHang khachHang = khachHangRepo.findByTenKH(tenKhachHang);
-//
-//        if (nhanVien == null || khachHang == null) {
-//            return ResponseEntity.badRequest().body(Map.of("error", "Không tìm thấy nhân viên hoặc khách hàng"));
-//        }
-//
-//        // Trả về ID của nhân viên và khách hàng
-//        Map<String, Object> response = new HashMap<>();
-//        response.put("idNV", nhanVien.getId());  // ID nhân viên
-//        response.put("idKH", khachHang.getId()); // ID khách hàng
-//
-//
-//        return ResponseEntity.ok(response);
-//    }
-
-
-
 }
