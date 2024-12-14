@@ -86,7 +86,8 @@ public class AutokidCheckoutController {
             hoaDon.setKhachHang(kh);
         }
         Object voucher = hoaDonData.get("voucher");
-        if (voucher != null) {
+        logger.info("voucher: {}", voucher);
+        if (voucher != null && !voucher.toString().trim().isEmpty()) {
             Integer idVoucher = Integer.parseInt(voucher.toString());
             Voucher voucher1 = voucherRepo.findById(idVoucher).orElseThrow();
             hoaDon.setVoucher(voucher1);

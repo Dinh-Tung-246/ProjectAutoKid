@@ -176,7 +176,7 @@ document.querySelector('#checkout-form').addEventListener('submit', async functi
     let vnpTxnRef = new Date().getTime().toString();
     let orderInfo = "Thanh toan don hang " + vnpTxnRef;
     const paymentData = {
-        amount: Math.round(TongTien),
+        amount: TongTien.replaceAll('.',''),
         orderInfo: orderInfo,
         vnpTxnRef: vnpTxnRef,
     }

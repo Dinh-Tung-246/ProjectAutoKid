@@ -91,8 +91,9 @@ public class VNPAYController {
         KHACH_HANG = infoKH;
         HDCT_LIST = hdctlist;
         EMAILKH = emailKH;
-        if (voucher != null) {
-            VOUCHER  = Integer.parseInt(voucher);
+        logger.info("voucher: {}", voucher);
+        if (voucher != null && !voucher.trim().isEmpty()) {
+            VOUCHER = Integer.parseInt(voucher);
         }
         logger.info("EMAIL KHACH HANG: {}", emailKH);
         System.out.println(HDCT_LIST);

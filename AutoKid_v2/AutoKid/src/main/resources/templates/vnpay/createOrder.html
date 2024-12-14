@@ -49,7 +49,7 @@
         const paymentData = JSON.parse(sessionStorage.getItem("payment")) || [];
         const infoData = JSON.parse(sessionStorage.getItem("info")) || [];
         const checkoutData = JSON.parse(sessionStorage.getItem("checkout")) || [];
-        document.querySelector('#amount').value = paymentData.amount + 50000;
+        document.querySelector('#amount').value = paymentData.amount;
         document.querySelector('#orderInfo').value = paymentData.orderInfo;
         document.querySelector('#vnpTxnRef').value = paymentData.vnpTxnRef;
         document.querySelector('#idKH').value = JSON.stringify(infoData);
