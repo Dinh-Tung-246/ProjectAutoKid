@@ -1,3 +1,4 @@
+
 document.addEventListener("DOMContentLoaded", function () {
     const searchInput = document.getElementById("searchCustomerInput");
     const customerResults = document.getElementById("customerResults");
@@ -228,6 +229,7 @@ document.addEventListener("DOMContentLoaded", function () {
             invoiceItem.appendChild(invoiceName);
             invoiceItem.appendChild(deleteButton);
             invoiceContainer.appendChild(invoiceItem);
+
         });
     }
 
@@ -382,7 +384,7 @@ document.addEventListener("DOMContentLoaded", function () {
     function addProductToCart(product, quantity) {
         if (!selectedOrder) {
             showNotification("Vui lòng chọn đơn hàng trước!");
-            return;
+          return;
         }
 
         console.log("Đơn hàng đã chọn:", selectedOrder);
@@ -725,8 +727,6 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     });
 
-
-
     let isUpdating = false;
     document.getElementById("addToCartButton").addEventListener("click", async function () {
         if (isUpdating) return;
@@ -857,7 +857,6 @@ document.getElementById("paymentButton").addEventListener("click", function () {
         const customerPaid = parseFloat(document.querySelector("#summaryTable input[type='number']").value);
         let finalAmount = parseFloat(finalAmountField.textContent.replace(/\D/g, ""));
         if (isNaN(customerPaid) || customerPaid < finalAmount) {
-            showNotification(`Số tiền khách hàng thanh toán không hợp lệ hoặc chưa đủ! Tổng tiền cần thanh toán là ${finalAmount.toLocaleString()} VNĐ.`);
             return;
         }
         const employeeData = JSON.parse(sessionStorage.getItem("infoNV"));
@@ -928,12 +927,10 @@ function showNotification(message) {
     notificationModal.show(); // Hiển thị modal
 }
 
-
 function generateInvoicePDF(invoice) {
     const { jsPDF } = window.jspdf;  // Lấy jsPDF từ window.jspdf khi dùng CDN
 
     const doc = new jsPDF();
-
     // Kiểm tra nếu font Arial không tồn tại
     try {
         doc.setFont('Arial', 'normal');
@@ -951,12 +948,12 @@ function generateInvoicePDF(invoice) {
     const currentDate = new Date();
     const formattedDate = `${currentDate.getDate()}/${currentDate.getMonth() + 1}/${currentDate.getFullYear()} ${currentDate.getHours()}:${currentDate.getMinutes()}:${currentDate.getSeconds()}`;
     doc.text(`Ngày tạo: ${formattedDate}`, 10, 40);  // In ngày tạo hóa đơn
-
+  
     const customer = invoice.khachHang || {};  // Lấy thông tin khách hàng từ đối tượng invoice
     const employee = invoice.nhanVien || {};  // Lấy thông tin nhân viên từ đối tượng invoice
     doc.text(`Khách hàng: ${customer.tenKH || 'Chưa có thông tin'}`, 10, 50);  // Thông tin khách hàng
     doc.text(`Nhân viên: ${employee.tenNV || 'Chưa có thông tin'}`, 10, 60);  // Thông tin nhân viên
-
+  
     // Bắt đầu vẽ bảng
     const startY = 70;  // Vị trí bắt đầu vẽ bảng
     let yPosition = startY;
@@ -972,6 +969,7 @@ function generateInvoicePDF(invoice) {
     yPosition += 10; // Dịch xuống một chút để vẽ các sản phẩm
 
     // Vẽ các sản phẩm trong giỏ hàng
+
     if (invoice.cartItems && invoice.cartItems.length > 0) {
         invoice.cartItems.forEach((item, index) => {
             doc.text((index + 1).toString(), 10, yPosition);  // Số thứ tự
@@ -993,12 +991,14 @@ function generateInvoicePDF(invoice) {
 
     // Phương thức thanh toán
     yPosition += 10;
+
     doc.text(`Phương thức thanh toán: ${invoice.paymentType || 'Chưa chọn phương thức thanh toán'}`, 10, yPosition);
 
     // Voucher (nếu có)
     if (invoice.voucher) {
         yPosition += 10;
         doc.text(`Voucher: ${invoice.voucher}`, 10, yPosition);
+
     } else {
         yPosition += 10;
         doc.text("Không có voucher", 10, yPosition);
@@ -1008,7 +1008,6 @@ function generateInvoicePDF(invoice) {
     doc.save('invoice.pdf');
     window.open(doc.output('bloburl'));  // Mở PDF để in
 }
-
 
 function resetCart() {
     document.getElementById("cartTableBody").innerHTML = "";

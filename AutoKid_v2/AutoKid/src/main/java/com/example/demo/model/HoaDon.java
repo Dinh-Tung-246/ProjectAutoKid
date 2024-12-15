@@ -32,6 +32,10 @@ public class HoaDon {
     @JoinColumn(name = "id_pttt")
     private PhuongThucThanhToan phuongThucThanhToan;
 
+    @ManyToOne
+    @JoinColumn(name = "id_voucher")
+    private Voucher voucher;
+
     @Column(name = "ngay_tao", updatable = false, insertable = false)
     private Date ngayTao;
 
@@ -58,10 +62,6 @@ public class HoaDon {
 
     @Column(name = "email_nguoi_nhan")
     private String EmailNguoiNhan;
-
-    @ManyToOne
-    @JoinColumn(name = "id_voucher")
-    private Voucher voucher;
 
     @OneToMany(mappedBy = "hoaDon", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
     private List<HoaDonChiTiet> hoaDonChiTiets = new ArrayList<>();
