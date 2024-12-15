@@ -91,7 +91,7 @@ public interface HoaDonRepo extends JpaRepository<HoaDon,Integer> {
     @Query("SELECT sp.maSP AS idSanPham, " +
             "sp.tenSP AS tenSanPham, " +
             "SUM(hdct.soLuong) AS tongSoLuong, " +
-            "SUM(hdct.soLuong * hdct.donGiaSauGiam) AS tongDoanhThu " +
+            "SUM(hdct.donGiaSauGiam) AS tongDoanhThu " +
             "FROM HoaDonChiTiet hdct " +
             "JOIN hdct.sanPhamChiTiet spct " +
             "JOIN spct.sanPham sp " +

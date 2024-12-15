@@ -156,7 +156,6 @@ public class AdminBanHangController {
         }
     }
 
-
     @PostMapping("/create-invoice")
     @ResponseBody
     public ResponseEntity<Map<String, Object>> createInvoice(@RequestBody Map<String, Object> hoaDonRequest) {

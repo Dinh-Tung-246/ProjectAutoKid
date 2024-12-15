@@ -62,7 +62,6 @@
         background-color: #000;
         color: #9fcdff;
     }
-
     .posts-table tbody {
         display: block;
         max-height: 300px;
@@ -80,7 +79,6 @@
         padding: 10px;
         text-align: left;
     }
-
     .posts-table td {
         word-wrap: break-word;
         white-space: normal;
@@ -91,120 +89,115 @@
 <!-- ! Body -->
 <a class="skip-link sr-only" href="#skip-target">Skip to content</a>
 <div class="page-flex">
-    <!-- ! Sidebar -->
-    <div th:insert="fragments/sidebar_admin :: sidebar"></div>
-    <div class="main-wrapper">
-        <!-- ! Main nav -->
-        <div th:insert="fragments/header_admin :: header"></div>
-        <!-- ! Main -->
-        <main class="main users chart-page" id="skip-target">
-            <div class="container">
-                <h2 class="mt-5">Quản lý hóa đơn</h2>
-                <br>
-                <div class="search-container">
-                    <form action="/admin/hoadon/search" method="GET">
-                        <div class="row">
-                            <div class="col">
-                                <input type="text" name="maHd" placeholder="Mã hoá đơn" class="form-control"/>
-                            </div>
-                            <div class="col">
-                                <button type="submit" class="btn btn-primary">Tìm kiếm</button>
-                            </div>
-                        </div>
-                    </form>
-                </div>
-                <div class="users-table table-wrapper">
-                    <table class="posts-table">
-                        <thead>
-                        <tr class="users-table-info">
-                            <th>STT</th>
-                            <th>Mã Hóa Đơn</th>
-                            <th>Tên Khách Hàng</th>
-                            <th>Tên Nhân Viên</th>
-                            <th>Hình thức</th>
-                            <th>Phương thức thanh toán</th>
-                            <th>Tổng tiền</th>
-                            <th>Trạng thái</th>
-                            <th></th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        <tr th:each="hdct, iterStat : ${listhd}">
-                            <td th:text="${iterStat.count}"></td>
-                            <td th:text="${hdct.maHD}"></td> <!-- Display HD + id instead of maHD -->
-                            <td th:text="${hdct.tenKhachHang}"></td>
-                            <td th:text="${hdct.tenNhanVien}"></td>
-                            <td th:text="${hdct.online == true ? 'Trực tuyến' : 'Tại quầy'}"></td>
-                            <td th:text="${hdct.tenPhuongThucThanhToan}"></td>
-                            <td th:text="${hdct.tongTien}"></td>
-                            <td th:text="${hdct.trangThaiHD}"></td>
-                            <td>
-                                <div style="display: flex; align-items: center; justify-content: space-around;">
-                                    <button th:data-id="${hdct.id}" onclick="handleClick(this.getAttribute('data-id'))"
-                                            data-bs-toggle="modal" data-bs-target="#chiTietHoaDon" class="btn btn-info">
-                                        Chi tiết
-                                    </button> <!-- Use id here -->
-                                </div>
-                            </td>
-                        </tr>
-                        </tbody>
-
-
-                    </table>
-                </div>
-
+  <!-- ! Sidebar -->
+  <div th:insert="fragments/sidebar_admin :: sidebar"></div>
+  <div class="main-wrapper">
+    <!-- ! Main nav -->
+    <div th:insert="fragments/header_admin :: header"></div>
+    <!-- ! Main -->
+    <main class="main users chart-page" id="skip-target">
+      <div class="container">
+        <h2 class="mt-5">Quản lý hóa đơn</h2>
+        <br>
+        <div class="search-container">
+          <form action="/admin/hoadon/search" method="GET">
+            <div class="row">
+              <div class="col">
+                <input type="text" name="maHd" placeholder="Mã hoá đơn" class="form-control" />
+              </div>
+              <div class="col">
+                <button type="submit" class="btn btn-primary">Tìm kiếm</button>
+              </div>
             </div>
-        </main>
-
-        <div class="modal fade" id="chiTietHoaDon" tabindex="-1" aria-labelledby="paymentModalLabel" aria-hidden="true">
-            <div class="modal-dialog modal-lg">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="paymentModalLabel">Chi tiết hóa đơn</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                    </div>
-                    <div class="modal-body">
-                        <div class="mb-3">
-                            <p class="mb-4"><strong>Mã Hóa Đơn:</strong> <span id="invoiceCode"></span></p>
-                            <p class="mb-4"><strong>Tên Khách Hàng:</strong> <span id="customerName"></span></p>
-                            <p class="mb-4"><strong>Tên Nhân Viên:</strong> <span id="employeeName"></span></p>
-                            <p class="mb-4"><strong>Ngày Tạo:</strong> <span id="creationDate"></span></p>
-                            <p class="mb-4"><strong>Phương thức thanh toán:</strong> <span id="paymentMethod"></span>
-                            </p>
-                            <p class="mb-4"><strong>Tổng tiền:</strong> <span id="totalAmount"></span></p>
-                            <div class="mb-4" style="display: flex; align-items: center">
-                                <strong>Trạng thái:</strong>
-                                <input id="maHD" type="hidden" name="maHD" value="12345">
-                                <select name="trangThai" class="form-select" id="statusSelect"
-                                        onchange="updateStatus(this)">
-                                </select>
-                            </div>
-                        </div>
-                        <h4 style="margin-bottom: 10px">Chi tiết sản phẩm</h4>
-                        <table class="table table-bordered">
-                            <thead>
-                            <tr>
-                                <th scope="col">Tên sản phẩm</th>
-                                <th scope="col">Số lượng</th>
-                                <th scope="col">Đơn giá</th>
-                                <th scope="col">Thành tiền</th>
-                            </tr>
-                            </thead>
-                            <tbody id="productTable">
-                            <!-- Các dòng sản phẩm sẽ được thêm động ở đây -->
-                            </tbody>
-                        </table>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
-                    </div>
+          </form>
+        </div>
+        <div class="users-table table-wrapper">
+          <table class="posts-table">
+            <thead>
+            <tr class="users-table-info">
+              <th>STT</th>
+              <th>Mã Hóa Đơn</th>
+              <th>Tên Khách Hàng</th>
+              <th>Tên Nhân Viên</th>
+              <th>Hình thức</th>
+              <th>Phương thức thanh toán</th>
+              <th>Tổng tiền</th>
+              <th>Trạng thái</th>
+              <th></th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="hdct, iterStat : ${listhd}">
+              <td th:text="${iterStat.count}"></td>
+              <td th:text="${hdct.maHD}"></td> <!-- Display HD + id instead of maHD -->
+              <td th:text="${hdct.tenKhachHang}"></td>
+              <td th:text="${hdct.tenNhanVien != null && !#strings.isEmpty(hdct.tenNhanVien) ? hdct.tenNhanVien : 'placeholderNV'}"></td>
+              <td th:text="${hdct.online == true ? 'Trực tuyến' : 'Tại quầy'}"></td>
+              <td th:text="${hdct.tenPhuongThucThanhToan}"></td>
+              <td th:text="${hdct.tongTien}"></td>
+              <td th:text="${hdct.trangThaiHD}"></td>
+              <td>
+                <div style="display: flex; align-items: center; justify-content: space-around;">
+                  <button th:data-id="${hdct.id}" onclick="handleClick(this.getAttribute('data-id'))" data-bs-toggle="modal" data-bs-target="#chiTietHoaDon" class="btn btn-info">Chi tiết</button> <!-- Use id here -->
                 </div>
-            </div>
+              </td>
+            </tr>
+            </tbody>
+
+
+          </table>
         </div>
 
-        <!-- ! Footer -->
-        <div th:insert="fragments/footer_admin :: footer"></div>
+      </div>
+    </main>
+
+    <div class="modal fade" id="chiTietHoaDon" tabindex="-1" aria-labelledby="paymentModalLabel" aria-hidden="true">
+      <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="paymentModalLabel">Chi tiết hóa đơn</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <div class="mb-3">
+              <p class="mb-4"><strong>Mã Hóa Đơn:</strong> <span id="invoiceCode"></span></p>
+              <p class="mb-4"><strong>Tên Khách Hàng:</strong> <span id="customerName"></span></p>
+              <p class="mb-4"><strong>Tên Nhân Viên:</strong> <span id="employeeName"></span></p>
+              <p class="mb-4"><strong>Ngày Tạo:</strong> <span id="creationDate"></span></p>
+              <p class="mb-4"><strong>Phương thức thanh toán:</strong> <span id="paymentMethod"></span></p>
+              <p class="mb-4"><strong>Tổng tiền:</strong> <span id="totalAmount"></span></p>
+              <div class="mb-4" style="display: flex; align-items: center">
+                <strong>Trạng thái:</strong>
+                <input id="maHD" type="hidden" name="maHD" value="12345">
+                <select name="trangThai" class="form-select" id="statusSelect" onchange="updateStatus(this)">
+                </select>
+              </div>
+            </div>
+            <h4 style="margin-bottom: 10px">Chi tiết sản phẩm</h4>
+            <table class="table table-bordered">
+              <thead>
+              <tr>
+                <th scope="col">Tên sản phẩm</th>
+                <th scope="col">Số lượng</th>
+                <th scope="col">Đơn giá</th>
+                <th scope="col">Thành tiền</th>
+              </tr>
+              </thead>
+              <tbody id="productTable">
+              <!-- Các dòng sản phẩm sẽ được thêm động ở đây -->
+              </tbody>
+            </table>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+          </div>
+        </div>
+      </div>
     </div>
+
+    <!-- ! Footer -->
+    <div th:insert="fragments/footer_admin :: footer"></div>
+  </div>
 </div>
 
 <!-- Chart library -->
@@ -214,9 +207,7 @@
 <!-- Bootstrap JS (requires Popper.js) -->
 <!-- Custom scripts -->
 <script src="js/script.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
-        integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
-        crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script>
@@ -252,7 +243,7 @@
         var maHD = $(selectElement).siblings('input[name="maHD"]').val();
         var trangThai = $(selectElement).val();
 
-        if (confirm('Bạn có muốn cập nhật trạng thái đơn hàng ?')) {
+        if(confirm('Bạn có muốn cập nhật trạng thái đơn hàng ?')){
             $.ajax({
                 url: '/admin/hoadon/updateStatus',
                 method: 'POST',
@@ -260,53 +251,62 @@
                     maHD: maHD,  // Send the ID (maHD)
                     trangThai: trangThai  // Send the selected status
                 },
-                success: function (response) {
+                success: function(response) {
                     alert('Cập nhật trạng thái thành công');
                     window.location.href = 'http://localhost:8080/admin/hoadon';
                 },
-                error: function (xhr, status, error) {
+                error: function(xhr, status, error) {
                     alert('Có lỗi!');
                 }
             });
         }
 
     }
-
     function getStatusOptions(currentStatus) {
         const statusMapping = {
             "Đã thanh toán, chờ giao hàng": [
-                {value: "Đã thanh toán, chờ giao hàng", text: "Đã thanh toán, chờ giao hàng", selected: true},
-                {value: "Đã thanh toán, đang giao hàng", text: "Đã thanh toán, đang giao hàng"},
-                {value: "Hoàn thành", text: "Hoàn thành"},
-                {value: "Huỷ đơn hàng", text: "Huỷ đơn hàng"},
+                { value: "Đã thanh toán, chờ giao hàng", text: "Đã thanh toán, chờ giao hàng", selected: true },
+                { value: "Đã thanh toán, đang giao hàng", text: "Đã thanh toán, đang giao hàng" },
+                { value: "Hoàn thành", text: "Hoàn thành" },
+                { value: "Huỷ đơn hàng", text: "Huỷ đơn hàng" },
             ],
             "Chưa thanh toán, chờ giao hàng": [
-                {value: "Chưa thanh toán, chờ giao hàng", text: "Chưa thanh toán, chờ giao hàng", selected: true},
-                {value: "Chưa thanh toán, đang giao hàng", text: "Chưa thanh toán, đang giao hàng"},
-                {value: "Hoàn thành", text: "Hoàn thành"},
-                {value: "Huỷ đơn hàng", text: "Huỷ đơn hàng"},
+                { value: "Chưa thanh toán, chờ giao hàng", text: "Chưa thanh toán, chờ giao hàng", selected: true },
+                { value: "Chưa thanh toán, đang giao hàng", text: "Chưa thanh toán, đang giao hàng" },
+                { value: "Hoàn thành", text: "Hoàn thành" },
+                { value: "Huỷ đơn hàng", text: "Huỷ đơn hàng" },
             ],
             "Hoàn thành": [
-                {value: "Hoàn thành", text: "Hoàn thành", selected: true},
+                { value: "Hoàn thành", text: "Hoàn thành", selected: true },
             ],
             "Huỷ đơn hàng": [
-                {value: "Huỷ đơn hàng", text: "Huỷ đơn hàng", selected: true},
+                { value: "Huỷ đơn hàng", text: "Huỷ đơn hàng", selected: true },
             ],
             "Đã thanh toán, đang giao hàng": [
-                {value: "Đã thanh toán, đang giao hàng", text: "Đã thanh toán, đang giao hàng", selected: true},
-                {value: "Hoàn thành", text: "Hoàn thành"},
-                {value: "Huỷ đơn hàng", text: "Huỷ đơn hàng"},
+                { value: "Đã thanh toán, đang giao hàng", text: "Đã thanh toán, đang giao hàng", selected: true },
+                { value: "Hoàn thành", text: "Hoàn thành" },
+                { value: "Huỷ đơn hàng", text: "Huỷ đơn hàng" },
             ],
             "Chưa thanh toán, đang giao hàng": [
-                {value: "Chưa thanh toán, đang giao hàng", text: "Chưa thanh toán, đang giao hàng", selected: true},
-                {value: "Hoàn thành", text: "Hoàn thành"},
-                {value: "Huỷ đơn hàng", text: "Huỷ đơn hàng"},
+                { value: "Chưa thanh toán, đang giao hàng", text: "Chưa thanh toán, đang giao hàng", selected: true },
+                { value: "Hoàn thành", text: "Hoàn thành" },
+                { value: "Huỷ đơn hàng", text: "Huỷ đơn hàng" },
             ],
         };
 
         return statusMapping[currentStatus] || [];
     }
+    document.addEventListener("DOMContentLoaded", () => {
+        const employeeData = JSON.parse(sessionStorage.getItem("infoNV"));
+        const infoNV = employeeData.tenNV;
 
+        // Tìm tất cả các ô có giá trị "placeholderNV"
+        document.querySelectorAll('td').forEach(td => {
+            if (td.textContent.trim() === 'placeholderNV') {
+                td.textContent = infoNV.replace(/\+/g, ' '); // Thay thế bằng giá trị từ sessionStorage
+            }
+        });
+    });
     function handleClick(id) {
         document.getElementById("maHD").value = id;
         fetch(`/admin/hoadon/ctht/${id}`)
