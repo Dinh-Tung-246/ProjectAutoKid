@@ -429,13 +429,10 @@ document.addEventListener("DOMContentLoaded", function () {
         const cartTableBody = document.getElementById("cartTableBody");
         cartTableBody.innerHTML = ""; // Xóa các sản phẩm cũ
         const voucherField = document.getElementById("voucherSelect");
-        const paymentField = document.querySelector("table#summaryTable tbody tr:nth-child(5) input");
-        const changeField = document.querySelector("table#summaryTable tbody tr:nth-child(6) td");
+
 
         const resetFields = () => {
             if (voucherField) voucherField.value = "";  // Reset voucher
-            if (paymentField) paymentField.value = "";
-            if (changeField) changeField.textContent = "0 VNĐ";
             updateSummaryTable(0, 0);
         };
 
@@ -495,10 +492,6 @@ document.addEventListener("DOMContentLoaded", function () {
                 const thanhTienCell = row.querySelector(".thanhTien");
                 if (thanhTienCell) {
                     thanhTienCell.textContent = currentCart[index].thanhTien;
-                }
-                const input = row.querySelector(".quantity-input");
-                if (input) {
-                    input.value = newQuantity;
                 }
 
                 // Cập nhật giỏ hàng và sessionStorage
@@ -595,9 +588,6 @@ document.addEventListener("DOMContentLoaded", function () {
         const totalField = document.querySelector("table#summaryTable tbody tr:nth-child(2) td");
         const voucherField = document.getElementById("voucherSelect");
         const finalAmountField = document.querySelector("table#summaryTable tbody tr:nth-child(4) td");
-        const paymentField = document.querySelector("table#summaryTable tbody tr:nth-child(5) input");
-        const changeField = document.querySelector("table#summaryTable tbody tr:nth-child(6) td");
-
         // Cập nhật tổng số lượng và tổng cộng
         if (totalQuantityField) totalQuantityField.textContent = totalQuantity;
         if (totalField) totalField.textContent = `${totalAmount.toLocaleString()} VNĐ`;
@@ -605,8 +595,6 @@ document.addEventListener("DOMContentLoaded", function () {
         // Nếu không có sản phẩm trong giỏ hàng, reset các trường
         if (totalQuantity === 0) {
             if (finalAmountField) finalAmountField.textContent = "0 VNĐ";
-            if (paymentField) paymentField.value = "";
-            if (changeField) changeField.textContent = "0 VNĐ";
             return;
         }
 
@@ -650,12 +638,6 @@ document.addEventListener("DOMContentLoaded", function () {
         // Cập nhật lại thành tiền cuối cùng
         if (finalAmountField) finalAmountField.textContent = `${finalAmount.toLocaleString()} VNĐ`;
 
-        // Tính toán tiền thối nếu có
-        if (paymentField && changeField) {
-            const customerPay = parseInt(paymentField.value) || 0;
-            const change = customerPay - finalAmount;
-            changeField.textContent = `${change.toLocaleString()} VNĐ`;
-        }
     }
 
 // Sự kiện khi chọn voucher
@@ -701,29 +683,26 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
 
-    document.getElementById("autoFillPayment").addEventListener("click", () => {
-        const finalAmountField = document.querySelector("table#summaryTable tbody tr:nth-child(4) td");
-        const paymentField = document.querySelector("table#summaryTable tbody tr:nth-child(5) input");
-
-        if (finalAmountField && paymentField) {
-            // Lấy giá trị "Thành tiền"
-            const finalAmountText = finalAmountField.textContent.replace(" VNĐ", "").replace(/\./g, "");
-            const finalAmount = parseInt(finalAmountText) || 0;
-
-            // Điền vào ô "Tiền khách trả"
-            paymentField.value = finalAmount;
-
-            // Gọi lại hàm updateSummaryTable để cập nhật tiền thừa
-            const totalAmountField = document.querySelector("table#summaryTable tbody tr:nth-child(2) td");
-            const totalAmountText = totalAmountField.textContent.replace(" VNĐ", "").replace(/\./g, "");
-            const totalAmount = parseInt(totalAmountText) || 0;
-
-            const totalQuantityField = document.querySelector("table#summaryTable tbody tr:nth-child(1) td");
-            const totalQuantity = parseInt(totalQuantityField.textContent) || 0;
-
-            updateSummaryTable(totalAmount, totalQuantity);
-        }
-    });
+    // document.getElementById("autoFillPayment").addEventListener("click", () => {
+    //     const finalAmountField = document.querySelector("table#summaryTable tbody tr:nth-child(4) td");
+    //
+    //     if (finalAmountField) {
+    //         // Lấy giá trị "Thành tiền"
+    //         const finalAmountText = finalAmountField.textContent.replace(" VNĐ", "").replace(/\./g, "");
+    //         const finalAmount = parseInt(finalAmountText) || 0;
+    //
+    //
+    //         // Gọi lại hàm updateSummaryTable để cập nhật tiền thừa
+    //         const totalAmountField = document.querySelector("table#summaryTable tbody tr:nth-child(2) td");
+    //         const totalAmountText = totalAmountField.textContent.replace(" VNĐ", "").replace(/\./g, "");
+    //         const totalAmount = parseInt(totalAmountText) || 0;
+    //
+    //         const totalQuantityField = document.querySelector("table#summaryTable tbody tr:nth-child(1) td");
+    //         const totalQuantity = parseInt(totalQuantityField.textContent) || 0;
+    //
+    //         updateSummaryTable(totalAmount, totalQuantity);
+    //     }
+    // });
 
 
 
@@ -854,12 +833,8 @@ document.getElementById("paymentButton").addEventListener("click", function () {
         }
         const voucher = document.getElementById("voucherSelect").value;
         const finalAmountField = document.querySelector("table#summaryTable tbody tr:nth-child(4) td");
-        const customerPaid = parseFloat(document.querySelector("#summaryTable input[type='number']").value);
-        let finalAmount = parseFloat(finalAmountField.textContent.replace(/\D/g, ""));
-        if (isNaN(customerPaid) || customerPaid < finalAmount) {
-            showNotification(`Số tiền khách hàng thanh toán không hợp lệ hoặc chưa đủ! Tổng tiền cần thanh toán là ${finalAmount.toLocaleString()} VNĐ.`);
-            return;
-        }
+        const finalAmountText = finalAmountField ? finalAmountField.textContent.trim() : '0';
+        const finalAmount = finalAmountText ? parseFloat(finalAmountText.replace(/[^\d.-]/g, "")) : 0;
         const employeeData = JSON.parse(sessionStorage.getItem("infoNV"));
         if (!employeeData || !employeeData.id) {
             showNotification("Thông tin nhân viên không hợp lệ hoặc không có trong hệ thống!");
@@ -1025,8 +1000,6 @@ function updateSummary() {
     document.querySelector("#summaryTable tbody tr:nth-child(1) td").textContent = totalQuantity;  // Số lượng = 0
     document.querySelector("#summaryTable tbody tr:nth-child(2) td").textContent = totalAmount.toFixed(2);  // Tổng tiền = 0
     document.querySelector("#summaryTable tbody tr:nth-child(4) td").textContent = totalAmount.toFixed(2);  // Cập nhật vào dòng 4
-    document.querySelector("#summaryTable tbody tr:nth-child(6) td").textContent = totalAmount.toFixed(2);  // Cập nhật vào dòng 6
-    document.querySelector("#summaryTable tbody tr:nth-child(5) input").value = '';  // Reset trường thanh toán
     customerName.textContent = '';
     customerPhone.textContent = '';
 }
