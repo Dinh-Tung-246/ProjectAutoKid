@@ -88,6 +88,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         option.textContent = voucher.ten; // Nội dung hiển thị
         option.setAttribute('data-loai', voucher.loaiVoucher);
         option.setAttribute('data-giatri', voucher.giaTri);
+        option.setAttribute('data-giatrimax', voucher.giaTriToiDa);
         option.setAttribute('data-dieukien', voucher.dieuKien);
         selectElement.appendChild(option);
     });
@@ -343,18 +344,20 @@ async function addVoucher(button) {
     let dieuKien = selectedOption.getAttribute('data-dieukien');
     let giaTri = selectedOption.getAttribute('data-giatri');
     let secretPrice = document.getElementById('secret-price').value;
+    let giaTriToiDa = selectedOption.getAttribute('data-giatrimax');
     secretPrice = secretPrice.replaceAll('.','');
     console.log('loai', loai);
     console.log('tong tien', secretPrice);
     console.log('gia tri', giaTri);
     console.log('dieu kien', dieuKien);
+    console.log('gia tri max', giaTriToiDa);
     let giaCuoi;
-    if (loai == 1) {
+    if (loai.trim() === '1' ) {
         let tienGiam = secretPrice * giaTri / 100;
-        if (tienGiam < dieuKien) {
+        if (tienGiam < giaTriToiDa) {
             giaCuoi = secretPrice - tienGiam;
         } else {
-            giaCuoi = secretPrice - giaTri;
+            giaCuoi = secretPrice - giaTriToiDa;
         }
         console.log('tien giam', tienGiam);
         console.log('gia cuoi', giaCuoi);

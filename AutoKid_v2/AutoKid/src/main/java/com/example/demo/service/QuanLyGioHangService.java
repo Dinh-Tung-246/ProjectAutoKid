@@ -109,7 +109,7 @@ public class QuanLyGioHangService {
             GioHangChiTiet ghct = new GioHangChiTiet();
             ghct.setGioHang(gioHangRepo.findById(idGH).orElseThrow());
             ghct.setSanPhamChiTiet(spctRepo.findById(idSPCT).orElseThrow());
-            ghct.setSoLuong(1);
+            ghct.setSoLuong(soLuong);
             ghct.setDonGia(giaSauGiam);
             ghctRepo.save(ghct);
         }
