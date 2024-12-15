@@ -3,9 +3,14 @@ package com.example.demo.controller;
 
 import com.example.demo.model.HoaDon;
 import com.example.demo.model.HoaDonChiTiet;
+import com.example.demo.model.SanPhamChiTiet;
+import com.example.demo.model.Voucher;
 import com.example.demo.repository.KhachHangRepo;
 import com.example.demo.repository.PhuongThucThanhToanRepo;
 import com.example.demo.repository.SanPhamChiTietRepo;
+import com.example.demo.repository.VoucherRepo;
+import com.example.demo.response.SanPhamKhuyenMaiResponse;
+import com.example.demo.service.EmailSenderService;
 import com.example.demo.service.QuanLyDatHangService;
 import com.example.demo.service.VNPAYService;
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -27,6 +32,8 @@ import java.util.Map;
 public class VNPAYController {
     private static Map<String, Object> KHACH_HANG;
     private static List<Map<String, Object>> HDCT_LIST;
+    private static String EMAILKH;
+    private static Integer VOUCHER;
 
     private Logger logger = LoggerFactory.getLogger(VNPAYController.class);
 
@@ -45,6 +52,12 @@ public class VNPAYController {
     @Autowired
     PhuongThucThanhToanRepo phuongThucThanhToanRepo;
 
+    @Autowired
+    EmailSenderService emailSenderService;
+
+    @Autowired
+    VoucherRepo voucherRepo;
+
     @GetMapping("/")
     public String home() {
         return "/vnpay/createOrder";
@@ -56,6 +69,8 @@ public class VNPAYController {
                               @RequestParam("orderInfo") String orderInfo,
                               @RequestParam("vnpTxnRef") String vnpTxnRef,
                               @RequestParam("idKH") String idKH,
+                              @RequestParam("emailKH") String emailKH,
+                              @RequestParam("voucher") String voucher,
                               @RequestParam("hdct") String hdct, // chuỗi JSON
                               HttpServletRequest request) {
         String baseUrl = request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort();
@@ -76,6 +91,12 @@ public class VNPAYController {
         }
         KHACH_HANG = infoKH;
         HDCT_LIST = hdctlist;
+        EMAILKH = emailKH;
+        logger.info("voucher: {}", voucher);
+        if (voucher != null && !voucher.trim().isEmpty()) {
+            VOUCHER = Integer.parseInt(voucher);
+        }
+        logger.info("EMAIL KHACH HANG: {}", emailKH);
         System.out.println(HDCT_LIST);
         return "redirect:" + vnpayUrl;
     }
@@ -114,9 +135,20 @@ public class VNPAYController {
         hoaDon.setTenNguoiNhan(tenNN);
         hoaDon.setDiaChiNguoiNhan(diaChiNN);
         hoaDon.setSdtNguoiNhan(sdtNN);
+        hoaDon.setEmailNguoiNhan(EMAILKH);
+        if (VOUCHER != null) {
+            Voucher voucher = voucherRepo.findById(VOUCHER).orElseThrow();
+            hoaDon.setVoucher(voucher);
+        }
         hoaDon.setPhiShip(50000F);
         hoaDon.setOnline(true);
         quanLyDatHangService.createHoaDon(hoaDon);
+        // Gui mail cho khach hang
+        try {
+            emailSenderService.sendMailToKH(EMAILKH, maHD.toString(), tenNN);
+        } catch (Exception e) {
+            logger.info("Error when send mail for customer: {}", e.getMessage());
+        }
 
         logger.info("Data : {}", HDCT_LIST);
 
@@ -126,12 +158,14 @@ public class VNPAYController {
                 String idSPCT = map.get("idSPCT").toString();
                 hdct.setSanPhamChiTiet(spctRepo.findById(Integer.parseInt(idSPCT)).orElseThrow());
             }
+            Integer idSPCT = Integer.parseInt(map.get("idSPCT").toString());
+            SanPhamChiTiet spct = spctRepo.findById(idSPCT).orElseThrow();
+            hdct.setDonGia(Double.parseDouble(new SanPhamKhuyenMaiResponse(spct.getSanPham()).getGiaSauGiam().replaceAll(".","")));
             hdct.setSoLuong(Integer.parseInt(map.get("quantity").toString()));
             String donGiaSauGiam = map.get("totalPrice").toString();
             donGiaSauGiam = donGiaSauGiam.replace(".", "");
             hdct.setDonGiaSauGiam(Double.parseDouble(donGiaSauGiam));
             Integer soLuong = Integer.parseInt(map.get("quantity").toString());
-            Integer idSPCT = Integer.parseInt(map.get("idSPCT").toString());
 
             quanLyDatHangService.createHDCT(hdct, soLuong, idSPCT);
         }

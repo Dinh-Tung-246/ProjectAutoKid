@@ -25,7 +25,6 @@ public interface HoaDonRepo extends JpaRepository<HoaDon,Integer> {
     void updateHoaDon(@Param("trangThai") String trangThai,@Param("idHD") Integer idHD);
 
     Optional findHoaDonByMaHD(String maHD);
-    Optional<HoaDon> findByMaHD(String maHD);
 
     @Query("SELECT h FROM HoaDon h WHERE h.khachHang.id = :idKH ORDER BY h.ngayTao ASC ")
     List<HoaDon> getHDByIdKH(@Param("idKH") Integer idKH);
@@ -92,7 +91,7 @@ public interface HoaDonRepo extends JpaRepository<HoaDon,Integer> {
     @Query("SELECT sp.maSP AS idSanPham, " +
             "sp.tenSP AS tenSanPham, " +
             "SUM(hdct.soLuong) AS tongSoLuong, " +
-            "SUM(hdct.soLuong * hdct.donGiaSauGiam) AS tongDoanhThu " +
+            "SUM(hdct.donGiaSauGiam) AS tongDoanhThu " +
             "FROM HoaDonChiTiet hdct " +
             "JOIN hdct.sanPhamChiTiet spct " +
             "JOIN spct.sanPham sp " +
@@ -103,4 +102,5 @@ public interface HoaDonRepo extends JpaRepository<HoaDon,Integer> {
     @Query("SELECT h.id FROM HoaDon h" +
             " WHERE h.maHD = :maHD")
     Integer getIdHDByMaHD(@Param("maHD") String maHD);
+
 }
