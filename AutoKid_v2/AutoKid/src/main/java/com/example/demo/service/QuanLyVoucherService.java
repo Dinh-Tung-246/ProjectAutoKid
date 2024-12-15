@@ -26,6 +26,14 @@ public class QuanLyVoucherService {
         voucherRepo.save(voucher);
     }
 
+    public List<Voucher> searchVouchers(String keyword) {
+        return voucherRepo.searchByKeyword(keyword);
+    }
+
+    public List<Voucher> getVouchersByStatus(Integer status) {
+        return voucherRepo.findByTrangThai(status);
+    }
+
     public void deleteVoucher(Integer id){
         voucherRepo.deleteById(id);
     }
@@ -33,7 +41,6 @@ public class QuanLyVoucherService {
     public Voucher findCode(String ma) {
         return voucherRepo.findByMa(ma);
     }
-
     public double applyVoucher(Voucher voucher, double tongHoaDon){
         LocalDate now = LocalDate.now();
 
