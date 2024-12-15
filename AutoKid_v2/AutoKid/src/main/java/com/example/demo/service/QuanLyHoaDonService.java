@@ -37,6 +37,9 @@ public class QuanLyHoaDonService {
     @Autowired
     KhachHangRepo khachHangRepo;
 
+    @Autowired
+    VoucherRepo voucherRepo;
+
     public HoaDon save(HoaDon hoaDon){
         return hoaDonRepo.save(hoaDon);
     }
@@ -53,21 +56,22 @@ public class QuanLyHoaDonService {
     @Transactional
     public boolean updateProductQuantity(String maSPCT, Integer soLuong) {
         if (soLuong == 0) {
-            return false; // Không làm gì nếu số lượng là 0
+            return false;
         }
         if (soLuong > 0) {
-            // Gọi phương thức tăng số lượng
             int updatedRows = sanPhamChiTietRepo.updateSoLuongSPCTA(soLuong, maSPCT);
             return updatedRows > 0;
         } else {
-            // Gọi phương thức giảm số lượng, truyền vào giá trị dương
             int updatedRows = sanPhamChiTietRepo.updateSoLuongSPCTIncrease(Math.abs(soLuong), maSPCT);
             return updatedRows > 0;
         }
     }
 
 
-
+    public Voucher getVoucherById(Integer id) {
+        Optional<Voucher> voucher = voucherRepo.findById(id);
+        return voucher.orElse(null);
+    }
 
 
 

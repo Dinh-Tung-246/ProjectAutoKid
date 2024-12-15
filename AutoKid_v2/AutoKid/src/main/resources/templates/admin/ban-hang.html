@@ -235,10 +235,8 @@
                                         <th>Chọn voucher</th>
                                         <td>
                                             <select class="form-select" id="voucherSelect">
-                                                <option value="" selected>Chọn</option>
-                                                <option value="voucher1">Voucher 1</option>
-                                                <option value="voucher2">Voucher 2</option>
-                                                <option value="voucher3">Voucher 3</option>
+                                                <option value="" disabled selected>Chọn Voucher</option>
+                                                <option th:each="voucher : ${listvc}" th:value="${voucher.id}" th:text="${voucher.ten}"></option>
                                             </select>
                                         </td>
                                     </tr>
@@ -260,10 +258,9 @@
                                     <tr>
                                         <th>Loại thanh toán</th>
                                         <td>
-                                            <select class="form-select" id="paymentTypeSelect">
-                                                <option value="cash" selected>Tiền mặt</option>
-                                                <option value="transfer">Chuyển khoản</option>
-                                                <option value="cashandtransfer">Tiền mặt và Chuyển khoản</option>
+                                            <select class="form-select" id="paymentTypeSelect" required>
+                                                <option value="" disabled selected>Chọn loại thanh toán</option>
+                                                <option th:each="pttt : ${pttps}" th:value="${pttt.id}" th:text="${pttt.tenPTTT}"></option>
                                             </select>
                                         </td>
                                     </tr>
