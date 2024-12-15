@@ -1,5 +1,3 @@
-
-
 document.addEventListener("DOMContentLoaded", function () {
     const searchInput = document.getElementById("searchCustomerInput");
     const customerResults = document.getElementById("customerResults");
@@ -176,7 +174,6 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
 });
-
 
 document.addEventListener("DOMContentLoaded", function () {
 
@@ -467,10 +464,10 @@ document.addEventListener("DOMContentLoaded", function () {
                 <small>Kích cỡ: ${product.kichCo || "Không có"}</small>
             </td>
             <td class="productPrice">${product.donGia}</td>
-            <td class="productQuantity">
-                <button class="decrease-btn" data-index="${index}">-</button>
-                <input type="number" value="${product.soLuong}" min="1" class="quantity-input" data-index="${index}">
-                <button class="increase-btn" data-index="${index}">+</button>
+            <td class="productQuantity" style="position: relative;">
+                <button style="position: absolute;top: 19px;left: 8px;" class="decrease-btn" data-index="${index}">-</button>
+                <input style="position: absolute;width: 80px;right: 30px;top: 8px;text-align: center" type="number" value="${product.soLuong}" min="1" class="quantity-input" data-index="${index}">
+                <button style="position:absolute;right: 13px;top: 18px;" class="increase-btn" data-index="${index}">+</button>
             </td>
             <td class="thanhTien">${product.thanhTien}</td>
         `;
@@ -769,6 +766,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 if (updateResult.success) {
                     addProductToCart(selectedProduct, quantity);
                     showNotification("Sản phẩm đã được cập nhật vào giỏ hàng!");
+                    quantityModal.hide();
                 } else {
                     alert("Có lỗi xảy ra khi cập nhật sản phẩm!");
                 }
