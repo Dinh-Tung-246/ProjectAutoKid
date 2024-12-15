@@ -9,6 +9,7 @@ import com.example.demo.repository.KhachHangRepo;
 import com.example.demo.repository.PhuongThucThanhToanRepo;
 import com.example.demo.repository.SanPhamChiTietRepo;
 import com.example.demo.repository.VoucherRepo;
+import com.example.demo.response.SanPhamKhuyenMaiResponse;
 import com.example.demo.service.EmailSenderService;
 import com.example.demo.service.QuanLyDatHangService;
 import com.example.demo.service.VNPAYService;
@@ -159,7 +160,7 @@ public class VNPAYController {
             }
             Integer idSPCT = Integer.parseInt(map.get("idSPCT").toString());
             SanPhamChiTiet spct = spctRepo.findById(idSPCT).orElseThrow();
-            hdct.setDonGia(spct.getSanPham().getDonGia());
+            hdct.setDonGia(Double.parseDouble(new SanPhamKhuyenMaiResponse(spct.getSanPham()).getGiaSauGiam().replaceAll(".","")));
             hdct.setSoLuong(Integer.parseInt(map.get("quantity").toString()));
             String donGiaSauGiam = map.get("totalPrice").toString();
             donGiaSauGiam = donGiaSauGiam.replace(".", "");

@@ -2,6 +2,7 @@ package com.example.demo.controller;
 
 import com.example.demo.model.*;
 import com.example.demo.repository.*;
+import com.example.demo.response.SanPhamKhuyenMaiResponse;
 import com.example.demo.service.EmailSenderService;
 import com.example.demo.service.QuanLyDatHangService;
 import com.example.demo.service.QuanLySanPhamService;
@@ -117,7 +118,7 @@ public class AutokidCheckoutController {
                 hoaDonChiTiet.setSanPhamChiTiet(sanPhamChiTiet);
             }
             SanPhamChiTiet spct = sanPhamChiTietRepo.findById(Integer.parseInt(idSPCT.toString())).orElseThrow();
-            hoaDonChiTiet.setDonGia(spct.getSanPham().getDonGia());
+            hoaDonChiTiet.setDonGia(Double.parseDouble(new SanPhamKhuyenMaiResponse(spct.getSanPham()).getGiaSauGiam().replaceAll(".","")));
             hoaDonChiTiet.setSoLuong(Integer.parseInt((String) hdctData.get("soLuong")));
 //            hoaDonChiTiet.setDonGia(((Number) hdctData.get("donGia")).doubleValue());
             hoaDonChiTiet.setDonGiaSauGiam(Double.parseDouble(String.valueOf((Integer) hdctData.get("donGiaSauGiam"))));

@@ -112,10 +112,15 @@
                                 </div>
                             </div>
                             <div style="margin-bottom: 20px;"><strong>Hình thức thanh toán</strong></div>
-                            <div class="checkout__input__checkbox" th:each="pttt : ${pttt}">
-                                <label th:if="${pttt.trangThai == 1}">
-                                    [[${pttt.tenPTTT}]]
-                                    <input type="radio" name="payment_type" th:id="${pttt.maPTTT}" th:value="${pttt.id}"/>
+                            <div class="checkout__input__checkbox" >
+                                <label>
+                                    Thanh toán khi nhận hàng
+                                    <input type="radio" name="payment_type" id="PTTT001" value="1"/>
+                                    <span class="checkmark"></span>
+                                </label> <br/>
+                                <label>
+                                    Thanh toán bằng VNpay
+                                    <input type="radio" name="payment_type" id="PTTT002" value="2"/>
                                     <span class="checkmark"></span>
                                 </label>
                             </div>
