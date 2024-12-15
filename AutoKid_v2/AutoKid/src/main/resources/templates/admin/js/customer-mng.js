@@ -67,8 +67,9 @@ function showDetail(button) {
 }
 
 function closeDetail() {
-    document.getElementById("detailModal").style.display = "none";
-    document.getElementById("overlay").style.display = "none";
+    // document.getElementById("detailModal").style.display = "none";
+    // document.getElementById("overlay").style.display = "none";
+    window.location.reload();
 }
 
 function showCreateForm() {
@@ -76,9 +77,9 @@ function showCreateForm() {
     document.getElementById("overlay").style.display = "block";
 }
 
-function closeCreate() {
-    document.getElementById("createModal").style.display = "none";
-    document.getElementById("overlay").style.display = "none";
+function closeCreate(event) {
+    event.preventDefault();
+    window.location.reload();
 }
 
 document.getElementById('submitBtn').addEventListener('click', function (event) {
