@@ -36,6 +36,32 @@ public class VoucherController {
         return "/admin/voucher";
     }
 
+    @GetMapping("/filter")
+    public String getVouchersByStatus(@RequestParam("status") Integer status, Model model) {
+        List<Voucher> vouchers = service.getVouchersByStatus(status);
+        model.addAttribute("vouchers", vouchers);
+        model.addAttribute("vouchers", vouchers.stream().map(VoucherResponse::new).collect(Collectors.toList()));
+        model.addAttribute("voucherAdd", new Voucher());
+        model.addAttribute("updateVoucher", new Voucher());
+        model.addAttribute("voucher", service.getAll());
+        return "/admin/voucher";
+    }
+
+    @GetMapping("/search")
+    public String searchVouchers(@RequestParam(name = "keyword", required = false) String keyword, Model model) {
+        List<Voucher> vouchers = keyword == null || keyword.isEmpty()
+                ? service.getAll()
+                : service.searchVouchers(keyword);
+
+        model.addAttribute("vouchers", vouchers);
+        model.addAttribute("keyword", keyword);
+        model.addAttribute("vouchers", vouchers.stream().map(VoucherResponse::new).collect(Collectors.toList()));
+        model.addAttribute("voucherAdd", new Voucher());
+        model.addAttribute("updateVoucher", new Voucher());
+
+        return "/admin/voucher";
+    }
+
     @PostMapping ("/save")
     public String saveVoucher(@ModelAttribute("voucherAdd") Voucher voucher) {
         service.saveVoucher(voucher);
