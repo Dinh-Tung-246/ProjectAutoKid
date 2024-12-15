@@ -208,10 +208,10 @@
                                            th:data-tt="${promotion.trangThaiKM}"
                                            th:data-id="${promotion.id}"
                                            onclick="showDetail(this)"> Chi tiết</a>
-                                        <a th:href="@{/admin/promotion/delete/{id}(id=${promotion.id})}"
-                                           onclick="return confirm('Bạn có chắc muốn xóa không?');"
-                                           class="btn btn-danger">Destroy
-                                        </a>
+<!--                                        <a th:href="@{/admin/promotion/delete/{id}(id=${promotion.id})}"-->
+<!--                                           onclick="return confirm('Bạn có chắc muốn xóa không?');"-->
+<!--                                           class="btn btn-danger">Destroy-->
+<!--                                        </a>-->
                                     </td>
                                 </tr>
                                 </tbody>
@@ -236,17 +236,16 @@
                         <div class="modal-body">
                             <div class="form-container">
                                 <h5>Nhập Thông Tin Khuyến Mãi</h5>
-                                <form th:action="@{/admin/promotion/save}" th:object="${addPromotion}" method="POST">
+                                <form id="formAdd" th:action="@{/admin/promotion/save}" th:object="${addPromotion}" method="POST">
                                     <div class="form-row">
                                         <div class="form-group">
                                             <label for="maKM">Mã khuyến mãi</label>
-                                            <input type="text" th:field="*{maKM}" id="maKM" placeholder="Mã khuyến mãi"
-                                                   required>
+                                            <input type="text" th:field="*{maKM}" id="maKM" placeholder="Mã khuyến mãi">
                                         </div>
                                         <div class="form-group">
                                             <label for="tenKM">Tên khuyến mãi</label>
                                             <input type="text" th:field="*{tenKM}" id="tenKM"
-                                                   placeholder="Tên khuyến mãi" required>
+                                                   placeholder="Tên khuyến mãi">
                                         </div>
                                     </div>
 
@@ -262,15 +261,14 @@
                                     </div>
                                     <div class="form-row">
                                         <div class="form-group">
-                                            <label for="giatri">Giá trị</label>
-                                            <input type="text" th:field="*{giaTri}" id="giatri" placeholder="Giá trị"
-                                                   required>
+                                            <label for="giaTri">Giá trị</label>
+                                            <input type="text" th:field="*{giaTri}" id="giaTri" placeholder="Phần trăm" oninput="validateInputAdd()">
                                         </div>
                                     </div>
                                     <div class="form-row">
                                         <div class="form-group">
                                             <label for="trangThaiKM">Trạng thái</label>
-                                            <select th:field="*{trangThaiKM}" id="trangThaiKM" required>
+                                            <select th:field="*{trangThaiKM}" id="trangThaiKM"  >
                                                 <option value="" disabled selected>Chọn trạng thái</option>
                                                 <option value="1">Hoạt động</option>
                                                 <option value="0">Không hoạt động</option>
@@ -278,7 +276,7 @@
                                         </div>
                                     </div>
 
-                                    <button type="submit" class="submit-btn">Thêm Khuyến Mãi</button>
+                                    <button type="submit" class="submit-btn" onclick="checkValidateAdd(event)">Thêm Khuyến Mãi</button>
                                 </form>
                             </div>
                         </div>
@@ -299,19 +297,19 @@
                                     <h2>Thông tin khuyến mãi</h2>
                                     <br>
                                     <div>
-                                        <form th:action="@{/admin/promotion/update}" th:object="${updatePromotion}"
+                                        <form id="formUpdate" th:action="@{/admin/promotion/update}" th:object="${updatePromotion}"
                                               method="POST" class="promotion-form">
                                             <div class="form-row">
-                                                <input type="hidden" id="modalIdKM" th:field="*{id}" required>
+                                                <input type="hidden" id="modalIdKM" th:field="*{id}"  >
                                                 <div class="form-group">
                                                     <label for="modalMaKM">Mã khuyến mãi</label>
                                                     <input type="text" id="modalMaKM" th:field="*{maKM}"
-                                                           placeholder="Mã khuyến mãi" required>
+                                                           placeholder="Mã khuyến mãi" readonly>
                                                 </div>
                                                 <div class="form-group">
                                                     <label for="modalTenKM">Tên khuyến mãi</label>
                                                     <input type="text" id="modalTenKM" th:field="*{tenKM}"
-                                                           placeholder="Tên khuyến mãi" required>
+                                                           placeholder="Tên khuyến mãi">
                                                 </div>
                                             </div>
 
@@ -319,18 +317,18 @@
                                                 <div class="form-group">
                                                     <label for="modalBD">Ngày bắt đầu</label>
                                                     <input type="date" id="modalBD" th:field="*{ngayBatDau}"
-                                                           class="date" required>
+                                                           class="date">
                                                 </div>
                                                 <div class="form-group">
                                                     <label for="modalKT">Ngày kết thúc</label>
                                                     <input type="date" id="modalKT" th:field="*{ngayKetThuc}"
-                                                           class="date" required>
+                                                           class="date">
                                                 </div>
                                             </div>
                                             <div class="form-row">
                                                 <div class="form-group">
                                                     <label for="modalGiaTri">Giá trị</label>
-                                                    <input type="text" id="modalGiaTri" th:field="*{giaTri}" required>
+                                                    <input type="text" id="modalGiaTri" th:field="*{giaTri}" oninput="validateInputUpdate()">
                                                 </div>
                                             </div>
                                             <div class="form-row">
@@ -342,8 +340,8 @@
                                                     </select>
                                                 </div>
                                             </div>
-                                            <div class="form-action">
-                                                <button class="btn btn-primary" type="submit">Lưu khuyến mãi</button>
+                                            <div>
+                                                <button class="btn btn-primary" type="submit" onclick="checkValidateUpdate(event)">Lưu khuyến mãi</button>
                                             </div>
                                         </form>
                                     </div>
@@ -354,38 +352,6 @@
                 </div>
             </div>
             <!-- modal-->
-            <script>
-                const myModal = document.getElementById('myModal')
-                const myInput = document.getElementById('myInput')
-
-                myModal.addEventListener('shown.bs.modal', () => {
-                    myInput.focus()
-                })
-
-                function showDetail(button) {
-                    document.getElementById('modalIdKM').value = button.getAttribute("data-id");
-                    document.getElementById('modalMaKM').value = button.getAttribute("data-ma");
-                    document.getElementById('modalTenKM').value = button.getAttribute("data-ten");
-                    document.getElementById('modalBD').value = button.getAttribute("data-batDau");
-                    document.getElementById('modalKT').value = button.getAttribute("data-ketThuc");
-                    document.getElementById('modalGiaTri').value = button.getAttribute("data-giaTri");
-                    document.getElementById('modalTT').value = button.getAttribute("data-tt");
-                    document.getElementById('detailModal').style.display = 'block';
-                }
-
-                const selectElement = document.getElementById('modalTT');
-                const statusText = document.getElementById('statusText');
-
-                function updateStatusText() {
-                    const value = selectElement.value;
-                    statusText.textContent = value === "1" ? "Trạng thái: Hoạt động" : "Trạng thái: Không hoạt động";
-                }
-
-                selectElement.addEventListener('change', updateStatusText);
-
-                window.addEventListener('load', updateStatusText);
-
-            </script>
         </div>
         <!-- ! Footer -->
         <footer class="footer">
@@ -430,6 +396,8 @@
 <script src="plugins/feather.min.js"></script>
 <!-- Custom scripts -->
 <script src="js/script.js"></script>
+
+<script src="js/promotion.js"></script>
 </body>
 
 </html>

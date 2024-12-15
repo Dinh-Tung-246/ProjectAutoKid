@@ -6,11 +6,14 @@ import com.example.demo.response.VoucherResponse;
 import com.example.demo.service.QuanLyDatHangService;
 import com.example.demo.service.QuanLyVoucherService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Controller
@@ -79,6 +82,17 @@ public class VoucherController {
         service.deleteVoucher(id);
         return "redirect:/admin/voucher/index";
     }
+
+     @PostMapping("/check-ma")
+     @ResponseBody
+     public ResponseEntity<?> checkMa(@RequestBody Map<String, Object> mavoucher){
+        String maVoucher = mavoucher.get("ma").toString();
+        if (service.checkMa(maVoucher)) {
+            return ResponseEntity.ok("oki");
+        } else {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Lỗi");
+        }
+     }
 
     @PostMapping("/aplly")
     public String applyVoucher(@RequestParam("ma") String ma,
