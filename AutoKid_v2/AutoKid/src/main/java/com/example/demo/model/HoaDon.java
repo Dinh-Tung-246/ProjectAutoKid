@@ -86,6 +86,7 @@ public class HoaDon {
                 ", tenNguoiNhan='" + tenNguoiNhan + '\'' +
                 ", diaChiNguoiNhan='" + diaChiNguoiNhan + '\'' +
                 ", sdtNguoiNhan='" + sdtNguoiNhan + '\'' +
+                ", EmailNguoiNhan='" + EmailNguoiNhan + '\'' +
                 ", hoaDonChiTiets=" + hoaDonChiTiets +
                 ", isOnline=" + isOnline +
                 '}';
