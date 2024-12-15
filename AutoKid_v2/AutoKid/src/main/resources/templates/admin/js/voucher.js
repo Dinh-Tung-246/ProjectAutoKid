@@ -48,7 +48,7 @@ selectElement.addEventListener('change', updateTrangThai, updateLoai);
 window.addEventListener('load', updateTrangThai, updateLoai);
 
 
-function checkValidateAdd(event) {
+async function checkValidateAdd(event) {
     event.preventDefault();
 
     const formAdd = document.getElementById('formAdd');
@@ -75,6 +75,30 @@ function checkValidateAdd(event) {
         });
         return;
     }
+
+    const mavoucher = {
+        ma: ma,
+    }
+    const response = await fetch('/admin/voucher/check-ma', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(mavoucher),
+    });
+    if (!response.ok) {
+        Swal.fire({
+            background: "#fff",
+            icon: "error",
+            title: "Lỗi" ,
+            text: "Mã không được trùng!",
+            customClass: {
+                title: 'my-custom-title'
+            }
+        });
+        return;
+    }
+
 
     if (!ten || ten.length < 3) {
         Swal.fire({

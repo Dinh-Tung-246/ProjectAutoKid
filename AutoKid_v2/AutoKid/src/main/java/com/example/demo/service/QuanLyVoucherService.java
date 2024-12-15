@@ -41,6 +41,18 @@ public class QuanLyVoucherService {
     public Voucher findCode(String ma) {
         return voucherRepo.findByMa(ma);
     }
+
+    public boolean checkMa(String ma){
+        boolean result = true;
+        for (Voucher v : voucherRepo.findAll()) {
+            if (v.getMa().equals(ma.trim())){
+                result = false;
+                break;
+            }
+        }
+        return result;
+    }
+
     public double applyVoucher(Voucher voucher, double tongHoaDon){
         LocalDate now = LocalDate.now();
 

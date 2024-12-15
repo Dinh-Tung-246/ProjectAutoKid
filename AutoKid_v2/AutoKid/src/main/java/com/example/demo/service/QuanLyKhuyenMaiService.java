@@ -32,8 +32,15 @@ public class QuanLyKhuyenMaiService {
         promotionRepository.save(khuyenMai);
     }
 
-    public void getById(Integer id){
-        promotionRepository.findById(id);
+    public boolean checkMa(String ma){
+        boolean result = true;
+        for (KhuyenMai km : promotionRepository.findAll()) {
+            if (km.getMaKM().equals(ma.trim())){
+                result = false;
+                break;
+            }
+        }
+        return result;
     }
 
     public List<KhuyenMai> searchByKeyword(String keyword) {

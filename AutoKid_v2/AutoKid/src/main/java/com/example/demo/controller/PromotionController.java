@@ -14,6 +14,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @Controller
@@ -39,6 +40,18 @@ public class PromotionController {
         model.addAttribute("namePage", "promotion");
         return "/admin/promotion";
     }
+
+    @PostMapping("/check-ma")
+    @ResponseBody
+    public ResponseEntity<?> checkMa(@RequestBody Map<String, Object> makhuyenmai){
+        String maKhuyenMai = makhuyenmai.get("ma").toString();
+        if (service.checkMa(maKhuyenMai)) {
+            return ResponseEntity.ok("hehe");
+        } else {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("errors");
+        }
+    }
+
 
     @GetMapping("/search")
     public String searchPromotions(@RequestParam(value = "keyword", required = false) String keyword, Model model) {
