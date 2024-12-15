@@ -5,6 +5,7 @@ import com.example.demo.repository.HoaDonRepo;
 import com.example.demo.repository.KhachHangRepo;
 import com.example.demo.repository.NhanVienRepo;
 import com.example.demo.repository.SanPhamRepo;
+import com.example.demo.service.QuanLyDatHangService;
 import com.example.demo.service.QuanLySanPhamService;
 
 import com.example.demo.service.ThongKeService;
@@ -63,7 +64,8 @@ public class AdminProductController {
     @Autowired
     private ThongKeService thongKeService;
 
-
+    @Autowired
+    QuanLyDatHangService serviceQLDH;
 
     @GetMapping("/home")
     public String home(){
@@ -78,6 +80,9 @@ public class AdminProductController {
         model.addAttribute("addSPCT", new SanPhamChiTiet());
         model.addAttribute("updateSPCT", new SanPhamChiTiet());
         model.addAttribute("spct", sanPhamChiTiets);
+        model.addAttribute("donhang",serviceQLDH.getDonHang());
+        model.addAttribute("int", serviceQLDH.getIndex());
+        model.addAttribute("namePage", "product");
         return "admin/products";
     }
 
@@ -118,7 +123,7 @@ public class AdminProductController {
         model.addAttribute("addSanPham", new SanPham());
         model.addAttribute("updateSanPham", new SanPham());
         model.addAttribute("sps", sanPhams);
-
+        model.addAttribute("namePage", "product");
         return "admin/san-pham";
     }
 
@@ -268,7 +273,9 @@ public class AdminProductController {
         model.addAttribute("invoiceCount", thongKeService.getInvoiceCount());
         model.addAttribute("numberOfEmployees", numberOfEmployees);
         model.addAttribute("numberOfProducts", numberOfProducts);
-
+        model.addAttribute("donhang",serviceQLDH.getDonHang());
+        model.addAttribute("int", serviceQLDH.getIndex());
+        model.addAttribute("namePage", "statistical");
 
         return "admin/statistical-year";
     }
@@ -283,7 +290,9 @@ public class AdminProductController {
         model.addAttribute("invoiceCount", thongKeService.getInvoiceCount());
         model.addAttribute("numberOfEmployees", numberOfEmployees);
         model.addAttribute("numberOfProducts", numberOfProducts);
-
+        model.addAttribute("donhang",serviceQLDH.getDonHang());
+        model.addAttribute("int", serviceQLDH.getIndex());
+        model.addAttribute("namePage", "statistical");
 
         return "admin/statistical-month";
     }
@@ -297,6 +306,9 @@ public class AdminProductController {
         model.addAttribute("data", thongKeService.findTop5BestSellingProducts());
         model.addAttribute("numberOfEmployees", numberOfEmployees);
         model.addAttribute("numberOfProducts", numberOfProducts);
+        model.addAttribute("donhang",serviceQLDH.getDonHang());
+        model.addAttribute("int", serviceQLDH.getIndex());
+        model.addAttribute("namePage", "statistical");
 
         return "admin/statistical-product";
     }
@@ -305,7 +317,9 @@ public class AdminProductController {
     @GetMapping("/thuong-hieu")
     public String thuongHieu(Model model){
         List<ThuongHieu> list = service.getAllThuongHieu();
-        model.addAttribute("namePage", "thuong-hieu");
+        model.addAttribute("donhang",serviceQLDH.getDonHang());
+        model.addAttribute("int", serviceQLDH.getIndex());
+        model.addAttribute("namePage", "statistical");
         model.addAttribute("updateThuongHieu", new ThuongHieu());
         model.addAttribute("ths", list);
         return "admin/thuong-hieu";
@@ -322,7 +336,9 @@ public class AdminProductController {
     @GetMapping("/mau-sac")
     public String mauSac(Model model){
         List<MauSac> list = service.getAllMauSac();
-        model.addAttribute("namePage", "mau-sac");
+        model.addAttribute("donhang",serviceQLDH.getDonHang());
+        model.addAttribute("int", serviceQLDH.getIndex());
+        model.addAttribute("namePage", "statistical");
         model.addAttribute("updateMauSac", new MauSac());
         model.addAttribute("mss", list);
         return "admin/mau-sac";
@@ -364,7 +380,9 @@ public class AdminProductController {
     @GetMapping("/kich-co")
     public String kichCo(Model model){
         List<KichCo> list = service.getAllKichCo();
-        model.addAttribute("namePage", "kich-co");
+        model.addAttribute("donhang",serviceQLDH.getDonHang());
+        model.addAttribute("int", serviceQLDH.getIndex());
+        model.addAttribute("namePage", "statistical");
         model.addAttribute("updateKichCo", new KichCo());
         model.addAttribute("kcs", list);
         return "admin/kich-co";
@@ -429,13 +447,18 @@ public class AdminProductController {
     public String searchTH(@RequestParam("tenTH") String tenTH , Model model){
         List<ThuongHieu> list = service.searchTH("%" + tenTH +"%");
         model.addAttribute("ths", list);
+        model.addAttribute("donhang",serviceQLDH.getDonHang());
+        model.addAttribute("int", serviceQLDH.getIndex());
+        model.addAttribute("namePage", "statistical");
         return "admin/thuong-hieu";
     }
 
     @GetMapping("/chat-lieu")
     public String chatLieu(Model model){
         List<ChatLieu> list = service.getAllChatLieu();
-        model.addAttribute("namePage", "chat-lieu");
+        model.addAttribute("donhang",serviceQLDH.getDonHang());
+        model.addAttribute("int", serviceQLDH.getIndex());
+        model.addAttribute("namePage", "statistical");
         model.addAttribute("updateChatLieu", new ChatLieu());
         model.addAttribute("cls", list);
         return "admin/chat-lieu";
@@ -474,6 +497,9 @@ public class AdminProductController {
     public String getAllLoaiSanPham(Model model) {
         model.addAttribute("lsps",service.getAllLoaiSanPham());
         model.addAttribute("updateLoaiSanPham", new LoaiSanPham());
+        model.addAttribute("donhang",serviceQLDH.getDonHang());
+        model.addAttribute("int", serviceQLDH.getIndex());
+        model.addAttribute("namePage", "statistical");
         return "admin/loai-san-pham";
     }
 

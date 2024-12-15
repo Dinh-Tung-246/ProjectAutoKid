@@ -29,4 +29,11 @@ public interface GioHangChiTietRepo extends JpaRepository<GioHangChiTiet,Integer
             " SET ghct.soLuong = :soLuong, ghct.donGia = :donGia" +
             " WHERE ghct.gioHang.idGioHang = :idGH AND ghct.sanPhamChiTiet.id = :idSPCT")
     void updateSoLuongSPCT(@Param("soLuong") Integer soLuong, @Param("donGia") Double donGia, @Param("idGH") Integer idGH, @Param("idSPCT") Integer idSPCT);
+
+    @Modifying
+    @Transactional
+    @Query("UPDATE GioHangChiTiet ghct " +
+            "SET ghct.soLuong= :soLuong, ghct.donGia = :donGia " +
+            "WHERE ghct.idGioHangChiTiet = :idGHCT")
+    void updateSoLuongSPCTinGHCT(@Param("soLuong") Integer soLuong, @Param("donGia") Double donGia, @Param("idGHCT") Integer idGHCT);
 }

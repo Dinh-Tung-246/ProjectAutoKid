@@ -115,12 +115,19 @@ public class QuanLyDatHangService {
         return true;
     }
 
-    // Lay danh sach cac ma dang hoat dong trong ngay
-    public List<Voucher> getAllVoucher() {
+    // Lay danh sach cac ma dang hoat dong trong ngay thoa man dieu kien ap dung
+    public List<Voucher> getAllVoucher(Double tongTien) {
         Date date = new Date();
         LocalDate today = date.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
         logger.info("Date: {}", today);
-        return voucherRepo.getAllVoucherisAction(today);
+        List<Voucher> list =  voucherRepo.getAllVoucherisAction(today);
+        List<Voucher> result = new ArrayList<>();
+        for (Voucher vc: list) {
+            if (vc.getDieuKien() < tongTien && vc.getTrangThai() == 1) {
+                result.add(vc);
+            }
+        }
+        return result;
     }
 
 }

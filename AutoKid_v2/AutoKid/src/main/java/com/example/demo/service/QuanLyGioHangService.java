@@ -16,7 +16,9 @@ import org.springframework.stereotype.Service;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class QuanLyGioHangService {
@@ -107,12 +109,35 @@ public class QuanLyGioHangService {
             GioHangChiTiet ghct = new GioHangChiTiet();
             ghct.setGioHang(gioHangRepo.findById(idGH).orElseThrow());
             ghct.setSanPhamChiTiet(spctRepo.findById(idSPCT).orElseThrow());
-            ghct.setSoLuong(1);
+            ghct.setSoLuong(soLuong);
             ghct.setDonGia(giaSauGiam);
             ghctRepo.save(ghct);
         }
     }
 
+    // Thay doi so luong trong gio
+    public void updateSoLuongSPCT(Integer idKH, Integer idSPCT, Integer soLuong) {
+        GioHangChiTiet ghct = ghctRepo.getGHCT(idKH, idSPCT);
+        SanPhamChiTiet spct = spctRepo.findById(idSPCT).orElseThrow();
+        Double donGia = spct.getSanPham().getDonGia() * soLuong;
+        ghctRepo.updateSoLuongSPCTinGHCT(soLuong, donGia, ghct.getIdGioHangChiTiet());
+    }
+
+    public void removeGHCT(Integer idKH, Integer idSPCT) {
+        GioHangChiTiet ghct = ghctRepo.getGHCT(idKH, idSPCT);
+        ghctRepo.delete(ghct);
+    }
+
+    public Map<String, Object> checkSoLuong(Integer idSPCT, Integer soLuong) {
+        Map<String, Object> map = new LinkedHashMap<>();
+        SanPhamChiTiet spct = spctRepo.findById(idSPCT).orElseThrow();
+        if(spct.getSoLuong() < soLuong) {
+            map.put("result", "Sản phẩm " + spct.getSanPham().getTenSP() + "(" + spct.getMauSac().getTenMS() + ") " + "vượt quá số lượng trong kho");
+        } else {
+            map.put("result", "ok");
+        }
+        return map;
+    }
     // Xóa sản phẩm khỏi giỏ hoặc giảm số lượng
 //    public void reduceSPCT(Integer idGHCT, Integer soLuong) {
 //        if(soLuong != null) { // giảm số lượng sản phẩm trong giỏ

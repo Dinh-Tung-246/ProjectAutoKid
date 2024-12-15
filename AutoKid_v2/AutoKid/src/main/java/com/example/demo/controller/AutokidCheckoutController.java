@@ -1,10 +1,9 @@
 package com.example.demo.controller;
 
 import com.example.demo.model.*;
-import com.example.demo.repository.KhachHangRepo;
-import com.example.demo.repository.LoaiSanPhamRepo;
-import com.example.demo.repository.PhuongThucThanhToanRepo;
-import com.example.demo.repository.SanPhamChiTietRepo;
+import com.example.demo.repository.*;
+import com.example.demo.response.SanPhamKhuyenMaiResponse;
+import com.example.demo.service.EmailSenderService;
 import com.example.demo.service.QuanLyDatHangService;
 import com.example.demo.service.QuanLySanPhamService;
 import org.slf4j.Logger;
@@ -43,6 +42,12 @@ public class AutokidCheckoutController {
     @Autowired
     QuanLyDatHangService qldhService;
 
+    @Autowired
+    EmailSenderService emailSenderService;
+
+    @Autowired
+    VoucherRepo voucherRepo;
+
     @GetMapping("")
     public String showCheckout(Model model) {
         model.addAttribute("currentPage", "checkout");
@@ -62,9 +67,10 @@ public class AutokidCheckoutController {
         hoaDon.setMaHD((String) hoaDonData.get("maHD"));
         hoaDon.setTenNguoiNhan((String) hoaDonData.get("tenNguoiNhan"));
         hoaDon.setSdtNguoiNhan((String) hoaDonData.get("sdtNguoiNhan"));
+        hoaDon.setEmailNguoiNhan(hoaDonData.get("emailNguoiNhan").toString());
         hoaDon.setDiaChiNguoiNhan((String) hoaDonData.get("diaChiNguoiNhan"));
 //            hoaDon.setNgayTao(Date.valueOf((String) hoaDonData.get("ngayTao")));
-        hoaDon.setTongTien(((Number) hoaDonData.get("tongTien")).floatValue());
+        hoaDon.setTongTien(Float.parseFloat(hoaDonData.get("tongTien").toString()));
         hoaDon.setPhiShip(((Number) hoaDonData.get("phiShip")).floatValue());
         hoaDon.setTrangThaiHD((String) hoaDonData.get("trangThaiHD"));
         hoaDon.setPhiShip(50000F);
@@ -80,9 +86,24 @@ public class AutokidCheckoutController {
             KhachHang kh = khachHangRepo.findById(idKH).orElseThrow();
             hoaDon.setKhachHang(kh);
         }
+        Object voucher = hoaDonData.get("voucher");
+        logger.info("voucher: {}", voucher);
+        if (voucher != null && !voucher.toString().trim().isEmpty()) {
+            Integer idVoucher = Integer.parseInt(voucher.toString());
+            Voucher voucher1 = voucherRepo.findById(idVoucher).orElseThrow();
+            hoaDon.setVoucher(voucher1);
+        }
 
         // Lưu HoaDon
         qldhService.createHoaDon(hoaDon);
+        // Gui mail cho khach hang
+        try {
+            emailSenderService.sendMailToKH(hoaDonData.get("emailNguoiNhan").toString()
+                    , hoaDonData.get("maHD").toString()
+                    , hoaDonData.get("tenNguoiNhan").toString());
+        } catch (Exception e) {
+            logger.info("Error when send mail for customer: {}", e.getMessage());
+        }
 
         logger.info("Data: {}", hoaDonChiTietList);
         for (Map<String, Object> hdctData : hoaDonChiTietList) {
@@ -96,6 +117,8 @@ public class AutokidCheckoutController {
                         .orElseThrow(() -> new RuntimeException("Không tìm thấy sản phẩm: " + idSP));
                 hoaDonChiTiet.setSanPhamChiTiet(sanPhamChiTiet);
             }
+            SanPhamChiTiet spct = sanPhamChiTietRepo.findById(Integer.parseInt(idSPCT.toString())).orElseThrow();
+            hoaDonChiTiet.setDonGia(Double.parseDouble(new SanPhamKhuyenMaiResponse(spct.getSanPham()).getGiaSauGiam().replace(".","")));
             hoaDonChiTiet.setSoLuong(Integer.parseInt((String) hdctData.get("soLuong")));
 //            hoaDonChiTiet.setDonGia(((Number) hdctData.get("donGia")).doubleValue());
             hoaDonChiTiet.setDonGiaSauGiam(Double.parseDouble(String.valueOf((Integer) hdctData.get("donGiaSauGiam"))));

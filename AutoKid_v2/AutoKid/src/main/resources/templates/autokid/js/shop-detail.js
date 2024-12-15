@@ -21,7 +21,7 @@ function decreaseQuantity() {
 }
 
 // Hàm thêm sản phẩm vào giỏ từ button
-$("#add-to-cart").on("click", function (event) {
+$("#add-to-cart").on("click", async function (event) {
     event.preventDefault();
 
     const cartData = JSON.parse(sessionStorage.getItem("cart")) || [];
@@ -65,7 +65,7 @@ $("#add-to-cart").on("click", function (event) {
         });
         return;
     }
-    if (quantitySP > soLuongSPCT-1) {
+    if (quantitySP > soLuongSPCT - 1) {
         Swal.fire({
             title: "Số lượng sản phẩm quá lớn, hiện tại shop không thể kịp cung cấp!",
             text: "Xin lỗi vì sự bất tiện này",
@@ -85,33 +85,61 @@ $("#add-to-cart").on("click", function (event) {
         });
         return;
     } else {
-        let cart = JSON.parse(sessionStorage.getItem("cart")) || [];
+        const KH = JSON.parse(sessionStorage.getItem("KH")) || [];
+        if (KH.length === 0) {
+            let cart = JSON.parse(sessionStorage.getItem("cart")) || [];
+            // Kiểm tra xem sản phẩm đã có trong giỏ chưa
+            let sp = cart.find((item) => item.idSPCT === idSPCT && item.idSP === idSP);
 
-        // Kiểm tra xem sản phẩm đã có trong giỏ chưa
-        let sp = cart.find((item) => item.idSPCT === idSPCT && item.idSP === idSP);
+            if (sp) {
+                sp.quantity = sp.quantity + quantitySP;
+            } else {
+                cart.push({
+                    idSP: idSP,
+                    name: tenSP,
+                    price: giaSP,
+                    idSPCT: idSPCT,
+                    color: tenMS,
+                    anhSP: anhStr,
+                    quantity: quantitySP,
+                });
+            }
 
-        if (sp) {
-            sp.quantity = sp.quantity + quantitySP;
-        } else {
-            cart.push({
-                idSP: idSP,
-                name: tenSP,
-                price: giaSP,
-                idSPCT: idSPCT,
-                color: tenMS,
-                anhSP: anhStr,
-                quantity: quantitySP,
+            sessionStorage.setItem("cart", JSON.stringify(cart));
+            updateCartCount();
+            updateCartTotal();
+            Swal.fire({
+                title: "Thêm sản phẩm vào giỏ hàng thành công!",
+                icon: "success",
+                confirmButtonText: "OK",
+            }).then(() => {
+                window.location.reload();
             });
-        }
+        } else {
+            const idKH = KH.idKH;
+            const payload = {
+                idKH: idKH,
+                idSPCT: idSPCT,
+                soLuong: quantitySP,
+            }
 
-        sessionStorage.setItem("cart", JSON.stringify(cart));
-        updateCartCount();
-        updateCartTotal();
-        Swal.fire({
-            title: "Thêm sản phẩm vào giỏ hàng thành công!",
-            icon: "success",
-            confirmButtonText: "OK",
-        }).then(() => {window.location.reload();});
+            const result = await fetch('/api/add-to-cart', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(payload),
+            });
+            if (result.ok) {
+                Swal.fire({
+                    title: "Thêm sản phẩm vào giỏ hàng thành công!",
+                    icon: "success",
+                    confirmButtonText: "OK",
+                }).then(() => {
+                    window.location.reload();
+                });
+            }
+        }
     }
 });
 
@@ -124,7 +152,7 @@ document.querySelectorAll('.custom-radio-div').forEach(item => {
         this.classList.add('selected');
 
         const anhSPCT = this.getAttribute('data-anhspct');
-        const soLuong =this.getAttribute('data-soluong');
+        const soLuong = this.getAttribute('data-soluong');
         console.log(soLuong);
         if (soLuong === 0) {
             document.getElementById('so-luong').textContent = 'Hết hàng';
