@@ -8,3 +8,4 @@ public class HoaDonChiTietRequest {
     private Integer soLuong;
     private Double donGia;
 }
+

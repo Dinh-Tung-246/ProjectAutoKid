@@ -63,7 +63,6 @@ public class HoaDon {
     @Column(name = "email_nguoi_nhan")
     private String EmailNguoiNhan;
 
-
     @OneToMany(mappedBy = "hoaDon", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
     private List<HoaDonChiTiet> hoaDonChiTiets = new ArrayList<>();
 

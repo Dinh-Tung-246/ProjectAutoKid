@@ -21,7 +21,7 @@ socket.onopen = function () {
 socket.onmessage = function (event) {
     console.log("Du lieu nhan tu server: ", event.data);
     // updateUI()
-    window.location.href= "http://localhost:8080/admin/customer-management/";
+    window.location.reload();
 }
 
 // Khi có lỗi
