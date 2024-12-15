@@ -195,7 +195,7 @@ public class AdminBanHangController {
             KhachHang khachHang = khachHangOpt.get();
 
             // Lấy và kiểm tra thông tin tổng tiền, số lượng
-            Integer discountPrice = (Integer) hoaDonRequest.get("finalAmount");
+            Integer discountPrice = (Integer) hoaDonRequest.get("discountPrice");
             Integer totalAmount = (Integer) hoaDonRequest.get("totalAmount");
 
             if (discountPrice == null || discountPrice <= 0) {
