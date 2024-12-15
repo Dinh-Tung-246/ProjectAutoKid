@@ -194,7 +194,7 @@ document.addEventListener("DOMContentLoaded", function () {
     if (!sessionStorage.getItem("cart")) {
         sessionStorage.setItem("cart", JSON.stringify({})); // Khởi tạo cart nếu chưa có
     }
-    // Hàm hiển thị danh sách hóa đơn
+
     function renderInvoices() {
         const invoiceContainer = document.getElementById("invoiceContainer");
         invoiceContainer.innerHTML = ""; // Xóa nội dung cũ
@@ -212,15 +212,15 @@ document.addEventListener("DOMContentLoaded", function () {
             const deleteButton = document.createElement("button");
             deleteButton.className = "delete-button";
             deleteButton.textContent = "×"; // Dấu "X"
-            deleteButton.addEventListener("click", () => {
-                deleteInvoice(index);
+            deleteButton.addEventListener("click", (event) => {
+                event.stopPropagation(); // Ngăn không cho sự kiện click trên hóa đơn được gọi khi nhấn nút xóa
+                deleteInvoice(index);  // Xóa đơn hàng tại vị trí index
             });
 
             // Xử lý khi nhấn vào đơn hàng
             invoiceItem.addEventListener("click", () => {
-                selectOrder(invoice);
-                // Hiển thị giỏ hàng của hóa đơn khi click
-                renderCart(invoice);
+                selectOrder(invoice);  // Chọn đơn hàng và cập nhật thông tin
+                renderCart(invoice);  // Hiển thị giỏ hàng của hóa đơn khi click
                 // Thêm hoặc bớt class để thể hiện đơn hàng đang được chọn
                 const allInvoiceItems = document.querySelectorAll('.invoice-item');
                 allInvoiceItems.forEach((item, idx) => {
@@ -231,16 +231,18 @@ document.addEventListener("DOMContentLoaded", function () {
             invoiceItem.appendChild(invoiceName);
             invoiceItem.appendChild(deleteButton);
             invoiceContainer.appendChild(invoiceItem);
-            console.log('Đơn hàng đã chọn:', selectedOrder);
         });
     }
 
-    // Hàm xóa hóa đơn
+// Hàm xóa hóa đơn
     function deleteInvoice(index) {
+        // Lưu thông tin đơn hàng đang được xóa
+        const deletedOrder = invoices[index];
+
         // Xóa hóa đơn khỏi danh sách
         invoices.splice(index, 1);
 
-        // Xóa giỏ hàng của hóa đơn khỏi cart
+        // Cập nhật lại giỏ hàng trong sessionStorage
         let storedCart = JSON.parse(sessionStorage.getItem("cart")) || [];
 
         // Nếu cart có đủ phần tử, xóa phần tử tại index
@@ -249,8 +251,32 @@ document.addEventListener("DOMContentLoaded", function () {
         }
         sessionStorage.setItem("cart", JSON.stringify(storedCart));
         sessionStorage.setItem("invoices", JSON.stringify(invoices));
-        renderInvoices();
-        showToast('deleteInvoiceToast');
+
+        renderInvoices();  // Render lại danh sách hóa đơn sau khi xóa
+        showToast('deleteInvoiceToast');  // Hiển thị thông báo xóa thành công
+
+        // In thông tin về đơn hàng đã xóa
+        console.log('Đơn hàng đã xóa:', deletedOrder);
+
+        // Nếu đơn hàng đang được chọn đã bị xóa, reset selectedOrder
+        if (selectedOrder === deletedOrder) {
+            selectedOrder = null;  // Reset thông tin đơn hàng đã chọn
+            sessionStorage.setItem("selectedOrder", JSON.stringify(null));  // Xóa thông tin đã chọn khỏi sessionStorage
+            console.log("Đơn hàng đã chọn đã bị xóa, reset selectedOrder.");
+        }
+
+        // Nếu không còn đơn hàng nào, thông báo
+        if (invoices.length === 0) {
+            console.log("Không còn đơn hàng nào.");
+        }
+    }
+
+// Hàm chọn đơn hàng
+    function selectOrder(invoice) {
+        selectedOrder = invoice;  // Cập nhật thông tin đơn hàng đã chọn
+        sessionStorage.setItem("selectedOrder", JSON.stringify(invoice)); // Lưu thông tin vào sessionStorage
+        console.log('Đơn hàng đã chọn:', selectedOrder);
+        renderCart(selectedOrder);
     }
 
     document.getElementById("addInvoiceButton").addEventListener("click", () => {
@@ -358,7 +384,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     function addProductToCart(product, quantity) {
         if (!selectedOrder) {
-            alert("Vui lòng chọn đơn hàng trước!");
+            showNotification("Vui lòng chọn đơn hàng trước!");
             return;
         }
 
@@ -608,7 +634,8 @@ document.addEventListener("DOMContentLoaded", function () {
                                 finalAmount = totalAmount - voucher.giaTri;
                             }
                         } else {
-                            alert(`Đơn hàng phải đạt tối thiểu ${voucher.dieuKien.toLocaleString()} VNĐ để áp dụng voucher này.`);
+                            showNotification(`Đơn hàng phải đạt tối thiểu ${voucher.dieuKien.toLocaleString()} VNĐ để áp dụng voucher này.`);
+                            voucherField.value = "";
                         }
                     } else {
                         alert("Không thể áp dụng voucher. Vui lòng thử lại!");
@@ -701,10 +728,7 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     });
 
-    function selectOrder(order) {
-        selectedOrder = order;
-        renderCart(selectedOrder);
-    }
+
 
     let isUpdating = false;
     document.getElementById("addToCartButton").addEventListener("click", async function () {
@@ -714,7 +738,7 @@ document.addEventListener("DOMContentLoaded", function () {
         const productId = selectedProduct.maSPCT;
 
         if (!selectedOrder) {
-            alert("Vui lòng chọn đơn hàng trước!");
+            showNotification("Vui lòng chọn đơn hàng trước!");
             isUpdating = false;
             return;
         }
@@ -728,7 +752,7 @@ document.addEventListener("DOMContentLoaded", function () {
             const availableQuantity = result.soLuong;
 
             if (quantity <= 0 || quantity > availableQuantity) {
-                alert(`Số lượng sản phẩm không hợp lệ! Hiện tại chỉ còn ${availableQuantity} sản phẩm.`);
+                showNotification(`Số lượng sản phẩm không hợp lệ! Hiện tại chỉ còn ${availableQuantity} sản phẩm.`);
                 isUpdating = false; // Khôi phục trạng thái nếu có lỗi
                 return;
             }
@@ -744,7 +768,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 const updateResult = await updateResponse.json();
                 if (updateResult.success) {
                     addProductToCart(selectedProduct, quantity);
-                    alert("Sản phẩm đã được cập nhật vào giỏ hàng!");
+                    showNotification("Sản phẩm đã được cập nhật vào giỏ hàng!");
                 } else {
                     alert("Có lỗi xảy ra khi cập nhật sản phẩm!");
                 }
@@ -820,22 +844,27 @@ document.getElementById("paymentButton").addEventListener("click", function () {
 
         const customerData = JSON.parse(localStorage.getItem("customerData"));
         if (!customerData || !customerData.idKH) {
-            alert("Thông tin khách hàng không hợp lệ hoặc không có trong hệ thống!");
+            showNotification("Thông tin khách hàng không hợp lệ hoặc không có trong hệ thống!");
             return;
         }
         const customerId = customerData.idKH;
-        const paymentTypeId = document.getElementById("paymentTypeSelect").value;
+        const paymentTypeSelect = document.getElementById("paymentTypeSelect");
+        const paymentTypeId = paymentTypeSelect.value;
+        if (!paymentTypeId) {
+            showNotification("Vui lòng chọn loại thanh toán!");
+            return;
+        }
         const voucher = document.getElementById("voucherSelect").value;
         const finalAmountField = document.querySelector("table#summaryTable tbody tr:nth-child(4) td");
         const customerPaid = parseFloat(document.querySelector("#summaryTable input[type='number']").value);
         let finalAmount = parseFloat(finalAmountField.textContent.replace(/\D/g, ""));
         if (isNaN(customerPaid) || customerPaid < finalAmount) {
-            alert(`Số tiền khách hàng thanh toán không hợp lệ hoặc chưa đủ! Tổng tiền cần thanh toán là ${finalAmount.toLocaleString()} VNĐ.`);
+            showNotification(`Số tiền khách hàng thanh toán không hợp lệ hoặc chưa đủ! Tổng tiền cần thanh toán là ${finalAmount.toLocaleString()} VNĐ.`);
             return;
         }
         const employeeData = JSON.parse(sessionStorage.getItem("infoNV"));
         if (!employeeData || !employeeData.id) {
-            alert("Thông tin nhân viên không hợp lệ hoặc không có trong hệ thống!");
+            showNotification("Thông tin nhân viên không hợp lệ hoặc không có trong hệ thống!");
             return;
         }
 
@@ -876,44 +905,59 @@ document.getElementById("paymentButton").addEventListener("click", function () {
                     toast.show();
                     resetCart();
                     updateSummary();
+                    document.getElementById("voucherSelect").value = '';
+                    document.getElementById("paymentTypeSelect").value = '';
                     generateInvoicePDF(invoice);
                 } else {
-                    alert("Đã có lỗi khi tạo hóa đơn: " + result.error);
+                    showNotification("Đã có lỗi khi tạo hóa đơn: " + result.error);
                 }
             } else {
                 const errorResponse = await response.json();  // In ra lỗi từ server
                 console.error("Lỗi khi gửi yêu cầu: ", errorResponse); // Kiểm tra lỗi chi tiết
-                alert("Đã có lỗi khi gửi yêu cầu! Mã lỗi: " + response.status);
+                showNotification("Đã có lỗi khi gửi yêu cầu! Mã lỗi: " + response.status);
             }
         } catch (error) {
-            alert("Đã có lỗi khi tạo hóa đơn! Vui lòng thử lại.");
+            showNotification("Đã có lỗi khi tạo hóa đơn! Vui lòng thử lại.");
         }
     }, { once: true }); // Đảm bảo sự kiện chỉ được lắng nghe một lần
 });
+
+// Hàm hiển thị modal thông báo
+function showNotification(message) {
+    const modalMessage = document.getElementById("modalMessage");
+    modalMessage.textContent = message; // Cập nhật thông điệp trong modal
+    const notificationModal = new bootstrap.Modal(document.getElementById("notificationModal"));
+    notificationModal.show(); // Hiển thị modal
+}
+
 
 function generateInvoicePDF(invoice) {
     const { jsPDF } = window.jspdf;  // Lấy jsPDF từ window.jspdf khi dùng CDN
 
     const doc = new jsPDF();
-    doc.setFont('Arial', 'normal');  // Sử dụng font Arial
+
+    // Kiểm tra nếu font Arial không tồn tại
+    try {
+        doc.setFont('Arial', 'normal');
+    } catch (error) {
+        console.error("Lỗi font Arial:", error);
+        doc.setFont('Helvetica', 'normal');  // Sử dụng font Helvetica thay thế nếu Arial không có
+    }
 
     // Tiêu đề hóa đơn
     doc.setFontSize(16);
     doc.text("Hóa Đơn Mua Hàng", 105, 20, null, null, 'center');
     doc.setFontSize(12);
 
-    // Lấy thông tin từ sessionStorage
-    const customer = JSON.parse(localStorage.getItem("customer")); // Thông tin khách hàng
-    const employee = JSON.parse(sessionStorage.getItem("employee")); // Thông tin nhân viên
-
     // Thêm ngày tạo hóa đơn
     const currentDate = new Date();
     const formattedDate = `${currentDate.getDate()}/${currentDate.getMonth() + 1}/${currentDate.getFullYear()} ${currentDate.getHours()}:${currentDate.getMinutes()}:${currentDate.getSeconds()}`;
     doc.text(`Ngày tạo: ${formattedDate}`, 10, 40);  // In ngày tạo hóa đơn
 
-    // Thông tin khách hàng và nhân viên
-    doc.text(`Khách hàng: ${customer ? customer.tenKH : 'Chưa có thông tin'}`, 10, 50);  // Thông tin khách hàng
-    doc.text(`Nhân viên: ${employee ? employee.tenNV : 'Chưa có thông tin'}`, 10, 60);  // Thông tin nhân viên
+    const customer = invoice.khachHang || {};  // Lấy thông tin khách hàng từ đối tượng invoice
+    const employee = invoice.nhanVien || {};  // Lấy thông tin nhân viên từ đối tượng invoice
+    doc.text(`Khách hàng: ${customer.tenKH || 'Chưa có thông tin'}`, 10, 50);  // Thông tin khách hàng
+    doc.text(`Nhân viên: ${employee.tenNV || 'Chưa có thông tin'}`, 10, 60);  // Thông tin nhân viên
 
     // Bắt đầu vẽ bảng
     const startY = 70;  // Vị trí bắt đầu vẽ bảng
@@ -930,15 +974,20 @@ function generateInvoicePDF(invoice) {
     yPosition += 10; // Dịch xuống một chút để vẽ các sản phẩm
 
     // Vẽ các sản phẩm trong giỏ hàng
-    invoice.cartItems.forEach((item, index) => {
-        doc.text((index + 1).toString(), 10, yPosition);  // Số thứ tự
-        doc.text(item.productName, 30, yPosition);  // Tên sản phẩm
-        doc.text(item.productPrice.toString(), 100, yPosition);  // Đơn giá
-        doc.text(item.productQuantity.toString(), 130, yPosition);  // Số lượng
-        doc.text(item.totalPrice.toString(), 160, yPosition);  // Thành tiền
+    if (invoice.cartItems && invoice.cartItems.length > 0) {
+        invoice.cartItems.forEach((item, index) => {
+            doc.text((index + 1).toString(), 10, yPosition);  // Số thứ tự
+            doc.text(item.productName, 30, yPosition);  // Tên sản phẩm
+            doc.text(item.productPrice.toString(), 100, yPosition);  // Đơn giá
+            doc.text(item.productQuantity.toString(), 130, yPosition);  // Số lượng
+            doc.text(item.totalPrice.toString(), 160, yPosition);  // Thành tiền
 
-        yPosition += 10; // Dịch xuống một chút cho dòng tiếp theo
-    });
+            yPosition += 10; // Dịch xuống một chút cho dòng tiếp theo
+        });
+    } else {
+        doc.text("Không có sản phẩm trong giỏ hàng", 10, yPosition);
+        yPosition += 10;
+    }
 
     // Tổng tiền
     yPosition += 10; // Dịch xuống sau bảng
@@ -946,18 +995,22 @@ function generateInvoicePDF(invoice) {
 
     // Phương thức thanh toán
     yPosition += 10;
-    doc.text(`Phương thức thanh toán: ${invoice.paymentType}`, 10, yPosition);
+    doc.text(`Phương thức thanh toán: ${invoice.paymentType || 'Chưa chọn phương thức thanh toán'}`, 10, yPosition);
 
     // Voucher (nếu có)
     if (invoice.voucher) {
         yPosition += 10;
         doc.text(`Voucher: ${invoice.voucher}`, 10, yPosition);
+    } else {
+        yPosition += 10;
+        doc.text("Không có voucher", 10, yPosition);
     }
 
     // Lưu và in hóa đơn PDF
     doc.save('invoice.pdf');
     window.open(doc.output('bloburl'));  // Mở PDF để in
 }
+
 
 function resetCart() {
     document.getElementById("cartTableBody").innerHTML = "";
