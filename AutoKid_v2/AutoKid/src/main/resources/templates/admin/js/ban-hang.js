@@ -824,7 +824,7 @@ document.getElementById("paymentButton").addEventListener("click", function () {
             return;
         }
         const customerId = customerData.idKH;
-        const paymentType = document.getElementById("paymentTypeSelect").value;
+        const paymentTypeId = document.getElementById("paymentTypeSelect").value;
         const voucher = document.getElementById("voucherSelect").value;
         const finalAmountField = document.querySelector("table#summaryTable tbody tr:nth-child(4) td");
         const customerPaid = parseFloat(document.querySelector("#summaryTable input[type='number']").value);
@@ -853,7 +853,7 @@ document.getElementById("paymentButton").addEventListener("click", function () {
             },
             totalAmount,
             finalAmount,
-            paymentType,
+            paymentTypeId,
             voucher,
             cartItems
         };
