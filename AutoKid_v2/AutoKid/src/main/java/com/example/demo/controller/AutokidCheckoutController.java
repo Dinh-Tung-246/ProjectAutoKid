@@ -118,7 +118,7 @@ public class AutokidCheckoutController {
                 hoaDonChiTiet.setSanPhamChiTiet(sanPhamChiTiet);
             }
             SanPhamChiTiet spct = sanPhamChiTietRepo.findById(Integer.parseInt(idSPCT.toString())).orElseThrow();
-            hoaDonChiTiet.setDonGia(Double.parseDouble(new SanPhamKhuyenMaiResponse(spct.getSanPham()).getGiaSauGiam().replaceAll(".","")));
+            hoaDonChiTiet.setDonGia(Double.parseDouble(new SanPhamKhuyenMaiResponse(spct.getSanPham()).getGiaSauGiam().replace(".","")));
             hoaDonChiTiet.setSoLuong(Integer.parseInt((String) hdctData.get("soLuong")));
 //            hoaDonChiTiet.setDonGia(((Number) hdctData.get("donGia")).doubleValue());
             hoaDonChiTiet.setDonGiaSauGiam(Double.parseDouble(String.valueOf((Integer) hdctData.get("donGiaSauGiam"))));
