@@ -557,32 +557,6 @@
     </div>
 </div>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-<script>
-    // ket noi den websocket
-    const socket = new WebSocket('ws://localhost:8080/ws');
-
-    // khi ket noi thanh cong
-    socket.onopen = function () {
-        console.log("Da ket noi voi WebSocket");
-    }
-
-    //Khi nhan duoc thong bao tu server
-    socket.onmessage = function (event) {
-        console.log("Du lieu nhan tu server: ", event.data);
-        // updateUI()
-        window.location.reload();
-    }
-
-    // Khi có lỗi
-    socket.onerror = function(error) {
-        console.error("Lỗi WebSocket:", error);
-    };
-
-    // Khi kết nối bị đóng
-    socket.onclose = function() {
-        console.log("Kết nối WebSocket đã đóng.");
-    };
-</script>
 <script src="js/header.js"></script>
 <script>
     document.addEventListener('DOMContentLoaded', function () {

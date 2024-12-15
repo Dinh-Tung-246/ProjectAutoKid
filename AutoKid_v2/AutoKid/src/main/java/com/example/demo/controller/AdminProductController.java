@@ -123,6 +123,8 @@ public class AdminProductController {
         model.addAttribute("addSanPham", new SanPham());
         model.addAttribute("updateSanPham", new SanPham());
         model.addAttribute("sps", sanPhams);
+        model.addAttribute("donhang",serviceQLDH.getDonHang());
+        model.addAttribute("int", serviceQLDH.getIndex());
         model.addAttribute("namePage", "product");
         return "admin/san-pham";
     }
