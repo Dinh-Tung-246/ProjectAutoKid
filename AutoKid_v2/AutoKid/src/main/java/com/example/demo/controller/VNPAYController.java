@@ -160,7 +160,7 @@ public class VNPAYController {
             }
             Integer idSPCT = Integer.parseInt(map.get("idSPCT").toString());
             SanPhamChiTiet spct = spctRepo.findById(idSPCT).orElseThrow();
-            hdct.setDonGia(Double.parseDouble(new SanPhamKhuyenMaiResponse(spct.getSanPham()).getGiaSauGiam().replaceAll(".","")));
+            hdct.setDonGia(Double.parseDouble(new SanPhamKhuyenMaiResponse(spct.getSanPham()).getGiaSauGiam().replace(".","")));
             hdct.setSoLuong(Integer.parseInt(map.get("quantity").toString()));
             String donGiaSauGiam = map.get("totalPrice").toString();
             donGiaSauGiam = donGiaSauGiam.replace(".", "");

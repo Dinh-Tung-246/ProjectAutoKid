@@ -17,7 +17,7 @@ public interface VoucherRepo extends JpaRepository<Voucher, Integer> {
 
     @Query("SELECT v FROM Voucher v" +
             " WHERE v.trangThai = 1 " +
-            " AND v.ngayBatDau < :today" +
+            " AND v.ngayBatDau <= :today" +
             " AND v.ngayKetThuc > :today")
     List<Voucher> getAllVoucherisAction(@Param("today") LocalDate today);
 
