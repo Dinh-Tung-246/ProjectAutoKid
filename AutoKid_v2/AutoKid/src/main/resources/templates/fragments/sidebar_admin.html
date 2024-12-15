@@ -46,13 +46,13 @@
                           <a th:classappend="${namePage == 'completed'} ? 'active'" href="/admin/hoadon/completed">Hoàn thành</a>
                         </li>
                         <li >
-                          <a th:classappend="${namePage == 'canceled'} ? 'active'" href="/admin/hoadon/canceled">Đã hủy</a>
+                          <a  href="/admin/hoadon/canceled">Đã hủy</a>
                         </li>
                       </ul>
                     </li>
 
                     <li>
-                        <a class="show-cat-btn" href="/admin/products">
+                        <a class="show-cat-btn" th:classappend="${namePage == 'product'} ? 'active'" href="/admin/products">
                             <span class="icon folder" aria-hidden="true"></span>Sản Phẩm
                             <span class="category__btn transparent-btn" title="Open list">
                             <span class="sr-only">Open list</span>
@@ -61,25 +61,25 @@
                         </a>
                         <ul class="cat-sub-menu">
                             <li >
-                                <a th:classappend="${namePage == 'products'} ? 'active'" href="/admin/products">Danh sách sản phẩm</a>
+                                <a href="/admin/products">Danh sách sản phẩm</a>
                             </li>
                             <li >
-                                <a th:classappend="${namePage == 'san-pham'} ? 'active'" href="/admin/san-pham">Sản phẩm</a>
+                                <a href="/admin/san-pham">Sản phẩm</a>
                             </li>
                             <li >
-                                <a th:classappend="${namePage == 'loai-san-pham'} ? 'active'" href="/admin/loai-san-pham">Loại sản phẩm</a>
+                                <a href="/admin/loai-san-pham">Loại sản phẩm</a>
                             </li>
                             <li >
-                                <a th:classappend="${namePage == 'thuong-hieu'} ? 'active'" href="/admin/thuong-hieu">Thương hiệu</a>
+                                <a href="/admin/thuong-hieu">Thương hiệu</a>
                             </li>
                             <li>
-                                <a th:classappend="${namePage == 'kich-co'} ? 'active'" href="/admin/kich-co">Kích cỡ</a>
+                                <a href="/admin/kich-co">Kích cỡ</a>
                             </li>
                             <li>
-                                <a th:classappend="${namePage == 'mau-sac'} ? 'active'" href="/admin/mau-sac">Màu sắc</a>
+                                <a  href="/admin/mau-sac">Màu sắc</a>
                             </li>
                             <li>
-                                <a th:classappend="${namePage == 'chat-lieu'} ? 'active'" href="/admin/chat-lieu">Chất liệu</a>
+                                <a  href="/admin/chat-lieu">Chất liệu</a>
                             </li>
                         </ul>
                     </li>
@@ -93,10 +93,10 @@
                         </a>
                         <ul class="cat-sub-menu">
                             <li >
-                                <a th:classappend="${namePage == 'promotion'} ? 'active'" href="/admin/promotion/index">Tạo đợt giảm giá</a>
+                                <a href="/admin/promotion/index">Tạo đợt giảm giá</a>
                             </li>
                             <li >
-                                <a th:classappend="${namePage == 'QuanLy'} ? 'active'" href="/admin/promotion/product-sale">Áp dụng khuyến mãi</a>
+                                <a href="/admin/promotion/product-sale">Áp dụng khuyến mãi</a>
                             </li>
                         </ul>
                     </li>
@@ -104,7 +104,7 @@
                     <li><a th:classappend="${namePage == 'staff'} ? 'active'" href="/admin/staff/home"><span class="icon message" aria-hidden="true"></span>Nhân Viên</a></li>
                     <li><a th:classappend="${namePage == 'voucher'} ? 'active'" href="/admin/voucher/index"><span class="icon message" aria-hidden="true"></span>Quản lý voucher</a></li>
                      <li>
-                      <a class="show-cat-btn" href="/admin/statistical-year">
+                      <a class="show-cat-btn" th:classappend="${namePage == 'statistical'} ? 'active'" href="/admin/statistical-year">
                         <span class="icon home" aria-hidden="true"></span>Thống kê
                         <span class="category__btn transparent-btn" title="Open list">
                             <span class="sr-only">Open list</span>
