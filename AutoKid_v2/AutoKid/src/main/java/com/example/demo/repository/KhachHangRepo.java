@@ -2,6 +2,7 @@ package com.example.demo.repository;
 
 import com.example.demo.model.KhachHang;
 
+import com.example.demo.model.NhanVien;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -19,6 +20,7 @@ public interface KhachHangRepo extends JpaRepository<KhachHang,Integer> {
             "WHERE k.tenKH LIKE %:ten% ")
     List<KhachHang> findByName(@Param("ten") String ten);
 
+    KhachHang findByTenKH(String tenKH);
     // Create Account
     @Modifying
     @Transactional
@@ -26,6 +28,10 @@ public interface KhachHangRepo extends JpaRepository<KhachHang,Integer> {
     void createAccount(@Param("ten") String ten,
                        @Param("email") String email,
                        @Param("matKhau") String matKhau);
+
+    @Query(value = "SELECT k  FROM KhachHang k " +
+            "WHERE k.sdt LIKE %:sdt% ")
+    List<KhachHang> findBySDT(@Param("sdt") String sdt);
 
     @Query(value = "SELECT TOP 1 * FROM khach_hang ORDER BY id_kh DESC", nativeQuery = true)
     KhachHang getKHByIdDESC();

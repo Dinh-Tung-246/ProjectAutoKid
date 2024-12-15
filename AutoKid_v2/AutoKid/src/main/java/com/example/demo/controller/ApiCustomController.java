@@ -1,6 +1,7 @@
 package com.example.demo.controller;
 
 import com.example.demo.model.SanPhamChiTiet;
+import com.example.demo.model.Voucher;
 import com.example.demo.repository.KhachHangRepo;
 import com.example.demo.repository.SanPhamChiTietRepo;
 import com.example.demo.model.KhachHang;
@@ -17,6 +18,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -63,15 +65,15 @@ public class ApiCustomController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of("error", e.getMessage()));
         }
     }
-      
+
     @GetMapping("/user/{sdt}")
     @ResponseBody
-    public ResponseEntity<?> checkExists(@PathVariable String sdt){
+    public ResponseEntity<?> checkExists(@PathVariable String sdt) {
         return ResponseEntity.ok().body(khachHangRepo.existsBySdt(sdt));
     }
 
     @PostMapping("/create-user")
-    public ResponseEntity<?> createUser(@RequestBody KhachHangResponse response){
+    public ResponseEntity<?> createUser(@RequestBody KhachHangResponse response) {
         return ResponseEntity.ok().body(serviceQLDH.createUser(response));
     }
 
@@ -84,7 +86,7 @@ public class ApiCustomController {
     @ResponseBody
     public ResponseEntity<?> checkCheckout(@RequestBody List<Map<String, Object>> hdct) {
         int i = 1;
-        for (Map<String, Object> item : hdct){
+        for (Map<String, Object> item : hdct) {
             Integer idSPCT = Integer.parseInt(item.get("idSPCT").toString());
             Integer soLuongMua = Integer.parseInt(item.get("soLuong").toString());
             SanPhamChiTiet spct = spctRepo.findById(idSPCT).orElseThrow();
@@ -110,5 +112,12 @@ public class ApiCustomController {
             map1.put("totalPrice", qlghService.getTotalPrice(idKH));
         }
         return map1;
+    }
+
+    @PostMapping("/get-voucher")
+    @ResponseBody
+    public List<Voucher> getVocher(@RequestBody Map<String, Object> payload){
+        Double tongTien = Double.parseDouble(payload.get("totalPrice").toString());
+        return serviceQLDH.getAllVoucher(tongTien);
     }
 }

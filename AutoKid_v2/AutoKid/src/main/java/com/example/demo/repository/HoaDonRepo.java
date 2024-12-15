@@ -12,6 +12,8 @@ import java.util.Optional;
 
 @Repository
 public interface HoaDonRepo extends JpaRepository<HoaDon,Integer> {
+    List<HoaDon> findByTrangThaiHD(String trangThaiHD);
+
     @Query(value = "SELECT TOP 1 * " +
             "FROM hoa_don h" +
             " ORDER BY h.id_hd DESC", nativeQuery = true)
@@ -22,10 +24,10 @@ public interface HoaDonRepo extends JpaRepository<HoaDon,Integer> {
             " WHERE id_hd = :idHD ", nativeQuery = true)
     void updateHoaDon(@Param("trangThai") String trangThai,@Param("idHD") Integer idHD);
 
+    Optional findHoaDonByMaHD(String maHD);
+
     @Query("SELECT h FROM HoaDon h WHERE h.khachHang.id = :idKH ORDER BY h.ngayTao ASC ")
     List<HoaDon> getHDByIdKH(@Param("idKH") Integer idKH);
-
-    Optional<HoaDon> findByMaHD(String maHD);
 
     @Query("SELECT h FROM HoaDon h WHERE " +
             "(COALESCE(:maHd, '') = '' OR h.maHD LIKE %:maHd%)")
@@ -89,11 +91,16 @@ public interface HoaDonRepo extends JpaRepository<HoaDon,Integer> {
     @Query("SELECT sp.maSP AS idSanPham, " +
             "sp.tenSP AS tenSanPham, " +
             "SUM(hdct.soLuong) AS tongSoLuong, " +
-            "SUM(hdct.soLuong * hdct.donGiaSauGiam) AS tongDoanhThu " +
+            "SUM(hdct.donGiaSauGiam) AS tongDoanhThu " +
             "FROM HoaDonChiTiet hdct " +
             "JOIN hdct.sanPhamChiTiet spct " +
             "JOIN spct.sanPham sp " +
             "GROUP BY sp.maSP, sp.tenSP " +
             "ORDER BY tongDoanhThu DESC")
     List<Object[]> findTop5BestSellingProducts();
+
+    @Query("SELECT h.id FROM HoaDon h" +
+            " WHERE h.maHD = :maHD")
+    Integer getIdHDByMaHD(@Param("maHD") String maHD);
+
 }

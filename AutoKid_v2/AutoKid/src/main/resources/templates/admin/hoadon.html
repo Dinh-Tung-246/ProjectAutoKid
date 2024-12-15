@@ -125,7 +125,7 @@
               <td th:text="${iterStat.count}"></td>
               <td th:text="${hdct.maHD}"></td> <!-- Display HD + id instead of maHD -->
               <td th:text="${hdct.tenKhachHang}"></td>
-              <td th:text="${hdct.tenNhanVien}"></td>
+              <td th:text="${hdct.tenNhanVien != null && !#strings.isEmpty(hdct.tenNhanVien) ? hdct.tenNhanVien : 'placeholderNV'}"></td>
               <td th:text="${hdct.online == true ? 'Trực tuyến' : 'Tại quầy'}"></td>
               <td th:text="${hdct.tenPhuongThucThanhToan}"></td>
               <td th:text="${hdct.tongTien}"></td>
@@ -262,6 +262,17 @@
 
       return statusMapping[currentStatus] || [];
   }
+  document.addEventListener("DOMContentLoaded", () => {
+      const employeeData = JSON.parse(sessionStorage.getItem("infoNV"));
+      const infoNV = employeeData.tenNV;
+
+      // Tìm tất cả các ô có giá trị "placeholderNV"
+      document.querySelectorAll('td').forEach(td => {
+          if (td.textContent.trim() === 'placeholderNV') {
+              td.textContent = infoNV.replace(/\+/g, ' '); // Thay thế bằng giá trị từ sessionStorage
+          }
+      });
+  });
   function handleClick(id) {
       document.getElementById("maHD").value = id;
       fetch(`/admin/hoadon/ctht/${id}`)
@@ -300,7 +311,14 @@
               data.hoaDonChiTietRPS.forEach(product => {
                   const row = document.createElement("tr");
                   row.innerHTML = `
-                    <td>${product.name}</td>
+                    <td>
+                      <p>
+                        ${product.name}
+                      </p>
+                      <span>
+                        Chất liệu: ${product.chatLieu}, Màu sắc: ${product.mauSac}, Kích cỡ: ${product.kichCo}
+                      </span>
+                    </td>
                     <td>${product.soLuong}</td>
                     <td>${product.donGia.toLocaleString("vi-VN", {
                       style: "currency",

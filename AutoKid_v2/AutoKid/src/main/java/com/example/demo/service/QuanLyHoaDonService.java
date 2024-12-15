@@ -1,6 +1,7 @@
 package com.example.demo.service;
 
 import com.example.demo.model.*;
+import com.example.demo.repository.*;
 import com.example.demo.repository.HoaDonChiTietRepo;
 import com.example.demo.repository.HoaDonHistoryRepo;
 import com.example.demo.repository.HoaDonRepo;
@@ -8,10 +9,13 @@ import com.example.demo.repository.SanPhamChiTietRepo;
 import com.example.demo.response.HoaDonResponse;
 import com.example.demo.response.HoadonhistoryRespone;
 import com.example.demo.response.hoadonchitietRespone;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -28,6 +32,54 @@ public class QuanLyHoaDonService {
 
     @Autowired
     private SanPhamChiTietRepo sanPhamChiTietRepo;
+
+
+    @Autowired
+    KhachHangRepo khachHangRepo;
+
+    @Autowired
+    VoucherRepo voucherRepo;
+
+    public HoaDon save(HoaDon hoaDon){
+        return hoaDonRepo.save(hoaDon);
+    }
+
+    public HoaDonChiTiet save(HoaDonChiTiet hoaDonChiTiet){
+        return hoaDonChiTietRepo.save(hoaDonChiTiet);
+    }
+
+
+    public List<KhachHang> searchBySDT(String sdt) {
+        return khachHangRepo.findBySDT(sdt);
+    }
+
+    @Transactional
+    public boolean updateProductQuantity(String maSPCT, Integer soLuong) {
+        if (soLuong == 0) {
+            return false;
+        }
+        if (soLuong > 0) {
+            int updatedRows = sanPhamChiTietRepo.updateSoLuongSPCTA(soLuong, maSPCT);
+            return updatedRows > 0;
+        } else {
+            int updatedRows = sanPhamChiTietRepo.updateSoLuongSPCTIncrease(Math.abs(soLuong), maSPCT);
+            return updatedRows > 0;
+        }
+    }
+
+
+    public Voucher getVoucherById(Integer id) {
+        Optional<Voucher> voucher = voucherRepo.findById(id);
+        return voucher.orElse(null);
+    }
+
+
+
+    public Optional<SanPhamChiTiet> findOptionalByMaSPCT(String maSPCT) {
+        SanPhamChiTiet sanPhamChiTiet = sanPhamChiTietRepo.findByMaSPCT(maSPCT);
+        return Optional.ofNullable(sanPhamChiTiet);
+    }
+
 
     public List<HoaDonResponse> fillAllHoaDon(){
         List<HoaDonResponse> list= new ArrayList<>();
@@ -186,6 +238,7 @@ public class QuanLyHoaDonService {
         }
         return list;
     }
+
 
 
 }

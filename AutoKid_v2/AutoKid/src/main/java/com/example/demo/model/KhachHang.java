@@ -36,4 +36,16 @@ public class KhachHang {
 
     @OneToMany(mappedBy = "khachHang")
     private List<HoaDon> hoaDons;
+
+    @Override
+    public String toString() {
+        return "KhachHang{" +
+                "id=" + id +
+                ", tenKH='" + tenKH + '\'' +
+                ", email='" + email + '\'' +
+                ", sdt='" + sdt + '\'' +
+                ", diaChi='" + diaChi + '\'' +
+                ", matKhau='" + matKhau + '\'' +
+                '}';
+    }
 }

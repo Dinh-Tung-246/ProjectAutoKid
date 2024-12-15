@@ -1,3 +1,38 @@
 .checkout__order {
     width: 500px;
 }
+
+.container .voucher {
+    margin-left: 780px;
+    margin-top: 20px;
+    border: 0px solid;
+    width: 500px;
+    height: 100px;
+    background-color: #f5f5f5;
+    padding: 30px 30px;
+    display: flex;
+}
+
+.voucher .select-voucher {
+    width: 300px;
+    height: 40px;
+}
+
+.voucher .select-voucher option{
+    width: 100px;
+}
+
+.voucher .btn-voucher {
+    margin-left: 20px;
+    border-radius: 5px;
+    width: 100px;
+    height: 40px;
+    background-color: purple;
+    color: whitesmoke;
+    border: none;
+}
+
+.voucher .btn-voucher:hover {
+    color: purple;
+    background-color: #ffffff;
+}

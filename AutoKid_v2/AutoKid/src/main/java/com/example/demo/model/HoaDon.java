@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.Data;
 
 import java.sql.Date;
+import java.util.ArrayList;
 import java.util.List;
 
 @Data
@@ -31,6 +32,10 @@ public class HoaDon {
     @JoinColumn(name = "id_pttt")
     private PhuongThucThanhToan phuongThucThanhToan;
 
+    @ManyToOne
+    @JoinColumn(name = "id_voucher")
+    private Voucher voucher;
+
     @Column(name = "ngay_tao", updatable = false, insertable = false)
     private Date ngayTao;
 
@@ -55,9 +60,35 @@ public class HoaDon {
     @Column(name = "sdt_nguoi_nhan")
     private String sdtNguoiNhan;
 
-    @OneToMany(mappedBy = "hoaDon")
-    private List<HoaDonChiTiet> hoaDonChiTiets;
+    @Column(name = "email_nguoi_nhan")
+    private String EmailNguoiNhan;
+
+
+    @OneToMany(mappedBy = "hoaDon", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
+    private List<HoaDonChiTiet> hoaDonChiTiets = new ArrayList<>();
 
     @Column(name = "is_online")
     private boolean isOnline;
+
+    @Override
+    public String toString() {
+        return "HoaDon{" +
+                "id=" + id +
+                ", maHD='" + maHD + '\'' +
+                ", khachHang=" + khachHang +
+                ", nhanVien=" + nhanVien +
+                ", phuongThucThanhToan=" + phuongThucThanhToan +
+                ", voucher=" + voucher +
+                ", ngayTao=" + ngayTao +
+                ", phiShip=" + phiShip +
+                ", hinhThucThanhToan='" + hinhThucThanhToan + '\'' +
+                ", tongTien=" + tongTien +
+                ", trangThaiHD='" + trangThaiHD + '\'' +
+                ", tenNguoiNhan='" + tenNguoiNhan + '\'' +
+                ", diaChiNguoiNhan='" + diaChiNguoiNhan + '\'' +
+                ", sdtNguoiNhan='" + sdtNguoiNhan + '\'' +
+                ", hoaDonChiTiets=" + hoaDonChiTiets +
+                ", isOnline=" + isOnline +
+                '}';
+    }
 }

@@ -158,9 +158,9 @@ CREATE TABLE san_pham_chi_tiet (
 CREATE TABLE voucher (
     id_voucher INT PRIMARY KEY IDENTITY,
     ma_voucher VARCHAR(50) NOT NULL UNIQUE,      
-    ten_voucher VARCHAR(100) NOT NULL,        
+    ten_voucher NVARCHAR(100) NOT NULL,        
     loai_voucher int NOT NULL, 
-    dieu_kien FLOAT NOT NULL,                   
+    dieu_kien FLOAT NULL,                   
     gia_tri FLOAT NOT NULL,                     
     gia_tri_toi_da FLOAT NULL,             
     ngay_bat_dau DATE NOT NULL,                  
@@ -184,6 +184,8 @@ CREATE TABLE hoa_don (
 	ten_nguoi_nhan NVARCHAR(50),
 	dia_chi_nguoi_nhan NVARCHAR(200),
 	sdt_nguoi_nhan VARCHAR(10),
+	email_nguoi_nhan NVARCHAR(50),
+	is_online bit,
     FOREIGN KEY (id_kh) REFERENCES khach_hang(id_kh),
     FOREIGN KEY (id_nv) REFERENCES nhan_vien(id_nv),
 	FOREIGN KEY (id_voucher) REFERENCES voucher(id_voucher),
@@ -394,10 +396,10 @@ VALUES
 ('PTTT003', N'Thẻ ghi nợ', 'TP006', N'Sử dụng thẻ ghi nợ để thanh toán', 0),
 ('PTTT004', N'Thẻ tín dụng', 'TP007', N'Sử dụng thẻ tín dụng để thanh toán', 0);
 
-INSERT INTO hoa_don (ma_hd, id_kh, id_nv, id_pttt, ngay_tao, phi_ship, hinh_thuc_thanh_toan, tong_tien, trang_thai_hd, ten_nguoi_nhan, dia_chi_nguoi_nhan, sdt_nguoi_nhan) 
+INSERT INTO hoa_don (ma_hd, id_kh, id_nv, id_pttt, ngay_tao, phi_ship, hinh_thuc_thanh_toan, tong_tien, trang_thai_hd, ten_nguoi_nhan, dia_chi_nguoi_nhan, sdt_nguoi_nhan, is_online) 
 VALUES 
-('HD001', 1, 1, 1, GETDATE(), 50000, N'Transfer', 1500000, N'Hoạt động', N'Trung Khá Bảnh', N'Aeon Mall Hà Đông', '0123456789'),
-('HD002', 2, 2, 2, GETDATE(), 60000, N'Pay on delivery', 3000000, N'Hoạt động', N'Ngọc Bướng Bỉnh', N'Cầu Diễn, Hà Nội', '0123456789');
+('HD001', 1, 1, 1, GETDATE(), 50000, N'Transfer', 1500000, N'Hoạt động', N'Trung Khá Bảnh', N'Aeon Mall Hà Đông', '0123456789', 1),
+('HD002', 2, 2, 2, GETDATE(), 60000, N'Pay on delivery', 3000000, N'Hoạt động', N'Ngọc Bướng Bỉnh', N'Cầu Diễn, Hà Nội', '0123456789', 0);
 
 INSERT INTO hoa_don_chi_tiet (id_hd, id_san_pham_chi_tiet, so_luong, don_gia, don_gia_sau_giam) 
 VALUES 
@@ -428,7 +430,7 @@ VALUES
 
 
 
-select * from voucher
+select * from hoa_don
 
 --INSERT INTO hoa_don_history (id_hd, ngay_thay_doi, ngay_tao, trang_thai) 
 --VALUES 
