@@ -34,7 +34,7 @@ document.querySelector('#update-info').addEventListener('submit', async function
         idKH: idKH,
         tenKH: hoTenKH,
         emailKH: emailKH,
-        matKhau: matKhau,
+        pass: matKhau,
         sdtKH: sdtKH,
         diaChiKH: diaChiKH,
     }

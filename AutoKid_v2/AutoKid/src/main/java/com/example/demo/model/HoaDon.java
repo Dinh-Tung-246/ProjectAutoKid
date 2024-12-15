@@ -61,8 +61,7 @@ public class HoaDon {
     private String sdtNguoiNhan;
 
     @Column(name = "email_nguoi_nhan")
-    private String emailNguoiNhan;
-
+    private String EmailNguoiNhan;
 
     @OneToMany(mappedBy = "hoaDon", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
     private List<HoaDonChiTiet> hoaDonChiTiets = new ArrayList<>();
@@ -87,7 +86,7 @@ public class HoaDon {
                 ", tenNguoiNhan='" + tenNguoiNhan + '\'' +
                 ", diaChiNguoiNhan='" + diaChiNguoiNhan + '\'' +
                 ", sdtNguoiNhan='" + sdtNguoiNhan + '\'' +
-                ", emailNguoiNhan='" + emailNguoiNhan + '\'' +
+                ", EmailNguoiNhan='" + EmailNguoiNhan + '\'' +
                 ", hoaDonChiTiets=" + hoaDonChiTiets +
                 ", isOnline=" + isOnline +
                 '}';

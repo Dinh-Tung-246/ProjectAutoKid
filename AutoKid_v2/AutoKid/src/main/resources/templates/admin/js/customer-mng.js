@@ -21,7 +21,7 @@ socket.onopen = function () {
 socket.onmessage = function (event) {
     console.log("Du lieu nhan tu server: ", event.data);
     // updateUI()
-    window.location.href= "http://localhost:8080/admin/customer-management/";
+    window.location.reload();
 }
 
 // Khi có lỗi
@@ -83,14 +83,22 @@ function closeCreate() {
 
 document.getElementById('submitBtn').addEventListener('click', function (event) {
     event.preventDefault();
-    const formData = new FormData(document.getElementById('customerForm'));
-    console.log(formData);
+    event.preventDefault();
+    const formElement = document.getElementById('customerForm');
+    const formData = new FormData(formElement);
+
+    // Chuyển FormData sang JSON
+    const jsonData = {};
+    formData.forEach((value, key) => {
+        jsonData[key] = value;
+    });
+    console.log(jsonData);
     fetch('/admin/customer-management/create-customer', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
         },
-        body: formData
+        body: JSON.stringify(jsonData),
     }) . then(response => response.text())
         .then(result => {
             if(result == 'sc') {

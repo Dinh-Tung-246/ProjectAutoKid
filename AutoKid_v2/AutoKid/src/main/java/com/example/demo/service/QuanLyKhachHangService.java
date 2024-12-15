@@ -76,9 +76,11 @@ public class QuanLyKhachHangService {
     public boolean checkMail(String email) {
         boolean result = true;
         for (KhachHang kh : khachHangRepo.findAll()) {
-            if (kh.getEmail().equals(email.trim())) { // nếu mail đã tồn tại
-                result = false;
-                break;
+            if (kh.getEmail() != null && !kh.getEmail().trim().isEmpty()) {
+                if (kh.getEmail().equals(email.trim())) { // nếu mail đã tồn tại
+                    result = false;
+                    break;
+                }
             }
         }
         return result;
@@ -126,11 +128,13 @@ public class QuanLyKhachHangService {
     public boolean checkMatKhau(String taiKhoan, String matKhau) {
         Boolean result = true;
         for (KhachHang kh : khachHangRepo.findAll()) {
-            if (kh.getEmail().equals(taiKhoan.trim())) {
-                if (kh.getMatKhau() == null || !kh.getMatKhau().equals(encryptPassword(matKhau))) {
-                    result = false;
+            if (kh.getEmail() != null && !kh.getEmail().trim().isEmpty()) {
+                if (kh.getEmail().equals(taiKhoan.trim())) {
+                    if (kh.getMatKhau() == null || !kh.getMatKhau().equals(encryptPassword(matKhau))) {
+                        result = false;
+                    }
+                    break;
                 }
-                break;
             }
         }
         return result;
@@ -151,14 +155,16 @@ public class QuanLyKhachHangService {
         } else {
             map.put("result", "sc");
             for (KhachHang kh : khachHangRepo.findAll()) {
-                if (kh.getEmail().equals(taiKhoan.trim())) {
-                    map.put("idKH", kh.getId());
-                    map.put("tenKH", kh.getTenKH());
-                    map.put("emailKH", kh.getEmail());
-                    map.put("pass", kh.getMatKhau());
-                    map.put("sdtKH", kh.getSdt());
-                    map.put("diaChiKH", kh.getDiaChi());
-                    break;
+                if (kh.getEmail() != null && !kh.getEmail().trim().isEmpty()) {
+                    if (kh.getEmail().equals(taiKhoan.trim())) {
+                        map.put("idKH", kh.getId());
+                        map.put("tenKH", kh.getTenKH());
+                        map.put("emailKH", kh.getEmail());
+                        map.put("pass", kh.getMatKhau());
+                        map.put("sdtKH", kh.getSdt());
+                        map.put("diaChiKH", kh.getDiaChi());
+                        break;
+                    }
                 }
             }
         }

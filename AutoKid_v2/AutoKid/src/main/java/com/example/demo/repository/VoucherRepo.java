@@ -13,9 +13,17 @@ import java.util.List;
 public interface VoucherRepo extends JpaRepository<Voucher, Integer> {
     Voucher findByMa(String ma);
 
+    List<Voucher> findByTrangThai(Integer trangThai);
+
     @Query("SELECT v FROM Voucher v" +
             " WHERE v.trangThai = 1 " +
-            " AND v.ngayBatDau < :today" +
+            " AND v.ngayBatDau <= :today" +
             " AND v.ngayKetThuc > :today")
     List<Voucher> getAllVoucherisAction(@Param("today") LocalDate today);
+
+    @Query("SELECT v FROM Voucher v WHERE " +
+            "LOWER(v.ten) LIKE LOWER(CONCAT('%', :keyword, '%')) " +
+            "OR LOWER(v.ma) LIKE LOWER(CONCAT('%', :keyword, '%'))")
+    List<Voucher> searchByKeyword(String keyword);
+
 }

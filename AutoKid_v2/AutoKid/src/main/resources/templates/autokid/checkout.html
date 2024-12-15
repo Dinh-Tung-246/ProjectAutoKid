@@ -80,14 +80,18 @@
                             </div>
                         </div>
                         <div class="checkout__input">
+                            <p>Eamil<span>*</span></p>
+                            <input type="text" placeholder="Email" class="email-kh" id="email-kh">
+                        </div>
+                        <div class="checkout__input">
                             <p>Địa chỉ nhận hàng<span>*</span></p>
                             <input type="text" placeholder="Số nhà, tên đường, xã, huyện, thành phố" class="address-kh" id="diaChi-kh">
                         </div>
                         <br/>
-                        <p>Sau khi đặt hàng, phía Shop sẽ gọi điện thoại cho bạn để xác nhận đơn hàng.
-                        Sau khi đơn hàng được xác nhận, Shop sẽ thông báo lại cho bạn và hàng sẽ được
-                        giao trong vòng 2 đến 3 ngày tới. Mọi thông tin thắc mắc hãy liện hệ với chúng
-                        tôi qua số: <strong>1900 5678</strong>. Cảm ơn bạn đã tin dùng.
+                        <span style="color: red">LƯU Ý: </span>
+                        <p>Shop sẽ gửi thông tin đơn hàng của bạn qua email bạn cung cấp, vậy nên vui lòng cung cấp chính xác
+                            email để có thể nhận được thông tin đơn hàng để tra cứu đơn. Mọi thông tin cần hỗ trợ vui lòng liên
+                            hệ qua số điện thoại: <strong>1900 5678</strong>. Cảm ơn bạn đã tin dùng.</p>
                     </div>
                     <div class="col-lg-4 col-md-6">
                         <div class="checkout__order">
@@ -108,13 +112,19 @@
                                 </div>
                             </div>
                             <div style="margin-bottom: 20px;"><strong>Hình thức thanh toán</strong></div>
-                            <div class="checkout__input__checkbox" th:each="pttt : ${pttt}">
-                                <label th:if="${pttt.trangThai == 1}">
-                                    [[${pttt.tenPTTT}]]
-                                    <input type="radio" name="payment_type" th:id="${pttt.maPTTT}" th:value="${pttt.id}"/>
+                            <div class="checkout__input__checkbox" >
+                                <label>
+                                    Thanh toán khi nhận hàng
+                                    <input type="radio" name="payment_type" id="PTTT001" value="1"/>
+                                    <span class="checkmark"></span>
+                                </label> <br/>
+                                <label>
+                                    Thanh toán bằng VNpay
+                                    <input type="radio" name="payment_type" id="PTTT002" value="2"/>
                                     <span class="checkmark"></span>
                                 </label>
                             </div>
+                            <input type="hidden" id="id-voucher"/>
                             <button type="submit" class="site-btn">ĐẶT HÀNG</button>
                         </div>
                     </div>
@@ -122,13 +132,11 @@
             </form>
         </div>
         <div class="voucher">
-            <select class="select-voucher" name="" id="">
-                <option value=""  disabled selected hidden>Chọn mã khuyến mãi</option>
-                <option value="">1</option>
-                <option value="">2</option>
-                <option value="">3</option>
-            </select>
-            <button class="btn-voucher">Áp dụng</button>
+            <div style="display: block; width: 350px" id="select-voucher">
+            </div>
+            <div style="display: block; width: 150px">
+                <button class="btn-voucher" onclick="addVoucher(this)">Áp dụng</button>
+            </div>
         </div>
     </div>
 </section>

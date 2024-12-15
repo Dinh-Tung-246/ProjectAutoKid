@@ -4,6 +4,7 @@ import com.example.demo.model.KhuyenMai;
 import com.example.demo.model.SanPham;
 import com.example.demo.repository.SanPhamRepo;
 import com.example.demo.response.SanPhamKhuyenMaiResponse;
+import com.example.demo.service.QuanLyDatHangService;
 import com.example.demo.service.QuanLyKhuyenMaiService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -13,6 +14,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @Controller
@@ -25,20 +27,39 @@ public class PromotionController {
     @Autowired
     private SanPhamRepo sanPhamRepo;
 
+    @Autowired
+    QuanLyDatHangService serviceQLDH;
+
     @GetMapping("/index")
     public String homeController(Model model){
         model.addAttribute("promotions", service.getAll());
         model.addAttribute("addPromotion", new KhuyenMai());
         model.addAttribute("updatePromotion", new KhuyenMai());
+        model.addAttribute("donhang",serviceQLDH.getDonHang());
+        model.addAttribute("int", serviceQLDH.getIndex());
         model.addAttribute("namePage", "promotion");
         return "/admin/promotion";
     }
+
+    @PostMapping("/check-ma")
+    @ResponseBody
+    public ResponseEntity<?> checkMa(@RequestBody Map<String, Object> makhuyenmai){
+        String maKhuyenMai = makhuyenmai.get("ma").toString();
+        if (service.checkMa(maKhuyenMai)) {
+            return ResponseEntity.ok("hehe");
+        } else {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("errors");
+        }
+    }
+
 
     @GetMapping("/search")
     public String searchPromotions(@RequestParam(value = "keyword", required = false) String keyword, Model model) {
         model.addAttribute("addPromotion", new KhuyenMai());
         model.addAttribute("updatePromotion", new KhuyenMai());
         model.addAttribute("namePage", "promotion");
+        model.addAttribute("donhang",serviceQLDH.getDonHang());
+        model.addAttribute("int", serviceQLDH.getIndex());
         List<KhuyenMai> promotions;
         if (keyword == null || keyword.isEmpty()) {
             promotions = service.getAll();
@@ -74,6 +95,9 @@ public class PromotionController {
         List<SanPham> listProductNoPromotion = service.getProductNoPromotion();
         model.addAttribute("NoPromotionList", listProductNoPromotion);
         model.addAttribute("promotion", service.getPromotionNoApply());
+        model.addAttribute("donhang",serviceQLDH.getDonHang());
+        model.addAttribute("namePage", "promotion");
+        model.addAttribute("int", serviceQLDH.getIndex());
         return "/admin/promotionProduct";
     }
 

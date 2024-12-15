@@ -26,12 +26,31 @@ public class QuanLyVoucherService {
         voucherRepo.save(voucher);
     }
 
+    public List<Voucher> searchVouchers(String keyword) {
+        return voucherRepo.searchByKeyword(keyword);
+    }
+
+    public List<Voucher> getVouchersByStatus(Integer status) {
+        return voucherRepo.findByTrangThai(status);
+    }
+
     public void deleteVoucher(Integer id){
         voucherRepo.deleteById(id);
     }
 
     public Voucher findCode(String ma) {
         return voucherRepo.findByMa(ma);
+    }
+
+    public boolean checkMa(String ma){
+        boolean result = true;
+        for (Voucher v : voucherRepo.findAll()) {
+            if (v.getMa().equals(ma.trim())){
+                result = false;
+                break;
+            }
+        }
+        return result;
     }
 
     public double applyVoucher(Voucher voucher, double tongHoaDon){

@@ -1,11 +1,12 @@
 package com.example.demo.controller;
 
 import com.example.demo.model.KhachHang;
-import com.example.demo.model.ThongTinVanChuyen;
 import com.example.demo.repository.KhachHangRepo;
 import com.example.demo.response.KhachHangResponse;
 import com.example.demo.service.QuanLyDatHangService;
 import com.example.demo.service.QuanLyKhachHangService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -18,6 +19,8 @@ import java.util.Map;
 @Controller
 @RequestMapping("/admin/customer-management")
 public class CustomerManagementController {
+    private static Logger logger = LoggerFactory.getLogger(CustomerManagementController.class);
+
     @Autowired
     QuanLyKhachHangService serviceQLKH;
 
@@ -74,7 +77,8 @@ public class CustomerManagementController {
     // thêm khách hàng mới tại quầy
     @PostMapping("/create-customer")
     @ResponseBody
-    public String insertCustomer(@ModelAttribute KhachHangResponse khres) {
+    public String insertCustomer(@RequestBody KhachHangResponse khres) {
+        logger.info("khachHangResponse: {}", khres);
         String result = serviceQLKH.insertKhachHang(khres);
         return result;
     }

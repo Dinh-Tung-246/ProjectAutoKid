@@ -34,7 +34,7 @@ public class VoucherResponse {
 
     private String formatCurrency(Double value) {
         if (value == null) {
-            return "Trống";
+            return "0";
         }
         DecimalFormat formatter = new DecimalFormat("#,###");
         return formatter.format(value);

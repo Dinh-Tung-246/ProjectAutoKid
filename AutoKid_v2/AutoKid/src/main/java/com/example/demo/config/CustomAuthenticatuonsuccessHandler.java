@@ -10,6 +10,8 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
@@ -19,6 +21,8 @@ import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 
 public class CustomAuthenticatuonsuccessHandler implements AuthenticationSuccessHandler {
+    private static Logger logger = LoggerFactory.getLogger(CustomAuthenticatuonsuccessHandler.class);
+
     @Autowired
     NhanVienRepo nhanVienRepo;
 
@@ -32,7 +36,7 @@ public class CustomAuthenticatuonsuccessHandler implements AuthenticationSuccess
         objectMapper.registerModule(new JavaTimeModule());
         objectMapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS); // Sử dụng định dạng ISO-8601
         String jsonNhanVien = objectMapper.writeValueAsString(nv);
-
+        logger.info("=================== {}", jsonNhanVien);
         // Lưu thông tin user vào cookie
         Cookie userCookie = new Cookie("infoNV", URLEncoder.encode(jsonNhanVien, StandardCharsets.UTF_8));
         userCookie.setHttpOnly(false); // Để cho phép JS truy cập

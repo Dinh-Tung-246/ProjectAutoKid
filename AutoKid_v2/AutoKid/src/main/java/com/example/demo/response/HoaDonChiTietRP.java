@@ -10,6 +10,9 @@ import java.util.Objects;
 @Data
 public class HoaDonChiTietRP {
     private String name;
+    private String kichCo;
+    private String mauSac;
+    private String chatLieu;
     private Integer soLuong;
     private Double donGia;
     private Double thanhTien;
@@ -19,5 +22,8 @@ public class HoaDonChiTietRP {
         this.soLuong = hdct.getSoLuong();
         this.donGia = hdct.getDonGia();
         this.thanhTien = hdct.getSoLuong() * hdct.getDonGia();
+        this.kichCo = hdct.getSanPhamChiTiet().getSanPham().getKichCo().getTenKC();
+        this.chatLieu = hdct.getSanPhamChiTiet().getSanPham().getChatLieu().getTenCl();
+        this.mauSac = hdct.getSanPhamChiTiet().getMauSac().getTenMS();
     }
 }

@@ -5,6 +5,7 @@ import com.example.demo.repository.HoaDonRepo;
 import com.example.demo.repository.KhachHangRepo;
 import com.example.demo.repository.NhanVienRepo;
 import com.example.demo.repository.SanPhamRepo;
+import com.example.demo.service.QuanLyDatHangService;
 import com.example.demo.service.QuanLySanPhamService;
 
 import com.example.demo.service.ThongKeService;
@@ -63,184 +64,8 @@ public class AdminProductController {
     @Autowired
     private ThongKeService thongKeService;
 
-
-
-    @GetMapping("/home")
-    public String home(){
-        return "admin/products";
-    }
-
-    @GetMapping("/products")
-    public String getAllproducts(Model model) {
-        List<SanPhamChiTiet> sanPhamChiTiets = service.getAllSanPham();
-        model.addAttribute("dsMauSac", service.getAllMauSac());
-        model.addAttribute("dsSanPham", service.DSSanPham());
-        model.addAttribute("addSPCT", new SanPhamChiTiet());
-        model.addAttribute("updateSPCT", new SanPhamChiTiet());
-        model.addAttribute("spct", sanPhamChiTiets);
-        return "admin/products";
-    }
-
-    @RequestMapping(value = "/add/products", method = RequestMethod.POST)
-    @ResponseBody
-    public ResponseEntity<?> addSPCT(@ModelAttribute SanPhamChiTiet sanPhamChiTiet) {
-        try {
-            if (service.isMaSPCTExist(sanPhamChiTiet.getMaSPCT())) {
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Mã sản phẩm chi tiết đã tồn tại.");
-            }
-            service.addSanPhamChiTiet(sanPhamChiTiet);
-            return ResponseEntity.ok("Thêm sản phẩm chi tiết thành công!");
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Có lỗi xảy ra khi thêm sản phẩm chi tiết.");
-        }
-    }
-    @GetMapping("/products/list")
-    @ResponseBody
-    public List<SanPhamChiTiet> getDanhSachSanPhamChiTiet() {
-        return service.getAllSanPham();
-    }
-
-    @PostMapping("/update/products")
-    public String updateSPCT(@ModelAttribute("updateSPCT") SanPhamChiTiet sanPhamChiTiet) {
-        if (sanPhamChiTiet.getId() != null) {
-            service.updateSanPhamChiTiet(sanPhamChiTiet);
-        }
-        return "redirect:/admin/products";
-    }
-
-    @GetMapping("/san-pham")
-    public String san_pham(Model model){
-        List<SanPham> sanPhams = service.DSSanPham();
-        model.addAttribute("dsChatLieu", service.getAllChatLieu());
-        model.addAttribute("dsThuongHieu", service.getAllThuongHieu());
-        model.addAttribute("dsKichCo", service.getAllKichCo());
-        model.addAttribute("dsLoaiSanPham", service.getAllLoaiSanPham());
-        model.addAttribute("addSanPham", new SanPham());
-        model.addAttribute("updateSanPham", new SanPham());
-        model.addAttribute("sps", sanPhams);
-
-        return "admin/san-pham";
-    }
-
-    @InitBinder
-    public void initBinder(WebDataBinder binder) {
-        binder.registerCustomEditor(String.class, "anhSPMau", new PropertyEditorSupport() {
-            @Override
-            public void setValue(Object value) {
-                if (value instanceof MultipartFile) {
-                    MultipartFile file = (MultipartFile) value;
-                    if (!file.isEmpty()) {
-                        String originalFilename = file.getOriginalFilename();
-                        if (originalFilename != null) {
-                            String fileName = System.currentTimeMillis() + "-" + originalFilename.replaceAll("[^a-zA-Z0-9\\.\\-]", "_");
-                            try {
-                                String uploadDir = "C:\\Users\\admin\\ProjectAutoKid\\AutoKid_v2\\AutoKid\\src\\main\\resources\\static\\img\\categories";
-                                Path uploadPath = Paths.get(uploadDir);
-                                if (!Files.exists(uploadPath)) {
-                                    Files.createDirectories(uploadPath);
-                                }
-                                Path filePath = uploadPath.resolve(fileName);
-                                try (InputStream inputStream = file.getInputStream()) {
-                                    Files.copy(inputStream, filePath, StandardCopyOption.REPLACE_EXISTING);
-                                }
-                                super.setValue(fileName);
-                            } catch (IOException e) {
-                                e.printStackTrace();
-                                super.setValue(null);
-                            }
-                        } else {
-                            super.setValue(null);
-                        }
-                    } else {
-                        super.setValue(null);
-                    }
-                } else {
-                    super.setValue(value);
-                }
-            }
-        });
-        binder.registerCustomEditor(String.class, "anh", new PropertyEditorSupport() {
-            @Override
-            public void setValue(Object value) {
-                if (value instanceof MultipartFile) {
-                    MultipartFile file = (MultipartFile) value;
-                    if (!file.isEmpty()) {
-                        String originalFilename = file.getOriginalFilename();
-                        if (originalFilename != null) {
-                            String fileName = System.currentTimeMillis() + "-" + originalFilename.replaceAll("[^a-zA-Z0-9\\.\\-]", "_");
-                            try {
-                                String uploadDir = "C:\\Users\\admin\\ProjectAutoKid\\AutoKid_v2\\AutoKid\\src\\main\\resources\\static\\img\\categories";
-                                Path uploadPath = Paths.get(uploadDir);
-                                if (!Files.exists(uploadPath)) {
-                                    Files.createDirectories(uploadPath);
-                                }
-                                Path filePath = uploadPath.resolve(fileName);
-                                try (InputStream inputStream = file.getInputStream()) {
-                                    Files.copy(inputStream, filePath, StandardCopyOption.REPLACE_EXISTING);
-                                }
-                                super.setValue(fileName);
-                            } catch (IOException e) {
-                                e.printStackTrace();
-                                super.setValue(null);
-                            }
-                        } else {
-                            super.setValue(null);
-                        }
-                    } else {
-                        super.setValue(null);
-                    }
-                } else {
-                    super.setValue(value);
-                }
-            }
-        });
-    }
-
-    @GetMapping("/img/categories/{fileName}")
-    @ResponseBody
-    public ResponseEntity<ByteArrayResource> getImage(@PathVariable String fileName) throws IOException {
-        String imagePath = "C:/Users/admin/ProjectAutoKid/AutoKid_v2/AutoKid/src/main/resources/static/img/categories/" + fileName;
-        File imageFile = new File(imagePath);
-        InputStream inputStream = new FileInputStream(imageFile);
-        byte[] imageBytes = inputStream.readAllBytes();
-        ByteArrayResource resource = new ByteArrayResource(imageBytes);
-        String fileExtension = fileName.substring(fileName.lastIndexOf('.') + 1).toLowerCase();
-        MediaType mediaType = fileExtension.equals("jpg") || fileExtension.equals("jpeg") ? MediaType.IMAGE_JPEG : MediaType.IMAGE_PNG;
-        return ResponseEntity.ok()
-                .contentType(mediaType)
-                .header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"" + fileName + "\"")
-                .body(resource);
-    }
-
-    @PostMapping("/add/san-pham")
-    @ResponseBody
-    public ResponseEntity<?> addSanPham(@ModelAttribute SanPham sanPham) {
-        try {
-            if (service.isMaSPExist(sanPham.getMaSP())) {
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Mã sản phẩm đã tồn tại.");
-            }
-            if (service.isTenSPExist(sanPham.getTenSP())) {
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Tên sản phẩm đã tồn tại.");
-            }
-            service.addSanPham(sanPham);
-            return ResponseEntity.ok("Thêm sản phẩm thành công!");
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Có lỗi xảy ra khi thêm sản phẩm.");
-        }
-    }
-    @PostMapping("/update/san-pham")
-    public String updateProduct(@ModelAttribute("updateSanPham") SanPham sanPham) {
-        if (sanPham.getId() != null) {
-            service.updateSanPham(sanPham);
-        }
-        return "redirect:/admin/san-pham";
-    }
-
-    @GetMapping("/san-pham/list")
-    @ResponseBody
-    public List<SanPham> getDanhSachSanPham() {
-        return service.DSSanPham();
-    }
+    @Autowired
+    QuanLyDatHangService serviceQLDH;
 
 //    @GetMapping("/statistical")
 //    public String statistical(Model model) {
@@ -268,7 +93,9 @@ public class AdminProductController {
         model.addAttribute("invoiceCount", thongKeService.getInvoiceCount());
         model.addAttribute("numberOfEmployees", numberOfEmployees);
         model.addAttribute("numberOfProducts", numberOfProducts);
-
+        model.addAttribute("donhang",serviceQLDH.getDonHang());
+        model.addAttribute("int", serviceQLDH.getIndex());
+        model.addAttribute("namePage", "statistical");
 
         return "admin/statistical-year";
     }
@@ -283,7 +110,9 @@ public class AdminProductController {
         model.addAttribute("invoiceCount", thongKeService.getInvoiceCount());
         model.addAttribute("numberOfEmployees", numberOfEmployees);
         model.addAttribute("numberOfProducts", numberOfProducts);
-
+        model.addAttribute("donhang",serviceQLDH.getDonHang());
+        model.addAttribute("int", serviceQLDH.getIndex());
+        model.addAttribute("namePage", "statistical");
 
         return "admin/statistical-month";
     }
@@ -297,6 +126,9 @@ public class AdminProductController {
         model.addAttribute("data", thongKeService.findTop5BestSellingProducts());
         model.addAttribute("numberOfEmployees", numberOfEmployees);
         model.addAttribute("numberOfProducts", numberOfProducts);
+        model.addAttribute("donhang",serviceQLDH.getDonHang());
+        model.addAttribute("int", serviceQLDH.getIndex());
+        model.addAttribute("namePage", "statistical");
 
         return "admin/statistical-product";
     }
@@ -305,7 +137,9 @@ public class AdminProductController {
     @GetMapping("/thuong-hieu")
     public String thuongHieu(Model model){
         List<ThuongHieu> list = service.getAllThuongHieu();
-        model.addAttribute("namePage", "thuong-hieu");
+        model.addAttribute("donhang",serviceQLDH.getDonHang());
+        model.addAttribute("int", serviceQLDH.getIndex());
+        model.addAttribute("namePage", "statistical");
         model.addAttribute("updateThuongHieu", new ThuongHieu());
         model.addAttribute("ths", list);
         return "admin/thuong-hieu";
@@ -322,7 +156,9 @@ public class AdminProductController {
     @GetMapping("/mau-sac")
     public String mauSac(Model model){
         List<MauSac> list = service.getAllMauSac();
-        model.addAttribute("namePage", "mau-sac");
+        model.addAttribute("donhang",serviceQLDH.getDonHang());
+        model.addAttribute("int", serviceQLDH.getIndex());
+        model.addAttribute("namePage", "statistical");
         model.addAttribute("updateMauSac", new MauSac());
         model.addAttribute("mss", list);
         return "admin/mau-sac";
@@ -364,7 +200,9 @@ public class AdminProductController {
     @GetMapping("/kich-co")
     public String kichCo(Model model){
         List<KichCo> list = service.getAllKichCo();
-        model.addAttribute("namePage", "kich-co");
+        model.addAttribute("donhang",serviceQLDH.getDonHang());
+        model.addAttribute("int", serviceQLDH.getIndex());
+        model.addAttribute("namePage", "statistical");
         model.addAttribute("updateKichCo", new KichCo());
         model.addAttribute("kcs", list);
         return "admin/kich-co";
@@ -429,13 +267,18 @@ public class AdminProductController {
     public String searchTH(@RequestParam("tenTH") String tenTH , Model model){
         List<ThuongHieu> list = service.searchTH("%" + tenTH +"%");
         model.addAttribute("ths", list);
+        model.addAttribute("donhang",serviceQLDH.getDonHang());
+        model.addAttribute("int", serviceQLDH.getIndex());
+        model.addAttribute("namePage", "statistical");
         return "admin/thuong-hieu";
     }
 
     @GetMapping("/chat-lieu")
     public String chatLieu(Model model){
         List<ChatLieu> list = service.getAllChatLieu();
-        model.addAttribute("namePage", "chat-lieu");
+        model.addAttribute("donhang",serviceQLDH.getDonHang());
+        model.addAttribute("int", serviceQLDH.getIndex());
+        model.addAttribute("namePage", "statistical");
         model.addAttribute("updateChatLieu", new ChatLieu());
         model.addAttribute("cls", list);
         return "admin/chat-lieu";
@@ -474,6 +317,9 @@ public class AdminProductController {
     public String getAllLoaiSanPham(Model model) {
         model.addAttribute("lsps",service.getAllLoaiSanPham());
         model.addAttribute("updateLoaiSanPham", new LoaiSanPham());
+        model.addAttribute("donhang",serviceQLDH.getDonHang());
+        model.addAttribute("int", serviceQLDH.getIndex());
+        model.addAttribute("namePage", "statistical");
         return "admin/loai-san-pham";
     }
 
