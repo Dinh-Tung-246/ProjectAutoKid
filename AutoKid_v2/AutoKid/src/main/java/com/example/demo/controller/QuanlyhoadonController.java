@@ -6,6 +6,7 @@ import com.example.demo.model.KhuyenMai;
 import com.example.demo.repository.HoaDonHistoryRepo;
 import com.example.demo.repository.HoaDonRepo;
 import com.example.demo.response.HoaDonResponse;
+import com.example.demo.service.QuanLyDatHangService;
 import com.example.demo.service.QuanLyHoaDonService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -26,11 +27,16 @@ public class QuanlyhoadonController {
     @Autowired
     private HoaDonRepo hoaDonRepo;
 
+    @Autowired
+    QuanLyDatHangService serviceQLDH;
+
     @GetMapping("")
     public String ShowHD(Model model) {
         model.addAttribute("listhd", quanLyHoaDonService.fillAllHoaDon());
 //        model.addAttribute("listhds", quanLyHoaDonService.fillAllHoaDonHistory());
         model.addAttribute("listhdct", quanLyHoaDonService.fillAllHoaDonChiTiet());
+        model.addAttribute("donhang",serviceQLDH.getDonHang());
+        model.addAttribute("int", serviceQLDH.getIndex());
         model.addAttribute("namePage", "hoadon");
         return "admin/hoadon";
     }
@@ -42,6 +48,8 @@ public class QuanlyhoadonController {
 
         model.addAttribute("hoaDon", hoaDon);
         model.addAttribute("hoaDonChiTiet", hoaDonChiTiet);
+        model.addAttribute("donhang",serviceQLDH.getDonHang());
+        model.addAttribute("int", serviceQLDH.getIndex());
 
         return "admin/hoadonchitiet";
     }
@@ -63,6 +71,8 @@ public class QuanlyhoadonController {
         }
         List<HoaDonResponse> filteredInvoices = quanLyHoaDonService.searchInvoices(maHd);
         model.addAttribute("listhd", filteredInvoices);
+        model.addAttribute("donhang",serviceQLDH.getDonHang());
+        model.addAttribute("int", serviceQLDH.getIndex());
         return "admin/hoadon";
     }
 
@@ -81,6 +91,8 @@ public class QuanlyhoadonController {
     public String HoaDonPending(Model model) {
         model.addAttribute("listhd", quanLyHoaDonService.findAllByPending());
         model.addAttribute("namePage", "pending");
+        model.addAttribute("donhang",serviceQLDH.getDonHang());
+        model.addAttribute("int", serviceQLDH.getIndex());
         return "admin/hoadon-pending";
     }
 
@@ -88,6 +100,8 @@ public class QuanlyhoadonController {
     public String HoaDonInProgress(Model model) {
         model.addAttribute("listhd", quanLyHoaDonService.findAllByInProgress());
         model.addAttribute("namePage", "in-progress");
+        model.addAttribute("donhang",serviceQLDH.getDonHang());
+        model.addAttribute("int", serviceQLDH.getIndex());
         return "admin/hoadon-in-progress";
     }
 
@@ -95,6 +109,8 @@ public class QuanlyhoadonController {
     public String HoaDonCompleted(Model model) {
         model.addAttribute("listhd", quanLyHoaDonService.findAllByCompleted());
         model.addAttribute("namePage", "completed");
+        model.addAttribute("donhang",serviceQLDH.getDonHang());
+        model.addAttribute("int", serviceQLDH.getIndex());
         return "admin/hoadon-completed";
     }
 
@@ -102,6 +118,8 @@ public class QuanlyhoadonController {
     public String HoaDonCanceled(Model model) {
         model.addAttribute("listhd", quanLyHoaDonService.findAllByCanceled());
         model.addAttribute("namePage", "canceled");
+        model.addAttribute("donhang",serviceQLDH.getDonHang());
+        model.addAttribute("int", serviceQLDH.getIndex());
         return "admin/hoadon-canceled";
     }
 
@@ -113,6 +131,8 @@ public class QuanlyhoadonController {
             return "redirect:/admin/hoadon/pending";
         }
         List<HoaDonResponse> filteredInvoices = quanLyHoaDonService.searchHoaDonPending(maHd);
+        model.addAttribute("donhang",serviceQLDH.getDonHang());
+        model.addAttribute("int", serviceQLDH.getIndex());
         model.addAttribute("listhd", filteredInvoices);
         return "admin/hoadon-pending";
     }
@@ -124,6 +144,8 @@ public class QuanlyhoadonController {
         }
         List<HoaDonResponse> filteredInvoices = quanLyHoaDonService.searchHoaDonInProgress(maHd);
         model.addAttribute("listhd", filteredInvoices);
+        model.addAttribute("donhang",serviceQLDH.getDonHang());
+        model.addAttribute("int", serviceQLDH.getIndex());
         return "admin/hoadon-in-progress";
     }
     @GetMapping("/search-completed")
@@ -134,6 +156,8 @@ public class QuanlyhoadonController {
         }
         List<HoaDonResponse> filteredInvoices = quanLyHoaDonService.searchHoaDonCompleted(maHd);
         model.addAttribute("listhd", filteredInvoices);
+        model.addAttribute("donhang",serviceQLDH.getDonHang());
+        model.addAttribute("int", serviceQLDH.getIndex());
         return "admin/hoadon-completed";
     }
     @GetMapping("/search-canceled")
@@ -144,6 +168,8 @@ public class QuanlyhoadonController {
         }
         List<HoaDonResponse> filteredInvoices = quanLyHoaDonService.searchHoaDonCanceled(maHd);
         model.addAttribute("listhd", filteredInvoices);
+        model.addAttribute("donhang",serviceQLDH.getDonHang());
+        model.addAttribute("int", serviceQLDH.getIndex());
         return "admin/hoadon-canceled";
     }
 

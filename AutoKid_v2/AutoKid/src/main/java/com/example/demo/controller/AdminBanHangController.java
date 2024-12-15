@@ -5,6 +5,7 @@ import com.example.demo.repository.*;
 import com.example.demo.response.ApiResponse;
 import com.example.demo.response.KhachHangResponse;
 import com.example.demo.response.SanPhamChiTietDTO;
+import com.example.demo.service.QuanLyDatHangService;
 import com.example.demo.service.QuanLyHoaDonService;
 import com.example.demo.service.QuanLySanPhamService;
 import com.example.demo.service.QuanLyVoucherService;
@@ -55,6 +56,8 @@ public class AdminBanHangController {
     @Autowired
     VoucherRepo voucherRepo;
 
+    @Autowired
+    QuanLyDatHangService serviceQLDH;
 
     @GetMapping("/home")
     public String products(Model model) {
@@ -70,6 +73,8 @@ public class AdminBanHangController {
         model.addAttribute("namePage", "ban-hang");
         model.addAttribute("spcts", sanPhamChiTiets);
         model.addAttribute("listvc", voucherService.getAll());
+        model.addAttribute("donhang",serviceQLDH.getDonHang());
+        model.addAttribute("int", serviceQLDH.getIndex());
         model.addAttribute("pttps", filteredPTTTs); // Chỉ truyền danh sách đã lọc
         return "admin/ban-hang";
     }

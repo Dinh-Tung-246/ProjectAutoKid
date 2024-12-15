@@ -3,6 +3,7 @@ package com.example.demo.controller;
 
 import com.example.demo.model.Voucher;
 import com.example.demo.response.VoucherResponse;
+import com.example.demo.service.QuanLyDatHangService;
 import com.example.demo.service.QuanLyVoucherService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -19,13 +20,19 @@ public class VoucherController {
     @Autowired
     private QuanLyVoucherService service;
 
+    @Autowired
+    QuanLyDatHangService serviceQLDH;
+
     @GetMapping("/index")
     public String getAllVoucher(Model model){
         List<Voucher> vouchers = service.getAll();
         model.addAttribute("vouchers", vouchers.stream().map(VoucherResponse::new).collect(Collectors.toList()));
         model.addAttribute("voucherAdd", new Voucher());
         model.addAttribute("updateVoucher", new Voucher());
+        model.addAttribute("donhang",serviceQLDH.getDonHang());
+        model.addAttribute("int", serviceQLDH.getIndex());
         model.addAttribute("voucher", service.getAll());
+        model.addAttribute("namePage","voucher");
         return "/admin/voucher";
     }
 
@@ -53,6 +60,8 @@ public class VoucherController {
                                Model model) {
         model.addAttribute("voucher", service.getAll());
         Voucher voucher = service.findCode(ma);
+        model.addAttribute("donhang",serviceQLDH.getDonHang());
+        model.addAttribute("int", serviceQLDH.getIndex());
 
         try {
             double discount = service.applyVoucher(voucher, tongHoaDon);

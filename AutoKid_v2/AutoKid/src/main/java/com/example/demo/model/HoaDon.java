@@ -32,10 +32,6 @@ public class HoaDon {
     @JoinColumn(name = "id_pttt")
     private PhuongThucThanhToan phuongThucThanhToan;
 
-    @ManyToOne
-    @JoinColumn(name = "id_voucher")
-    private Voucher voucher;
-
     @Column(name = "ngay_tao", updatable = false, insertable = false)
     private Date ngayTao;
 
