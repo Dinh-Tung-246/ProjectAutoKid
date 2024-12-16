@@ -116,18 +116,18 @@ async function checkValidateAdd(event) {
         return;
     }
 
-    if (!giaTri || isNaN(giaTri) <= 0) {
-        Swal.fire({
-            background: "#fff",
-            icon: "error",
-            title: "Lỗi",
-            text: "Vui lòng nhập từ 1 đến 100",
-            customClass: {
-                title: 'my-custom-title'
-            }
-        });
-        return;
-    }
+    // if (!giaTri || isNaN(giaTri) <= 0) {
+    //     Swal.fire({
+    //         background: "#fff",
+    //         icon: "error",
+    //         title: "Lỗi",
+    //         text: "Vui lòng nhập từ 1 đến 100",
+    //         customClass: {
+    //             title: 'my-custom-title'
+    //         }
+    //     });
+    //     return;
+    // }
 
 
     if (!ngayBatDau || !ngayKetThuc) {
@@ -258,18 +258,18 @@ function checkValidateUpdate(event) {
         return;
     }
 
-    if (!giaTri || isNaN(giaTri) < 0) {
-        Swal.fire({
-            background: "#fff",
-            icon: "error",
-            title: "Lỗi",
-            text: "Vui lòng nhập từ 1 đến 100",
-            customClass: {
-                title: 'my-custom-title'
-            }
-        });
-        return;
-    }
+    // if (!giaTri || isNaN(giaTri) < 0) {
+    //     Swal.fire({
+    //         background: "#fff",
+    //         icon: "error",
+    //         title: "Lỗi",
+    //         text: "Vui lòng nhập từ 1 đến 100",
+    //         customClass: {
+    //             title: 'my-custom-title'
+    //         }
+    //     });
+    //     return;
+    // }
 
 
     if (!ngayBatDau || !ngayKetThuc) {
