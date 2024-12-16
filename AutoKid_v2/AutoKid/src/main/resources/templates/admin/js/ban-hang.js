@@ -97,20 +97,44 @@ document.addEventListener("DOMContentLoaded", function () {
 
     saveCustomerBtn.addEventListener("click", function () {
         const tenKH = newCustomerName.value.trim();
+        if (newCustomerName.value == ""){
+            showNotification("Vui lòng nhập tên khách hàng.!");
+            return;
+        }
+        if (newCustomerPhone.value == ""){
+            showNotification("Vui lòng nhập số điện thoại.!");
+            return;
+        }
         const sdt = newCustomerPhone.value.trim();
         if (tenKH && sdt) {
             saveCustomerBtn.disabled = true;
 
-            fetch('/admin/ban-hang/khach-hang/add', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({
-                    tenKH: tenKH,
-                    sdt: sdt
-                })
+            // Kiểm tra số điện thoại
+            fetch(`/admin/ban-hang/check-phone?sdt=${encodeURIComponent(sdt)}`, {
+                method: 'GET'
             })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Lỗi kiểm tra số điện thoại!');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    if (data.exists) {
+                        showNotification("Số điện thoại này đã được sử dụng. Vui lòng nhập số khác.!");
+                        throw new Error('Số điện thoại đã tồn tại.');
+                    }
+                    return fetch('/admin/ban-hang/khach-hang/add', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            tenKH: tenKH,
+                            sdt: sdt
+                        })
+                    });
+                })
                 .then(response => {
                     if (!response.ok) {
                         throw new Error('Lỗi trong quá trình thêm khách hàng!');
@@ -118,28 +142,31 @@ document.addEventListener("DOMContentLoaded", function () {
                     return response.json();
                 })
                 .then(data => {
-                    customerName.textContent = tenKH;
-                    customerPhone.textContent = sdt;
-                    const modalElement = document.querySelector('#addCustomerModal');
-                    const modalInstance = bootstrap.Modal.getInstance(modalElement);
-                    modalInstance.hide();
+                    if (data) {
+                        customerName.textContent = tenKH;
+                        customerPhone.textContent = sdt;
+                        const modalElement = document.querySelector('#addCustomerModal');
+                        const modalInstance = bootstrap.Modal.getInstance(modalElement);
+                        modalInstance.hide();
 
-                    const toast = new bootstrap.Toast(document.getElementById('successToast'));
-                    toast.show();
+                        const toast = new bootstrap.Toast(document.getElementById('successToast'));
+                        toast.show();
 
-                    saveCustomerToSession(sdt);
-                    searchInput.value = '';
-                    customerResults.style.display = "none";
-                    newCustomerName.value='';
-                    newCustomerPhone.value='';
+                        saveCustomerToSession(sdt);
+                        searchInput.value = '';
+                        customerResults.style.display = "none";
+                        newCustomerName.value = '';
+                        newCustomerPhone.value = '';
+                    }
                 })
                 .catch(error => {
-                    console.error('Error saving customer:', error);
-                    alert('Đã xảy ra lỗi, vui lòng thử lại!');
+                    if (error.message !== 'Số điện thoại đã tồn tại.') {
+                        console.error('Error saving customer:', error);
+                        alert('Đã xảy ra lỗi, vui lòng thử lại!');
+                    }
                 })
                 .finally(() => {
-                    // Bật lại nút sau khi xử lý xong
-                    saveCustomerBtn.disabled = false;
+                    saveCustomerBtn.disabled = false; // Bật lại nút sau khi xử lý xong
                 });
         }
     });
