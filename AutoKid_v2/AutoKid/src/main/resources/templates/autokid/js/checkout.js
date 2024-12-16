@@ -122,6 +122,18 @@ function validateEmail(email) {
     return emailRegex.test(email);
 }
 
+function getFormattedDate() {
+    const now = new Date();
+
+    const day = String(now.getDate()).padStart(2, '0');
+    const month = String(now.getMonth() + 1).padStart(2, '0'); // Tháng trong JavaScript bắt đầu từ 0
+    const year = now.getFullYear();
+    const hours = String(now.getHours()).padStart(2, '0');
+    const minutes = String(now.getMinutes()).padStart(2, '0');
+    const seconds = String(now.getSeconds()).padStart(2, '0');
+
+    return `${day}${month}${year}${hours}${minutes}${seconds}`;
+}
 
 document.querySelector('#checkout-form').addEventListener('submit', async function (event) {
     event.preventDefault();
@@ -174,7 +186,7 @@ document.querySelector('#checkout-form').addEventListener('submit', async functi
 
     let TongTien = document.getElementById('totalPrice').textContent;
 
-    let vnpTxnRef = new Date().getTime().toString();
+    let vnpTxnRef = getFormattedDate();
     let orderInfo = "Thanh toan don hang " + vnpTxnRef;
     const paymentData = {
         amount: TongTien.replaceAll('.',''),

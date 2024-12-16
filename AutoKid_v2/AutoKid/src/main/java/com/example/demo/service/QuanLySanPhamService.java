@@ -329,13 +329,15 @@ public class QuanLySanPhamService {
         SanPham sanPham = sanPhamRepo.findById(idSP).orElseThrow();
         if (sanPham.getSanPhamChiTiets().size() != 0) {
             for (SanPhamChiTiet spct: sanPham.getSanPhamChiTiets()){
-                Map<String, Object> map = new LinkedHashMap<>();
-                map.put("idSPCT",spct.getId());
-                map.put("idMS", spct.getMauSac().getId());
-                map.put("tenMS", spct.getMauSac().getTenMS());
-                map.put("soLuong", spct.getSoLuong());
-                map.put("anhSPCT", spct.getAnh());
-                listColor.add(map);
+                if (spct.getMauSac().getTrangThaiMS().equals("Hoạt động")) {
+                    Map<String, Object> map = new LinkedHashMap<>();
+                    map.put("idSPCT",spct.getId());
+                    map.put("idMS", spct.getMauSac().getId());
+                    map.put("tenMS", spct.getMauSac().getTenMS());
+                    map.put("soLuong", spct.getSoLuong());
+                    map.put("anhSPCT", spct.getAnh());
+                    listColor.add(map);
+                }
             }
         }
 
