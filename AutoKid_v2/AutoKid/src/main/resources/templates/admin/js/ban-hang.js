@@ -130,6 +130,8 @@ document.addEventListener("DOMContentLoaded", function () {
                     saveCustomerToSession(sdt);
                     searchInput.value = '';
                     customerResults.style.display = "none";
+                    newCustomerName.value='';
+                    newCustomerPhone.value='';
                 })
                 .catch(error => {
                     console.error('Error saving customer:', error);

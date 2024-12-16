@@ -141,7 +141,7 @@ public class AdminProductController {
                         if (originalFilename != null) {
                             String fileName = System.currentTimeMillis() + "-" + originalFilename.replaceAll("[^a-zA-Z0-9\\.\\-]", "_");
                             try {
-                                String uploadDir = "C:\\Users\\admin\\ProjectAutoKid\\AutoKid_v2\\AutoKid\\src\\main\\resources\\static\\img\\categories";
+                                String uploadDir = "D:\\Git\\Autokid\\ProjectAutoKid\\AutoKid_v2\\AutoKid\\src\\main\\resources\\templates\\autokid\\img\\product";
                                 Path uploadPath = Paths.get(uploadDir);
                                 if (!Files.exists(uploadPath)) {
                                     Files.createDirectories(uploadPath);
@@ -176,7 +176,7 @@ public class AdminProductController {
                         if (originalFilename != null) {
                             String fileName = System.currentTimeMillis() + "-" + originalFilename.replaceAll("[^a-zA-Z0-9\\.\\-]", "_");
                             try {
-                                String uploadDir = "C:\\Users\\admin\\ProjectAutoKid\\AutoKid_v2\\AutoKid\\src\\main\\resources\\static\\img\\categories";
+                                String uploadDir = "D:\\Git\\Autokid\\ProjectAutoKid\\AutoKid_v2\\AutoKid\\src\\main\\resources\\templates\\autokid\\img\\product";
                                 Path uploadPath = Paths.get(uploadDir);
                                 if (!Files.exists(uploadPath)) {
                                     Files.createDirectories(uploadPath);
@@ -206,7 +206,7 @@ public class AdminProductController {
     @GetMapping("/img/categories/{fileName}")
     @ResponseBody
     public ResponseEntity<ByteArrayResource> getImage(@PathVariable String fileName) throws IOException {
-        String imagePath = "C:/Users/admin/ProjectAutoKid/AutoKid_v2/AutoKid/src/main/resources/static/img/categories/" + fileName;
+        String imagePath = "D:/Git/Autokid/ProjectAutoKid/AutoKid_v2/AutoKid/src/main/resources/templates/autokid/img/product" + fileName;
         File imageFile = new File(imagePath);
         InputStream inputStream = new FileInputStream(imageFile);
         byte[] imageBytes = inputStream.readAllBytes();
@@ -238,6 +238,11 @@ public class AdminProductController {
     @PostMapping("/update/san-pham")
     public String updateProduct(@ModelAttribute("updateSanPham") SanPham sanPham) {
         if (sanPham.getId() != null) {
+            if (sanPham.getAnhSPMau() == null) {
+                Integer idSP = sanPham.getId();
+                SanPham SP = sanPhamRepo.findById(idSP).orElseThrow();
+                sanPham.setAnhSPMau(SP.getAnhSPMau());
+            }
             service.updateSanPham(sanPham);
         }
         return "redirect:/admin/san-pham";

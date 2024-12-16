@@ -91,7 +91,7 @@
                         <tr th:each="sp : ${sps}" th:if="${sp.trangThaiSP} == 'Đang bán'">
                             <td th:text="${sp.maSP}"></td>
                             <td th:text="${sp.tenSP}"></td>
-                            <td><img th:src="@{'/img/categories/' + ${sp.anhSPMau}}" alt="Ảnh sản phẩm"></td>
+                            <td><img th:src="@{'../autokid/img/product/' + ${sp.anhSPMau}}" alt="Ảnh sản phẩm"></td>
                             <td th:text="${sp.donGia}"></td>
                             <td th:text="${sp.moTa}"></td>
                             <td th:text="${sp.trangThaiSP}"></td>
@@ -399,8 +399,8 @@
                         <tbody>
                         <tr th:each="sp : ${sps}" th:if="${sp.trangThaiSP} == 'Ngừng bán'">
                             <td th:text="${sp.maSP}"></td>
-                            <td th:text="${sp.tenSP}"></td>
-                            <td><img th:src="@{'/img/categories/' + ${sp.anhSPMau}}" alt="Ảnh sản phẩm"></td>
+                            <td th:text="${sp.tenSP}"></td>'>
+                            <td><img th:src="@{'../autokid/img/product/' + ${sp.anhSPMau}}" alt="Ảnh sản phẩm"></td>
                             <td th:text="${sp.donGia}"></td>
                             <td th:text="${sp.moTa}"></td>
                             <td th:text="${sp.trangThaiSP}"></td>
@@ -589,7 +589,7 @@
                 const chatLieu = this.getAttribute('data-chatlieu');
                 const trangThaiSP = this.getAttribute('data-trangthai');
                 const imageName = button.dataset.anh; // Tên ảnh từ thuộc tính data-anh
-                const imageUrl = `/img/categories/${imageName}`; // Đường dẫn ảnh
+                const imageUrl = `../autokid/img/product/${imageName}`; // Đường dẫn ảnh
 
 
                 // Đảm bảo ID được truyền vào trường ẩn
@@ -611,7 +611,7 @@
                     modal.querySelector('#currentImageName').value = imageName;
                     const currentImage = modal.querySelector('#currentImage');
                     if (currentImage) {
-                        currentImage.src = '/img/categories/' + (anh || '');
+                        currentImage.src = '../autokid/img/product/' + (anh || '');
                     }
                 }
             });

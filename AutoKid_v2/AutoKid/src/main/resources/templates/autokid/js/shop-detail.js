@@ -7,8 +7,10 @@ $(document).ready(function () {
 // hàm tăng số lượng
 function increaseQuantity() {
     const quantityInput = document.getElementById("quantity-input");
-    let quantity = parseInt(quantityInput.value) || 1;
-    quantityInput.value = quantity + 1;
+    let quantity = parseInt(quantityInput.value) || 50;
+    if (quantity < 50) {
+        quantityInput.value = quantity + 1;
+    }
 }
 
 // hàm giảm số lượng

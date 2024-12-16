@@ -1,6 +1,29 @@
 // Gọi hàm render sau khi trang load nếu chưa đăng nhập
 document.addEventListener("DOMContentLoaded", () => {
     renderCartForm();
+
+    const quantityInputs = document.querySelectorAll(".shoping__cart__quantityProduct");
+
+    quantityInputs.forEach(input => {
+        input.addEventListener("input", function () {
+            let value = parseInt(this.value, 10);
+
+            // Kiem  tra neu khong phai là so hoac gia tri ngoai khoang
+            if (isNaN(value) || value < 1) {
+                this.value = 1;
+            } else if (value > 50) {
+                this.value = 50;
+            }
+        });
+
+        // Ngan khong cho nguoi dung nhap ky tu khac so
+        input.addEventListener("keypress", function (e) {
+            const charCode = e.which || e.keyCode;
+            if (charCode < 48 || charCode > 57) {
+                e.preventDefault();
+            }
+        });
+    })
 });
 
 
