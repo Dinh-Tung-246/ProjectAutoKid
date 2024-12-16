@@ -34,6 +34,7 @@ import java.nio.file.StandardCopyOption;
 import java.text.DecimalFormat;
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
 
 @Controller
@@ -84,6 +85,39 @@ public class AdminProductController {
         model.addAttribute("int", serviceQLDH.getIndex());
         model.addAttribute("namePage", "product");
         return "admin/products";
+    }
+
+    @GetMapping("/search")
+    public String searchProduct(@RequestParam(name = "keyword", required = false) String keyword, Model model) {
+        List<SanPham> sanPham = keyword == null || keyword.isEmpty()
+                ? service.DSSanPham()
+                :  service.searchProduct(keyword);
+
+        model.addAttribute("sps", sanPham);
+        model.addAttribute("keyword", keyword);
+        model.addAttribute("dsChatLieu", service.getAllChatLieu());
+        model.addAttribute("dsThuongHieu", service.getAllThuongHieu());
+        model.addAttribute("dsKichCo", service.getAllKichCo());
+        model.addAttribute("dsLoaiSanPham", service.getAllLoaiSanPham());
+        model.addAttribute("addSanPham", new SanPham());
+        model.addAttribute("updateSanPham", new SanPham());
+        model.addAttribute("donhang",serviceQLDH.getDonHang());
+        model.addAttribute("int", serviceQLDH.getIndex());
+        model.addAttribute("namePage", "product");
+
+        return "/admin/san-pham";
+    }
+
+    @GetMapping("/searchDetail")
+    public String searchDetailProduct(@RequestParam(name = "keyword", required = false) String keyword, Model model) {
+        List<SanPhamChiTiet> sanPhamChiTiet = keyword == null || keyword.isEmpty()
+                ? service.findAll()
+                :  service.searchDetailProduct(keyword);
+
+        model.addAttribute("spct", sanPhamChiTiet);
+        model.addAttribute("keyword", keyword);
+
+        return "/admin/products";
     }
 
     @RequestMapping(value = "/add/products", method = RequestMethod.POST)

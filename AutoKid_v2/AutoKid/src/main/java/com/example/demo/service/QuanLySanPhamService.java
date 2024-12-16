@@ -41,6 +41,16 @@ public class QuanLySanPhamService {
     @Autowired
     LoaiSanPhamRepo loaiSanPhamRepo;
 
+    public List<SanPham> searchProduct(String keyword) {
+        return sanPhamRepo.searchByKeyword(keyword);
+    }
+    public List<SanPhamChiTiet> findAll(){
+        return sanPhamChiTietRepo.findAll();
+    }
+    public List<SanPhamChiTiet> searchDetailProduct(String keyword) {
+        return sanPhamChiTietRepo.searchByKeyword(keyword);
+    }
+
     public List<SanPham> DSSanPham(){
         return sanPhamRepo.findAllByOrderByIdDesc();
     }

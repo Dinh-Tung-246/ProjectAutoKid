@@ -1,6 +1,8 @@
 package com.example.demo.repository;
 
 import com.example.demo.model.SanPham;
+import com.example.demo.model.Voucher;
+import com.example.demo.response.SanPhamKhuyenMaiResponse;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -29,4 +31,10 @@ public interface SanPhamRepo extends JpaRepository<SanPham,Integer> {
     @Query("SELECT s FROM SanPham s " +
             " WHERE s.tenSP LIKE %:tenSanPham%")
     List<SanPham> findAllByName(@Param("tenSanPham") String tenSanPham);
+
+    @Query("SELECT sp FROM SanPham sp WHERE " +
+            "LOWER(sp.tenSP) LIKE LOWER(CONCAT('%', :keyword, '%')) " +
+            "OR LOWER(sp.maSP) LIKE LOWER(CONCAT('%', :keyword, '%'))")
+    List<SanPham> searchByKeyword(String keyword);
+
 }
