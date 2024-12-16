@@ -97,20 +97,44 @@ document.addEventListener("DOMContentLoaded", function () {
 
     saveCustomerBtn.addEventListener("click", function () {
         const tenKH = newCustomerName.value.trim();
+        if (newCustomerName.value == ""){
+            showNotification("Vui lòng nhập tên khách hàng.!");
+            return;
+        }
+        if (newCustomerPhone.value == ""){
+            showNotification("Vui lòng nhập số điện thoại.!");
+            return;
+        }
         const sdt = newCustomerPhone.value.trim();
         if (tenKH && sdt) {
             saveCustomerBtn.disabled = true;
 
-            fetch('/admin/ban-hang/khach-hang/add', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({
-                    tenKH: tenKH,
-                    sdt: sdt
-                })
+            // Kiểm tra số điện thoại
+            fetch(`/admin/ban-hang/check-phone?sdt=${encodeURIComponent(sdt)}`, {
+                method: 'GET'
             })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Lỗi kiểm tra số điện thoại!');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    if (data.exists) {
+                        showNotification("Số điện thoại này đã được sử dụng. Vui lòng nhập số khác.!");
+                        throw new Error('Số điện thoại đã tồn tại.');
+                    }
+                    return fetch('/admin/ban-hang/khach-hang/add', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            tenKH: tenKH,
+                            sdt: sdt
+                        })
+                    });
+                })
                 .then(response => {
                     if (!response.ok) {
                         throw new Error('Lỗi trong quá trình thêm khách hàng!');
@@ -118,28 +142,31 @@ document.addEventListener("DOMContentLoaded", function () {
                     return response.json();
                 })
                 .then(data => {
-                    customerName.textContent = tenKH;
-                    customerPhone.textContent = sdt;
-                    const modalElement = document.querySelector('#addCustomerModal');
-                    const modalInstance = bootstrap.Modal.getInstance(modalElement);
-                    modalInstance.hide();
+                    if (data) {
+                        customerName.textContent = tenKH;
+                        customerPhone.textContent = sdt;
+                        const modalElement = document.querySelector('#addCustomerModal');
+                        const modalInstance = bootstrap.Modal.getInstance(modalElement);
+                        modalInstance.hide();
 
-                    const toast = new bootstrap.Toast(document.getElementById('successToast'));
-                    toast.show();
+                        const toast = new bootstrap.Toast(document.getElementById('successToast'));
+                        toast.show();
 
-                    saveCustomerToSession(sdt);
-                    searchInput.value = '';
-                    customerResults.style.display = "none";
-                    newCustomerName.value='';
-                    newCustomerPhone.value='';
+                        saveCustomerToSession(sdt);
+                        searchInput.value = '';
+                        customerResults.style.display = "none";
+                        newCustomerName.value = '';
+                        newCustomerPhone.value = '';
+                    }
                 })
                 .catch(error => {
-                    console.error('Error saving customer:', error);
-                    alert('Đã xảy ra lỗi, vui lòng thử lại!');
+                    if (error.message !== 'Số điện thoại đã tồn tại.') {
+                        console.error('Error saving customer:', error);
+                        alert('Đã xảy ra lỗi, vui lòng thử lại!');
+                    }
                 })
                 .finally(() => {
-                    // Bật lại nút sau khi xử lý xong
-                    saveCustomerBtn.disabled = false;
+                    saveCustomerBtn.disabled = false; // Bật lại nút sau khi xử lý xong
                 });
         }
     });
@@ -495,7 +522,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 .then(data => {
                     const stockQuantity = data.soLuong;
                     if (stockQuantity <= 0) {
-                        alert("Sản phẩm đã hết hàng! Không thể thêm vào giỏ.");
+                        showNotification("Sản phẩm đã hết hàng! Không thể thêm vào giỏ!");
                         return;
                     }
                     const newQuantity = currentQuantity + 1;
@@ -630,15 +657,28 @@ document.addEventListener("DOMContentLoaded", function () {
                     const response = await fetch(`/admin/ban-hang/voucher/${selectedVoucherId}`);
                     if (response.ok) {
                         const voucher = await response.json();
+                        console.log(voucher);
                         // Kiểm tra điều kiện áp dụng voucher
                         if (totalAmount >= voucher.dieuKien) {
+                            let discount = 0; // Biến lưu giá trị giảm
                             if (voucher.loaiVoucher === 1) {
                                 // Giảm theo tỷ lệ phần trăm
-                                const discount = totalAmount * (voucher.giaTri / 100);
-                                finalAmount = totalAmount - discount;
+                                discount = totalAmount * (voucher.giaTri / 100);
                             } else if (voucher.loaiVoucher === 2) {
                                 // Giảm theo giá trị cố định
-                                finalAmount = totalAmount - voucher.giaTri;
+                                discount = voucher.giaTri;
+                            }
+
+                            // Nếu giảm giá vượt quá giá trị tối đa, giới hạn giảm giá
+                            if (voucher.giaTriToiDa && discount > voucher.giaTriToiDa) {
+                                discount = voucher.giaTriToiDa;
+                            }
+
+                            finalAmount = totalAmount - discount;
+
+                            // Đảm bảo số tiền cuối cùng không âm
+                            if (finalAmount < 0) {
+                                finalAmount = 0;
                             }
                         } else {
                             showNotification(`Đơn hàng phải đạt tối thiểu ${voucher.dieuKien.toLocaleString()} VNĐ để áp dụng voucher này.`);

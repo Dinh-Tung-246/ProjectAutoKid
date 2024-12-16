@@ -97,6 +97,12 @@ public class AdminBanHangController {
         return ResponseEntity.ok(savedKhachHang);
     }
 
+    @GetMapping("/check-phone")
+    public ResponseEntity<Map<String, Boolean>> checkPhone(@RequestParam String sdt) {
+        boolean exists = khachHangRepo.existsBySdt(sdt);
+        return ResponseEntity.ok(Collections.singletonMap("exists", exists));
+    }
+
     @PostMapping("/set-session")
     @ResponseBody
     public ResponseEntity<?> setCustomerToSession(@RequestBody Map<String, String> request, HttpSession session) {

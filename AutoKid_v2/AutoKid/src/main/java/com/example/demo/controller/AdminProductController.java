@@ -1,12 +1,7 @@
 package com.example.demo.controller;
 
 import com.example.demo.model.*;
-import com.example.demo.repository.HoaDonRepo;
-import com.example.demo.repository.KhachHangRepo;
-import com.example.demo.repository.NhanVienRepo;
-import com.example.demo.repository.SanPhamRepo;
-import com.example.demo.response.SanPhamKhuyenMaiResponse;
-import com.example.demo.response.VoucherResponse;
+import com.example.demo.repository.*;
 import com.example.demo.service.QuanLyDatHangService;
 import com.example.demo.service.QuanLySanPhamService;
 
@@ -69,6 +64,9 @@ public class AdminProductController {
 
     @Autowired
     QuanLyDatHangService serviceQLDH;
+
+    @Autowired
+    SanPhamChiTietRepo spctRepo;
 
     @GetMapping("/home")
     public String home(){
@@ -144,6 +142,11 @@ public class AdminProductController {
     @PostMapping("/update/products")
     public String updateSPCT(@ModelAttribute("updateSPCT") SanPhamChiTiet sanPhamChiTiet) {
         if (sanPhamChiTiet.getId() != null) {
+            if (sanPhamChiTiet.getAnh() == null) {
+                Integer idSPCT =sanPhamChiTiet.getId();
+                SanPhamChiTiet spct = spctRepo.findById(idSPCT).orElseThrow();
+                sanPhamChiTiet.setAnh(spct.getAnh());
+            }
             service.updateSanPhamChiTiet(sanPhamChiTiet);
         }
         return "redirect:/admin/products";
