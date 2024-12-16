@@ -28,7 +28,7 @@ public class SanPham {
     @Column(name = "gia_ban")
     private Double donGia;
 
-    @Column(name = "ngay_tao")
+    @Column(name = "ngay_tao", updatable = false, insertable = false)
     private String ngayTao;
 
     @Column(name = "trang_thai_sp")
