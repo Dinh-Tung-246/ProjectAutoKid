@@ -1,4 +1,5 @@
 package com.example.demo.repository;
+import com.example.demo.model.SanPham;
 import com.example.demo.model.SanPhamChiTiet;
 import com.example.demo.response.SanPhamChiTietDTO;
 import jakarta.transaction.Transactional;
@@ -51,4 +52,8 @@ public interface SanPhamChiTietRepo extends JpaRepository<SanPhamChiTiet,Integer
 
     int updateSoLuongSPCTIncrease(@Param("soLuong") Integer soLuong, @Param("maSPCT") String maSPCT);
 
+
+    @Query("SELECT spct FROM SanPhamChiTiet spct WHERE " +
+            "LOWER(spct.maSPCT) LIKE LOWER(CONCAT('%', :keyword, '%')) ")
+    List<SanPhamChiTiet> searchByKeyword(String keyword);
 }

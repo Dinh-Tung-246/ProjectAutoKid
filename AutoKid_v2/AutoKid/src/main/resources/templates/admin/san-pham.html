@@ -64,9 +64,9 @@
                         <button type="button" class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#inactiveProductsModal">Danh sách sản phẩm ngừng bán</button>
                     </div>
                     <div class="col-7">
-                        <form action="" method="GET" class="row">
+                        <form th:action="@{/admin/search}" method="GET" class="row">
                             <div class="col-7">
-                                <input name="tenTH" placeholder="Tìm kiếm sản phẩm" class="form-control">
+                                <input name="keyword" th:value="${keyword}" placeholder="Tìm kiếm theo mã và tên" class="form-control">
                             </div>
                             <div class="col-3">
                                 <button type="submit" class="btn btn-primary">Tìm kiếm</button>
@@ -112,8 +112,7 @@
                                         th:data-thuonghieu="${sp.thuongHieu.id}"
                                         th:data-kichco="${sp.kichCo.id}"
                                         th:data-chatlieu="${sp.chatLieu.id}"
-                                        th:data-trangthai="${sp.trangThaiSP}"
-                                >
+                                        th:data-trangthai="${sp.trangThaiSP}">
                                     Chi tiết
                                 </button>
                             </td>

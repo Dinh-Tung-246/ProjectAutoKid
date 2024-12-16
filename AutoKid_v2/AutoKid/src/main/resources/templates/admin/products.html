@@ -62,10 +62,14 @@
                         <button type="button" class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#inactiveProductsModal">Danh sách sản phẩm ngừng bán</button>
                     </div>
                     <div class="col-7">
-                        <div class="row">
-                            <div class="col-7"><input placeholder="Tìm kiếm sản phẩm"></div>
-                            <div class="col-3"><button type="button" class="btn btn-primary">Tìm kiếm</button></div>
-                        </div>
+                        <form th:action="@{/admin/searchDetail}" method="GET" class="row">
+                            <div class="col-7">
+                                <input name="keyword" th:value="${keyword}" placeholder="Tìm kiếm theo mã" class="form-control">
+                            </div>
+                            <div class="col-3">
+                                <button type="submit" class="btn btn-primary">Tìm kiếm</button>
+                            </div>
+                        </form>
                     </div>
                 </div>
                 <div class="users-table table-wrapper">
