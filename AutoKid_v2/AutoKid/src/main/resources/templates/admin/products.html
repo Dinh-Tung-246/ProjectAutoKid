@@ -53,7 +53,7 @@
         <!-- ! Main -->
         <main class="main users chart-page" id="skip-target">
             <div class="container">
-                <h2 class="main-title">Danh Sách Sản Phẩm</h2>
+                <h2 class="main-title">Sản phẩm chi tiết</h2>
                 <div class="row">
                     <div class="col-2">
                         <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">Thêm chi tiết SP</button>
@@ -95,7 +95,7 @@
                             <td th:text="${sp.sanPham.chatLieu.tenCl}"></td>
                             <td th:text="${sp.sanPham.kichCo.tenKC}"></td>
                             <td th:text="${sp.mauSac.tenMS}"></td>
-                            <td><img th:src="@{'/img/categories/' + ${sp.anh}}" alt="Ảnh sản phẩm"></td>
+                            <td><img th:src="@{'../autokid/img/product/' + ${sp.anh}}" alt="Ảnh sản phẩm"></td>
                             <td th:text="${sp.trangThaiSPCT}"></td>
                             <td>
                                 <button  class="view-detail btn btn-info" data-bs-toggle="modal" data-bs-target="#productDetailModal"
@@ -241,7 +241,7 @@
                             <td th:text="${sp.sanPham.kichCo.tenKC}"></td>
                             <td th:text="${sp.mauSac.tenMS}"></td>
                             <td><img th:if="${sp.anh != null and !sp.anh.isEmpty()}"
-                                     th:src="@{'/img/categories/' + ${sp.anh}}"
+                                     th:src="@{'../autokid/img/product/' + ${sp.anh}}"
                                      alt="Ảnh sản phẩm"></td>
                             <td th:text="${sp.trangThaiSPCT}"></td>
                             <td>
@@ -367,7 +367,7 @@
                 const trangThaiSPCT = this.getAttribute('data-trang-thai');
                 const imageName = this.getAttribute('data-anh');
                 console.log(imageName);
-                const imageUrl = `/img/categories/${imageName}`; // Đường dẫn ảnh
+                const imageUrl = `../autokid/img/product/${imageName}`; // Đường dẫn ảnh
                 const modal = document.querySelector('#productDetailModal');
                 if (modal) {
                     modal.querySelector('#productId').value = id || '';
@@ -380,7 +380,7 @@
                     modal.querySelector('#currentImageName').value = imageName;
                     const currentImage = modal.querySelector('#currentImage');
                     if (currentImage) {
-                        currentImage.src = '/img/categories/' + (anh || '');
+                        currentImage.src = '../autokid/img/product/' + (anh || '');
                     }
 
                 } else {

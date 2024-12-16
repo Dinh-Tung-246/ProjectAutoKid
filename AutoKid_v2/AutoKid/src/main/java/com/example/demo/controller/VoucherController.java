@@ -46,6 +46,8 @@ public class VoucherController {
         model.addAttribute("vouchers", vouchers.stream().map(VoucherResponse::new).collect(Collectors.toList()));
         model.addAttribute("voucherAdd", new Voucher());
         model.addAttribute("updateVoucher", new Voucher());
+        model.addAttribute("donhang",serviceQLDH.getDonHang());
+        model.addAttribute("int", serviceQLDH.getIndex());
         model.addAttribute("voucher", service.getAll());
         return "/admin/voucher";
     }
@@ -60,6 +62,8 @@ public class VoucherController {
         model.addAttribute("keyword", keyword);
         model.addAttribute("vouchers", vouchers.stream().map(VoucherResponse::new).collect(Collectors.toList()));
         model.addAttribute("voucherAdd", new Voucher());
+        model.addAttribute("donhang",serviceQLDH.getDonHang());
+        model.addAttribute("int", serviceQLDH.getIndex());
         model.addAttribute("updateVoucher", new Voucher());
 
         return "/admin/voucher";

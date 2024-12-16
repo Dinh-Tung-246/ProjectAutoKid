@@ -90,7 +90,7 @@ public class ApiCustomController {
             Integer idSPCT = Integer.parseInt(item.get("idSPCT").toString());
             Integer soLuongMua = Integer.parseInt(item.get("soLuong").toString());
             SanPhamChiTiet spct = spctRepo.findById(idSPCT).orElseThrow();
-            if (spct.getSoLuong() < soLuongMua) {
+            if (spct.getSoLuong() < soLuongMua || !spct.getSanPham().getTrangThaiSP().equals("Đang bán") || !spct.getTrangThaiSPCT().equals("Còn hàng")) {
                 i = 0;
                 break;
             }
