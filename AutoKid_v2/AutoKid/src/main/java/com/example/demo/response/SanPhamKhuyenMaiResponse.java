@@ -55,7 +55,8 @@ public class SanPhamKhuyenMaiResponse {
         this.chatLieu = s.getChatLieu().getTenCl();
         this.kichCo = s.getKichCo().getTenKC();
         this.trangThai = s.getTrangThaiSP();
-        if (s.getKhuyenMai() != null) {
+        LocalDate currentDate = LocalDate.now();
+        if (s.getKhuyenMai() != null && currentDate.isAfter(s.getKhuyenMai().getNgayBatDau()) && currentDate.isBefore(s.getKhuyenMai().getNgayKetThuc())) {
             this.maKM = s.getKhuyenMai().getMaKM();
             this.tenKM = s.getKhuyenMai().getTenKM();
             this.giaSauGiam = formatPrice(s.getDonGia() - (s.getKhuyenMai().getGiaTri() * s.getDonGia()) / 100.00);
