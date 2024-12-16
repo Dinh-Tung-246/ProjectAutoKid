@@ -658,7 +658,19 @@ document.addEventListener("DOMContentLoaded", function () {
                     if (response.ok) {
                         const voucher = await response.json();
                         console.log(voucher);
-                        // Kiểm tra điều kiện áp dụng voucher
+                        const today = new Date();
+                        const ngayBatDau = new Date(voucher.ngayBatDau);
+                        const ngayKetThuc = new Date(voucher.ngayKetThuc);
+                        
+                        if (today < ngayBatDau) {
+                            showNotification(`Voucher chưa có hiệu lực. Ngày áp dụng từ ${ngayBatDau.toLocaleDateString()}.`);
+                            voucherField.value = "";
+                            return;
+                        } else if (today > ngayKetThuc) {
+                            showNotification(`Voucher đã hết hạn. Ngày hết hạn: ${ngayKetThuc.toLocaleDateString()}.`);
+                            voucherField.value = "";
+                            return;
+                        }
                         if (totalAmount >= voucher.dieuKien) {
                             let discount = 0; // Biến lưu giá trị giảm
                             if (voucher.loaiVoucher === 1) {
