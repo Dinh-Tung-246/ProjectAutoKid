@@ -6,6 +6,13 @@ socket.onopen = function () {
     console.log("Da ket noi voi WebSocket");
 }
 
+//Khi nhan duoc thong bao tu server
+socket.onmessage = function (event) {
+    console.log("Du lieu nhan tu server: ", event.data);
+    // updateUI()
+    window.location.reload();
+}
+
 // Khi có lỗi
 socket.onerror = function(error) {
     console.error("Lỗi WebSocket:", error);
