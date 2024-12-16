@@ -661,7 +661,7 @@ document.addEventListener("DOMContentLoaded", function () {
                         const today = new Date();
                         const ngayBatDau = new Date(voucher.ngayBatDau);
                         const ngayKetThuc = new Date(voucher.ngayKetThuc);
-                        
+
                         if (today < ngayBatDau) {
                             showNotification(`Voucher chưa có hiệu lực. Ngày áp dụng từ ${ngayBatDau.toLocaleDateString()}.`);
                             voucherField.value = "";

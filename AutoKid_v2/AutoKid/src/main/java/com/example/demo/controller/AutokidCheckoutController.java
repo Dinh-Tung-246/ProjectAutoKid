@@ -48,6 +48,9 @@ public class AutokidCheckoutController {
     @Autowired
     VoucherRepo voucherRepo;
 
+    @Autowired
+    GioHangChiTietRepo ghctRepo;
+
     @GetMapping("")
     public String showCheckout(Model model) {
         model.addAttribute("currentPage", "checkout");
@@ -116,6 +119,11 @@ public class AutokidCheckoutController {
                 SanPhamChiTiet sanPhamChiTiet = sanPhamChiTietRepo.findById(idSP)
                         .orElseThrow(() -> new RuntimeException("Không tìm thấy sản phẩm: " + idSP));
                 hoaDonChiTiet.setSanPhamChiTiet(sanPhamChiTiet);
+                if (idKHO != null && !idKHO.toString().trim().equals("")) {
+                    Integer idKH = Integer.parseInt(idKHO.toString());
+                    GioHangChiTiet ghct = ghctRepo.getGHCT(idKH, idSP);
+                    ghctRepo.delete(ghct);
+                }
             }
             SanPhamChiTiet spct = sanPhamChiTietRepo.findById(Integer.parseInt(idSPCT.toString())).orElseThrow();
             hoaDonChiTiet.setDonGia(Double.parseDouble(new SanPhamKhuyenMaiResponse(spct.getSanPham()).getGiaSauGiam().replace(".","")));

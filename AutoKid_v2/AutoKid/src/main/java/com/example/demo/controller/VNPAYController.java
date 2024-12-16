@@ -1,14 +1,8 @@
 package com.example.demo.controller;
 
 
-import com.example.demo.model.HoaDon;
-import com.example.demo.model.HoaDonChiTiet;
-import com.example.demo.model.SanPhamChiTiet;
-import com.example.demo.model.Voucher;
-import com.example.demo.repository.KhachHangRepo;
-import com.example.demo.repository.PhuongThucThanhToanRepo;
-import com.example.demo.repository.SanPhamChiTietRepo;
-import com.example.demo.repository.VoucherRepo;
+import com.example.demo.model.*;
+import com.example.demo.repository.*;
 import com.example.demo.response.SanPhamKhuyenMaiResponse;
 import com.example.demo.service.EmailSenderService;
 import com.example.demo.service.QuanLyDatHangService;
@@ -57,6 +51,9 @@ public class VNPAYController {
 
     @Autowired
     VoucherRepo voucherRepo;
+
+    @Autowired
+    GioHangChiTietRepo ghctRepo;
 
     @GetMapping("/")
     public String home() {
@@ -166,6 +163,12 @@ public class VNPAYController {
             donGiaSauGiam = donGiaSauGiam.replace(".", "");
             hdct.setDonGiaSauGiam(Double.parseDouble(donGiaSauGiam));
             Integer soLuong = Integer.parseInt(map.get("quantity").toString());
+
+            if (KHACH_HANG.get("idKH") != null) {
+                Integer idKHStr = Integer.parseInt(KHACH_HANG.get("idKH").toString());
+                GioHangChiTiet ghct = ghctRepo.getGHCT(idKHStr, idSPCT);
+                ghctRepo.delete(ghct);
+            }
 
             quanLyDatHangService.createHDCT(hdct, soLuong, idSPCT);
         }
