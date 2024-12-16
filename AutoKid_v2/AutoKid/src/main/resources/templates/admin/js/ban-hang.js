@@ -495,7 +495,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 .then(data => {
                     const stockQuantity = data.soLuong;
                     if (stockQuantity <= 0) {
-                        alert("Sản phẩm đã hết hàng! Không thể thêm vào giỏ.");
+                        showNotification("Sản phẩm đã hết hàng! Không thể thêm vào giỏ!");
                         return;
                     }
                     const newQuantity = currentQuantity + 1;
@@ -630,15 +630,28 @@ document.addEventListener("DOMContentLoaded", function () {
                     const response = await fetch(`/admin/ban-hang/voucher/${selectedVoucherId}`);
                     if (response.ok) {
                         const voucher = await response.json();
+                        console.log(voucher);
                         // Kiểm tra điều kiện áp dụng voucher
                         if (totalAmount >= voucher.dieuKien) {
+                            let discount = 0; // Biến lưu giá trị giảm
                             if (voucher.loaiVoucher === 1) {
                                 // Giảm theo tỷ lệ phần trăm
-                                const discount = totalAmount * (voucher.giaTri / 100);
-                                finalAmount = totalAmount - discount;
+                                discount = totalAmount * (voucher.giaTri / 100);
                             } else if (voucher.loaiVoucher === 2) {
                                 // Giảm theo giá trị cố định
-                                finalAmount = totalAmount - voucher.giaTri;
+                                discount = voucher.giaTri;
+                            }
+
+                            // Nếu giảm giá vượt quá giá trị tối đa, giới hạn giảm giá
+                            if (voucher.giaTriToiDa && discount > voucher.giaTriToiDa) {
+                                discount = voucher.giaTriToiDa;
+                            }
+
+                            finalAmount = totalAmount - discount;
+
+                            // Đảm bảo số tiền cuối cùng không âm
+                            if (finalAmount < 0) {
+                                finalAmount = 0;
                             }
                         } else {
                             showNotification(`Đơn hàng phải đạt tối thiểu ${voucher.dieuKien.toLocaleString()} VNĐ để áp dụng voucher này.`);

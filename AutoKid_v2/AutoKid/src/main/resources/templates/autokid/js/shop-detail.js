@@ -1,3 +1,30 @@
+document.addEventListener("DOMContentLoaded", function () {
+    const quantityInput = document.getElementById("quantity-input");
+
+    if (quantityInput) { // Kiểm tra nếu phần tử tồn tại
+        quantityInput.addEventListener("input", function () {
+            let value = parseInt(this.value, 10);
+
+            if (isNaN(value) || value < 1) {
+                this.value = 1;
+            } else if (value > 50) {
+                this.value = 50;
+            }
+        });
+
+        // Ngăn nhập ký tự không hợp lệ
+        quantityInput.addEventListener("keypress", function (e) {
+            const charCode = e.which || e.keyCode;
+            if (charCode < 48 || charCode > 57) {
+                e.preventDefault();
+            }
+        });
+    } else {
+        console.warn("Không tìm thấy phần tử #quantity-input.");
+    }
+});
+
+
 $(document).ready(function () {
     // Xóa các nút "-" và "+"
     $(".pro-qty .dec").remove();
